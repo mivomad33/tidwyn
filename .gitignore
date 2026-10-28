@@ -1,0 +1,13 @@
+node_modules/
+# 실제 데이터 폴더(DB, 실행 전 사본, 마크다운, 백업 작업 파일). 백업은 data 브랜치에 있다.
+/data/
+# /brief test가 만드는 시험 데이터 폴더
+/.test-data/
+# Claude Code가 만드는 파일
+/.claude/worktrees/
+/.claude/settings.local.json
+.env*
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
