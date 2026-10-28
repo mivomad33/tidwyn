@@ -5,16 +5,33 @@ import { parseArgs as parseNodeArgs } from "node:util";
 import { BACKUP_DIR, backupMessage, commitBackup, exportBackup, readBackupDir, readBackupRef, restoreBackup } from "./backup.ts";
 import { openDb, openExistingDb } from "./db.ts";
 import { collectCandidates, describeFeedReport, feedSpecs, fetchText as realFetch, renderCandidatesMarkdown, type FetchText } from "./feeds.ts";
-import { kstIso, kstStamp } from "./kst.ts";
+import { issueIndexPath, renderAll, writeBriefMarkdown } from "./issueMarkdown.ts";
+import { linkableDates, unlinkedCount, unlinkedStories } from "./issues.ts";
+import { kstDate, kstIso, kstStamp } from "./kst.ts";
+import { applyLinkPlan, checkLinkFile, renderLinkWork, renderSearch } from "./links.ts";
 import { markdownPath, writeMarkdown } from "./markdown.ts";
+import { applyMerges, checkMergeFile, describeMerges, markMergeChecked, mergeCandidates, mergeDue, renderMergeCandidates, unmerge } from "./merge.ts";
 import { priorityRatio } from "./outlets.ts";
 import { requireRepo } from "./paths.ts";
-import { RUNS_DIR, candidatesFile, readRun, updateRun, workFile, writeRun, type BackupResult, type RunState } from "./run.ts";
+import {
+  RUNS_DIR,
+  candidatesFile,
+  linkWorkFile,
+  mergeWorkFile,
+  readRun,
+  updateRun,
+  workFile,
+  writeRun,
+  type BackupResult,
+  type LinkResult,
+  type MergeStepResult,
+  type RunState,
+} from "./run.ts";
 import { DB_FILE, ENV_DATA_DIR, checkRunCondition, describeSettings, parseArgs, resolveSettings, type Settings } from "./settings.ts";
 import { pruneSnapshots, takeSnapshot } from "./snapshot.ts";
-import { AlreadyStoredError, loadBrief, recordFirstCollectionDate, saveBrief } from "./store.ts";
+import { AlreadyStoredError, hasBrief, loadBrief, recordFirstCollectionDate, saveBrief } from "./store.ts";
 import { isLate, planTargets } from "./targets.ts";
-import { formatViolations, validateBrief } from "./validate.ts";
+import { formatViolations, validateBrief, type Violation } from "./validate.ts";
 
 // /brief 스킬이 부르는 명령들. 런타임 의존성 없이 Node 내장 기능과 git만 쓴다.
 
@@ -59,8 +76,18 @@ const USAGE = `명령:
   fail --run <파일> --date <날짜> --reason <이유>   조사 실패 기록
   backup [--run <파일>]          월별 JSON 내보내기와 data 브랜치 커밋
   summary --run <파일>           실행 끝 출력
-  render --date <날짜>           DB에서 마크다운 다시 만들기
-  restore [--repo <저장소> | --from <폴더>] [--out <DB 경로>] [--force]   백업에서 DB 복원`;
+  render --date <날짜> | --all [--run <파일>]   DB에서 마크다운 다시 만들기(--all: 모든 브리프와 이슈 마크다운)
+  restore [--repo <저장소> | --from <폴더>] [--out <DB 경로>] [--force]   백업에서 DB 복원
+이슈(2단계):
+  issues --run <파일> --date <날짜>       연결할 뉴스와 후보 이슈 목록(work/<날짜>.issues.md)
+  issue-search [--run <파일>] --q <낱말>  이름·별칭·요약으로 이슈 찾기
+  link-check --run <파일> --date <날짜>   연결 파일(work/<날짜>.links.json) 검사
+  link-apply --run <파일> --date <날짜>   검사 → 적용 → 마크다운(실패하면 실행 기록에 남긴다)
+  merge-list --run <파일>                 합치기 주기 확인과 후보 목록(work/merges.candidates.md)
+  merge-check --run <파일>                합치기 파일(work/merges.json) 검사
+  merge-apply --run <파일>                검사 → 합치기 → 점검일 갱신 → 마크다운
+  merges [--run <파일>]                   합치기 기록 목록
+  unmerge --id <번호>                     합치기 하나 되돌리기(사용자가 직접 실행, /brief는 실행하지 않음)`;
 
 function opts(argv: string[], options: Record<string, { type: "string" | "boolean" }>) {
   return parseNodeArgs({ args: argv, options, allowPositionals: false, strict: true }).values as Record<string, string | boolean | undefined>;
@@ -113,10 +140,15 @@ function cmdStart(argv: string[], ctx: Context): number {
   const pruned = pruneSnapshots(s.dataDir, now);
   const db = openDb(s.dbPath);
   let targets: string[];
+  let linkDates: string[];
+  let mergeLine: string;
   try {
     const plan = planTargets(db, now, s.startDate);
     if (plan.firstDateToRecord !== null) recordFirstCollectionDate(db, plan.firstDateToRecord);
     targets = plan.dates;
+    linkDates = linkableDates(db);
+    const due = mergeDue(db, kstDate(now));
+    mergeLine = due.due ? `이번 실행 끝에 한다(마지막 점검 ${due.checkedOn})` : due.nextOn === null ? "아직 연결한 이슈가 없다" : `다음 점검 ${due.nextOn}`;
   } finally {
     db.close();
   }
@@ -131,6 +163,8 @@ function cmdStart(argv: string[], ctx: Context): number {
     targetDates: targets,
     results: {},
     backup: null,
+    linkDates,
+    links: {},
   };
   writeRun(runFile, state);
   ctx.out(
@@ -139,6 +173,8 @@ function cmdStart(argv: string[], ctx: Context): number {
       `- 실행 기록: ${runFile}`,
       `- 대상 날짜: ${targets.length > 0 ? targets.join(", ") : "없음(빠진 날짜가 없다)"}`,
       ...targets.map((d) => `  - ${d} 작업 파일: ${workFile(s.dataDir, d)}`),
+      `- 이슈를 연결할 저장된 날짜(소급·재시도): ${linkDates.length > 0 ? linkDates.join(", ") : "없음"}`,
+      `- 합치기: ${mergeLine}`,
     ].join("\n"),
   );
   return EXIT.ok;
@@ -350,6 +386,7 @@ function cmdSummary(argv: string[], ctx: Context): number {
     lines.push(`- ${d} 받지 못한 피드(웹 검색으로 조사했다):`);
     for (const x of f.failures) lines.push(`  - ${x.feed}: ${x.reason}`);
   }
+  lines.push(...issueSummaryLines(s));
   lines.push(`- 백업: ${describeBackup(s.backup)}`);
   const latest = saved.at(-1);
   const others = saved.slice(0, -1);
@@ -386,27 +423,27 @@ function priorityLines(dbPath: string, dates: string[]): string[] {
 }
 
 function cmdRender(argv: string[], ctx: Context): number {
-  const v = opts(argv, { date: { type: "string" }, run: { type: "string" } });
-  const date = need(v, "date");
-  let dataDir: string;
-  let dbPath: string;
-  if (typeof v.run === "string") {
-    const s = readRun(v.run);
-    dataDir = s.dataDir;
-    dbPath = s.dbPath;
-  } else {
-    const s = resolveSettings({ cwd: ctx.cwd, env: ctx.env, args: { test: false, startDate: null }, now: ctx.now() });
-    dataDir = s.dataDir;
-    dbPath = s.dbPath;
+  const v = opts(argv, { date: { type: "string" }, run: { type: "string" }, all: { type: "boolean" } });
+  const { dataDir, dbPath } = dataTarget(v.run, ctx);
+  if (v.all === true) {
+    if (typeof v.date === "string") throw new UsageError("--date와 --all은 함께 쓸 수 없다");
+    const db = openExistingDb(dbPath);
+    try {
+      ctx.out(rerender(db, dataDir));
+      return EXIT.ok;
+    } finally {
+      db.close();
+    }
   }
+  const date = need(v, "date");
   const db = openExistingDb(dbPath);
   try {
-    const stored = loadBrief(db, date);
-    if (stored === null) {
+    const file = writeBriefMarkdown(db, dataDir, date);
+    if (file === null) {
       ctx.out(`${date} 브리프가 DB에 없다.`);
       return EXIT.failed;
     }
-    ctx.out(`마크다운을 다시 만들었다: ${writeMarkdown(dataDir, stored)}`);
+    ctx.out(`마크다운을 다시 만들었다: ${file}`);
     return EXIT.ok;
   } finally {
     db.close();
@@ -436,6 +473,332 @@ function cmdRestore(argv: string[], ctx: Context): number {
   return EXIT.ok;
 }
 
+// ---- 이슈(2단계) ----
+
+/** --run이 있으면 실행 기록의 데이터 폴더, 없으면 환경 변수로 계산한 데이터 폴더 */
+function dataTarget(run: string | boolean | undefined, ctx: Context): { dataDir: string; dbPath: string } {
+  if (typeof run === "string") {
+    const s = readRun(run);
+    return { dataDir: s.dataDir, dbPath: s.dbPath };
+  }
+  const s = resolveSettings({ cwd: ctx.cwd, env: ctx.env, args: { test: false, startDate: null }, now: ctx.now() });
+  return { dataDir: s.dataDir, dbPath: s.dbPath };
+}
+
+function readJson(file: string, label: string): { ok: true; data: unknown } | { ok: false; reason: string } {
+  if (!fs.existsSync(file)) return { ok: false, reason: `${label}이 없다: ${file}` };
+  try {
+    return { ok: true, data: JSON.parse(fs.readFileSync(file, "utf8")) };
+  } catch (e) {
+    return { ok: false, reason: `${label}이 올바른 JSON이 아니다: ${(e as Error).message}` };
+  }
+}
+
+/** 마크다운을 모두 다시 만든다. 실패해도 데이터 변경은 그대로 두고 메시지만 돌려준다 */
+function rerender(db: ReturnType<typeof openDb>, dataDir: string): string {
+  try {
+    const r = renderAll(db, dataDir);
+    return `마크다운을 다시 만들었다(브리프 ${r.briefs}개, 이슈 ${r.issues}개). 이슈 목록: ${r.index}`;
+  } catch (e) {
+    return `마크다운 만들기 실패: ${(e as Error).message} (render --all로 다시 만들 수 있다)`;
+  }
+}
+
+function requireStored(db: ReturnType<typeof openDb>, date: string): void {
+  if (!hasBrief(db, date)) throw new UsageError(`${date} 브리프가 DB에 없다`);
+}
+
+function cmdIssues(argv: string[], ctx: Context): number {
+  const v = opts(argv, { run: { type: "string" }, date: { type: "string" } });
+  const state = readRun(need(v, "run"));
+  const date = need(v, "date");
+  const db = openExistingDb(state.dbPath);
+  try {
+    requireStored(db, date);
+    const work = renderLinkWork(db, date);
+    if (work.stories === 0) {
+      ctx.out(`할 일 없음(${date}): 이슈가 없는 뉴스가 없다.`);
+      return EXIT.ok;
+    }
+    const file = linkWorkFile(state.dataDir, date, "issues.md");
+    fs.mkdirSync(path.dirname(file), { recursive: true });
+    fs.writeFileSync(file, work.text);
+    ctx.out(`연결할 뉴스 ${work.stories}건, 후보 이슈 ${work.candidates}개: ${file}\n연결 파일을 쓸 곳: ${linkWorkFile(state.dataDir, date, "links.json")}`);
+    return EXIT.ok;
+  } finally {
+    db.close();
+  }
+}
+
+function cmdIssueSearch(argv: string[], ctx: Context): number {
+  const v = opts(argv, { run: { type: "string" }, q: { type: "string" } });
+  const q = need(v, "q");
+  const db = openExistingDb(dataTarget(v.run, ctx).dbPath);
+  try {
+    ctx.out(renderSearch(db, q));
+    return EXIT.ok;
+  } finally {
+    db.close();
+  }
+}
+
+function cmdLinkCheck(argv: string[], ctx: Context): number {
+  const v = opts(argv, { run: { type: "string" }, date: { type: "string" } });
+  const state = readRun(need(v, "run"));
+  const date = need(v, "date");
+  const file = readJson(linkWorkFile(state.dataDir, date, "links.json"), "연결 파일");
+  if (!file.ok) {
+    ctx.out(`연결 검사 실패(${date}):\n- 연결 파일: ${file.reason}`);
+    return EXIT.failed;
+  }
+  const db = openExistingDb(state.dbPath);
+  try {
+    requireStored(db, date);
+    const r = checkLinkFile(db, file.data, date);
+    if (!r.ok) {
+      ctx.out(`연결 검사 실패(${date}), 위반 ${r.violations.length}개:\n${formatViolations(r.violations)}`);
+      return EXIT.failed;
+    }
+    ctx.out(`연결 검사 통과(${date}): 뉴스 ${r.plan.links.length}건, 새 이슈 ${r.plan.newIssues.length}개.`);
+    return EXIT.ok;
+  } finally {
+    db.close();
+  }
+}
+
+function cmdLinkApply(argv: string[], ctx: Context): number {
+  const v = opts(argv, { run: { type: "string" }, date: { type: "string" } });
+  const runFile = need(v, "run");
+  const state = readRun(runFile);
+  const date = need(v, "date");
+  const record = (r: LinkResult) => updateRun(runFile, (s) => ((s.links ??= {})[date] = r));
+  const db = openExistingDb(state.dbPath);
+  try {
+    requireStored(db, date);
+    if (unlinkedStories(db, date).length === 0) {
+      record({ status: "nothing" });
+      ctx.out(`할 일 없음(${date}): 이슈가 없는 뉴스가 없다. 바꾼 것이 없다.`);
+      return EXIT.ok;
+    }
+    const file = readJson(linkWorkFile(state.dataDir, date, "links.json"), "연결 파일");
+    if (!file.ok) {
+      record({ status: "failed", reason: file.reason });
+      ctx.out(`연결하지 않음(${date}): ${file.reason}`);
+      return EXIT.failed;
+    }
+    const checked = checkLinkFile(db, file.data, date);
+    if (!checked.ok) {
+      record({ status: "failed", reason: "연결 파일이 검사를 통과하지 못했다", violations: checked.violations });
+      ctx.out(`연결하지 않음(${date}), 위반 ${checked.violations.length}개(뉴스는 저장된 채로 두고 다음 실행이 다시 연결한다):\n${formatViolations(checked.violations)}`);
+      return EXIT.failed;
+    }
+    const applied = applyLinkPlan(db, checked.plan, kstDate(ctx.now()));
+    record(applied);
+    const head = applied.status === "applied" ? `연결함(${date}): 뉴스 ${applied.linked}건, 기존 이슈에 ${applied.attached}건, 새 이슈 ${applied.newIssues}개.` : `할 일 없음(${date}).`;
+    ctx.out(`${head}\n${rerender(db, state.dataDir)}`);
+    return EXIT.ok;
+  } finally {
+    db.close();
+  }
+}
+
+function cmdMergeList(argv: string[], ctx: Context): number {
+  const v = opts(argv, { run: { type: "string" } });
+  const runFile = need(v, "run");
+  const state = readRun(runFile);
+  const today = kstDate(ctx.now());
+  const record = (r: MergeStepResult) => updateRun(runFile, (s) => (s.merge = r));
+  const db = openExistingDb(state.dbPath);
+  try {
+    const due = mergeDue(db, today);
+    if (!due.due) {
+      record({ status: "notDue", nextOn: due.nextOn });
+      ctx.out(`합치기: 할 일 없음(${due.nextOn === null ? "아직 연결한 이슈가 없다" : `다음 점검 ${due.nextOn}`}).`);
+      return EXIT.ok;
+    }
+    const pairs = mergeCandidates(db);
+    if (pairs.length === 0) {
+      markMergeChecked(db, today);
+      record({ status: "none", candidates: 0 });
+      ctx.out(`합치기: 할 일 있음(마지막 점검 ${due.checkedOn}). 후보가 없어 합친 것 없이 점검일을 ${today}로 바꿨다.`);
+      return EXIT.ok;
+    }
+    const file = mergeWorkFile(state.dataDir, "candidates.md");
+    fs.mkdirSync(path.dirname(file), { recursive: true });
+    fs.writeFileSync(file, renderMergeCandidates(db, pairs));
+    record({ status: "pending", candidates: pairs.length });
+    ctx.out(`합치기: 할 일 있음(마지막 점검 ${due.checkedOn}). 후보 ${pairs.length}쌍: ${file}\n합치기 파일을 쓸 곳: ${mergeWorkFile(state.dataDir, "json")}`);
+    return EXIT.ok;
+  } finally {
+    db.close();
+  }
+}
+
+function cmdMergeCheck(argv: string[], ctx: Context): number {
+  const v = opts(argv, { run: { type: "string" } });
+  const state = readRun(need(v, "run"));
+  const file = readJson(mergeWorkFile(state.dataDir, "json"), "합치기 파일");
+  if (!file.ok) {
+    ctx.out(`합치기 검사 실패:\n- 합치기 파일: ${file.reason}`);
+    return EXIT.failed;
+  }
+  const db = openExistingDb(state.dbPath);
+  try {
+    const r = checkMergeFile(db, file.data);
+    if (!r.ok) {
+      ctx.out(`합치기 검사 실패, 위반 ${r.violations.length}개:\n${formatViolations(r.violations)}`);
+      return EXIT.failed;
+    }
+    ctx.out(`합치기 검사 통과: ${r.merges.length}쌍.`);
+    return EXIT.ok;
+  } finally {
+    db.close();
+  }
+}
+
+function cmdMergeApply(argv: string[], ctx: Context): number {
+  const v = opts(argv, { run: { type: "string" } });
+  const runFile = need(v, "run");
+  const state = readRun(runFile);
+  const record = (r: MergeStepResult) => updateRun(runFile, (s) => (s.merge = r));
+  const fail = (reason: string, violations?: Violation[]) => {
+    record(violations ? { status: "failed", reason, violations } : { status: "failed", reason });
+    ctx.out(`합치지 않음: ${reason}${violations ? `\n${formatViolations(violations)}` : ""}\n점검일을 바꾸지 않았다. 다음 실행이 다시 한다.`);
+    return EXIT.failed;
+  };
+  const file = readJson(mergeWorkFile(state.dataDir, "json"), "합치기 파일");
+  if (!file.ok) return fail(file.reason);
+  const db = openExistingDb(state.dbPath);
+  try {
+    const checked = checkMergeFile(db, file.data);
+    if (!checked.ok) return fail("합치기 파일이 검사를 통과하지 못했다", checked.violations);
+    const names = new Map<number, string>();
+    for (const m of checked.merges) for (const id of [m.survivor, m.absorbed]) names.set(id, getIssueName(db, id));
+    const ids = applyMerges(db, checked.merges, kstDate(ctx.now()));
+    if (ids.length === 0) {
+      const prev = readRun(runFile).merge;
+      record({ status: "none", candidates: prev?.status === "pending" || prev?.status === "none" ? prev.candidates : 0 });
+      ctx.out(`합친 것 없음. 점검일을 ${kstDate(ctx.now())}로 바꿨다.`);
+      return EXIT.ok;
+    }
+    const merges = checked.merges.map((m, i) => ({
+      id: ids[i]!,
+      survivor: m.survivor,
+      survivorName: names.get(m.survivor) ?? "",
+      absorbed: m.absorbed,
+      absorbedName: names.get(m.absorbed) ?? "",
+      reason: m.reason,
+    }));
+    record({ status: "merged", merges });
+    const lines = merges.map((m) => `- 합치기 ${m.id}: 이슈 ${m.absorbed}(${m.absorbedName}) → 이슈 ${m.survivor}(${m.survivorName}). 되돌리기: node src/cli.ts unmerge --id ${m.id}`);
+    ctx.out([`합침: ${merges.length}쌍. 점검일을 ${kstDate(ctx.now())}로 바꿨다.`, ...lines, rerender(db, state.dataDir)].join("\n"));
+    return EXIT.ok;
+  } finally {
+    db.close();
+  }
+}
+
+function getIssueName(db: ReturnType<typeof openDb>, id: number): string {
+  return (db.prepare("SELECT name FROM issues WHERE id = ?").get(id) as { name: string } | undefined)?.name ?? "";
+}
+
+function cmdMerges(argv: string[], ctx: Context): number {
+  const v = opts(argv, { run: { type: "string" } });
+  const db = openExistingDb(dataTarget(v.run, ctx).dbPath);
+  try {
+    ctx.out(describeMerges(db));
+    return EXIT.ok;
+  } finally {
+    db.close();
+  }
+}
+
+/** 합치기 되돌리기(4.3-4). 실제 데이터 폴더면 실행 조건(S12)을 따른다. 바꾸기 전에 DB 사본을 남긴다 */
+function cmdUnmerge(argv: string[], ctx: Context): number {
+  const v = opts(argv, { id: { type: "string" } });
+  const raw = need(v, "id");
+  const id = Number(raw);
+  if (!Number.isInteger(id) || id <= 0) throw new UsageError(`--id는 합치기 기록 번호여야 한다: ${raw}`);
+  const s = resolveSettings({ cwd: ctx.cwd, env: ctx.env, args: { test: false, startDate: null }, now: ctx.now() });
+  const cond = checkRunCondition(s);
+  if (!cond.ok) {
+    ctx.out(cond.message);
+    return EXIT.refused;
+  }
+  if (!fs.existsSync(s.dbPath)) {
+    ctx.out(`DB가 없다: ${s.dbPath}`);
+    return EXIT.failed;
+  }
+  const now = ctx.now();
+  const snapshot = takeSnapshot(s.dataDir, s.dbPath, now);
+  pruneSnapshots(s.dataDir, now);
+  const db = openExistingDb(s.dbPath);
+  try {
+    const r = unmerge(db, id, kstDate(now));
+    if (!r.ok) {
+      ctx.out(`되돌리지 않음: ${r.reason}`);
+      return EXIT.failed;
+    }
+    ctx.out(
+      [
+        `되돌림: 합치기 ${id} (이슈 ${r.merge.absorbed}을(를) 이슈 ${r.merge.survivor}에서 되살렸다). 두 이슈는 다음 합치기 후보에서 빠진다.`,
+        `- 실행 전 사본: ${snapshot}`,
+        `- ${rerender(db, s.dataDir)}`,
+        "- 백업은 다음 /brief 실행이 한다.",
+      ].join("\n"),
+    );
+    return EXIT.ok;
+  } finally {
+    db.close();
+  }
+}
+
+/** 실행 요약의 이슈 줄(2단계 4.4-4). 1·1.5단계 실행 기록(linkDates 없음)에는 붙이지 않는다 */
+function issueSummaryLines(s: RunState): string[] {
+  if (s.linkDates === undefined) return [];
+  const lines: string[] = [];
+  const results = s.links ?? {};
+  const saved = s.targetDates.filter((d) => s.results[d]?.status === "saved");
+  const dates = [...new Set([...s.linkDates, ...saved, ...Object.keys(results)])].sort();
+  if (dates.length > 0) lines.push("- 이슈 연결:");
+  for (const d of dates) {
+    const r = results[d];
+    if (r === undefined) lines.push(`  - ${d}: 연결 결과가 기록되지 않았다(다음 실행이 다시 연결한다)`);
+    else if (r.status === "applied") lines.push(`  - ${d}: 뉴스 ${r.linked}건 연결(기존 이슈에 ${r.attached}건, 새 이슈 ${r.newIssues}개)`);
+    else if (r.status === "nothing") lines.push(`  - ${d}: 할 일 없음(이미 연결됨)`);
+    else {
+      lines.push(`  - ${d}: 연결 실패(뉴스는 저장됨, 다음 실행이 다시 연결한다): ${r.reason}`);
+      if (r.violations) for (const vi of r.violations) lines.push(`    - ${vi.where}: ${vi.why}`);
+    }
+  }
+  if (fs.existsSync(s.dbPath)) {
+    const db = openExistingDb(s.dbPath);
+    try {
+      const n = unlinkedCount(db);
+      lines.push(n > 0 ? `- 아직 이슈가 없는 뉴스: ${n}건(다음 실행이 연결한다)` : "- 아직 이슈가 없는 뉴스: 없음");
+    } finally {
+      db.close();
+    }
+  }
+  const m = s.merge;
+  if (m === undefined) lines.push("- 합치기: 실행하지 않았다(다음 실행이 주기를 다시 본다)");
+  else if (m.status === "notDue") lines.push(`- 합치기: 할 일 없음(${m.nextOn === null ? "아직 연결한 이슈가 없다" : `다음 점검 ${m.nextOn}`})`);
+  else if (m.status === "pending") lines.push(`- 합치기: 후보 ${m.candidates}쌍을 만들었지만 적용하지 않았다(점검일을 바꾸지 않았다, 다음 실행이 다시 한다)`);
+  else if (m.status === "none") lines.push(`- 합치기: 점검했고 합친 것이 없다(후보 ${m.candidates}쌍)`);
+  else if (m.status === "merged") {
+    lines.push(`- 합치기: ${m.merges.length}쌍을 합쳤다`);
+    for (const x of m.merges) {
+      lines.push(`  - 이슈 ${x.absorbed}(${x.absorbedName}) → 이슈 ${x.survivor}(${x.survivorName}). 이유: ${x.reason}. 되돌리기: node src/cli.ts unmerge --id ${x.id}`);
+    }
+  } else {
+    lines.push(`- 합치기 실패(점검일을 바꾸지 않았다, 다음 실행이 다시 한다): ${m.reason}`);
+    if (m.violations) for (const vi of m.violations) lines.push(`  - ${vi.where}: ${vi.why}`);
+  }
+  const index = issueIndexPath(s.dataDir);
+  lines.push(`- 이슈 목록: ${fs.existsSync(index) ? index : `아직 없다(${index})`}`);
+  return lines;
+}
+
 const COMMANDS: Record<string, (argv: string[], ctx: Context) => number> = {
   check: cmdCheck,
   start: cmdStart,
@@ -446,6 +809,15 @@ const COMMANDS: Record<string, (argv: string[], ctx: Context) => number> = {
   summary: cmdSummary,
   render: cmdRender,
   restore: cmdRestore,
+  issues: cmdIssues,
+  "issue-search": cmdIssueSearch,
+  "link-check": cmdLinkCheck,
+  "link-apply": cmdLinkApply,
+  "merge-list": cmdMergeList,
+  "merge-check": cmdMergeCheck,
+  "merge-apply": cmdMergeApply,
+  merges: cmdMerges,
+  unmerge: cmdUnmerge,
 };
 
 function handleError(e: unknown, ctx: Context): number {

@@ -16,7 +16,36 @@ function source(s: Source): string {
   return `[${s.name}](${s.url}) (${extra})${image}`;
 }
 
-export function renderMarkdown(stored: StoredBrief): string {
+/** 뉴스의 이슈 정보(2단계 4.4-1). 이슈가 없는 뉴스는 넣지 않는다 */
+export interface StoryIssueInfo {
+  primary: { id: number; name: string };
+  extras: { id: number; name: string }[];
+  /** 주 이슈에서 이 뉴스보다 앞선 전개, 가까운 것부터 최대 3건 */
+  previous: { date: string; title: string }[];
+}
+
+/** 뉴스 키(`한국-1`, `한국-s1`) → 이슈 정보 */
+export type BriefIssues = Map<string, StoryIssueInfo>;
+
+/** 이슈 마크다운 폴더(데이터 폴더 기준) */
+export const ISSUES_DIR = "issues";
+
+function issueLink(i: { id: number; name: string }): string {
+  return `[${i.name}](../${ISSUES_DIR}/${i.id}.md)`;
+}
+
+function issueLines(info: StoryIssueInfo): string[] {
+  const extras = info.extras.length > 0 ? ` · 함께 엮인 이슈: ${info.extras.map(issueLink).join(", ")}` : "";
+  const lines = [`- **이어지는 이야기:** ${issueLink(info.primary)}${extras}`];
+  if (info.previous.length === 0) lines.push("- **이전 전개:** 새 이슈");
+  else {
+    lines.push("- **이전 전개:**");
+    for (const p of info.previous) lines.push(`  - [${p.date}](${p.date}.md) ${p.title}`);
+  }
+  return lines;
+}
+
+export function renderMarkdown(stored: StoredBrief, issues: BriefIssues = new Map()): string {
   const { brief } = stored;
   const lines: string[] = [];
   lines.push(`# ${brief.targetDate} 브리프`, "");
@@ -27,6 +56,8 @@ export function renderMarkdown(stored: StoredBrief): string {
     lines.push(`## ${sec.name}`, "", `**흐름** ${sec.flow}`, "");
     for (const t of sec.topStories) {
       lines.push(`### ${t.rank}. ${t.title}`, "");
+      const info = issues.get(`${sec.name}-${t.rank}`);
+      if (info) lines.push(...issueLines(info));
       lines.push(`- **분류:** ${category(t.category)}`);
       lines.push(`- **한 줄 요약:** ${t.summary}`);
       lines.push(`- **왜 중요한가:** ${t.whyItMatters}`);
@@ -43,7 +74,11 @@ export function renderMarkdown(stored: StoredBrief): string {
     }
     if (sec.shortNews.length > 0) {
       lines.push("### 짧은 소식", "");
-      for (const n of sec.shortNews) lines.push(`- ${n.summary} — ${category(n.category)} · ${n.sources.map(source).join(", ")}`);
+      sec.shortNews.forEach((n, ni) => {
+        const info = issues.get(`${sec.name}-s${ni + 1}`);
+        const issue = info ? ` · 이슈: ${issueLink(info.primary)}` : "";
+        lines.push(`- ${n.summary} — ${category(n.category)} · ${n.sources.map(source).join(", ")}${issue}`);
+      });
       lines.push("");
     }
     if (sec.unverified) lines.push(`> 확인되지 않은 내용: ${sec.unverified}`, "");
@@ -55,10 +90,16 @@ export function markdownPath(dataDir: string, date: string): string {
   return path.join(dataDir, BRIEFS_DIR, `${date}.md`);
 }
 
-/** 마크다운 파일을 쓴다. 쓴 경로 */
-export function writeMarkdown(dataDir: string, stored: StoredBrief): string {
-  const file = markdownPath(dataDir, stored.brief.targetDate);
+/** 파일을 쓴다. 내용이 같으면 다시 쓰지 않는다 */
+export function writeIfChanged(file: string, content: string): void {
+  if (fs.existsSync(file) && fs.readFileSync(file, "utf8") === content) return;
   fs.mkdirSync(path.dirname(file), { recursive: true });
-  fs.writeFileSync(file, renderMarkdown(stored));
+  fs.writeFileSync(file, content);
+}
+
+/** 마크다운 파일을 쓴다. 쓴 경로 */
+export function writeMarkdown(dataDir: string, stored: StoredBrief, issues: BriefIssues = new Map()): string {
+  const file = markdownPath(dataDir, stored.brief.targetDate);
+  writeIfChanged(file, renderMarkdown(stored, issues));
   return file;
 }

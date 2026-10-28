@@ -40,8 +40,8 @@ describe("4.5-1 월별 JSON 내보내기", () => {
     exportBackup(db, out);
     assert.deepEqual(snapshot(out), first);
     assert.deepEqual(Object.keys(first), ["2026-09.json", "2026-10.json", "meta.json"]);
-    assert.deepEqual(JSON.parse(first["meta.json"]!), { formatVersion: 1, firstCollectionDate: "2026-09-30" });
-    assert.equal(JSON.parse(first["2026-10.json"]!).formatVersion, 1);
+    assert.deepEqual(JSON.parse(first["meta.json"]!), { formatVersion: 2, firstCollectionDate: "2026-09-30" });
+    assert.equal(JSON.parse(first["2026-10.json"]!).formatVersion, 2);
     db.close();
   });
   test("10월 날짜 하나를 더하면 10월 파일만 바뀐다", () => {
@@ -146,9 +146,9 @@ describe("4.5-3 복원", () => {
     exportBackup(db, out);
     db.close();
     const files = readBackupDir(out);
-    files.set("2026-10.json", files.get("2026-10.json")!.replace('"formatVersion": 1', '"formatVersion": 2'));
+    files.set("2026-10.json", files.get("2026-10.json")!.replace('"formatVersion": 2', '"formatVersion": 3'));
     const target = path.join(tempDir(), "r.db");
-    assert.throws(() => restoreBackup(files, target), /형식 버전 2/);
+    assert.throws(() => restoreBackup(files, target), /형식 버전 3/);
     assert.equal(fs.existsSync(target), false);
   });
   test("임시 저장소: 백업 커밋 → DB 삭제 → 4.1-2가 알려 준 명령대로 복원 → 다시 내보내기 결과가 같다", () => {

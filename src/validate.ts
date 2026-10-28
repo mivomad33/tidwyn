@@ -14,9 +14,9 @@ export interface Violation {
 
 export type ValidateResult = { ok: true; brief: Brief } | { ok: false; violations: Violation[] };
 
-type Obj = Record<string, unknown>;
+export type Obj = Record<string, unknown>;
 
-class Checker {
+export class Checker {
   readonly violations: Violation[] = [];
   add(where: string, why: string): void {
     this.violations.push({ where, why });
@@ -76,7 +76,7 @@ function isRedirectUrl(v: string): boolean {
 
 const REDIRECT_WHY = "구글 뉴스 중간 주소는 쓸 수 없다. 매체 원문 주소를 웹 검색으로 찾아 넣거나, 못 찾으면 그 출처를 뺀다";
 
-function checkQuotes(c: Checker, text: string | undefined, where: string): void {
+export function checkQuotes(c: Checker, text: string | undefined, where: string): void {
   if (text === undefined) return;
   for (const q of longQuotes(text)) {
     const head = q.quote.length > 30 ? `${q.quote.slice(0, 30)}…` : q.quote;
@@ -84,7 +84,7 @@ function checkQuotes(c: Checker, text: string | undefined, where: string): void 
   }
 }
 
-function parseCategory(c: Checker, v: unknown, where: string): Category {
+export function parseCategory(c: Checker, v: unknown, where: string): Category {
   const w = `${where} 분류`;
   const o = c.obj(v, w);
   if (o === null) return { major: "사회", minor: "" };

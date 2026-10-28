@@ -20,6 +20,20 @@ export type BackupResult =
   | { status: "skipped"; reason: string }
   | { status: "failed"; error: string };
 
+/** 날짜별 연결 결과(2단계 4.2) */
+export type LinkResult =
+  | { status: "applied"; linked: number; attached: number; newIssues: number }
+  | { status: "nothing" }
+  | { status: "failed"; reason: string; violations?: Violation[] };
+
+/** 합치기 단계 결과(2단계 4.3) */
+export type MergeStepResult =
+  | { status: "notDue"; nextOn: string | null }
+  | { status: "pending"; candidates: number }
+  | { status: "none"; candidates: number }
+  | { status: "merged"; merges: { id: number; survivor: number; survivorName: string; absorbed: number; absorbedName: string; reason: string }[] }
+  | { status: "failed"; reason: string; violations?: Violation[] };
+
 export interface RunState {
   startedAt: string;
   mode: "real" | "test" | "custom";
@@ -32,10 +46,24 @@ export interface RunState {
   backup: BackupResult | null;
   /** 날짜별 후보 목록 결과(1.5단계 4.1-5). 1단계 실행 기록에는 없다 */
   feeds?: Record<string, { counts: Record<string, { fetched: number; inWindow: number }>; failures: FeedFailure[] }>;
+  /** start 때 이슈가 없는 뉴스가 있던 저장된 날짜(2단계 4.2-1). 1·1.5단계 실행 기록에는 없다 */
+  linkDates?: string[];
+  links?: Record<string, LinkResult>;
+  merge?: MergeStepResult;
 }
 
 export function workFile(dataDir: string, date: string): string {
   return path.join(dataDir, WORK_DIR, `${date}.json`);
+}
+
+/** 날짜의 연결 작업 파일: 연결할 뉴스와 후보 이슈(md), Claude가 쓰는 연결 파일(links.json) */
+export function linkWorkFile(dataDir: string, date: string, kind: "issues.md" | "links.json"): string {
+  return path.join(dataDir, WORK_DIR, `${date}.${kind}`);
+}
+
+/** 합치기 후보(md)와 Claude가 쓰는 합치기 파일(json) */
+export function mergeWorkFile(dataDir: string, kind: "candidates.md" | "json"): string {
+  return path.join(dataDir, WORK_DIR, kind === "json" ? "merges.json" : "merges.candidates.md");
 }
 
 /** 대상일의 후보 목록 파일(1.5단계 4.1-1). JSON은 전체, md는 Claude가 읽는 짧은 목록이다 */
