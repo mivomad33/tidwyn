@@ -206,7 +206,8 @@
                   {
                     "name": "연합뉴스",
                     "url": "https://www.yna.co.kr/view/AKR20261027099851504",
-                    "publishedAt": "2026-10-27"
+                    "publishedAt": "2026-10-27",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/10/27/PYH2026102708720001300_P2.jpg"
                   },
                   {
                     "name": "데일리안",
@@ -398,6 +399,7 @@
                     "name": "BBC",
                     "url": "https://www.bbc.co.uk/news/articles/c6lye1w9p2l8o",
                     "publishedAt": "2026-10-27",
+                    "imageUrl": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/97b7/live/fc424bf0-d23c-11f1-904a-5b90e72e87ff.jpg",
                     "primary": true
                   },
                   {
@@ -413,7 +415,8 @@
                   {
                     "name": "BBC",
                     "url": "https://www.bbc.co.uk/news/articles/c6vgj813mlelo",
-                    "publishedAt": "2026-10-27"
+                    "publishedAt": "2026-10-27",
+                    "imageUrl": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/62a7/live/0a738c90-d1fa-11f1-8c9f-8d21fef6ffad.jpg"
                   }
                 ]
               },
@@ -440,6 +443,7 @@
                     "name": "BBC",
                     "url": "https://www.bbc.co.uk/news/articles/cq62yg6rggj0o",
                     "publishedAt": "2026-10-27",
+                    "imageUrl": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/05b2/live/06753110-d192-11f1-8c41-0bbbeafdc6d4.jpg",
                     "primary": true
                   },
                   {
@@ -743,6 +747,7 @@
                     "name": "연합뉴스",
                     "url": "https://www.yna.co.kr/view/AKR20261028103200017",
                     "publishedAt": "2026-10-28",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/10/27/PYH2026102713130001300_P2.jpg",
                     "primary": true
                   },
                   {
@@ -858,6 +863,1249 @@
         ]
       },
       "collectedAt": "2026-10-28T15:19:08+09:00",
+      "late": false
+    },
+    {
+      "brief": {
+        "targetDate": "2026-10-28",
+        "headline": "SK하이닉스의 사상 최대 실적에 코스피가 6.6% 뛰어 6,000선을 되찾았고, 세계는 스페인 고속열차 참사와 미 연준의 금리 동결, 이스라엘 총선 교착에 주목했다.",
+        "keywords": [
+          "SK하이닉스 6천피",
+          "금융권 연쇄 해킹",
+          "스페인 고속철 참사",
+          "연준 금리 동결",
+          "인앱결제 과징금"
+        ],
+        "sections": [
+          {
+            "name": "한국",
+            "flow": "SK하이닉스의 사상 최대 실적과 대규모 주주환원에 코스피가 6.6% 뛰어 6,000선을 되찾았다. 같은 날 증권사·자산운용사·가상자산 거래소가 잇달아 해킹을 당해 정부가 긴급 점검에 나섰고, 선관위특검의 송파 투표지 247만 장 공개검증과 엘리엇 분쟁 최종 패소가 뒤를 이었다.",
+            "topStories": [
+              {
+                "rank": 1,
+                "title": "SK하이닉스 분기 매출 100조 첫 돌파·영업익 83조, 대규모 주주환원에 코스피 6.6% 급등해 6,000선 탈환",
+                "summary": "SK하이닉스가 3분기 매출 104조6천억 원, 영업이익 83조3천억 원으로 사상 최대 실적을 내고 주당 2만 원 배당 등 주주환원을 내놓자 코스피가 하루 만에 6.63% 올라 6,012.44로 마감했다.",
+                "whyItMatters": "한국 수출과 증시를 떠받치는 반도체 대표 기업이 분기 매출 100조 원을 처음 넘기면서 증시 전체가 크게 움직였다. 회사가 2029년까지 메모리 물량이 사실상 다 팔렸다고 밝혀 반도체 호황이 몇 년 더 이어질 수 있다는 기대가 커졌다.",
+                "background": "SK하이닉스는 AI 서버에 들어가는 고대역폭 메모리(HBM)를 엔비디아 등에 공급하며 AI 투자 붐의 최대 수혜 기업으로 꼽혀 왔다. HBM은 메모리 칩을 여러 층 쌓아 데이터를 빠르게 주고받게 만든 고가 메모리다. 코스피는 최근 6,000선 아래로 밀렸다가 이날 10거래일 만에 다시 올라섰다. 매수 사이드카는 선물 가격이 급등할 때 프로그램 매수 주문을 5분간 멈추는 장치다.",
+                "keyFacts": [
+                  "SK하이닉스 3분기 매출 104조6,155억 원·영업이익 83조3,338억 원으로 영업이익률 80%, 매출과 영업이익 모두 분기 최대(전 분기 대비 각각 32%, 38% 증가)",
+                  "3분기 배당은 주당 2만 원(일반 1만 원 + 키옥시아 투자 수익을 나누는 특별 1만 원)으로 현금배당 약 14조 원, 자사주 매입 20조 원 등 추가 주주환원 발표",
+                  "회사는 2029년까지 3년간 D램과 HBM 물량이 사실상 모두 팔렸다고 밝힘",
+                  "코스피는 374.10포인트(6.63%) 오른 6,012.44로 마감해 7월 31일 이후 최대 상승률을 기록했고, 이틀 연속 매수 사이드카가 발동됨",
+                  "SK하이닉스 주가는 10.89% 오른 148만7천 원, 삼성전자는 9.01% 오른 24만2천 원에 마감했고 외국인·기관이 함께 순매수함"
+                ],
+                "outlook": "29일 삼성전자 확정 실적 발표와 컨퍼런스콜에서 추가 주주환원이 나올지, 코스피가 6,000선을 지킬지가 관심이다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "경제",
+                  "minor": "산업·기업"
+                },
+                "sources": [
+                  {
+                    "name": "지디넷코리아",
+                    "url": "https://zdnet.co.kr/view/?no=20261028080340",
+                    "publishedAt": "2026-10-28",
+                    "primary": true
+                  },
+                  {
+                    "name": "전자신문",
+                    "url": "https://www.etnews.com/20261028000419",
+                    "publishedAt": "2026-10-28"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261028142451008",
+                    "publishedAt": "2026-10-28",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/10/28/PYH2026102803580001300_P2.jpg"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261028050952008",
+                    "publishedAt": "2026-10-28",
+                    "imageUrl": "https://img.yna.co.kr/photo/cms/2026/06/29/57/PCM20260629000557990_P2.jpg"
+                  },
+                  {
+                    "name": "SK하이닉스 뉴스룸",
+                    "url": "https://news.skhynix.co.kr/q3-2026-business-results/",
+                    "publishedAt": "2026-10-28"
+                  }
+                ],
+                "analogy": "가게 하나가 한 분기에 100원어치를 팔아 80원을 남긴 셈이다. 이런 이익률은 제조업에서 보기 드물다."
+              },
+              {
+                "rank": 2,
+                "title": "대신증권·미래에셋자산운용·빗썸 잇단 해킹…정부, 기반시설 172곳 긴급 점검",
+                "summary": "은행권에 이어 증권사·자산운용사·가상자산 거래소에서 해킹 침해가 확인됐고, 대신증권에서는 고객 약 3만8천 명의 정보가 빠져나갔다. 청와대 긴급회의와 정부 보안 점검이 이어졌고, 해킹 시도에서 북한 IP가 다수 확인됐다.",
+                "whyItMatters": "계좌번호·연락처 같은 금융 개인정보가 새어 나가 보이스피싱 같은 2차 피해가 걱정되는 상황이다. 이달 초 은행권 해킹에 이어 금융권 전반으로 피해가 번지면서, 금융 보안 체계 전체가 다시 점검 대상이 됐다.",
+                "background": "이달 초 은행 등 금융기관에서 해킹 사고가 잇따랐고, 그때 비켜 갔던 증권사들까지 이번에 뚫렸다. 일부 회사는 개인정보가 오가는 API(프로그램끼리 데이터를 주고받는 통로)의 취약점이 공격받은 것으로 전해졌고, 당국은 은행권 사건과 같은 해커인지도 조사하고 있다.",
+                "keyFacts": [
+                  "대신증권: 비대면 계좌개설 연계 서버에 비정상 접근이 있었고, 고객 3만8천여 명의 이름·이메일·주소·계좌번호·휴대전화번호 등 8개 항목이 유출됨(일부는 암호화 상태, 2차 피해는 아직 확인 안 됨)",
+                  "미래에셋자산운용은 업무용 시스템 정보가 유출됐고, 빗썸은 사내 모바일 그룹웨어 침해로 개인정보가 유출됐다고 밝힘",
+                  "정부는 통신·데이터센터 등 민간 핵심 기반시설 172곳을 긴급 보안 점검하기로 했고, 청와대 국가안보실은 안보 3차장 주재로 긴급 대응회의를 열어 2차 피해 차단을 지시함",
+                  "금융당국은 금융권 해킹 시도에서 북한 IP 대역의 접근이 대량 탐지됐다며 주의를 당부했고, 경찰은 내사에 착수함"
+                ],
+                "outlook": "금융당국 현장 점검 결과, 유출 규모가 더 늘어나는지, 북한 연계 여부를 밝히는 수사 결과가 나올지가 다음 관심사다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "보안"
+                },
+                "sources": [
+                  {
+                    "name": "한국경제",
+                    "url": "https://www.hankyung.com/article/2026102800026",
+                    "publishedAt": "2026-10-28",
+                    "primary": true
+                  },
+                  {
+                    "name": "한국일보",
+                    "url": "https://www.hankookilbo.com/news/article/A2026102809050000341",
+                    "publishedAt": "2026-10-28"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261028053253002",
+                    "publishedAt": "2026-10-28",
+                    "imageUrl": "https://img.yna.co.kr/photo/cms/2026/10/28/19/PCM20261028000019990_P2.jpg"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261028118100002",
+                    "publishedAt": "2026-10-28",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/10/05/PYH2026100505460001300_P2.jpg"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261028095451001",
+                    "publishedAt": "2026-10-28",
+                    "imageUrl": "https://img.yna.co.kr/photo/cms/2025/12/24/49/PCM20251224000049990_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 3,
+                "title": "선관위특검, 송파 투표지 247만 장 공개검증 12시간여 만에 종료…추가분석 대상 선별, 국민의힘 이송 저지 농성",
+                "summary": "이태한 선관위특검이 서울 올림픽공원 핸드볼경기장에서 6·3 지방선거 송파 지역 투표지 약 247만 장을 공개 검증했고, 추가 분석이 필요한 투표지 상당수를 골라 정밀 감정하기로 했다.",
+                "whyItMatters": "지방선거 투표용지 부족 사태로 생긴 선거관리 불신을 수사로 가리는 첫 대규모 현장 검증이다. 결과에 따라 선거 관리 제도 개선 논의와 여야 공방의 방향이 달라질 수 있다.",
+                "background": "이태한 특검은 6·3 지방선거 투표용지 부족 사태 등을 수사하고 있다. 송파 지역 투표지는 선거 뒤 148일 동안 핸드볼경기장에 보관돼 있었다. 이번 검증은 수사 절차로, 당선인이나 득표수를 바꾸는 재검표가 아니다.",
+                "keyFacts": [
+                  "검증은 28일 촬영 허용 문제로 예정보다 약 3시간 늦게 시작해 29일 0시 38분께 끝났고, 방송사 2곳의 촬영이 허용됨",
+                  "사무원이 투표지를 한 장씩 육안으로 살피고 계수기로 수를 셌으며, 의심 투표지는 국과수 지원 장비로 다시 확인함",
+                  "특검은 참관인 이의 제기를 받아들여 일부 투표지 상자를 통째로 넘겨받았고, 이상 있는 투표지는 국과수 등으로, 문제없는 투표지는 선관위 창고로 옮김",
+                  "국민의힘 장동혁 대표 등은 증거 훼손을 우려하며 투표함 반출을 막고 밤샘 농성했고, 투표함은 29일 새벽 경찰이 접근을 막은 가운데 반출됨",
+                  "특검은 결과를 객관적 증거로 판단해야 한다며 성급한 단정을 경계했고, 국민의힘은 전체 재검표를 요구함"
+                ],
+                "outlook": "국과수 정밀 감정 결과와 특검의 수사 발표, 국민의힘의 재검표 요구를 둘러싼 공방이 이어질 전망이다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "정치",
+                  "minor": "선거"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261029000251004",
+                    "publishedAt": "2026-10-29",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/10/28/PYH2026102806600001300_P2.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261028046352004",
+                    "publishedAt": "2026-10-28",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/10/28/PYH2026102807050001300_P2.jpg"
+                  },
+                  {
+                    "name": "경향신문",
+                    "url": "https://www.khan.co.kr/article/202610282059005/",
+                    "publishedAt": "2026-10-28"
+                  },
+                  {
+                    "name": "파이낸셜뉴스",
+                    "url": "https://www.fnnews.com/news/202610290138184943",
+                    "publishedAt": "2026-10-29"
+                  }
+                ]
+              },
+              {
+                "rank": 4,
+                "title": "정부, 엘리엇 국제투자분쟁 불복 포기로 최종 패소…배상액 약 1,530억 원",
+                "summary": "법무부가 엘리엇 투자자-국가 분쟁(ISDS) 환송중재 판정에 영국 법원 취소소송을 내지 않기로 하면서, 지연이자를 포함해 약 1,530억 원의 배상 책임이 확정됐다.",
+                "whyItMatters": "2015년 삼성물산·제일모직 합병 때 정부가 개입한 일로 국민 세금이 배상금으로 나가게 됐다. 한미 FTA에 근거한 투자분쟁에서 한국 정부가 진 대표 사례가 된다.",
+                "background": "엘리엇은 2018년 정부가 국민연금 의결권 행사에 부당하게 개입해 손해를 봤다며 ISDS를 냈다. 2023년 중재판정부가 약 4,849만 달러 배상을 명령했고, 정부는 영국 법원에서 다퉈 사건이 다시 중재로 돌아갔다. 지난달 30일 환송중재에서도 패소했다.",
+                "keyFacts": [
+                  "법무부는 28일 판정 취소소송을 내지 않기로 했다고 밝힘",
+                  "판정문 분석, 정부 대리 로펌과 외부 전문가 의견, 소송을 이어갈 때 드는 비용을 함께 따져 결정함",
+                  "배상 원금 약 4,849만 달러에 지연이자 등을 더하면 약 1,530억 원이며, 구체적인 지급 방법은 논의 중"
+                ],
+                "outlook": "실제 지급 시기와 액수, 메이슨 캐피털 등 같은 합병을 둘러싼 다른 분쟁에 미칠 영향이 관심이다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "경제",
+                  "minor": "무역·통상"
+                },
+                "sources": [
+                  {
+                    "name": "한국경제",
+                    "url": "https://www.hankyung.com/article/2026102808207",
+                    "publishedAt": "2026-10-28",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261028126051004",
+                    "publishedAt": "2026-10-28",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/02/24/PYH2026022405840001300_P2.jpg"
+                  },
+                  {
+                    "name": "파이낸셜뉴스",
+                    "url": "https://www.fnnews.com/news/202610281830127354",
+                    "publishedAt": "2026-10-28"
+                  },
+                  {
+                    "name": "세계일보",
+                    "url": "https://www.segye.com/newsView/20261028511724",
+                    "publishedAt": "2026-10-28"
+                  }
+                ]
+              },
+              {
+                "rank": 5,
+                "title": "8월 출생아 2만4천 명, 같은 달 기준 7년 만에 최대…26개월 연속 증가",
+                "summary": "8월 출생아가 2만3,703명으로 1년 전보다 13.0% 늘어 8월 기준 2019년 이후 가장 많았고, 26개월 연속 늘어 역대 가장 긴 증가 기간을 기록했다.",
+                "whyItMatters": "세계 최저 수준 출산율에 시달려 온 한국에서 출생아 반등이 2년 넘게 이어지고 있어, 인구 감소 속도가 늦춰질 수 있다는 신호로 읽힌다.",
+                "background": "출생아 수는 2024년 7월부터 늘기 시작했다. 결혼이 늘어난 효과와 1990년대 초반생 인구가 출산 연령에 들어선 영향이 겹친 것으로 풀이된다.",
+                "keyFacts": [
+                  "8월 출생아 2만3,703명으로 1년 전보다 13.0% 늘었고, 증가율은 2007년에 이어 역대 2위",
+                  "출생아는 26개월 연속 늘어 기존 최장 기록(2006~2008년, 25개월)을 넘어섬",
+                  "1~8월 누적 출생아는 19만3,783명으로 작년 같은 기간보다 14.5% 늘었고, 8월 합계출산율은 0.87명",
+                  "같은 발표에서 8월 혼인 건수는 석 달 만에 줄었음"
+                ],
+                "outlook": "올해 연간 합계출산율이 0.90명대를 회복할지가 관심이다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "사회",
+                  "minor": "복지·인구"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261028085551002",
+                    "publishedAt": "2026-10-28",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/10/28/PYH2026102813680001300_P2.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261028085500002",
+                    "publishedAt": "2026-10-28",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/10/28/PYH2026102813680001300_P2.jpg"
+                  },
+                  {
+                    "name": "글로벌경제신문",
+                    "url": "https://www.getnews.co.kr/news/articleView.html?idxno=885113",
+                    "publishedAt": "2026-10-28"
+                  }
+                ]
+              },
+              {
+                "rank": 6,
+                "title": "한미 국방장관 첫 회담서 SCM 내년 초로 연기, 전작권 적기 전환 협력…'미군 믿을 수 있나' 발언엔 야권 경질 요구",
+                "summary": "강신철 국방부 장관과 피트 헤그세스 미 국방장관이 첫 대면 회담에서 12월 워싱턴 회담과 내년 초 한미안보협의회의(SCM) 개최에 합의했다. 같은 날 보수 야권은 강 장관의 국감 발언을 문제 삼아 경질을 요구했다.",
+                "whyItMatters": "전시작전통제권(전작권) 전환 시기를 둘러싼 한미 협의 일정이 늦춰졌고, 국방장관의 동맹 관련 발언이 정치 쟁점이 돼 동맹 관리에 부담이 될 수 있다.",
+                "background": "SCM은 한미 국방장관이 해마다 만나는 최고위 안보 협의체로, 원래 11월에 열릴 예정이었다. 전작권은 전쟁 때 한국군을 지휘하는 권한으로, 지금은 한미연합사령관(미군)이 갖고 있다. 강 장관은 26일 국방위 종합감사에서 전작권 신중론을 펴던 야당 의원에게 북한과 전쟁이 나면 미군을 믿을 수 있느냐고 되물었다.",
+                "keyFacts": [
+                  "회담은 아세안 확대 국방장관회의를 계기로 약 40분간 열렸고, 강 장관 취임 뒤 첫 대면 회담",
+                  "올해 12월 워싱턴에서 양자 회담을 하고, 이를 바탕으로 SCM을 내년 초 열기로 함",
+                  "양측은 전작권 전환이 적기에 순조롭게 이뤄지도록 협력하기로 했으나, 구체적인 전환 시기는 논의되지 않은 것으로 전해짐",
+                  "국민의힘 등 보수 야권은 강 장관 발언이 동맹을 흔든다며 경질을 요구했고, 국방부는 신뢰를 강조한 취지라고 해명함"
+                ],
+                "outlook": "12월 워싱턴 국방장관 회담과 내년 초 SCM에서 전작권 전환 목표 시기가 정해질지, 강 장관 거취 공방이 이어질지가 관심이다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "국제",
+                  "minor": "국제기구·안보"
+                },
+                "sources": [
+                  {
+                    "name": "경향신문",
+                    "url": "https://www.khan.co.kr/article/202610281917001/",
+                    "publishedAt": "2026-10-28",
+                    "primary": true
+                  },
+                  {
+                    "name": "뉴스1",
+                    "url": "https://www.news1.kr/diplomacy/defense-diplomacy/6334958",
+                    "publishedAt": "2026-10-28"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261028090953504",
+                    "publishedAt": "2026-10-29",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/10/28/PYH2026102812350001300_P2.jpg"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261028076251001",
+                    "publishedAt": "2026-10-28",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/10/26/PYH2026102608770001300_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 7,
+                "title": "'윤석열 체포 방해' 박종준 전 경호처장, 2심서 징역 3년으로 감형",
+                "summary": "서울고법이 윤석열 전 대통령 체포영장 집행을 막은 혐의로 기소된 박종준 전 대통령경호처장에게 1심(징역 4년)보다 1년 줄어든 징역 3년을 선고했다.",
+                "whyItMatters": "현직 대통령 체포를 경호 조직이 막은 사건에서 2심도 유죄를 유지해, 위법한 지시를 따른 공직자의 책임을 다시 확인했다.",
+                "background": "2025년 1월 공수처가 윤 전 대통령 체포영장을 집행하려 했을 때 경호처가 이를 막았다. 박 전 처장은 특수공무집행방해·직권남용·범인도피 등 혐의로 기소됐다.",
+                "keyFacts": [
+                  "서울고법 형사1부는 박 전 처장이 항소심에서 혐의를 인정하고 반성한 점을 감형 이유로 들었음",
+                  "재판부는 그가 2025년 1월 10일 사직해 이후 영장 집행 방해에서 빠진 점도 고려함",
+                  "함께 기소된 김성훈 전 경호차장은 2심에서도 징역 5년이 유지됐고, 이광우 전 경호본부장은 감형됨"
+                ],
+                "outlook": "검찰·피고인 쪽의 대법원 상고 여부와, 윤 전 대통령 본인의 내란 혐의 항소심 결심 절차가 이어진다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "사회",
+                  "minor": "법·재판"
+                },
+                "sources": [
+                  {
+                    "name": "한국일보",
+                    "url": "https://www.hankookilbo.com/news/article/A2026102814540004377",
+                    "publishedAt": "2026-10-28",
+                    "primary": true
+                  },
+                  {
+                    "name": "뉴스1",
+                    "url": "https://www.news1.kr/society/court-prosecution/6335210",
+                    "publishedAt": "2026-10-28"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261028146051004",
+                    "publishedAt": "2026-10-28",
+                    "imageUrl": "https://img.yna.co.kr/photo/cms/2025/12/04/58/PCM20251204000058990_P2.jpg"
+                  }
+                ]
+              }
+            ],
+            "shortNews": [
+              {
+                "summary": "이재명 대통령이 검찰 개혁을 둘러싼 여권 내 공방을 두고 자기만 개혁 주체인 양 동지를 공격하는 것은 '무책임한 극단주의'라고 비판했다. 이주노동자 관련 발언에는 민주노총이 사과를 요구했다.",
+                "category": {
+                  "major": "정치",
+                  "minor": "행정부"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261028147500371",
+                    "publishedAt": "2026-10-28",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/10/27/PYH2026102706320001300_P2.jpg"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261028189600530",
+                    "publishedAt": "2026-10-28",
+                    "imageUrl": "https://img.yna.co.kr/photo/cms/2025/09/03/84/PCM20250903000084990_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "공정위 중점조사기획단이 즉석밥·장류에 이어 라면 담합 의혹으로 농심·삼양·팔도·오뚜기를 현장 조사했다.",
+                "category": {
+                  "major": "경제",
+                  "minor": "산업·기업"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261028167000002",
+                    "publishedAt": "2026-10-28",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/04/03/PYH2026040308960001300_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "인천 강화군 소 농장에서 구제역 항원이 확인돼, 방역 당국이 11월 4일까지 전국 집중 소독에 들어갔다.",
+                "category": {
+                  "major": "사회",
+                  "minor": "재난·안전"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261028194600030",
+                    "publishedAt": "2026-10-28",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/09/17/PYH2026091719830006500_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "서울시가 강남 구룡마을 화재로 집을 잃은 이재민을 위해 6개월간 살 수 있는 공공임대주택 96호를 긴급 확보했다.",
+                "category": {
+                  "major": "사회",
+                  "minor": "재난·안전"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261028193900004",
+                    "publishedAt": "2026-10-28",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/10/28/PYH2026102810360001301_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "정부가 기초생활보장 종합계획 공청회에서 생계급여 선정 기준을 2030년까지 기준 중위소득 35%로 단계적으로 올리고 자동차·주거 재산 기준을 완화하는 안을 내놨다. 11월 중앙생활보장위원회에서 확정한다.",
+                "category": {
+                  "major": "사회",
+                  "minor": "복지·인구"
+                },
+                "sources": [
+                  {
+                    "name": "경향신문",
+                    "url": "https://www.khan.co.kr/article/202610281629001/",
+                    "publishedAt": "2026-10-28"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "세계",
+            "flow": "스페인에서 고속열차 추돌로 68명이 숨졌다. 미 연준은 금리를 동결했고, 이스라엘 총선은 어느 쪽도 과반을 얻지 못한 채 개표가 막바지에 이르렀다. 우크라이나는 국지 휴전이 이어지는 가운데 11월 3자 회담 날짜를 놓고 신경전을 벌였다.",
+            "topStories": [
+              {
+                "rank": 1,
+                "title": "스페인 톨레도 인근 고속열차 추돌로 최소 68명 사망, 올해 두 번째 대형 고속철 참사",
+                "summary": "마드리드 남쪽 톨레도주 우르다 인근에서 렌페(Renfe) 고속열차가 멈춰 서 있던 이리오(Iryo) 열차 뒤를 들이받아 최소 68명이 숨졌고, 스페인은 사흘간 국가 애도 기간을 선포했다.",
+                "whyItMatters": "1월 아다무스 사고에 이어 한 해에 두 번째로 난 대형 고속철 참사여서, 유럽에서 손꼽히는 스페인 고속철망의 안전 관리에 큰 의문이 생겼다. 11월 29일 총선을 앞둔 산체스 정부에도 정치적 부담이 커졌다.",
+                "background": "스페인은 유럽에서 고속철 노선이 가장 긴 나라 가운데 하나다. 국영 렌페와 민간 이리오 등 여러 운영사가 같은 선로를 나눠 쓰고, 선로와 신호는 국영 기관 아디프(Adif)가 관리한다. 올해 1월에는 코르도바주 아다무스 근처에서 탈선한 열차가 마주 오던 열차와 부딪쳐 40명 넘게 숨졌다.",
+                "keyFacts": [
+                  "28일(현지시간) 오전 마드리드~세비야 노선에서 렌페 AVE 열차가 정차 중이던 이리오 열차의 뒤를 들이받았다. 객차 2량이 탈선해 둑 아래로 떨어졌다.",
+                  "사망자는 최소 68명이고 부상자는 100명이 넘는다. 두 열차에는 약 540명(렌페 397명, 이리오 147명)이 타고 있었다.",
+                  "오스카르 푸엔테 교통장관은 63km 구간에서 안전 시스템이 멈췄고, 관제센터가 렌페 열차에 속도 제한 없이 운행을 재개하라고 지시했다고 설명했다. 컴퓨터 고장과 사람의 실수가 함께 원인으로 거론된다.",
+                  "연합뉴스에 따르면 사고 열차에는 한국인 10명이 타고 있었고, 그중 2명이 다쳤다.",
+                  "산체스 총리는 현장을 찾아 사흘간의 국가 애도를 선포하고, 과실이 있으면 엄정히 대응하겠다고 밝혔다. 스페인축구협회는 이날 예정된 국왕컵 24경기를 미뤘다."
+                ],
+                "outlook": "사망자가 더 늘어날 수 있다. 신호 시스템과 관제 지시에 대한 조사 결과, 교통장관 사퇴 요구의 향방, 11월 29일 총선에 미칠 영향을 지켜봐야 한다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "사회",
+                  "minor": "사건·사고"
+                },
+                "sources": [
+                  {
+                    "name": "CNN",
+                    "url": "https://www.cnn.com/2026/10/28/europe/spain-train-crash-cause-what-we-know-intl",
+                    "publishedAt": "2026-10-28",
+                    "primary": true
+                  },
+                  {
+                    "name": "France 24",
+                    "url": "https://www.france24.com/en/europe/20261028-two-high-speed-trains-collide-in-southern-spain-rail-operator-says",
+                    "publishedAt": "2026-10-28"
+                  },
+                  {
+                    "name": "CBS News",
+                    "url": "https://www.cbsnews.com/news/spain-train-crash-toledo-urda/",
+                    "publishedAt": "2026-10-28",
+                    "publishedAtEstimated": true
+                  },
+                  {
+                    "name": "BBC",
+                    "url": "https://www.bbc.co.uk/news/articles/c6p3g84kjqjlo",
+                    "publishedAt": "2026-10-29",
+                    "imageUrl": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/0c0f/live/1f7e90f0-d2e8-11f1-8d86-83eebc838351.jpg"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261029009151085",
+                    "publishedAt": "2026-10-29",
+                    "imageUrl": "https://img.yna.co.kr/photo/reuters/2026/10/29/PRU20261029019301009_P2.jpg"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261028189451085",
+                    "publishedAt": "2026-10-28",
+                    "imageUrl": "https://img.yna.co.kr/photo/reuters/2026/10/28/PRU20261028270801009_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 2,
+                "title": "미 연준, 기준금리 3.75~4.00% 동결…워시 의장, 내년 금리 결정 회의 7회로 축소",
+                "summary": "연준이 지난달 금리를 올린 뒤 이번에는 10대 2 표결로 금리를 동결했다. 성명은 물가가 여전히 높다고 밝혔고, 월가는 12월 인상을 유력하게 본다.",
+                "whyItMatters": "세계 금융시장의 기준이 되는 미국 금리가 인상 쪽으로 기울어 있어, 달러·채권·신흥국 통화와 한국은행의 다음 결정에도 영향을 준다. 금리 결정 회의 횟수를 줄이는 것은 연준 운영 방식이 크게 바뀌는 일이다.",
+                "background": "이란 전쟁 이후 에너지 가격이 뛰면서 미국 물가가 다시 올랐고, 연준은 9월에 금리를 올렸다. 케빈 워시 의장은 중간선거(11월 3일)를 앞두고 정치적 압박을 받는다는 시선 속에서 이번 회의를 이끌었다.",
+                "keyFacts": [
+                  "28일(현지시간) 기준금리를 연 3.75~4.00%로 유지했다. 표결은 10대 2였고, 리사 쿡 이사와 베스 해맥 클리블랜드 연은 총재는 0.25%포인트 인상을 주장하며 반대했다.",
+                  "성명은 물가가 여전히 높다고 밝혔고, 경제 성장 평가는 '견조'에서 '강한' 속도로 올렸다.",
+                  "워시 의장은 정치는 이번 결정에 아무 역할도 하지 않았다고 말했다. 앞으로의 금리 방향을 미리 알려 주는 방식(포워드 가이던스)에는 부정적이라고 밝혔다.",
+                  "워시 의장은 내년부터 금리 결정 회의(FOMC)를 7번으로 줄이고, 내후년에는 6번만 열겠다고 밝혔다. 지금은 해마다 8번 연다.",
+                  "결정 뒤 달러는 약해졌고, 뉴욕 증시는 일제히 올랐다."
+                ],
+                "outlook": "다음 회의는 12월이다. 시장은 인상을 유력하게 본다. 11월 3일 중간선거 결과와 이란 정세에 따른 유가 흐름이 변수다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "경제",
+                  "minor": "금융·증시"
+                },
+                "sources": [
+                  {
+                    "name": "NPR",
+                    "url": "https://www.npr.org/2026/10/28/nx-s1-6020425/federal-reserve-interest-rates-inflation",
+                    "publishedAt": "2026-10-28",
+                    "primary": true
+                  },
+                  {
+                    "name": "CNBC",
+                    "url": "https://www.cnbc.com/2026/10/28/fed-interest-rate-decision-october-2026.html",
+                    "publishedAt": "2026-10-28"
+                  },
+                  {
+                    "name": "CNBC",
+                    "url": "https://www.cnbc.com/2026/10/28/fed-meeting-today-live-updates.html",
+                    "publishedAt": "2026-10-28"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261029002952071",
+                    "publishedAt": "2026-10-29",
+                    "imageUrl": "https://img.yna.co.kr/photo/etc/epa/2026/10/29/PEP20261029040301009_P2.jpg"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261029007851072",
+                    "publishedAt": "2026-10-29",
+                    "imageUrl": "https://img.yna.co.kr/photo/ap/2026/10/29/PAP20261029041601009_P2.jpg"
+                  }
+                ],
+                "analogy": "운전자가 속도를 한 번 줄인 뒤 브레이크에서 발을 떼지 않고 앞 상황을 지켜보는 것과 비슷하다. 물가가 다시 오르면 언제든 다시 밟겠다는 신호다."
+              },
+              {
+                "rank": 3,
+                "title": "이스라엘 총선 85% 개표, 네타냐후 진영 53석으로 앞서지만 과반 미달…연정 구성 안갯속",
+                "summary": "개표가 막바지에 이른 가운데 네타냐후 총리 진영은 120석 가운데 53석, 아이젠코트 진영은 48석을 얻을 것으로 보인다. 어느 쪽도 과반(61석)에 이르지 못했다.",
+                "whyItMatters": "가자·이란 전쟁을 이끌어 온 네타냐후 정부가 이어질지가 걸린 선거다. 교착이 길어지면 재선거까지 갈 수 있고, 그동안 네타냐후는 과도정부 총리로 전쟁 권한을 계속 쥔다.",
+                "background": "27일 치러진 총선은 투표율이 거의 30년 만에 가장 높았다. 출구조사에서는 가디 아이젠코트 전 참모총장이 이끄는 반(反)네타냐후 진영이 조금 앞섰지만, 개표가 진행되면서 네타냐후 진영이 따라잡거나 조금 앞섰다. 대통령은 정부 구성에 성공할 가능성이 가장 큰 후보에게 연정 구성을 맡긴다.",
+                "keyFacts": [
+                  "85% 개표 기준으로 리쿠드당과 동맹 정당들은 53석, 아이젠코트 진영은 48석, 아랍계 정당들은 역대 최다 수준인 19석을 얻을 것으로 집계됐다.",
+                  "정당별로는 리쿠드가 26석으로 1당이고, 아이젠코트의 야샤르가 21석으로 뒤를 이었다.",
+                  "아이젠코트가 과반을 만들려면 아랍계 정당의 지지가 필요하다. 하지만 네타냐후와 아이젠코트 모두 아랍계 정당과의 연대에 선을 그어 왔다.",
+                  "두 사람 모두 승리를 선언하지 않았다. 네타냐후는 극우 연정 파트너들을 버리지 않겠다고 약속한 것으로 전해졌다.",
+                  "결과가 불확실해지자 셰켈화 가치와 이스라엘 주가·채권 가격이 함께 떨어졌다."
+                ],
+                "outlook": "공식 최종 결과는 늦어도 11월 4일까지 나온다. 헤르초그 대통령이 누구에게 연정 구성을 맡길지, 대연정이나 재선거로 갈지를 지켜봐야 한다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "국제",
+                  "minor": "중동"
+                },
+                "sources": [
+                  {
+                    "name": "BBC",
+                    "url": "https://www.bbc.co.uk/news/articles/cmdx3knq1xexo",
+                    "publishedAt": "2026-10-29",
+                    "imageUrl": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/3381/live/719a4410-d2f2-11f1-8d86-83eebc838351.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "BBC",
+                    "url": "https://www.bbc.co.uk/news/articles/cm62y46d97wwo",
+                    "publishedAt": "2026-10-28",
+                    "imageUrl": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/5c6a/live/eef90440-d2d5-11f1-b677-b762d2f83f6e.jpg"
+                  },
+                  {
+                    "name": "CNN",
+                    "url": "https://www.cnn.com/2026/10/28/world/live-news/israel-election-result-live-latest-netanyahu-eisenkot-intl",
+                    "publishedAt": "2026-10-28"
+                  },
+                  {
+                    "name": "Times of Israel",
+                    "url": "https://www.timesofisrael.com/with-85-of-votes-counted-netanyahu-bloc-has-53-seats-eisenkots-48-arab-parties-surge-to-19/",
+                    "publishedAt": "2026-10-28",
+                    "publishedAtEstimated": true
+                  },
+                  {
+                    "name": "NPR",
+                    "url": "https://www.npr.org/2026/10/28/nx-s1-6020995/the-israeli-election-is-deadlocked",
+                    "publishedAt": "2026-10-28"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261029008200099",
+                    "publishedAt": "2026-10-29",
+                    "imageUrl": "https://img.yna.co.kr/photo/reuters/2026/10/27/PRU20261027175501009_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 4,
+                "title": "우크라이나 헤르손 국지 휴전 유지, 젤렌스키 \"3자 회담은 11월 6~10일에\"…크렘린은 신중",
+                "summary": "올레시키에서 시작해 헤르손 지역으로 넓어진 휴전이 위반 없이 이어지는 가운데, 젤렌스키 대통령이 미국·러시아와의 3자 회담 날짜를 11월 6~10일로 제시했다. 러시아는 아직 날짜를 확정하지 않았다.",
+                "whyItMatters": "멈춰 있던 종전 협상이 다시 시작될지 가늠하는 시점이다. 국지 휴전이 더 넓은 휴전으로 이어질 수 있을지가 걸려 있다.",
+                "background": "러시아가 점령한 남부 도시 올레시키는 3년 동안 전기·가스·수도가 끊겼다. 멜라니아 트럼프 여사가 푸틴 대통령에게 보낸 편지를 계기로 인도적 휴전이 성사됐고, 27일 예정보다 일찍 시작됐다.",
+                "keyFacts": [
+                  "휴전은 이틀째 위반 사례 없이 이어졌다. 멜라니아 여사는 휴전이 헤르손 지역 안으로 넓어졌다고 밝혔다.",
+                  "젤렌스키 대통령은 28일 네덜란드 헤이그 회견에서 아부다비 3자 회담을 11월 6~10일에 열어야 한다고 말했다. 회담은 실무급이고, 에너지·해상 휴전과 포로 교환을 다룰 예정이다.",
+                  "크렘린은 11월 4일 이후 협상을 재개할 준비가 됐다는 입장이다. 다만 협상 재개가 군사 작전을 제한하지는 않는다고 밝혔다.",
+                  "네덜란드는 5억 유로의 군사 지원을 약속했다. 영국은 예산안에서 우크라이나 지원 100억 파운드를 더 내놓았다."
+                ],
+                "outlook": "미국 중간선거(11월 3일) 뒤 회담 날짜가 확정되는지, 11월 초로 알려진 휴전 기한이 연장되는지를 지켜봐야 한다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "국제",
+                  "minor": "유럽·러시아"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261029002451108",
+                    "publishedAt": "2026-10-29",
+                    "imageUrl": "https://img.yna.co.kr/photo/etc/epa/2026/10/29/PEP20261029007201009_P2.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "BBC",
+                    "url": "https://www.bbc.co.uk/news/articles/c6lye1w9p2l8o",
+                    "publishedAt": "2026-10-28",
+                    "imageUrl": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/97b7/live/fc424bf0-d23c-11f1-904a-5b90e72e87ff.jpg"
+                  },
+                  {
+                    "name": "Ukrinform",
+                    "url": "https://www.ukrinform.net/rubric-polytics/4179077-zelensky-ukraine-hopes-to-hold-trilateral-meeting-in-abu-dhabi-by-nov-10.html",
+                    "publishedAt": "2026-10-28",
+                    "publishedAtEstimated": true
+                  },
+                  {
+                    "name": "Kyiv Independent",
+                    "url": "https://kyivindependent.com/ukraine-war-latest-oleshky-ceasefire-holds-as-zelensky-secures-new-aid-pledges/",
+                    "publishedAt": "2026-10-28",
+                    "publishedAtEstimated": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261028191100108",
+                    "publishedAt": "2026-10-28",
+                    "imageUrl": "https://img.yna.co.kr/photo/ap/2026/10/28/PAP20261028005401009_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 5,
+                "title": "브라질 대선에서 진 플라비우 보우소나루, 법원 명령 어기고 미국 마이애미 도착",
+                "summary": "룰라 대통령에게 진 플라비우 보우소나루 상원의원이 여권을 내라는 법원 명령을 어기고 아르헨티나·에콰도르를 거쳐 가족과 함께 마이애미에 도착했다. 그는 자신이 정당한 당선인이라고 주장한다.",
+                "whyItMatters": "패배한 후보가 결과를 인정하지 않고 해외로 떠나면서 브라질 정치의 갈등이 커졌다. 미국 정부가 입국을 허용해 미국과 브라질의 외교 갈등으로 번질 수 있다.",
+                "background": "플라비우는 자이르 보우소나루 전 대통령의 아들이다. 이번 결선투표에서 룰라 대통령에게 400만 표 넘게 졌다. 브라질 대법원은 돈세탁 수사와 관련해 그에게 일반·외교 여권을 내라고 명령했고, 그 기한이 27일 끝났다. 그는 혐의를 부인한다.",
+                "keyFacts": [
+                  "28일(현지시간) 오전 가족과 함께 플로리다주 오파로카 공항에 내렸다. 미 국무부는 가족에게 비자를 내주겠다고 밝혔다.",
+                  "트럼프 대통령은 그의 입국을 승인했다고 밝혔다.",
+                  "브라질 당국은 그의 여권을 취소했다. 그는 도피가 아니라고 부인하며 자신이 쿠데타와 정치적 박해의 피해자라고 주장했다.",
+                  "소속 정당인 자유당은 룰라의 승리를 인정했지만, 플라비우 본인은 패배를 인정하지 않고 있다.",
+                  "브라질 법원은 미국 JD 밴스 부통령 후원 단체가 그의 선거 캠프를 지원했다는 의혹을 조사하라고 명령했다."
+                ],
+                "outlook": "브라질 정부가 신병 인도를 요청할지, 미국이 어떻게 대응할지 지켜봐야 한다. 상원의원 면책 특권은 1월에 끝난다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "국제",
+                  "minor": "기타 지역"
+                },
+                "sources": [
+                  {
+                    "name": "Al Jazeera",
+                    "url": "https://www.aljazeera.com/news/2026/10/28/flavio-bolsonaro-lands-in-miami-after-losing-brazils-presidential-election",
+                    "publishedAt": "2026-10-28",
+                    "primary": true
+                  },
+                  {
+                    "name": "CNN",
+                    "url": "https://www.cnn.com/2026/10/27/americas/flavio-bolsonaro-brazil-passports-latam-intl",
+                    "publishedAt": "2026-10-27"
+                  },
+                  {
+                    "name": "BBC",
+                    "url": "https://www.bbc.co.uk/news/articles/c6kglwe4lxwzo",
+                    "publishedAt": "2026-10-29",
+                    "imageUrl": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/2c2c/live/4c19c1e0-d2eb-11f1-b441-2b33b063138f.jpg"
+                  },
+                  {
+                    "name": "NBC News",
+                    "url": "https://www.nbcnews.com/world/brazil/flavio-bolsonaro-arrives-miami-election-defeat-rcna606099",
+                    "publishedAt": "2026-10-28",
+                    "publishedAtEstimated": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261029002751087",
+                    "publishedAt": "2026-10-29",
+                    "imageUrl": "https://img.yna.co.kr/photo/reuters/2026/10/29/PRU20261029028301009_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 6,
+                "title": "영국 힐리 재무장관 첫 예산안: 은행 추가세 6%로 두 배, 가구당 에너지 지원 100파운드, 2027년 성장률 1%로 낮춰",
+                "summary": "존 힐리 재무장관이 첫 예산안에서 은행 추가 법인세를 올려 이란 전쟁 뒤 뛴 에너지 요금 부담을 덜어 주기로 했다. 영국 예산책임청(OBR)은 2027년 성장률 전망을 1%로 낮췄다.",
+                "whyItMatters": "에너지 가격 충격 속에서 영국 정부가 가계 지원과 재정 규율 사이에서 어떤 선택을 했는지 보여 준다. 은행권과 국채 시장의 반응도 관심을 모았다.",
+                "background": "영국은 이란 전쟁 이후 가스·전기 요금이 크게 올랐고, 국채 금리도 높아졌다. 힐리 장관은 전임 레이철 리브스 장관이 정한 재정 원칙(3년 안에 경상 적자 해소)을 지키겠다고 밝혔다.",
+                "keyFacts": [
+                  "은행 추가 법인세를 3%에서 6%로 올린다. 인상은 15개월 동안이며 2028년 3월 31일에 끝난다. 은행들이 걱정한 것보다 약해 은행 주가는 오히려 올랐다.",
+                  "주택 가치가 낮은 2,000만 가구에 일회성 에너지 지원금 100파운드를 준다. 가스 기본요금은 없애고, 전기 부가세 인하는 2027년 7월까지 연장한다. 생계비 지원은 모두 41억 파운드 규모다.",
+                  "OBR은 올해 성장률 전망을 1.2%로 조금 올렸지만, 2027년은 1.6%에서 1%로 낮췄다. 2029~30년 재정 여유분은 150억 파운드로 줄었다.",
+                  "국방비를 마련하려고 각 부처에 예산 1% 절감을 요구했다."
+                ],
+                "outlook": "국채 시장이 예산안을 계속 차분히 받아들일지, 겨울철 에너지 가격이 더 오르면 추가 지원이 나올지 지켜봐야 한다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "경제",
+                  "minor": "거시·정책"
+                },
+                "sources": [
+                  {
+                    "name": "Bloomberg",
+                    "url": "https://www.bloomberg.com/news/articles/2026-10-28/uk-budget-pledges-4-1-billion-in-cost-of-living-relief",
+                    "publishedAt": "2026-10-28",
+                    "primary": true
+                  },
+                  {
+                    "name": "Al Jazeera",
+                    "url": "https://www.aljazeera.com/economy/2026/10/28/five-key-takeaways-from-the-uk-autumn-budget",
+                    "publishedAt": "2026-10-28"
+                  },
+                  {
+                    "name": "CNBC",
+                    "url": "https://www.cnbc.com/2026/10/28/uk-autumn-budget-cost-living-defense-ai.html",
+                    "publishedAt": "2026-10-28"
+                  },
+                  {
+                    "name": "Bloomberg",
+                    "url": "https://www.bloomberg.com/news/articles/2026-10-28/healey-s-bank-tax-hike-set-to-be-less-severe-than-lenders-feared",
+                    "publishedAt": "2026-10-28"
+                  },
+                  {
+                    "name": "ITV",
+                    "url": "https://www.itv.com/news/2026-10-28/chancellor-john-healey-reveals-what-is-in-his-first-budget",
+                    "publishedAt": "2026-10-28"
+                  }
+                ]
+              }
+            ],
+            "shortNews": [
+              {
+                "summary": "캐나다 중앙은행이 2023년 7월 이후 3년 3개월 만에 처음으로 금리를 올려 기준금리를 연 2.50%로 정했다. 추가 인상 가능성도 열어 뒀다.",
+                "category": {
+                  "major": "경제",
+                  "minor": "금융·증시"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261029000600072",
+                    "publishedAt": "2026-10-29",
+                    "imageUrl": "https://img.yna.co.kr/etc/inner/KR/2026/10/29/AKR20261029000600072_01_i_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "겨울을 앞두고 중동발 공급난이 이어지면서 유럽 천연가스 가격이 2022년 에너지 위기 이후 가장 높아졌다. 이란 전쟁 전보다 약 3배 오른 수준이다.",
+                "category": {
+                  "major": "경제",
+                  "minor": "산업·기업"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261029000351082",
+                    "publishedAt": "2026-10-29",
+                    "imageUrl": "https://img.yna.co.kr/photo/etc/epa/2025/10/01/PEP20251001268801009_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "미국이 걸프 동맹국들에 11월 3일 중간선거 뒤 짧고 강한 이란 공격과 이란의 보복에 대비하라고 경고했다고 WSJ와 AP가 보도했다. 백악관은 구체적인 군사 계획에 대해 답하지 않았다.",
+                "category": {
+                  "major": "국제",
+                  "minor": "중동"
+                },
+                "sources": [
+                  {
+                    "name": "Audacy(AP)",
+                    "url": "https://www.audacy.com/wben/news/politics/trump-iran-strikes-midterm-elections-c7df622f1e87de6035173be8fb8c4add",
+                    "publishedAt": "2026-10-29",
+                    "publishedAtEstimated": true
+                  },
+                  {
+                    "name": "Middle East Eye",
+                    "url": "https://www.middleeasteye.net/news/us-warns-gulf-intense-strikes-iran-after-midterms-report",
+                    "publishedAt": "2026-10-28",
+                    "publishedAtEstimated": true
+                  }
+                ]
+              },
+              {
+                "summary": "초강력 사이클론 '아르납'이 인도 동부 안드라프라데시주 해안에 상륙해 최소 3명이 숨졌다. 안드라프라데시주와 오디샤주에서 약 18만 명이 대피했다.",
+                "category": {
+                  "major": "과학·건강",
+                  "minor": "기후·환경"
+                },
+                "sources": [
+                  {
+                    "name": "Al Jazeera",
+                    "url": "https://www.aljazeera.com/news/2026/10/28/cyclone-arnab-makes-landfall-in-indias-andhra-pradesh",
+                    "publishedAt": "2026-10-28"
+                  }
+                ]
+              },
+              {
+                "summary": "세사르 차베스와 함께 미국 농장노동자연합(UFW)을 세운 노동·민권 운동가 돌로레스 우에르타가 96세로 세상을 떠났다.",
+                "category": {
+                  "major": "국제",
+                  "minor": "미국"
+                },
+                "sources": [
+                  {
+                    "name": "NPR",
+                    "url": "https://www.npr.org/2026/10/28/nx-s1-6020543/dolores-huerta-dies",
+                    "publishedAt": "2026-10-28"
+                  },
+                  {
+                    "name": "CNN",
+                    "url": "https://www.cnn.com/2026/10/28/us/dolores-huerta-dead",
+                    "publishedAt": "2026-10-28"
+                  }
+                ]
+              }
+            ],
+            "unverified": "스페인 열차 사고 원인(신호 시스템 고장과 관제 지시)은 정부의 초기 설명이며 아직 공식 조사 결과가 아니다. 우크라이나 휴전이 헤르손 지역 전체로 넓어졌는지, 언제 끝나는지는 출처마다 다르다."
+          },
+          {
+            "name": "IT·AI",
+            "flow": "국내에서는 구글·애플이 인앱결제 강제로 첫 과징금을 받았다. 미국에서는 빅테크 실적 발표에서 AI 투자를 현금흐름이 버텨 주는지에 따라 주가가 크게 엇갈렸고, 애플 터치 맥북, 구글 보안 특화 모델, 깃허브 모델 조율 도구 같은 신제품이 한꺼번에 나왔다.",
+            "topStories": [
+              {
+                "rank": 1,
+                "title": "방미통위, 인앱결제 강제한 구글·애플에 과징금 637억 원…첫 제재",
+                "summary": "방송미디어통신위원회가 특정 결제 방식을 강제하고 앱 심사를 부당하게 늦춘 구글에 429억 원, 애플에 208억 1천만 원의 과징금을 매기고 시정명령을 의결했다.",
+                "whyItMatters": "2021년 '인앱결제 강제 금지법'(전기통신사업법 개정)이 생긴 뒤 처음 나온 실제 제재다. 앱 개발사의 수수료 부담과 소비자가 내는 앱·콘텐츠 가격이 달라질 수 있다.",
+                "background": "앱마켓 사업자가 자사 결제 시스템만 쓰게 하는 것은 법으로 금지되어 있다. 하지만 구글·애플은 외부 결제를 허용하면서도 높은 수수료를 매기거나 따로 앱을 내라고 요구해, 결제 방식을 고를 수 있다는 것이 사실상 이름뿐이라는 비판을 받았다. 옛 방송통신위원회는 2023년 10월 최대 680억 원의 과징금 안을 두 회사에 알렸지만, 위원회 구성 문제로 3년 동안 의결하지 못했다.",
+                "keyFacts": [
+                  "10월 28일 전체회의 의결: 구글 429억 원, 애플 208억 1천만 원, 합계 637억 1천만 원",
+                  "위반 내용: 특정 결제 방식 강제와 앱 심사 부당 지연(두 회사 모두), 국내 개발사에 대한 차별적 수수료(애플)",
+                  "시정명령: 외부 링크 결제 허용 등 실제로 고를 수 있게 할 것, 제3자 결제 수수료와 심사 절차 개선. 이행계획은 1개월 안에, 개선은 3개월 안에 마쳐야 한다",
+                  "방미통위는 2023년 금액이 부과 상한이었고, 최종 금액은 관련 매출과 가중·감경 사유를 반영해 정했다고 설명했다",
+                  "구글은 유감을 표했고, 애플은 결정에 동의하지 않는다며 대응을 검토하겠다고 밝혔다. 두 회사 모두 법적 대응 가능성을 내비쳤다"
+                ],
+                "outlook": "1개월 안에 낼 이행계획에 외부 결제 수수료를 낮추는 안이 담기는지, 두 회사가 행정소송을 낼지가 관심이다. 방미통위는 과징금 상한을 올리는 방안도 검토하고 있다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "규제·정책"
+                },
+                "sources": [
+                  {
+                    "name": "지디넷코리아",
+                    "url": "https://zdnet.co.kr/view/?no=20261028163737",
+                    "publishedAt": "2026-10-28",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261028139252017",
+                    "publishedAt": "2026-10-28",
+                    "imageUrl": "https://img.yna.co.kr/etc/inner/KR/2026/10/28/AKR20261028139252017_02_i_P2.jpg"
+                  },
+                  {
+                    "name": "뉴스1",
+                    "url": "https://www.news1.kr/it-science/cc-newmedia/6335243",
+                    "publishedAt": "2026-10-28",
+                    "publishedAtEstimated": true
+                  },
+                  {
+                    "name": "뉴스1",
+                    "url": "https://www.news1.kr/it-science/internet-platform/6335324",
+                    "publishedAt": "2026-10-28",
+                    "publishedAtEstimated": true
+                  },
+                  {
+                    "name": "한국경제",
+                    "url": "https://www.hankyung.com/article/2026102813791",
+                    "publishedAt": "2026-10-28"
+                  }
+                ],
+                "analogy": "백화점이 입점 업체에 '계산은 우리 계산대에서만 하라'고 강요하고, 다른 계산대를 쓰겠다는 업체의 입점 심사는 일부러 늦춘 것과 비슷하다."
+              },
+              {
+                "rank": 2,
+                "title": "빅테크 실적, 현금흐름이 희비 갈랐다: MS 애저 48% 성장, 알파벳 주가 10% 급락, 오라클 11% 상승",
+                "summary": "마이크로소프트는 클라우드 애저의 빠른 성장으로 예상을 넘는 실적을 냈다. 알파벳은 클라우드 매출이 두 배로 늘었는데도 이익과 현금흐름이 기대에 못 미쳐 시간외 주가가 약 10% 떨어졌고, 오라클은 현금흐름을 흑자로 돌리겠다는 계획을 내놓아 주가가 11% 올랐다.",
+                "whyItMatters": "투자자들이 AI 매출이 늘었는지보다 AI 투자로 현금이 얼마나 빠져나가는지를 보기 시작했다는 신호다. AI 투자 경쟁의 속도와 반도체 수요 전망에도 영향을 준다.",
+                "background": "빅테크는 AI 데이터센터에 해마다 수천억 달러를 쓰고 있다. 매출이 커져도 설비투자가 더 빨리 늘면, 회사가 실제로 손에 쥐는 현금(잉여현금흐름)은 줄어든다. 그래서 이번 실적 시즌의 관심은 투자를 감당할 현금 창출력에 쏠렸다.",
+                "keyFacts": [
+                  "마이크로소프트(회계연도 2027년 1분기, 7~9월): 매출 922억 8천만 달러(약 124조 원)로 19% 증가. 애저 매출을 처음으로 금액(331억 7천만 달러)으로 공개했고, 성장률은 48%",
+                  "MS의 설비투자는 약 452억 달러였고, 잉여현금흐름은 27% 줄었지만 186억 달러 흑자를 유지했다(CNBC)",
+                  "알파벳(3분기): 매출 1,276억 달러로 25% 증가, 구글 클라우드 매출 307억 달러로 103% 증가. 그러나 주당순이익이 기대에 못 미쳤고 잉여현금흐름이 약 91억 달러 적자로 돌아섰다",
+                  "알파벳 주가는 정규장 마감 뒤 시간외 거래에서 약 10% 떨어졌다. 올해 설비투자 전망(1,950억~2,050억 달러)은 유지했고, 내년에는 크게 늘어난다고 예고했다",
+                  "오라클: 2028 회계연도 하반기에 잉여현금흐름이 흑자로 돌아서고 2029 회계연도에 300억 달러 이상이 될 것으로 내다봤다. 2030 회계연도까지 외부 조달은 200억 달러(약 27조 원) 이내로 묶겠다고 밝히자 주가가 11% 올랐다"
+                ],
+                "outlook": "이어지는 아마존·메타 실적에서도 설비투자와 현금흐름이 주가를 가를 것으로 보인다. 알파벳이 예고한 2027년 투자 증가 폭도 관심이다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "경제",
+                  "minor": "산업·기업"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261029024200091",
+                    "publishedAt": "2026-10-29",
+                    "imageUrl": "https://img.yna.co.kr/photo/cms/2026/10/29/01/PCM20261029000001091_P2.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "CNBC",
+                    "url": "https://www.cnbc.com/2026/10/28/microsoft-msft-q1-earnings-report-2027.html",
+                    "publishedAt": "2026-10-28"
+                  },
+                  {
+                    "name": "CNBC",
+                    "url": "https://www.cnbc.com/2026/10/28/alphabet-googl-earnings-q3-2026.html",
+                    "publishedAt": "2026-10-28"
+                  },
+                  {
+                    "name": "Bloomberg",
+                    "url": "https://www.bloomberg.com/news/articles/2026-10-28/oracle-projects-30-billion-free-cash-flow-in-fiscal-2029",
+                    "publishedAt": "2026-10-28"
+                  },
+                  {
+                    "name": "뉴스1",
+                    "url": "https://www.news1.kr/world/international-economy/6335594",
+                    "publishedAt": "2026-10-29",
+                    "publishedAtEstimated": true
+                  }
+                ]
+              },
+              {
+                "rank": 3,
+                "title": "애플, 첫 터치스크린 맥 공개…OLED 맥북 프로 2,899달러부터",
+                "summary": "애플이 화면을 손가락으로 조작할 수 있고 OLED 패널을 쓴 'PROLED XDR 디스플레이' 맥북 프로 14·16인치를 공개했다.",
+                "whyItMatters": "애플은 오랫동안 노트북에는 터치 화면이 맞지 않다는 입장이었는데, 이번에 그 방침을 바꿨다. 아이패드와 맥의 경계가 흐려지고, 고급 노트북 시장의 경쟁 구도도 달라질 수 있다.",
+                "background": "그동안 맥은 키보드와 트랙패드로만 조작했고, 터치는 아이폰·아이패드의 몫이었다. 블룸버그 등은 1년 넘게 애플이 터치 맥북을 준비 중이라고 보도해 왔고, 이번 제품은 10월 28일 발표 행사에서 나왔다.",
+                "keyFacts": [
+                  "애플이 밝힌 '첫 터치 지원 맥'으로, 디스플레이 안에 터치 센서를 넣어 지연을 줄였다고 설명했다",
+                  "OLED 두 겹을 쌓은 탠덤 OLED 패널을 썼고, 최대 밝기는 2,000니트다",
+                  "칩은 M5 프로 또는 M5 맥스이고, 배터리는 최대 24시간 간다",
+                  "가격은 14인치 2,899달러, 16인치 3,399달러부터다. 10월 28일 사전 주문을 시작했고 11월 6일 출고한다"
+                ],
+                "outlook": "같은 칩을 쓴 일반 화면 모델보다 비싼 가격을 소비자가 받아들일지, macOS가 터치 조작에 맞게 얼마나 바뀔지가 관심이다. 국내 출시 일정과 가격은 아직 확인되지 않았다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "반도체·하드웨어"
+                },
+                "sources": [
+                  {
+                    "name": "Apple",
+                    "url": "https://www.apple.com/newsroom/2026/10/apple-unveils-groundbreaking-macbook-pro-with-proled-xdr-display/",
+                    "publishedAt": "2026-10-28",
+                    "primary": true
+                  },
+                  {
+                    "name": "CNN",
+                    "url": "https://www.cnn.com/2026/10/28/tech/apple-macbook-pro-touchscreen",
+                    "publishedAt": "2026-10-28"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261029006200091",
+                    "publishedAt": "2026-10-29",
+                    "imageUrl": "https://img.yna.co.kr/etc/inner/KR/2026/10/29/AKR20261029006200091_01_i_P2.jpg"
+                  },
+                  {
+                    "name": "CNBC",
+                    "url": "https://www.cnbc.com/2026/10/28/apple-mac-touchscreen-launch.html",
+                    "publishedAt": "2026-10-28"
+                  }
+                ]
+              },
+              {
+                "rank": 4,
+                "title": "오픈AI, 구글 AI칩 TPU 구매 추진…엔비디아 의존 낮추기",
+                "summary": "오픈AI가 구글이 직접 설계한 AI 칩 TPU를 사들일 계획이라고 미국 IT 매체 디인포메이션이 보도했고, 블룸버그 등이 뒤따라 전했다.",
+                "whyItMatters": "엔비디아 GPU가 거의 독차지해 온 AI 칩 시장에서 구글 TPU가 대형 고객을 넓히고 있다는 뜻이다. 칩 공급 경쟁과 AI 서비스 비용에 영향을 줄 수 있다.",
+                "background": "TPU는 구글이 AI 계산용으로 직접 만든 칩으로, 그동안 주로 구글 클라우드를 통해 빌려 쓰는 방식으로 제공됐다. 오픈AI는 2025년 6월부터 TPU를 일부 빌려 썼고, 앤트로픽도 TPU를 대량으로 쓰고 있다. 오픈AI는 브로드컴과 함께 자체 칩도 개발하고 있다.",
+                "keyFacts": [
+                  "디인포메이션이 10월 27일(현지시간) 사정을 아는 사람을 인용해 보도했다. 구매 물량·금액·일정은 공개되지 않았다",
+                  "엔비디아 칩을 대신하는 것이 아니라, 엔비디아 칩과 함께 쓰는 형태라는 보도가 많다",
+                  "젠슨 황 엔비디아 CEO는 오픈AI가 2030년까지 엔비디아 서버에 약 6,000억 달러를 쓰기로 했다고 밝힌 바 있다",
+                  "오픈AI와 구글은 이 보도를 공식 확인하지 않았다"
+                ],
+                "outlook": "실제 계약 규모와 구글이 최신 TPU까지 내줄지가 관심이다. 오라클도 2027년부터 자사 클라우드에서 TPU를 제공할 예정이라는 보도가 나와, TPU가 구글 밖으로 퍼지는 흐름이 이어질 수 있다.",
+                "confidence": "보도에 따르면",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "AI 산업·기업"
+                },
+                "sources": [
+                  {
+                    "name": "Bloomberg",
+                    "url": "https://bloomberg.com/news/articles/2026-10-28/openai-plans-to-buy-google-s-chips-as-part-of-its-ai-build-out",
+                    "publishedAt": "2026-10-28",
+                    "primary": true
+                  },
+                  {
+                    "name": "한국경제",
+                    "url": "https://www.hankyung.com/article/202610280398i",
+                    "publishedAt": "2026-10-28"
+                  },
+                  {
+                    "name": "뉴스1",
+                    "url": "https://www.news1.kr/world/international-economy/6334668",
+                    "publishedAt": "2026-10-28",
+                    "publishedAtEstimated": true
+                  },
+                  {
+                    "name": "뉴시스",
+                    "url": "https://www.newsis.com/view/NISX20261028_0003844594",
+                    "publishedAt": "2026-10-28"
+                  }
+                ]
+              },
+              {
+                "rank": 5,
+                "title": "미 법무부, 엔비디아의 허깅페이스 인수가 AI 경쟁에 미칠 영향 조사",
+                "summary": "미국 법무부가 엔비디아의 약 129억 달러 규모 허깅페이스 인수가 AI 경쟁을 해치는지 시장 참여자들에게 묻고 있다고 Reuters가 단독 보도했다.",
+                "whyItMatters": "허깅페이스는 전 세계 개발자가 AI 모델을 올리고 내려받는 사실상 표준 저장소다. 칩 1위 기업이 이곳을 갖게 되면 경쟁사에 불리하게 쓰일 수 있는지가 쟁점이다.",
+                "background": "엔비디아는 9월 허깅페이스 인수에 합의했고, 허깅페이스가 경쟁사의 칩·클라우드·소프트웨어에도 중립을 지킬 것이라고 밝혔다. 법무부는 바이든 행정부 때부터 엔비디아의 인수·투자·영업 방식을 조사해 왔다.",
+                "keyFacts": [
+                  "Reuters는 소식통 2명을 인용해, 법무부가 이 인수로 엔비디아가 핵심 AI 유통 경로를 쥐게 되는지 묻고 있다고 전했다",
+                  "이번 질문은 그로크(Groq)와 맺은 약 200억 달러 규모 기술 사용·인력 영입 계약, 스케드엠디(SchedMD) 인수 등을 포함한 더 넓은 조사의 일부로 전해졌다",
+                  "엔비디아는 인수를 2027년 상반기에 마무리할 것으로 예상하며, 규제 승인이 필요하다",
+                  "엔비디아는 답변을 거부했고, 법무부는 진행 중인 사안에 대해 말하지 않는다. 조사가 곧 소송으로 이어진다는 뜻은 아니다"
+                ],
+                "outlook": "법무부가 정식 심층 조사(추가 자료 요구)에 들어가는지, 유럽 등 다른 나라의 심사도 함께 깐깐해지는지가 관심이다.",
+                "confidence": "보도에 따르면",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "규제·정책"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261029020700009",
+                    "publishedAt": "2026-10-29",
+                    "imageUrl": "https://img.yna.co.kr/photo/etc/epa/2026/09/04/PEP20260904036501009_P2.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "Bloomberg",
+                    "url": "https://www.bloomberg.com/news/articles/2026-10-28/doj-inquires-about-nvidia-s-hugging-face-deal-reuters-says",
+                    "publishedAt": "2026-10-28"
+                  },
+                  {
+                    "name": "The Next Web",
+                    "url": "https://thenextweb.com/news/doj-nvidia-hugging-face-deal-antitrust-inquiry",
+                    "publishedAt": "2026-10-28",
+                    "publishedAtEstimated": true
+                  }
+                ],
+                "devCheckpoint": "허깅페이스 허브에 모델·데이터를 의존하는 팀은 인수 조건(중립성 약속)과 규제 결론에 따라 이용 조건이 바뀌는지 지켜본다."
+              },
+              {
+                "rank": 6,
+                "title": "구글, 사이버보안에 강한 새 최상위 모델 'Gemini 4 Carbon' 공개",
+                "summary": "구글이 취약점을 찾고 고치는 능력을 앞세운 새 최상위 AI 모델 Gemini 4 Carbon을 공개했다. 우선 일부 보안 방어 담당자에게만 제공한다.",
+                "whyItMatters": "AI가 소프트웨어 결함을 찾아내는 능력이 공격에도 쓰일 수 있어, 구글은 성능을 높이는 동시에 쓸 수 있는 사람을 제한하는 방식을 택했다. 최상위 모델 경쟁에서 보안이 새 기준이 되고 있다.",
+                "background": "AI 모델이 코드의 취약점을 찾고 공격 코드까지 만들 수 있게 되면서, 회사들은 위험한 능력을 가진 모델을 믿을 만한 방어자에게만 먼저 주는 방식을 쓰기 시작했다. Carbon은 약 2주 전 나온 Gemini 4 Argon의 뒤를 잇는 모델이다.",
+                "keyFacts": [
+                  "구글이 직접 잰 점수: 취약점 찾기(SEC-bench Pro) 88.2%, 공격 재현(ExploitGym) 54.8%, 패치(CWE-bench) 71.0%",
+                  "구글은 세 보안 평가 모두에서 경쟁 모델을 앞섰다고 주장했다. 독립 검증은 아직 없다",
+                  "이번 주부터 일부 사이버 방어 담당자에게 먼저 제공하고, 신뢰할 수 있는 협력사로 점차 넓힌다. 일반 개발자·기업에 제공할 날짜는 정하지 않았다",
+                  "구글 서버에서만 쓸 수 있고, 모델 가중치는 공개하지 않는다"
+                ],
+                "outlook": "일반 API 공개 시점과 외부 기관의 성능 검증 결과가 나올지가 관심이다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "AI 모델·연구"
+                },
+                "sources": [
+                  {
+                    "name": "Google",
+                    "url": "https://blog.google/innovation-and-ai/models-and-research/gemini-models/introducing-gemini-4-carbon/",
+                    "publishedAt": "2026-10-28",
+                    "primary": true
+                  },
+                  {
+                    "name": "9to5Google",
+                    "url": "https://9to5google.com/2026/10/28/gemini-4-carbon-announcement/",
+                    "publishedAt": "2026-10-28"
+                  },
+                  {
+                    "name": "MarkTechPost",
+                    "url": "https://www.marktechpost.com/2026/10/28/google-deepmind-gemini-4-carbon-frontier-model/",
+                    "publishedAt": "2026-10-28"
+                  }
+                ],
+                "devCheckpoint": "당장은 일반 API로 쓸 수 없다. 보안 점검용으로 쓰려면 구글의 제한 제공 프로그램 확대 일정을 지켜봐야 한다."
+              },
+              {
+                "rank": 7,
+                "title": "깃허브, 작업마다 AI 모델을 골라 맡기는 '코파일럿 퓨전' 정식 출시",
+                "summary": "깃허브가 연례 행사 '유니버스 2026'에서 작업 종류에 맞춰 여러 AI 모델을 고르고 조율하는 코파일럿 퓨전을 정식 출시했다. 여러 저장소에서 에이전트가 일하게 하는 '코파일럿 프로젝트'도 공개 시험판으로 내놓았다.",
+                "whyItMatters": "개발자가 매번 어떤 모델을 쓸지 고르지 않아도 되고, 같은 품질을 더 싸게 얻을 수 있다는 주장이다. 코딩 AI 경쟁이 한 모델의 성능에서 여러 모델을 어떻게 섞어 쓰느냐로 옮겨 가고 있다.",
+                "background": "깃허브는 9월 여러 모델을 함께 쓰는 연구용 시험판 '프로젝트 하이드라퓨전'을 냈다. 코파일럿 퓨전은 이 조율 방식에 기존의 자동 모델 선택 기능을 합친 것이다.",
+                "keyFacts": [
+                  "실행 방식: 모델 하나가 처리, 값싼 모델의 결과를 점검해 필요하면 더 강한 모델로 넘김, 한 모델의 초안을 다른 모델이 검토. 노력 수준은 Standard·High·Max 세 단계",
+                  "깃허브에 따르면 Fusion Max는 외부 코딩 에이전트 평가에서 60점을 받아 최상위 경쟁 에이전트와 2점 안쪽 차이를 냈고, 작업당 비용은 약 절반이었다",
+                  "모든 코파일럿 요금제에서 VS Code, 코파일럿 앱, 코파일럿 CLI, JetBrains IDE로 쓸 수 있다. 관리자는 쓸 모델과 기본값을 정할 수 있다",
+                  "기기 안에서 돌리는 로컬 모델과 클라우드 모델 사이의 자동 선택도 실험 기능으로 지원한다"
+                ],
+                "outlook": "깃허브가 밝힌 비용 절감이 실제 사용에서도 나오는지, 코파일럿 프로젝트가 언제 정식 출시되는지가 관심이다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "개발 도구"
+                },
+                "sources": [
+                  {
+                    "name": "GitHub",
+                    "url": "https://github.blog/changelog/2026-10-28-route-and-orchestrate-models-with-github-copilot-fusion/",
+                    "publishedAt": "2026-10-28",
+                    "primary": true
+                  },
+                  {
+                    "name": "GitHub",
+                    "url": "https://github.blog/news-insights/company-news/github-universe-2026-evolving-every-layer-of-the-stack/",
+                    "publishedAt": "2026-10-28",
+                    "publishedAtEstimated": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261029001551091",
+                    "publishedAt": "2026-10-29",
+                    "imageUrl": "https://img.yna.co.kr/etc/inner/KR/2026/10/29/AKR20261029001551091_02_i_P2.jpg"
+                  },
+                  {
+                    "name": "지디넷코리아",
+                    "url": "https://zdnet.co.kr/view/?no=20261029031253",
+                    "publishedAt": "2026-10-29"
+                  }
+                ],
+                "devCheckpoint": "조직 관리자는 퓨전이 쓸 수 있는 모델 목록과 기본값 설정을 확인한다. 모델이 자동으로 바뀌면 비용·데이터 처리 정책이 달라질 수 있다."
+              }
+            ],
+            "shortNews": [
+              {
+                "summary": "미국 뉴욕주가 미성년자에게 사람인 척하거나 정서적 의존을 부추기는 등 '위험한' 챗봇 기능을 제공하지 못하게 하는 법을 만들었다. 이런 기능을 쓰려면 성인임을 확인해야 한다.",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "규제·정책"
+                },
+                "sources": [
+                  {
+                    "name": "Fortune",
+                    "url": "https://fortune.com/2026/10/28/new-york-state-kathy-hochul-bans-ai-chatbots-romantic-baby-monitors/",
+                    "publishedAt": "2026-10-28"
+                  },
+                  {
+                    "name": "Times Union",
+                    "url": "https://www.timesunion.com/capitol/article/hochul-signing-bills-regulating-ai-kid-chats-22497981.php",
+                    "publishedAt": "2026-10-28",
+                    "publishedAtEstimated": true
+                  }
+                ]
+              },
+              {
+                "summary": "말레이시아 세관이 쿠알라룸푸르 공항에서 '전자부품'으로 신고된 약 1,210만 달러어치 AI칩 서버 30대를 압수했다. 미국 수출 통제를 피해 다른 아시아 나라로 다시 보내려 한 것으로 보인다.",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "반도체·하드웨어"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261028143600104",
+                    "publishedAt": "2026-10-28",
+                    "imageUrl": "https://img.yna.co.kr/photo/ap/2026/10/28/PAP20261028188501009_P2.jpg"
+                  },
+                  {
+                    "name": "TRT World",
+                    "url": "https://www.trtworld.com/article/bc86b62b6cf6",
+                    "publishedAt": "2026-10-28",
+                    "publishedAtEstimated": true
+                  }
+                ]
+              },
+              {
+                "summary": "아마존이 기기 부문에서 최대 250명을 감원했다. 같은 날 새로 디자인한 에코쇼 등 알렉사 신제품을 공개했다.",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "AI 산업·기업"
+                },
+                "sources": [
+                  {
+                    "name": "AOL(Reuters)",
+                    "url": "https://www.aol.com/articles/amazon-cuts-more-jobs-devices-150608000.html",
+                    "publishedAt": "2026-10-28",
+                    "publishedAtEstimated": true
+                  },
+                  {
+                    "name": "Allwork.Space",
+                    "url": "https://allwork.space/2026/10/amazon-cuts-hundreds-of-jobs-from-devices-unit-in-latest-layoffs/",
+                    "publishedAt": "2026-10-28",
+                    "publishedAtEstimated": true
+                  }
+                ]
+              },
+              {
+                "summary": "앤트로픽이 'Claude for Legal'에 인용 확인, 계약 검토, 규제 동향 점검 등 바로 쓸 수 있는 법률 도구 모음을 추가했다. 최종 판단은 변호사가 하도록 설계했다.",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "AI 산업·기업"
+                },
+                "sources": [
+                  {
+                    "name": "Legal IT Insider",
+                    "url": "https://legaltechnology.com/anthropic-moves-further-up-the-legal-tech-stack-with-launch-of-claude-for-legal-artifacts/",
+                    "publishedAt": "2026-10-28",
+                    "publishedAtEstimated": true
+                  },
+                  {
+                    "name": "Yahoo Finance",
+                    "url": "https://finance.yahoo.com/sectors/technology/articles/anthropic-expands-claudes-ai-tools-170145869.html",
+                    "publishedAt": "2026-10-28",
+                    "publishedAtEstimated": true
+                  }
+                ]
+              },
+              {
+                "summary": "인증 없이 서버를 장악할 수 있는 PHP 취약점('PHP2셸')에 대해 정부와 민간이 함께 점검·대응 방안을 내놓았다. 국내 PHP 서비스의 보안 패치 적용률은 3.9%에 그친다는 분석이 나왔다.",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "보안"
+                },
+                "sources": [
+                  {
+                    "name": "지디넷코리아",
+                    "url": "https://zdnet.co.kr/view/?no=20261028110228",
+                    "publishedAt": "2026-10-28"
+                  },
+                  {
+                    "name": "전자신문",
+                    "url": "https://www.etnews.com/20261027000434",
+                    "publishedAt": "2026-10-27"
+                  }
+                ]
+              }
+            ],
+            "unverified": "오픈AI의 구글 TPU 구매는 디인포메이션이 익명 소식통 한 명을 인용한 보도이고, 미 법무부의 허깅페이스 인수 조사도 Reuters가 익명 소식통을 인용한 보도로, 당사자들은 공식 확인하지 않았다."
+          }
+        ]
+      },
+      "collectedAt": "2026-10-29T08:55:24+09:00",
       "late": false
     }
   ]
