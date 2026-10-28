@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { parseRoute } from "./lib/routes.ts";
+import { focusTargetId, parseRoute } from "./lib/routes.ts";
 import { AboutPage } from "./pages/AboutPage.tsx";
 import { BriefPage } from "./pages/BriefPage.tsx";
 import { DatesPage } from "./pages/DatesPage.tsx";
@@ -15,6 +15,7 @@ export function App() {
   const first = useRef(true);
 
   // 앱 안에서 다른 화면으로 가면 맨 위로 올리고 본문에 초점을 둔다(키보드·화면 읽기 프로그램).
+  // 검색어 없는 검색 화면은 입력란에 둔다(화면 쪽 초점보다 이 효과가 나중에 돌아서 여기서 정한다).
   // `#<뉴스 키>`가 있으면 브리프 화면이 그 카드로 스크롤한다.
   useEffect(() => {
     if (first.current) {
@@ -24,7 +25,7 @@ export function App() {
     const nav = lastNavigation();
     if (nav.quiet || nav.kind === "pop") return;
     if (!loc.hash) window.scrollTo({ top: 0 });
-    document.getElementById("main")?.focus({ preventScroll: true });
+    document.getElementById(focusTargetId(parseRoute(loc.pathname, loc.search)))?.focus({ preventScroll: true });
   }, [loc.pathname, loc.search, loc.hash]);
 
   switch (route.name) {

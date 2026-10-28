@@ -8,7 +8,7 @@ import { daySections, findStoryTarget, orderSources, sectionView, stateForHash, 
 import { groupDatesByMonth, monthDayWeekday, pageTitle, shortDate } from "../site/src/lib/format.ts";
 import { filterIssues, sortIssues } from "../site/src/lib/issues.ts";
 import { ISSUE_CHUNK, chunkOf, dataUrl } from "../site/src/lib/paths.ts";
-import { adjacentDates, briefPath, hashKey, isValidDate, parseRoute, resolveBriefDate, resolveIssueId } from "../site/src/lib/routes.ts";
+import { adjacentDates, briefPath, focusTargetId, hashKey, isValidDate, parseRoute, resolveBriefDate, resolveIssueId } from "../site/src/lib/routes.ts";
 import { countMatches, matchDayStories, matchIssues, parseHit, queryTerms } from "../site/src/lib/search.ts";
 import { DARK, LIGHT, contrast, textPairs } from "../site/src/lib/theme.ts";
 
@@ -88,6 +88,13 @@ describe("4.2-1 라우팅", () => {
     assert.equal(hashKey("#한국-s2"), "한국-s2");
     assert.equal(hashKey(""), null);
     assert.equal(hashKey("#%E0%A4%A"), null);
+  });
+  test("앱 안 이동 뒤 초점: 검색어 없는 검색 화면은 입력란, 나머지는 본문", () => {
+    assert.equal(focusTargetId(parseRoute("/search")), "q");
+    assert.equal(focusTargetId(parseRoute("/search", "?q=%EB%B0%98%EB%8F%84%EC%B2%B4")), "main");
+    for (const p of ["/", "/2026-10-27", "/dates", "/issues", "/issues/1", "/about", "/nope"]) {
+      assert.equal(focusTargetId(parseRoute(p)), "main", p);
+    }
   });
 });
 

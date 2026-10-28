@@ -46,6 +46,11 @@ export function parseRoute(pathname: string, search = ""): Route {
   return { name: "notFound" };
 }
 
+/** 앱 안에서 화면을 옮긴 뒤 초점을 둘 요소의 id. 검색어 없는 검색 화면은 바로 입력하게 입력란, 나머지는 본문 */
+export function focusTargetId(route: Route): "q" | "main" {
+  return route.name === "search" && !route.q ? "q" : "main";
+}
+
 /** 브리프 주소의 날짜를 저장된 날짜와 맞춘다. `/`는 가장 최근 날짜, 저장되지 않은 날짜는 null(없는 페이지) */
 export function resolveBriefDate(route: Route, dates: { latestDate: string | null; dates: string[] }): string | null {
   if (route.name === "latest") return dates.latestDate;
