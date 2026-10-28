@@ -20,8 +20,8 @@ function source(s: Source): string {
 export interface StoryIssueInfo {
   primary: { id: number; name: string };
   extras: { id: number; name: string }[];
-  /** 주 이슈에서 이 뉴스보다 앞선 전개, 가까운 것부터 최대 3건 */
-  previous: { date: string; title: string }[];
+  /** 주 이슈에서 이 뉴스보다 앞선 전개, 가까운 것부터 최대 3건. key는 그 날짜 안의 뉴스 키(사이트 링크에 쓴다) */
+  previous: { date: string; key: string; title: string }[];
 }
 
 /** 뉴스 키(`한국-1`, `한국-s1`) → 이슈 정보 */

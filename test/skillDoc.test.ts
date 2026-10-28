@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 import { after, describe, test } from "node:test";
+import { COMMAND_NAMES } from "../src/cli.ts";
 import { openDb } from "../src/db.ts";
 import { createIssue, linkStory, storiesOfDate } from "../src/issues.ts";
 import { checkLinkFile } from "../src/links.ts";
@@ -57,5 +58,33 @@ describe("2단계 4.6-1 스킬 문서의 파일 형식 예시", () => {
     assert.match(SKILL, /합치기 되돌리기 명령\(`unmerge`\)은 실행하지 않는다/);
     assert.match(SKILL, /이슈 연결\(7단계, 12단계\)과 합치기\(13단계\)는 서브에이전트에 맡기지 않고 메인이 한다/);
     assert.match(SKILL, /5줄 이하/);
+  });
+});
+
+describe("3단계 4.5-1 스킬 문서의 명령과 실행 순서", () => {
+  test("문서에 적힌 `node src/cli.ts <명령>`이 모두 실제 명령이다", () => {
+    const names = [...SKILL.matchAll(/node src\/cli\.ts ([a-z][a-z-]*)/g)].map((m) => m[1]!);
+    assert.ok(names.length > 10);
+    const unknown = [...new Set(names)].filter((n) => !COMMAND_NAMES.includes(n));
+    assert.deepEqual(unknown, [], "문서에 있는데 CLI에 없는 명령");
+    for (const n of ["images", "backup", "site", "deploy", "push", "summary"]) assert.ok(names.includes(n), `${n} 명령이 문서에 없다`);
+  });
+  test("실행 순서 표가 이미지 채우기 → 백업 → 사이트 빌드 → 배포 → push → 요약 순서다", () => {
+    const rows = SKILL.split("\n").filter((l) => /^\| \d+ \|/.test(l));
+    const stepOf = (cmd: string) => {
+      const row = rows.find((r) => r.includes(`node src/cli.ts ${cmd} `) || r.includes(`\`${cmd}\``));
+      assert.ok(row, `순서 표에 ${cmd}가 없다`);
+      return Number(/^\| (\d+) \|/.exec(row)![1]);
+    };
+    const steps = ["images", "backup", "site", "deploy", "push", "summary"].map(stepOf);
+    assert.deepEqual(steps, [...steps].sort((a, b) => a - b));
+    assert.equal(steps.at(-1), Math.max(...rows.map((r) => Number(/^\| (\d+) \|/.exec(r)![1]))), "요약이 마지막 단계다");
+    assert.ok(stepOf("merge-apply") < stepOf("images"), "이미지 채우기는 합치기 뒤, 백업 전이다");
+  });
+  test("실패해도 계속하고, 시험 모드는 빌드만 하며, Claude가 git·vercel을 직접 치지 않는다고 적혀 있다", () => {
+    assert.match(SKILL, /Claude가 직접 실행하는 git·vercel 명령은 없다/);
+    assert.match(SKILL, /앞 명령이 실패해도\(종료 코드 1\) 멈추지 않고 다음 명령과 19단계로 넘어간다/);
+    assert.match(SKILL, /시험 모드와 데이터 폴더 지정 실행은 빌드만 한다/);
+    assert.match(SKILL, /빌드가 실패했으면 배포하지 않는다/);
   });
 });

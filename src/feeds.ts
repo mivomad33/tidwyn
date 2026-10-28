@@ -23,6 +23,8 @@ export interface Candidate {
   /** 링크가 구글 뉴스 같은 중간 주소인지. 그렇다면 원문 주소를 웹 검색으로 찾아야 한다 */
   redirectLink: boolean;
   feed: string;
+  /** 공식 RSS 항목의 이미지 주소(미디어 태그, 3단계 P3). 공식 피드에서만 넣는다 */
+  imageUrl?: string;
 }
 
 export interface FeedFailure {
@@ -84,7 +86,13 @@ export function feedSpecs(date: string): FeedSpec[] {
     specs.push({ group: g.group, url: googleNewsUrl(g.domain, date, addDays(date, 2), g.korean), google: true });
     for (const t of g.topics) specs.push({ group: g.group, url: googleNewsUrl(g.domain, addDays(date, -1), addDays(date, 2), g.korean, t), google: true });
   }
-  for (const f of YONHAP_FEEDS) specs.push({ group: "연합뉴스 RSS", url: `https://www.yna.co.kr/rss/${f}.xml`, google: false, outlet: "연합뉴스" });
+  specs.push(...officialFeedSpecs());
+  return specs;
+}
+
+/** 직접 받는 공식 RSS(연합뉴스, BBC). 날짜와 관계없다. 지난 날짜 이미지 채우기(3단계 4.4-2)도 이 목록을 쓴다 */
+export function officialFeedSpecs(): FeedSpec[] {
+  const specs: FeedSpec[] = YONHAP_FEEDS.map((f) => ({ group: "연합뉴스 RSS", url: `https://www.yna.co.kr/rss/${f}.xml`, google: false, outlet: "연합뉴스" }));
   specs.push({ group: "BBC RSS", url: BBC_WORLD, google: false, outlet: "BBC" });
   return specs;
 }
@@ -139,6 +147,51 @@ export interface RawItem {
   pubDate: string;
   description?: string;
   source?: string;
+  /** 미디어 태그의 이미지 주소(http/https만, 구글 뉴스 주소 제외) */
+  imageUrl?: string;
+}
+
+function attr(tagText: string, name: string): string | undefined {
+  const m = new RegExp(`\\s${name}\\s*=\\s*(?:"([^"]*)"|'([^']*)')`, "i").exec(tagText);
+  const v = m ? (m[1] ?? m[2]) : undefined;
+  return v === undefined ? undefined : decodeXmlText(v).trim();
+}
+
+function usableImageUrl(v: string | undefined): string | undefined {
+  if (v === undefined) return undefined;
+  try {
+    const u = new URL(v);
+    if (u.protocol !== "http:" && u.protocol !== "https:") return undefined;
+    const host = u.hostname.toLowerCase();
+    if (host === "news.google.com" || host.endsWith(".news.google.com")) return undefined;
+    return v;
+  } catch {
+    return undefined;
+  }
+}
+
+/**
+ * 항목의 이미지 주소. 연합뉴스 `media:content url=`, BBC `media:thumbnail url=`, 이미지 형식의 `enclosure`를 이 순서로 본다.
+ * `media:content`는 형식이 이미지가 아니라고 적혀 있으면(동영상 등) 건너뛴다.
+ */
+export function itemImage(item: string): string | undefined {
+  for (const m of item.matchAll(/<media:content\b[^>]*>/gi)) {
+    const type = attr(m[0], "type");
+    const medium = attr(m[0], "medium");
+    if ((type !== undefined && !type.toLowerCase().startsWith("image/")) || (medium !== undefined && medium.toLowerCase() !== "image")) continue;
+    const url = usableImageUrl(attr(m[0], "url"));
+    if (url) return url;
+  }
+  for (const m of item.matchAll(/<media:thumbnail\b[^>]*>/gi)) {
+    const url = usableImageUrl(attr(m[0], "url"));
+    if (url) return url;
+  }
+  for (const m of item.matchAll(/<enclosure\b[^>]*>/gi)) {
+    if (!(attr(m[0], "type") ?? "").toLowerCase().startsWith("image/")) continue;
+    const url = usableImageUrl(attr(m[0], "url"));
+    if (url) return url;
+  }
+  return undefined;
 }
 
 /** RSS 2.0 항목을 뽑는다. RSS가 아니면 예외 */
@@ -156,6 +209,8 @@ export function parseRss(xml: string): RawItem[] {
     if (description) item.description = stripTags(decodeXmlText(description));
     const source = tag(body, "source");
     if (source) item.source = stripTags(source);
+    const image = itemImage(body);
+    if (image) item.imageUrl = image;
     items.push(item);
   }
   return items;
@@ -174,6 +229,8 @@ function toCandidate(spec: FeedSpec, item: RawItem, published: Date): Candidate 
   const c: Candidate = { outlet: split.outlet, title: split.title, publishedAt: kstIso(published), link: item.link, redirectLink: spec.google, feed: spec.group };
   // 구글 뉴스의 설명은 제목과 매체명을 되풀이할 뿐이라 요약으로 쓰지 않는다
   if (!spec.google && item.description && item.description !== item.title) c.summary = item.description;
+  // 구글 뉴스에는 이미지가 없고, 있어도 쓰지 않는다(P3)
+  if (!spec.google && item.imageUrl) c.imageUrl = item.imageUrl;
   return c;
 }
 

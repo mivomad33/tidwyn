@@ -7,16 +7,28 @@
   },
   "packageManager": "pnpm@12.14.0",
   "scripts": {
-    "typecheck": "tsc",
+    "typecheck": "tsc && tsc -p site",
     "lint": "eslint .",
     "test": "node --test \"test/**/*.test.ts\"",
-    "verify": "pnpm typecheck && pnpm lint && pnpm test"
+    "verify": "pnpm typecheck && pnpm lint && pnpm test",
+    "site:build": "node site/build.ts",
+    "site:dev": "node site/dev/fixtures.ts --out .test-data/site-dev && node site/build.ts --data .test-data/site-dev --out .test-data/site-dev-out && node site/dev/serve.ts .test-data/site-dev-out",
+    "site:preview": "node site/dev/serve.ts"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@types/node": "^24.19.2",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vercel/analytics": "2.0.1",
+    "@vitejs/plugin-react": "6.1.2",
     "eslint": "^10.13.0",
+    "pagefind": "1.5.2",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
     "typescript": "~6.0.3",
-    "typescript-eslint": "^8.72.1"
+    "typescript-eslint": "^8.72.1",
+    "vercel": "65.5.0",
+    "vite": "8.3.5"
   }
 }

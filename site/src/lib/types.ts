@@ -1,0 +1,24 @@
+// 사이트 데이터 형식은 src/siteTypes.ts가 정한다. 화면 코드는 형식만 가져온다(값은 가져오지 않는다).
+export type {
+  Continues,
+  DayList,
+  IssueChunk,
+  IssueDetail,
+  IssueListItem,
+  IssueRef,
+  ListSection,
+  ListStory,
+  MonthDetail,
+  MonthList,
+  SearchRecord,
+  SiteDates,
+  SiteIssueList,
+  SiteSource,
+  StoryDetail,
+} from "../../../src/siteTypes.ts";
+export type { Major, SectionName } from "../../../src/categories.ts";
+
+export interface SourceLike {
+  primary?: boolean;
+  imageUrl?: string;
+}

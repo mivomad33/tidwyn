@@ -9,3 +9,6 @@
 ## 결정
 
 - 2026-10-28: Claude Code의 웹 페이지 읽기 도구(WebFetch)가 Reuters, AP, 연합뉴스, BBC 페이지를 읽지 못하는 문제는 1.5단계에서 이렇게 정했다: `feeds` 명령이 RSS 후보 목록(공식 RSS + 구글 뉴스 RSS)을 만들고, Claude는 그 제목·요약·발행 시각을 근거로 쓰며 원문 주소는 웹 검색으로 찾는다. 막힌 매체 페이지는 curl 등으로 읽지 않는다(1.5단계 명세서 R1·R4). 구글 뉴스 robots.txt가 AI 봇을 막는 것은 알고 감수한 결정이다(사용자 결정).
+- 2026-10-28: 3단계 호스팅은 GitHub Pages 대신 Vercel(`tidwyn.vercel.app`)로 정했다(사용자 결정, 3단계 명세서 P1, plan D2 바뀜). 무료 플랜의 CLI 업로드 한도(총 100MB, 파일 15,000개)가 GitHub Pages(1GB)보다 작다는 것을 알고 고른 것이다. 한도에 가까워지면 Pro로 올리거나 옮긴다.
+- 2026-10-29: Vercel 화면 작업(Claude in Chrome)은 Vercel에 `mivomad33`(팀 `mivomad33`, Hobby)으로 로그인된 Chrome 프로필로 한다(사용자 결정). Vercel CLI의 사용자 이름은 `mivomad33-8917`이고 팀(scope)은 `mivomad33`이다(같은 계정). 연결된 다른 Chrome 프로필은 다른 Vercel 팀(`inhan-s-projects`)으로 로그인되어 있어 쓰지 않는다. 화면의 팀 이름이 `mivomad33`인지 확인하고 작업한다.
+- 2026-10-29: 원본 저장소(`mivomad33/tidwyn`)는 3단계 구현 중에는 비공개로 push만 하고, 3단계 머지 뒤 머지한 세션이 공개 전 점검을 통과시킨 뒤 공개로 바꾼다(사용자 결정, 3단계 명세서 P14). README·라이선스 없이 공개되는 기간을 없애기 위해서다.

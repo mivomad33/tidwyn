@@ -18,5 +18,8 @@
   같은 것이 곳곳에서 조금씩 다르게 구현되면 일관성이 깨지고, 고칠 때 여러 곳을 찾아 고쳐야 하기 때문이다.
 - 파일을 수정하는 작업을 하면 작업을 마친 뒤 바로 작업용 브랜치에 커밋한다.
 - 사용자 검토를 통과하면 main에 squash merge하고, 해당 브랜치는 삭제한다. 머지 전에 사용자에게 확인한다.
+- 머지한 뒤에는 공개 전 점검(`node src/cli.ts precheck`)을 돌리고, 통과하면 main을 원본 저장소에 push한다(`git push origin main`). 점검이 실패하면 push하지 않고 사용자에게 알린다. 작업 브랜치는 push하지 않는다.
+  - 3단계(공개 사이트) 머지 때만: push 뒤 저장소를 공개로 바꾸고(`gh repo edit mivomad33/tidwyn --visibility public --accept-visibility-change-consequences`), 로그인 없이 열리는지(`curl`로 200) 본다. 사용자의 머지 승인을 공개 승인으로 본다.
+  - 공개로 바꾼 뒤에는 main과 `data`를 강제 push하지 않는다. 절차는 `docs/operations.md`의 "머지 뒤 할 일"에 있다.
 
 @docs/memory.md

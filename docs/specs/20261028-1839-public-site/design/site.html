@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tidwyn 확정 시안</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  body { margin: 0; background: #e9e9ec; font-family: Pretendard, system-ui, sans-serif; color: #222; }
+  h1 { font-size: 20px; margin: 24px 24px 4px; }
+  p.note { margin: 0 24px 16px; color: #555; font-size: 14px; }
+  .option { margin: 0 24px 40px; }
+  .option h2 { font-size: 17px; margin: 0 0 4px; }
+  .option p { margin: 0 0 12px; font-size: 13px; color: #555; }
+  .phones { display: flex; gap: 20px; flex-wrap: wrap; }
+  .phone { width: 375px; height: 760px; border-radius: 28px; overflow: hidden; position: relative; box-shadow: 0 6px 24px rgba(0,0,0,.15); background: var(--bg); color: var(--fg); }
+  .screen { position: absolute; inset: 0; overflow: hidden; display: flex; flex-direction: column; }
+  .caption { text-align: center; font-size: 12px; color: #666; margin-top: 6px; }
+  .bar { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px 10px; border-bottom: 1px solid var(--line); background: var(--bg); }
+  .brand { font-weight: 800; letter-spacing: -.3px; font-size: 19px; }
+  .datebtn { font-size: 13px; color: var(--muted); display: flex; gap: 10px; align-items: center; }
+  .icons { display: flex; gap: 14px; color: var(--muted); font-size: 16px; }
+  .body { flex: 1; overflow: hidden; }
+  .headline { padding: 14px 18px; font-size: 14px; line-height: 1.55; color: var(--muted); border-bottom: 1px solid var(--line); }
+  .kw { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+  .kw span { font-size: 12px; padding: 3px 8px; border-radius: 999px; background: var(--chip); color: var(--fg); }
+  .chips { display: flex; gap: 6px; padding: 10px 18px; overflow: hidden; border-bottom: 1px solid var(--line); }
+  .chips span { font-size: 12px; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--line); white-space: nowrap; color: var(--muted); }
+  .chips span.on { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+  .item { padding: 14px 18px; border-bottom: 1px solid var(--line); display: flex; gap: 12px; }
+  .item .txt { flex: 1; }
+  .cat { font-size: 11.5px; font-weight: 600; letter-spacing: .2px; margin-bottom: 4px; }
+  .title { font-size: 17px; font-weight: 700; line-height: 1.4; letter-spacing: -.2px; }
+  .cont { margin-top: 6px; font-size: 12px; color: var(--muted); display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+  .badge { font-size: 11px; padding: 2px 7px; border-radius: 4px; background: var(--accentbg); color: var(--accent); font-weight: 600; }
+  .thumb { display: none; width: 76px; height: 76px; border-radius: 10px; background: linear-gradient(135deg,#c9d3e0,#a8b6c9); flex: none; }
+  .tabs { display: flex; justify-content: space-around; border-top: 1px solid var(--line); padding: 12px 0 22px; background: var(--bg); font-size: 15px; color: var(--muted); }
+  .tabs .on { color: var(--fg); font-weight: 700; border-bottom: 2px solid var(--accent); padding-bottom: 3px; }
+  /* 펼친 카드 */
+  .detail { padding: 16px 18px; }
+  .detail .title { font-size: 21px; }
+  .story { margin: 12px 0; padding: 12px; border-radius: 10px; background: var(--chip); font-size: 13px; line-height: 1.5; }
+  .story b { display: block; font-size: 12px; color: var(--accent); margin-bottom: 4px; }
+  .story ol { margin: 4px 0 0; padding-left: 0; list-style: none; }
+  .story li { padding: 3px 0; color: var(--muted); }
+  .story li em { font-style: normal; color: var(--fg); margin-right: 6px; font-variant-numeric: tabular-nums; }
+  .sum { font-size: 15.5px; line-height: 1.65; }
+  .h { font-size: 12.5px; font-weight: 700; color: var(--muted); margin: 14px 0 4px; }
+  .p { font-size: 14px; line-height: 1.65; }
+  .src { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+  .src span { font-size: 12px; padding: 4px 8px; border: 1px solid var(--line); border-radius: 6px; }
+  .hero { display: none; height: 170px; border-radius: 12px; background: linear-gradient(135deg,#c9d3e0,#a8b6c9); margin: 10px 0 4px; }
+  /* 이슈 페이지 */
+  .iss { padding: 16px 18px; }
+  .iss .name { font-size: 22px; font-weight: 800; letter-spacing: -.3px; line-height: 1.3; }
+  .iss .meta { font-size: 12px; color: var(--muted); margin: 6px 0 12px; }
+  .iss .summary { font-size: 14px; line-height: 1.7; padding: 12px 14px; border-left: 3px solid var(--accent); background: var(--chip); border-radius: 0 8px 8px 0; }
+  .tl { margin-top: 16px; position: relative; padding-left: 18px; }
+  .tl:before { content: ""; position: absolute; left: 4px; top: 6px; bottom: 6px; width: 2px; background: var(--line); }
+  .tl div { position: relative; padding: 0 0 14px; }
+  .tl div:before { content: ""; position: absolute; left: -18px; top: 6px; width: 10px; height: 10px; border-radius: 50%; background: var(--bg); border: 2px solid var(--accent); }
+  .tl small { display: block; font-size: 12px; color: var(--muted); }
+  .tl span { font-size: 14.5px; font-weight: 600; line-height: 1.45; }
+  .rel { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
+  .rel span { font-size: 13px; padding: 5px 10px; border-radius: 999px; border: 1px solid var(--line); }
+
+  /* A: 미니멀 목록 (Kagi에 가까움) */
+  .A { --bg: #fff; --fg: #1d1d1f; --muted: #6b6b70; --line: #ececee; --chip: #f5f5f7; --accent: #c2410c; --accentbg: #fff1e8; }
+  .A .hero { display: block; height: 150px; }
+  .Ad { --bg: #161618; --fg: #ececee; --muted: #9a9aa0; --line: #2a2a2e; --chip: #222226; --accent: #fb923c; --accentbg: #3a2414; }
+  /* B: 카드형 */
+  .B { --bg: #f3f4f6; --fg: #111827; --muted: #6b7280; --line: #e5e7eb; --chip: #fff; --accent: #2563eb; --accentbg: #e8efff; }
+  .B .item { background: #fff; margin: 10px 12px 0; border-radius: 14px; border: none; box-shadow: 0 1px 2px rgba(0,0,0,.05); }
+  .B .thumb, .B .hero { display: block; }
+  .B .headline { background: #fff; }
+  .B .detail, .B .iss { background: #fff; margin: 10px 12px; border-radius: 14px; }
+  .B .tabs { position: static; }
+  .B .chips span.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+  /* C: 신문형 */
+  .C { --bg: #faf7f0; --fg: #1f1b16; --muted: #6f665a; --line: #e4dccd; --chip: #f1ebdf; --accent: #8a1c1c; --accentbg: #f3e1dc; }
+  .C .title, .C .brand, .C .iss .name { font-family: "Noto Serif KR", serif; font-weight: 700; }
+  .C .bar { border-bottom: 2px solid var(--fg); }
+  .C .tabs { border-top: none; border-bottom: 1px solid var(--line); padding: 8px 0 10px; }
+  .C .cat { text-transform: none; color: var(--accent) !important; }
+  .C .rank { display: inline-block; font-family: "Noto Serif KR", serif; color: var(--muted); margin-right: 6px; }
+  .rank { display: none; }
+
+  @media (prefers-color-scheme: dark) { body { background: #1b1b1d; color: #ddd; } p.note, .option p, .caption { color: #aaa; } }
+</style>
+</head>
+<body>
+<h1>Tidwyn 확정 시안: A. 미니멀 목록 (폰 375px)</h1>
+<p class="note">2026-10-28 사용자가 A를 골랐다. 내용은 지어낸 예시다. 다크 모드는 기기 설정을 따르고, 아래 줄은 그 예시다. 화면은 왼쪽부터 날짜별 브리프 목록, 뉴스를 눌러 펼친 카드, 이슈 페이지입니다.</p>
+<div id="root"></div>
+<script>
+const items = [
+  { cat: "경제 · 거시·정책", color: "#c2410c", title: "가짜시 3분기 성장률 1.2%, 반도체 수출이 끌어올렸다", cont: "이어지는 이야기: 가짜시 경기 흐름", yesterday: true },
+  { cat: "정치 · 국회·정당", color: "#7c3aed", title: "가짜당, 예산안 처리 시한 앞두고 장외 집회 예고", cont: "새 이슈" },
+  { cat: "사회 · 사건·사고", color: "#0f766e", title: "가짜구 주상복합 화재로 주민 200명 대피", cont: "이어지는 이야기: 가짜구 화재 안전 논란" },
+  { cat: "국제 · 중동·안보", color: "#b91c1c", title: "가짜국 휴전 협상 결렬, 국경 지역 포격 재개", cont: "이어지는 이야기: 가짜국 분쟁", yesterday: true },
+];
+const tl = [
+  ["10-27", "가짜시 3분기 성장률 1.2%, 반도체 수출이 끌어올렸다"],
+  ["10-21", "가짜 중앙은행, 기준금리 동결하고 성장 전망 상향 시사"],
+  ["10-14", "가짜시 9월 수출 12% 늘어 석 달 연속 증가"],
+  ["10-02", "가짜시 2분기 성장률 0.4%로 확정, 소비는 부진"],
+];
+const opts = [
+  ["A", "A. 미니멀 목록 (라이트)", "흰 배경과 제목 목록. 카테고리를 색 글자로 보이고, 섹션은 아래 탭으로 바꾼다. 이미지는 펼친 카드에서만 보인다(있을 때만)."],
+  ["A Ad", "A. 미니멀 목록 (다크)", "기기가 다크 모드일 때."],
+];
+const list = (o) => `
+  <div class="bar"><span class="brand">Tidwyn</span><span class="datebtn">‹ 10월 27일 (화) ›</span><span class="icons">⌕ ☰</span></div>
+  
+  <div class="body">
+    <div class="headline">한국은 반도체 덕에 깜짝 성장을 했고, 세계는 가짜국 휴전 협상 결렬에 주목했다.
+      <div class="kw"><span>깜짝 성장</span><span>예산안</span><span>휴전 결렬</span></div></div>
+    <div class="chips"><span class="on">전체</span><span>정치</span><span>경제</span><span>사회</span><span>국제</span><span>IT·AI</span></div>
+    ${items.map((it, i) => `<div class="item"><div class="txt"><div class="cat" style="color:${it.color}"><span class="rank">${i + 1}</span>${it.cat}</div>
+      <div class="title">${it.title}</div>
+      <div class="cont">${it.yesterday ? '<span class="badge">어제에 이어</span>' : ""}${it.cont}</div></div><div class="thumb"></div></div>`).join("")}
+  </div>
+  ${tabs()}`;
+const tabs = () => `<div class="tabs"><span class="on">한국</span><span>세계</span><span>IT·AI</span></div>`;
+const detail = () => `
+  <div class="bar"><span class="datebtn">‹ 10월 27일</span><span class="icons">⌕ ☰</span></div>
+  <div class="body"><div class="detail">
+    <div class="cat" style="color:#c2410c">경제 · 거시·정책</div>
+    <div class="title">가짜시 3분기 성장률 1.2%, 반도체 수출이 끌어올렸다</div>
+    <div class="hero"></div>
+    <div class="story"><b>이어지는 이야기 · 가짜시 경기 흐름 ›</b>
+      <ol><li><em>10-21</em>가짜 중앙은행, 기준금리 동결하고 성장 전망 상향 시사</li><li><em>10-14</em>가짜시 9월 수출 12% 늘어 석 달 연속 증가</li><li><em>10-02</em>가짜시 2분기 성장률 0.4%로 확정</li></ol></div>
+    <div class="sum">가짜시 3분기 실질 성장률이 전 분기보다 1.2% 늘어 전망치 0.5%를 크게 웃돌았다.</div>
+    <div class="h">왜 중요한가</div><div class="p">연간 성장률 전망이 올라갈 가능성이 커졌다. 다만 성장이 한 산업에 크게 기대고 있다.</div>
+    <div class="h">핵심</div><div class="p">· 수출이 3.1% 늘었다<br>· 민간소비는 0.3% 줄었다</div>
+    <div class="h">출처</div><div class="src"><span>가짜일보 ↗</span><span>가짜경제 ↗</span><span>가짜방송 ↗</span></div>
+  </div></div>`;
+const issue = () => `
+  <div class="bar"><span class="datebtn">‹ 이슈</span><span class="icons">⌕ ☰</span></div>
+  <div class="body"><div class="iss">
+    <div class="cat" style="color:#c2410c">경제 · 거시·정책 · 진행 중</div>
+    <div class="name">가짜시 경기 흐름</div>
+    <div class="meta">2026-10-02 시작 · 최근 10-27 · 전개 4건</div>
+    <div class="summary">가짜시 경기가 반도체 수출 덕에 회복세다. 3분기 성장률이 전망을 크게 넘었지만 소비는 약하다. 다음 달 중앙은행의 전망 수정과 4분기 수출이 다음에 볼 것이다.</div>
+    <div class="h">타임라인</div>
+    <div class="tl">${tl.map(([d, t]) => `<div><small>${d}</small><span>${t}</span></div>`).join("")}</div>
+    <div class="h">관련 이슈</div><div class="rel"><span>가짜 중앙은행 금리</span><span>반도체 수출 경쟁</span></div>
+  </div></div>`;
+document.getElementById("root").innerHTML = opts.map(([k, name, desc]) => `
+  <section class="option"><h2>${name}</h2><p>${desc}</p><div class="phones">
+    ${[list(k), detail(), issue()].map((html, i) => `<div><div class="phone ${k}"><div class="screen">${html}</div></div><div class="caption">${["날짜별 브리프", "펼친 뉴스 카드", "이슈 페이지"][i]}</div></div>`).join("")}
+  </div></section>`).join("");
+</script>
+</body>
+</html>

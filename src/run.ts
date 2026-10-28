@@ -9,7 +9,7 @@ export const RUNS_DIR = "runs";
 export const WORK_DIR = "work";
 
 export type DateResult =
-  | { status: "saved"; markdownPath: string | null; markdownError?: string }
+  | { status: "saved"; markdownPath: string | null; markdownError?: string; images?: number }
   | { status: "skipped"; reason: string }
   | { status: "failed"; reason: string; violations?: Violation[] };
 
@@ -34,6 +34,30 @@ export type MergeStepResult =
   | { status: "merged"; merges: { id: number; survivor: number; survivorName: string; absorbed: number; absorbedName: string; reason: string }[] }
   | { status: "failed"; reason: string; violations?: Violation[] };
 
+/** 지난 날짜 이미지 채우기 결과(3단계 4.4-2) */
+export type ImagesResult = { status: "done"; filled: number; failures: FeedFailure[] } | { status: "failed"; reason: string };
+
+/** 사이트 빌드 결과(3단계 4.1, 4.5) */
+export type SiteResult =
+  | { status: "built"; outDir: string; dates: number; issues: number; files: number; bytes: number }
+  | { status: "failed"; outDir: string; reason: string; findings?: string[] };
+
+/** 배포 뒤 점검(3단계 4.6-3) */
+export type PostDeployCheck = { status: "passed"; latestDate: string | null } | { status: "failed"; reason: string };
+
+/** 배포 결과(3단계 4.6) */
+export type DeployResult =
+  | { status: "deployed"; url: string; deploymentUrl: string | null; check: PostDeployCheck }
+  | { status: "skipped"; reason: string }
+  | { status: "failed"; reason: string; findings?: string[] };
+
+/** data 브랜치 push 결과(3단계 4.5-1). findings는 값을 가린 공개 전 점검 결과 */
+export type PushResult =
+  | { status: "pushed"; commits: number }
+  | { status: "upToDate" }
+  | { status: "skipped"; reason: string }
+  | { status: "failed"; reason: string; findings?: string[] };
+
 export interface RunState {
   startedAt: string;
   mode: "real" | "test" | "custom";
@@ -50,6 +74,12 @@ export interface RunState {
   linkDates?: string[];
   links?: Record<string, LinkResult>;
   merge?: MergeStepResult;
+  /** 지난 날짜 이미지 채우기(3단계). 1·1.5·2단계 실행 기록에는 없다 */
+  images?: ImagesResult;
+  /** 사이트 빌드·배포·push(3단계). start가 null로 두고 각 명령이 채운다. 앞 단계 실행 기록에는 없다 */
+  site?: SiteResult | null;
+  deploy?: DeployResult | null;
+  push?: PushResult | null;
 }
 
 export function workFile(dataDir: string, date: string): string {

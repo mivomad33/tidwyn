@@ -1,0 +1,12 @@
+allowBuilds:
+  esbuild: false
+minimumReleaseAgeExclude:
+  - '@vercel/cli-support@65.5.0'
+  - '@vercel/container@23.0.1'
+  - '@vercel/vc-native-darwin-arm64@65.5.0'
+  - '@vercel/vc-native-darwin-x64@65.5.0'
+  - '@vercel/vc-native-linux-arm64-musl@65.5.0'
+  - '@vercel/vc-native-linux-arm64@65.5.0'
+  - '@vercel/vc-native-linux-x64-musl@65.5.0'
+  - '@vercel/vc-native-linux-x64@65.5.0'
+  - vercel@65.5.0

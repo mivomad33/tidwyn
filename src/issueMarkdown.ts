@@ -40,7 +40,7 @@ export function briefIssues(db: DatabaseSync, date: string): BriefIssues {
     const previous = list
       .slice(Math.max(0, idx - PREVIOUS_LIMIT), Math.max(0, idx))
       .reverse()
-      .map((d) => ({ date: d.date, title: d.title }));
+      .map((d) => ({ date: d.date, key: d.key, title: d.title }));
     out.set(s.key, {
       primary: named(primary.issueId),
       extras: links.filter((l) => !l.primary).map((l) => named(l.issueId)),

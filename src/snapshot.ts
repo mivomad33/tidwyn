@@ -6,11 +6,11 @@ import { kstStamp } from "./kst.ts";
 
 export const SNAPSHOT_DIR = "snapshots";
 export const SNAPSHOT_KEEP_DAYS = 14;
-const NAME_RE = /^tidwyn-(\d{4})(\d{2})(\d{2})-(\d{2})(\d{2})(\d{2})\.db$/;
+export const SNAPSHOT_NAME_RE = /^tidwyn-(\d{4})(\d{2})(\d{2})-(\d{2})(\d{2})(\d{2})\.db$/;
 
 /** 사본 파일 이름의 시각(KST로 적혀 있다) */
 function snapshotTime(name: string): number | null {
-  const m = NAME_RE.exec(name);
+  const m = SNAPSHOT_NAME_RE.exec(name);
   if (!m) return null;
   const [, y, mo, d, h, mi, s] = m;
   return Date.parse(`${y}-${mo}-${d}T${h}:${mi}:${s}+09:00`);

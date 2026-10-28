@@ -1,10 +1,13 @@
 import { spawnSync } from "node:child_process";
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import { parseArgs as parseNodeArgs } from "node:util";
 import { BACKUP_DIR, backupMessage, commitBackup, exportBackup, readBackupDir, readBackupRef, restoreBackup } from "./backup.ts";
 import { openDb, openExistingDb } from "./db.ts";
+import { gitTry } from "./git.ts";
 import { collectCandidates, describeFeedReport, feedSpecs, fetchText as realFetch, renderCandidatesMarkdown, type FetchText } from "./feeds.ts";
+import { attachImages, dropImages, fillImages, readCandidateImages } from "./images.ts";
 import { issueIndexPath, renderAll, writeBriefMarkdown } from "./issueMarkdown.ts";
 import { linkableDates, unlinkedCount, unlinkedStories } from "./issues.ts";
 import { kstDate, kstIso, kstStamp } from "./kst.ts";
@@ -13,6 +16,25 @@ import { markdownPath, writeMarkdown } from "./markdown.ts";
 import { applyMerges, checkMergeFile, describeMerges, markMergeChecked, mergeCandidates, mergeDue, renderMergeCandidates, unmerge } from "./merge.ts";
 import { priorityRatio } from "./outlets.ts";
 import { requireRepo } from "./paths.ts";
+import { commitsOfRefs, describeFindings, homeValue, localBranches, precheck } from "./precheck.ts";
+import {
+  DEFAULT_CHECK_RETRY,
+  WARN_BYTES,
+  WARN_FILES,
+  buildSite,
+  cliVercel,
+  deployOutput,
+  fetchGet,
+  formatMb,
+  gitRemote,
+  nodeSiteBuilder,
+  pushDataBranch,
+  type CheckRetry,
+  type HttpGet,
+  type RemoteGit,
+  type SiteBuilder,
+  type VercelRunner,
+} from "./publish.ts";
 import {
   RUNS_DIR,
   candidatesFile,
@@ -23,9 +45,13 @@ import {
   workFile,
   writeRun,
   type BackupResult,
+  type DeployResult,
+  type ImagesResult,
   type LinkResult,
   type MergeStepResult,
+  type PushResult,
   type RunState,
+  type SiteResult,
 } from "./run.ts";
 import { DB_FILE, ENV_DATA_DIR, checkRunCondition, describeSettings, parseArgs, resolveSettings, type Settings } from "./settings.ts";
 import { pruneSnapshots, takeSnapshot } from "./snapshot.ts";
@@ -52,6 +78,16 @@ export interface Context {
   fetchText?: FetchText;
   /** 구글 뉴스 요청 사이 간격(밀리초). 없으면 1초 */
   feedGapMs?: number;
+  /** 사이트 빌더(3단계 4.1). 없으면 `node site/build.ts --data <입력> --out <결과물>` */
+  buildSite?: SiteBuilder;
+  /** vercel CLI 실행(3단계 4.6-1). 없으면 node_modules/.bin/vercel */
+  runVercel?: VercelRunner;
+  /** 배포 뒤 점검의 HTTP GET(3단계 4.6-3). 없으면 fetch */
+  httpGet?: HttpGet;
+  /** 배포 뒤 점검의 재시도. 없으면 6번, 5초 간격 */
+  checkRetry?: CheckRetry;
+  /** 원격 저장소 작업(3단계 4.5-1의 push). 없으면 git */
+  remote?: RemoteGit;
 }
 
 /** 의존성 잠금 파일대로, 잠금 파일을 바꾸지 않고 대화형 확인 없이 설치한다 */
@@ -74,7 +110,13 @@ const USAGE = `명령:
   validate --run <파일> --date <날짜>   작업 파일(work/<날짜>.json) 검사
   save --run <파일> --date <날짜>       검사 → 저장 → 마크다운
   fail --run <파일> --date <날짜> --reason <이유>   조사 실패 기록
+  images --run <파일>            지난 날짜 이미지 채우기(공식 RSS를 다시 받아 이미지 주소가 없는 출처를 채운다)
   backup [--run <파일>]          월별 JSON 내보내기와 data 브랜치 커밋
+  site --run <파일> | --data-dir <폴더>   사이트 빌드(<데이터 폴더>/site/)와 결과물 검사
+  deploy --run <파일>            실제 실행이면 결과물 검사 → Vercel 운영 배포 → 배포 뒤 점검(시험·지정 모드는 건너뜀)
+  deploy --dir <결과물> --db <DB>   손으로 하는 배포(실행 기록 없이, 모드와 상관없이 배포한다)
+  push --run <파일>              실제 실행이면 원격보다 앞선 data 커밋에 공개 전 점검 → git push origin data
+  precheck [--refs main,data]    공개 전 점검(기본: 모든 로컬 브랜치의 이력 + 추적하는 지금 파일)
   summary --run <파일>           실행 끝 출력
   render --date <날짜> | --all [--run <파일>]   DB에서 마크다운 다시 만들기(--all: 모든 브리프와 이슈 마크다운)
   restore [--repo <저장소> | --from <폴더>] [--out <DB 경로>] [--force]   백업에서 DB 복원
@@ -165,6 +207,9 @@ function cmdStart(argv: string[], ctx: Context): number {
     backup: null,
     linkDates,
     links: {},
+    site: null,
+    deploy: null,
+    push: null,
   };
   writeRun(runFile, state);
   ctx.out(
@@ -248,6 +293,9 @@ function cmdSave(argv: string[], ctx: Context): number {
     ctx.out(`저장하지 않음(${date}), 검사 위반 ${result.violations.length}개:\n${formatViolations(result.violations)}`);
     return EXIT.failed;
   }
+  // 작업 파일의 이미지 주소는 쓰지 않고, 그 날짜 후보 목록의 공식 RSS 항목과 원문 주소가 같은 출처에만 스크립트가 넣는다(3단계 4.4-1)
+  dropImages(result.brief);
+  const images = attachImages(result.brief, readCandidateImages(candidatesFile(state.dataDir, date)));
   const now = ctx.now();
   const db = openExistingDb(state.dbPath);
   try {
@@ -268,12 +316,12 @@ function cmdSave(argv: string[], ctx: Context): number {
     try {
       if (stored === null) throw new Error("저장한 브리프를 다시 읽지 못했다");
       const md = writeMarkdown(state.dataDir, stored);
-      updateRun(runFile, (s) => (s.results[date] = { status: "saved", markdownPath: md }));
-      ctx.out(`저장함(${date}). 마크다운: ${md}`);
+      updateRun(runFile, (s) => (s.results[date] = { status: "saved", markdownPath: md, images }));
+      ctx.out(`저장함(${date}). 원문 이미지: 출처 ${images}개. 마크다운: ${md}`);
     } catch (e) {
       const markdownError = (e as Error).message;
-      updateRun(runFile, (s) => (s.results[date] = { status: "saved", markdownPath: null, markdownError }));
-      ctx.out(`저장함(${date}). 마크다운 만들기 실패: ${markdownError}`);
+      updateRun(runFile, (s) => (s.results[date] = { status: "saved", markdownPath: null, markdownError, images }));
+      ctx.out(`저장함(${date}). 원문 이미지: 출처 ${images}개. 마크다운 만들기 실패: ${markdownError}`);
     }
     return EXIT.ok;
   } finally {
@@ -387,7 +435,9 @@ function cmdSummary(argv: string[], ctx: Context): number {
     for (const x of f.failures) lines.push(`  - ${x.feed}: ${x.reason}`);
   }
   lines.push(...issueSummaryLines(s));
+  lines.push(...imageSummaryLines(s, saved));
   lines.push(`- 백업: ${describeBackup(s.backup)}`);
+  lines.push(...siteSummaryLines(s));
   const latest = saved.at(-1);
   const others = saved.slice(0, -1);
   if (others.length > 0) {
@@ -401,6 +451,26 @@ function cmdSummary(argv: string[], ctx: Context): number {
   }
   ctx.out(lines.join("\n"));
   return EXIT.ok;
+}
+
+/** 요약의 이미지 줄(3단계 4.5-4): 새 날짜에 넣은 이미지 수, 지난 날짜 이미지 채우기 결과. 기록이 없는 앞 단계 실행 기록에는 붙이지 않는다 */
+function imageSummaryLines(s: RunState, saved: string[]): string[] {
+  const lines: string[] = [];
+  for (const d of saved) {
+    const r = s.results[d];
+    if (r?.status === "saved" && r.images !== undefined) lines.push(`- ${d} 원문 이미지: 출처 ${r.images}개에 넣음`);
+  }
+  const im = s.images;
+  if (im === undefined) return lines;
+  if (im.status === "failed") lines.push(`- 지난 날짜 이미지 채우기: 실패(다음 실행이 다시 한다): ${im.reason}`);
+  else {
+    lines.push(`- 지난 날짜 이미지 채우기: 출처 ${im.filled}개 채움`);
+    if (im.failures.length > 0) {
+      lines.push("  - 받지 못한 피드(다음 실행이 다시 받는다):");
+      for (const f of im.failures) lines.push(`    - ${f.feed}: ${f.reason} (${f.url})`);
+    }
+  }
+  return lines;
 }
 
 /** 저장한 날짜마다 주요 뉴스 대표 출처의 우선 출처 비율(1.5단계 R6). 절반 미만이면 경고를 붙인다 */
@@ -799,6 +869,156 @@ function issueSummaryLines(s: RunState): string[] {
   return lines;
 }
 
+// ---- 사이트·배포·push(3단계) ----
+
+function homeOf(ctx: Context): string | null {
+  return homeValue(ctx.env.HOME ?? os.homedir());
+}
+
+function describeSite(r: SiteResult | null): string[] {
+  if (r === null) return ["실행하지 않았다"];
+  if (r.status === "failed") return [`실패(배포하지 않는다, 다음 실행이 다시 빌드한다): ${r.reason}`, ...(r.findings ?? []).map((f) => `  - ${f}`)];
+  const lines = [`브리프 날짜 ${r.dates}개, 이슈 ${r.issues}개, 결과물 ${formatMb(r.bytes)}, 파일 ${r.files}개`];
+  if (r.bytes > WARN_BYTES || r.files > WARN_FILES) {
+    lines.push(`  - 경고: Vercel 무료 한도(100MB, 파일 15,000개)에 가깝다(문턱 ${formatMb(WARN_BYTES)}, ${WARN_FILES.toLocaleString("en-US")}개). docs/operations.md의 한도 대응을 본다`);
+  }
+  return lines;
+}
+
+function describeDeploy(r: DeployResult | null): string[] {
+  if (r === null) return ["실행하지 않았다"];
+  if (r.status === "skipped") return [`건너뜀 (${r.reason})`];
+  if (r.status === "failed") return [`실패(다음 실행이 다시 배포한다): ${r.reason}`, ...(r.findings ?? []).map((f) => `  - ${f}`)];
+  const head = `${r.url}에 운영 배포함${r.deploymentUrl === null ? "" : ` (배포 주소 ${r.deploymentUrl})`}`;
+  if (r.check.status === "passed") return [`${head}, 배포 뒤 점검 통과(최근 날짜 ${r.check.latestDate ?? "없음"})`];
+  return [`${head}, 배포 뒤 점검 실패: ${r.check.reason} (자동으로 되돌리지 않았다. 다음 실행이 다시 배포한다)`];
+}
+
+function describePush(r: PushResult | null): string[] {
+  if (r === null) return ["실행하지 않았다"];
+  switch (r.status) {
+    case "pushed":
+      return [`커밋 ${r.commits}개를 origin에 push함`];
+    case "upToDate":
+      return ["원격과 같아 push할 것이 없다"];
+    case "skipped":
+      return [`건너뜀 (${r.reason})`];
+    case "failed":
+      return [`실패(다음 실행이 밀린 커밋을 다시 점검하고 push한다): ${r.reason}`, ...(r.findings ?? []).map((f) => `  - ${f}`)];
+  }
+}
+
+/** 로컬에서 결과물을 열어 보는 명령(SPA 대체 경로를 지원한다) */
+export function previewCommand(outDir: string): string {
+  return `pnpm site:preview ${JSON.stringify(outDir)}`;
+}
+
+/** 요약의 사이트 줄(3단계 4.5-4). 앞 단계 실행 기록(필드 없음)에는 붙이지 않는다 */
+function siteSummaryLines(s: RunState): string[] {
+  if (s.site === undefined && s.deploy === undefined && s.push === undefined) return [];
+  const block = (label: string, lines: string[]) => [`- ${label}: ${lines[0]}`, ...lines.slice(1)];
+  const lines = block("사이트 빌드", describeSite(s.site ?? null));
+  if (s.site && s.mode !== "real") {
+    lines.push(`  - 결과물: ${s.site.outDir}`);
+    if (s.site.status === "built") lines.push(`  - 로컬에서 보기: ${previewCommand(s.site.outDir)}`);
+  }
+  lines.push(...block("배포", describeDeploy(s.deploy ?? null)));
+  lines.push(...block("data 브랜치 push", describePush(s.push ?? null)));
+  return lines;
+}
+
+/** 사이트 빌드(4.1, 4.5). 실패해도 /brief는 다음 단계로 간다(종료 코드 1) */
+function cmdSite(argv: string[], ctx: Context): number {
+  const v = opts(argv, { run: { type: "string" }, "data-dir": { type: "string" } });
+  const runFile = typeof v.run === "string" ? v.run : undefined;
+  const dirArg = typeof v["data-dir"] === "string" ? v["data-dir"] : undefined;
+  if ((runFile === undefined) === (dirArg === undefined)) throw new UsageError("--run과 --data-dir 중 하나만 준다");
+  let dataDir: string;
+  let dbPath: string;
+  if (runFile !== undefined) {
+    const s = readRun(runFile);
+    dataDir = s.dataDir;
+    dbPath = s.dbPath;
+  } else {
+    dataDir = path.resolve(ctx.cwd, dirArg!);
+    dbPath = path.join(dataDir, DB_FILE);
+  }
+  const result = buildSite({ repoDir: requireRepo(ctx.cwd).toplevel, dataDir, dbPath, home: homeOf(ctx), builder: ctx.buildSite ?? nodeSiteBuilder });
+  if (runFile !== undefined) updateRun(runFile, (s) => (s.site = result));
+  const lines = describeSite(result);
+  lines[0] = `사이트 빌드: ${lines[0]}`;
+  lines.push(`- 결과물: ${result.outDir}`);
+  ctx.out(lines.join("\n"));
+  return result.status === "built" ? EXIT.ok : EXIT.failed;
+}
+
+/** 배포(4.6). --run은 실제 실행에서만 배포한다. --dir/--db는 손으로 하는 배포다(4.9-2) */
+async function cmdDeploy(argv: string[], ctx: Context): Promise<number> {
+  const v = opts(argv, { run: { type: "string" }, dir: { type: "string" }, db: { type: "string" } });
+  const deps = { repoDir: requireRepo(ctx.cwd).toplevel, home: homeOf(ctx), vercel: ctx.runVercel ?? cliVercel, httpGet: ctx.httpGet ?? fetchGet, retry: ctx.checkRetry ?? DEFAULT_CHECK_RETRY };
+  let result: DeployResult;
+  if (typeof v.run === "string") {
+    if (typeof v.dir === "string" || typeof v.db === "string") throw new UsageError("--run과 --dir/--db는 함께 쓸 수 없다");
+    const runFile = v.run;
+    const s = readRun(runFile);
+    if (s.mode !== "real") result = { status: "skipped", reason: "시험 모드·데이터 폴더 지정 실행은 배포하지 않는다" };
+    else if (s.site?.status !== "built") result = { status: "skipped", reason: s.site ? "사이트 빌드가 실패해 배포하지 않았다" : "사이트를 빌드하지 않아 배포하지 않았다" };
+    else result = await deployOutput({ ...deps, outDir: s.site.outDir, dbPath: s.dbPath });
+    updateRun(runFile, (st) => (st.deploy = result));
+  } else {
+    const dir = path.resolve(ctx.cwd, need(v, "dir"));
+    const db = path.resolve(ctx.cwd, need(v, "db"));
+    result = await deployOutput({ ...deps, outDir: dir, dbPath: db });
+  }
+  const lines = describeDeploy(result);
+  lines[0] = `배포: ${lines[0]}`;
+  ctx.out(lines.join("\n"));
+  const failed = result.status === "failed" || (result.status === "deployed" && result.check.status === "failed");
+  return failed ? EXIT.failed : EXIT.ok;
+}
+
+/** data 브랜치 push(4.5-1). 실제 실행에서만 한다 */
+function cmdPush(argv: string[], ctx: Context): number {
+  const v = opts(argv, { run: { type: "string" } });
+  const runFile = need(v, "run");
+  const s = readRun(runFile);
+  let result: PushResult;
+  if (s.mode !== "real") result = { status: "skipped", reason: "시험 모드·데이터 폴더 지정 실행은 push하지 않는다" };
+  else if (s.backupRepo === null) result = { status: "skipped", reason: s.noCommitReason ?? "백업 저장소가 없다" };
+  else result = pushDataBranch({ repo: s.backupRepo, home: homeOf(ctx), remote: ctx.remote ?? gitRemote });
+  updateRun(runFile, (st) => (st.push = result));
+  const lines = describePush(result);
+  lines[0] = `data 브랜치 push: ${lines[0]}`;
+  ctx.out(lines.join("\n"));
+  return result.status === "failed" ? EXIT.failed : EXIT.ok;
+}
+
+/** 공개 전 점검(4.7-3): 참조들의 이력 전체와 git이 추적하는 지금 파일 */
+function cmdPrecheck(argv: string[], ctx: Context): number {
+  const v = opts(argv, { refs: { type: "string" } });
+  const repo = requireRepo(ctx.cwd).toplevel;
+  let refs: string[];
+  if (typeof v.refs === "string") {
+    refs = v.refs
+      .split(",")
+      .map((r) => r.trim())
+      .filter((r) => r.length > 0)
+      .map((r) => (r.startsWith("refs/") ? r : `refs/heads/${r}`));
+    if (refs.length === 0) throw new UsageError("--refs에 브랜치가 없다");
+    for (const r of refs) {
+      if (gitTry(repo, ["rev-parse", "--verify", "--quiet", `${r}^{commit}`]) === null) throw new UsageError(`없는 참조다: ${r}`);
+    }
+  } else refs = localBranches(repo);
+  const r = precheck({ repo, commits: commitsOfRefs(repo, refs), trackedFiles: true, home: homeOf(ctx) });
+  const head = `공개 전 점검: 커밋 ${r.commits}개(${refs.map((x) => x.replace(/^refs\/heads\//, "")).join(", ") || "브랜치 없음"}), 커밋 속 파일 ${r.blobs}개, 지금 파일 ${r.files}개를 봤다.`;
+  if (r.findings.length === 0) {
+    ctx.out(`${head}\n통과.`);
+    return EXIT.ok;
+  }
+  ctx.out([head, `걸림 ${r.findings.length}건(값은 가렸다):`, ...describeFindings(r.findings, 200).map((l) => `- ${l}`)].join("\n"));
+  return EXIT.failed;
+}
+
 const COMMANDS: Record<string, (argv: string[], ctx: Context) => number> = {
   check: cmdCheck,
   start: cmdStart,
@@ -818,6 +1038,9 @@ const COMMANDS: Record<string, (argv: string[], ctx: Context) => number> = {
   "merge-apply": cmdMergeApply,
   merges: cmdMerges,
   unmerge: cmdUnmerge,
+  site: cmdSite,
+  push: cmdPush,
+  precheck: cmdPrecheck,
 };
 
 function handleError(e: unknown, ctx: Context): number {
@@ -829,10 +1052,42 @@ function handleError(e: unknown, ctx: Context): number {
   return EXIT.failed;
 }
 
+/** 지난 날짜 이미지 채우기(3단계 4.4-2). 피드를 받지 못해도 실행은 계속한다(종료 코드 0). DB를 열지 못할 때만 실패다 */
+async function cmdImages(argv: string[], ctx: Context): Promise<number> {
+  const v = opts(argv, { run: { type: "string" } });
+  const runFile = need(v, "run");
+  const state = readRun(runFile);
+  const record = (r: ImagesResult) => updateRun(runFile, (s) => (s.images = r));
+  let db: ReturnType<typeof openDb>;
+  try {
+    db = openExistingDb(state.dbPath);
+  } catch (e) {
+    const reason = (e as Error).message;
+    record({ status: "failed", reason });
+    ctx.out(`지난 날짜 이미지 채우기 실패: ${reason}`);
+    return EXIT.failed;
+  }
+  try {
+    const r = await fillImages(db, ctx.fetchText ?? realFetch);
+    record({ status: "done", filled: r.filled, failures: r.failures });
+    const lines = [`지난 날짜 이미지 채우기: 출처 ${r.filled}개 채움`];
+    for (const f of r.failures) lines.push(`- 받지 못한 피드: ${f.feed}: ${f.reason} (${f.url})`);
+    ctx.out(lines.join("\n"));
+    return EXIT.ok;
+  } finally {
+    db.close();
+  }
+}
+
 /** 네트워크를 쓰는 명령. mainAsync로만 실행한다 */
 const ASYNC_COMMANDS: Record<string, (argv: string[], ctx: Context) => Promise<number>> = {
   feeds: cmdFeeds,
+  images: cmdImages,
+  deploy: cmdDeploy,
 };
+
+/** 모든 명령 이름(스킬 문서의 명령 이름 검사, 3단계 4.5-1) */
+export const COMMAND_NAMES: readonly string[] = [...Object.keys(COMMANDS), ...Object.keys(ASYNC_COMMANDS)].sort();
 
 /** 동기 명령을 실행한다 */
 export function main(argv: string[], ctx: Context): number {
