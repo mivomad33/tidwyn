@@ -51,9 +51,9 @@ export function saveBrief(db: DatabaseSync, stored: StoredBrief, hooks: SaveHook
     const insSection = db.prepare("INSERT INTO sections (target_date, position, name, flow, unverified) VALUES (?, ?, ?, ?, ?)");
     const insStory = db.prepare(`INSERT INTO stories (section_id, kind, position, title, summary, why_it_matters, background, key_facts,
       analogy, outlook, confidence, dev_checkpoint, major, minor, is_new_minor) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`);
-    const insSource = db.prepare("INSERT INTO sources (story_id, position, name, url, published_at, image_url, is_primary) VALUES (?, ?, ?, ?, ?, ?, ?)");
+    const insSource = db.prepare("INSERT INTO sources (story_id, position, name, url, published_at, image_url, is_primary, published_at_estimated) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
     const addSources = (storyId: number | bigint, sources: Source[]) => {
-      sources.forEach((s, i) => insSource.run(storyId, i, s.name, s.url, s.publishedAt, s.imageUrl ?? null, s.primary === true ? 1 : 0));
+      sources.forEach((s, i) => insSource.run(storyId, i, s.name, s.url, s.publishedAt, s.imageUrl ?? null, s.primary === true ? 1 : 0, s.publishedAtEstimated === true ? 1 : 0));
     };
     brief.sections.forEach((sec, si) => {
       const sectionId = insSection.run(brief.targetDate, si, sec.name, sec.flow, sec.unverified ?? null).lastInsertRowid;
@@ -101,6 +101,7 @@ interface SourceRow {
   published_at: string;
   image_url: string | null;
   is_primary: number;
+  published_at_estimated: number;
 }
 
 /** 저장한 브리프를 브리프 데이터로 다시 읽는다. 없으면 null */
@@ -115,6 +116,7 @@ export function loadBrief(db: DatabaseSync, date: string): StoredBrief | null {
       const s: Source = { name: r.name, url: r.url, publishedAt: r.published_at };
       if (r.image_url !== null) s.imageUrl = r.image_url;
       if (r.is_primary === 1) s.primary = true;
+      if (r.published_at_estimated === 1) s.publishedAtEstimated = true;
       return s;
     });
   const category = (r: StoryRow): Category => {

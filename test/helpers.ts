@@ -95,7 +95,7 @@ function topStory(section: SectionName, rank: number, date: string): TopStory {
     confidence: "여러 출처 확인",
     category: section === "IT·AI" ? { major: "IT·AI", minor: "AI 모델·연구" } : section === "한국" ? { major: "경제", minor: "금융·증시" } : { major: "국제", minor: "미국" },
     sources: [
-      { name: "가짜통신", url: `https://news.example.com/${date}/${slug}`, publishedAt: date, primary: true, imageUrl: `https://img.example.com/${slug}.jpg` },
+      { name: "가짜통신", url: `https://news.example-${slug}.com/${date}/${slug}`, publishedAt: date, primary: true, imageUrl: `https://img.example.com/${slug}.jpg` },
       { name: "예시일보", url: `https://daily.example.org/${slug}`, publishedAt: date },
     ],
   };

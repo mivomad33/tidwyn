@@ -4,10 +4,12 @@ import path from "node:path";
 import { parseArgs as parseNodeArgs } from "node:util";
 import { BACKUP_DIR, backupMessage, commitBackup, exportBackup, readBackupDir, readBackupRef, restoreBackup } from "./backup.ts";
 import { openDb, openExistingDb } from "./db.ts";
+import { collectCandidates, describeFeedReport, feedSpecs, fetchText as realFetch, renderCandidatesMarkdown, type FetchText } from "./feeds.ts";
 import { kstIso, kstStamp } from "./kst.ts";
 import { markdownPath, writeMarkdown } from "./markdown.ts";
+import { priorityRatio } from "./outlets.ts";
 import { requireRepo } from "./paths.ts";
-import { RUNS_DIR, readRun, updateRun, workFile, writeRun, type BackupResult, type RunState } from "./run.ts";
+import { RUNS_DIR, candidatesFile, readRun, updateRun, workFile, writeRun, type BackupResult, type RunState } from "./run.ts";
 import { DB_FILE, ENV_DATA_DIR, checkRunCondition, describeSettings, parseArgs, resolveSettings, type Settings } from "./settings.ts";
 import { pruneSnapshots, takeSnapshot } from "./snapshot.ts";
 import { AlreadyStoredError, loadBrief, recordFirstCollectionDate, saveBrief } from "./store.ts";
@@ -29,6 +31,10 @@ export interface Context {
   out: (text: string) => void;
   /** 의존성 맞추기(4.1-2) */
   install: Installer;
+  /** 피드 받기(1.5단계 4.1). 없으면 실제 네트워크를 쓴다 */
+  fetchText?: FetchText;
+  /** 구글 뉴스 요청 사이 간격(밀리초). 없으면 1초 */
+  feedGapMs?: number;
 }
 
 /** 의존성 잠금 파일대로, 잠금 파일을 바꾸지 않고 대화형 확인 없이 설치한다 */
@@ -47,6 +53,7 @@ export const pnpmInstall: Installer = (projectDir) => {
 const USAGE = `명령:
   check [test] [YYYY-MM-DD]     인자와 실행 조건만 확인(아무것도 쓰지 않음)
   start [test] [YYYY-MM-DD]     인자·실행 조건 확인 → 의존성 맞추기 → 설정 표시 → 실행 전 사본 → 대상 날짜
+  feeds --run <파일> --date <날짜>      대상일의 우선 출처 후보 목록(work/<날짜>.candidates.md, 전체는 .json)
   validate --run <파일> --date <날짜>   작업 파일(work/<날짜>.json) 검사
   save --run <파일> --date <날짜>       검사 → 저장 → 마크다운
   fail --run <파일> --date <날짜> --reason <이유>   조사 실패 기록
@@ -149,6 +156,23 @@ function readWork(state: RunState, date: string): { ok: true; data: unknown } | 
 
 function requireTarget(state: RunState, date: string): void {
   if (!state.targetDates.includes(date)) throw new UsageError(`${date}은(는) 이번 실행의 대상 날짜가 아니다(대상: ${state.targetDates.join(", ") || "없음"})`);
+}
+
+async function cmdFeeds(argv: string[], ctx: Context): Promise<number> {
+  const v = opts(argv, { run: { type: "string" }, date: { type: "string" } });
+  const runFile = need(v, "run");
+  const state = readRun(runFile);
+  const date = need(v, "date");
+  requireTarget(state, date);
+  const report = await collectCandidates(date, feedSpecs(date), { fetch: ctx.fetchText ?? realFetch, gapMs: ctx.feedGapMs ?? 1000 });
+  const file = candidatesFile(state.dataDir, date);
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+  fs.writeFileSync(file, JSON.stringify(report, null, 2) + "\n");
+  const md = candidatesFile(state.dataDir, date, "md");
+  fs.writeFileSync(md, renderCandidatesMarkdown(date, report));
+  updateRun(runFile, (s) => ((s.feeds ??= {})[date] = { counts: report.counts, failures: report.failures }));
+  ctx.out(describeFeedReport(date, md, report));
+  return EXIT.ok;
 }
 
 function cmdValidate(argv: string[], ctx: Context): number {
@@ -320,6 +344,12 @@ function cmdSummary(argv: string[], ctx: Context): number {
     const r = s.results[d];
     if (r?.status === "saved" && r.markdownError) lines.push(`- ${d} 마크다운 만들기 실패: ${r.markdownError} (render 명령으로 다시 만들 수 있다)`);
   }
+  lines.push(...priorityLines(s.dbPath, saved));
+  for (const [d, f] of Object.entries(s.feeds ?? {})) {
+    if (f.failures.length === 0) continue;
+    lines.push(`- ${d} 받지 못한 피드(웹 검색으로 조사했다):`);
+    for (const x of f.failures) lines.push(`  - ${x.feed}: ${x.reason}`);
+  }
   lines.push(`- 백업: ${describeBackup(s.backup)}`);
   const latest = saved.at(-1);
   const others = saved.slice(0, -1);
@@ -334,6 +364,25 @@ function cmdSummary(argv: string[], ctx: Context): number {
   }
   ctx.out(lines.join("\n"));
   return EXIT.ok;
+}
+
+/** 저장한 날짜마다 주요 뉴스 대표 출처의 우선 출처 비율(1.5단계 R6). 절반 미만이면 경고를 붙인다 */
+function priorityLines(dbPath: string, dates: string[]): string[] {
+  if (dates.length === 0 || !fs.existsSync(dbPath)) return [];
+  const lines: string[] = [];
+  const db = openExistingDb(dbPath);
+  try {
+    for (const d of dates) {
+      const stored = loadBrief(db, d);
+      if (stored === null) continue;
+      const { priority, total } = priorityRatio(stored.brief);
+      lines.push(`- ${d} 우선 출처 비율: 대표 출처 ${total}건 중 ${priority}건`);
+      if (priority * 2 < total) lines.push(`  - 경고: 우선 출처(통신사, 주요 일간지·방송사, 공식 발표)가 절반 미만이다`);
+    }
+  } finally {
+    db.close();
+  }
+  return lines;
 }
 
 function cmdRender(argv: string[], ctx: Context): number {
@@ -399,6 +448,21 @@ const COMMANDS: Record<string, (argv: string[], ctx: Context) => number> = {
   restore: cmdRestore,
 };
 
+function handleError(e: unknown, ctx: Context): number {
+  if (e instanceof UsageError || (e as { code?: string }).code?.startsWith("ERR_PARSE_ARGS")) {
+    ctx.out(`${(e as Error).message}\n${USAGE}`);
+    return EXIT.usage;
+  }
+  ctx.out(`오류: ${(e as Error).message}`);
+  return EXIT.failed;
+}
+
+/** 네트워크를 쓰는 명령. mainAsync로만 실행한다 */
+const ASYNC_COMMANDS: Record<string, (argv: string[], ctx: Context) => Promise<number>> = {
+  feeds: cmdFeeds,
+};
+
+/** 동기 명령을 실행한다 */
 export function main(argv: string[], ctx: Context): number {
   const [name, ...rest] = argv;
   const cmd = name === undefined ? undefined : COMMANDS[name];
@@ -409,17 +473,24 @@ export function main(argv: string[], ctx: Context): number {
   try {
     return cmd(rest, ctx);
   } catch (e) {
-    if (e instanceof UsageError || (e as { code?: string }).code?.startsWith("ERR_PARSE_ARGS")) {
-      ctx.out(`${(e as Error).message}\n${USAGE}`);
-      return EXIT.usage;
-    }
-    ctx.out(`오류: ${(e as Error).message}`);
-    return EXIT.failed;
+    return handleError(e, ctx);
+  }
+}
+
+/** 모든 명령을 실행한다(네트워크를 쓰는 명령 포함) */
+export async function mainAsync(argv: string[], ctx: Context): Promise<number> {
+  const [name, ...rest] = argv;
+  const cmd = name === undefined ? undefined : ASYNC_COMMANDS[name];
+  if (cmd === undefined) return main(argv, ctx);
+  try {
+    return await cmd(rest, ctx);
+  } catch (e) {
+    return handleError(e, ctx);
   }
 }
 
 if (import.meta.main) {
-  process.exitCode = main(process.argv.slice(2), {
+  process.exitCode = await mainAsync(process.argv.slice(2), {
     cwd: process.cwd(),
     env: process.env,
     now: () => new Date(),

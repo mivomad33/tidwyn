@@ -191,3 +191,50 @@ describe("4.2-8 인용 길이", () => {
     assert.deepEqual(extractQuotes("a ” b ’ c"), []);
   });
 });
+
+describe("1.5단계 4.2 출처 규칙", () => {
+  const allTops = (b: Brief) => b.sections.flatMap((s) => s.topStories);
+  const setPrimaryHosts = (b: Brief, hosts: string[]) =>
+    allTops(b).forEach((t, i) => {
+      const p = t.sources.find((s) => s.primary === true)!;
+      p.url = `https://${hosts[i % hosts.length]}/story-${i}`;
+    });
+  /** 한국 섹션에 6위를 더해 대표 출처를 16건으로 만든다 */
+  const sixteen = (b: Brief) => {
+    const s = sec(b, 0);
+    s.topStories.push({ ...clone(s.topStories[4]!), rank: 6, sources: s.topStories[4]!.sources.map((x) => ({ ...x, url: `${x.url}-6` })) });
+  };
+  const primaries = (n: number, yna: number) => Array.from({ length: n }, (_, i) => (i < yna ? (i % 2 === 0 ? "www.yna.co.kr" : "en.yna.co.kr") : `news.example-${i}.com`));
+
+  test("4.2-1 발행일 추정 표시가 true면 통과하고, true가 아니면 거부된다", () => {
+    passes((b) => (top(b, 0, 0).sources[1]!.publishedAtEstimated = true));
+    rejects((b) => ((top(b, 0, 0).sources[1] as unknown as Record<string, unknown>).publishedAtEstimated = false), "1위 출처 2 발행일 추정", "true");
+    rejects((b) => ((top(b, 0, 0).sources[1] as unknown as Record<string, unknown>).publishedAtEstimated = "yes"), "1위 출처 2 발행일 추정", "true");
+  });
+  test("4.2-1 발행일 추정 표시는 저장 결과에 남는다", () => {
+    const b = clone(sampleBrief());
+    top(b, 0, 0).sources[1]!.publishedAtEstimated = true;
+    const r = validateBrief(b, DATE);
+    assert.ok(r.ok);
+    assert.equal(r.brief.sections[0]!.topStories[0]!.sources[1]!.publishedAtEstimated, true);
+    assert.equal(r.brief.sections[0]!.topStories[0]!.sources[0]!.publishedAtEstimated, undefined);
+  });
+  test("4.2-2 구글 뉴스 중간 주소는 거부되고 이유가 나온다", () => {
+    rejects((b) => (top(b, 0, 0).sources[1]!.url = "https://news.google.com/rss/articles/CBMiFAKE?oc=5"), "1위 출처 2 원문 링크", "매체 원문 주소를 웹 검색으로 찾아");
+    rejects((b) => (top(b, 0, 0).sources[0]!.imageUrl = "https://news.google.com/api/attachments/FAKE"), "1위 출처 1 이미지 주소", "구글 뉴스 중간 주소");
+    rejects((b) => (sec(b, 0).shortNews[0]!.sources[0]!.url = "https://news.google.com/articles/FAKE"), "짧은 소식 1 출처 1 원문 링크", "구글 뉴스");
+  });
+  test("4.2-3 작업 파일 전체: 대표 출처 16건 중 9건이 한 매체면 거부, 8건이면 통과", () => {
+    rejects((b) => {
+      sixteen(b);
+      setPrimaryHosts(b, primaries(16, 9));
+    }, "브리프 전체 대표 출처", "연합뉴스)가 주요 뉴스 대표 출처 16건 중 9건");
+    passes((b) => {
+      sixteen(b);
+      setPrimaryHosts(b, primaries(16, 8));
+    });
+  });
+  test("4.2-3 목록 밖 도메인은 등록 도메인으로 묶는다", () => {
+    rejects((b) => setPrimaryHosts(b, [...Array.from({ length: 8 }, (_, i) => `s${i}.example.co.kr`), ...primaries(7, 0).map((h, i) => `other-${i}.${h}`)]), "브리프 전체 대표 출처", "example.co.kr");
+  });
+});

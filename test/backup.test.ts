@@ -6,7 +6,7 @@ import { after, describe, test } from "node:test";
 import { buildBackup, commitBackup, exportBackup, readBackupDir, readBackupRef, restoreBackup } from "../src/backup.ts";
 import { main } from "../src/cli.ts";
 import { openDb } from "../src/db.ts";
-import { recordFirstCollectionDate, saveBrief } from "../src/store.ts";
+import { loadBrief, recordFirstCollectionDate, saveBrief } from "../src/store.ts";
 import { planTargets } from "../src/targets.ts";
 import { validateBrief } from "../src/validate.ts";
 import { NOW, cleanupTemp, commitCount, gitIn, listFiles, makeCtx, sampleBrief, tempDir, tempRepo } from "./helpers.ts";
@@ -220,5 +220,42 @@ describe("4.6-3 백업에 로컬 정보 없음", () => {
     const all = [...readBackupRef(backupRepo).values()].join("\n") + gitIn(backupRepo, "log", "--format=%B", "refs/heads/data");
     const forbidden = [os.homedir(), fs.realpathSync(os.homedir()), dataDir, backupRepo, project, os.tmpdir(), fs.realpathSync(os.tmpdir()), os.userInfo().username];
     for (const f of forbidden) assert.equal(all.includes(f), false, `백업에 ${f}가 들어 있다`);
+  });
+});
+
+describe("1.5단계 4.3-2 발행일 추정 표시 백업", () => {
+  test("추정 표시가 있는 DB를 백업→복원하면 같은 브리프가 나온다", () => {
+    const dir = tempDir();
+    const db = openDb(path.join(dir, "tidwyn.db"));
+    recordFirstCollectionDate(db, "2026-10-27");
+    const b = sampleBrief();
+    b.sections[1]!.topStories[2]!.sources[0]!.publishedAtEstimated = true;
+    const r = validateBrief(b, "2026-10-27");
+    assert.ok(r.ok);
+    saveBrief(db, { brief: r.brief, collectedAt: "2026-10-28T09:00:00+09:00", late: false });
+    const out = path.join(dir, "backup");
+    exportBackup(db, out);
+    db.close();
+    assert.match(readBackupDir(out).get("2026-10.json")!, /"publishedAtEstimated": true/);
+    const restored = path.join(dir, "restored.db");
+    restoreBackup(readBackupDir(out), restored);
+    const db2 = openDb(restored);
+    assert.deepEqual(loadBrief(db2, "2026-10-27")?.brief, r.brief);
+    db2.close();
+  });
+  test("추정 표시 항목이 없는 형식 버전 1 백업도 복원된다", () => {
+    const dir = tempDir();
+    const r = validateBrief(sampleBrief(), "2026-10-27");
+    assert.ok(r.ok);
+    const files = new Map([
+      ["meta.json", JSON.stringify({ formatVersion: 1, firstCollectionDate: "2026-10-27" })],
+      ["2026-10.json", JSON.stringify({ formatVersion: 1, month: "2026-10", briefs: [{ brief: r.brief, collectedAt: "2026-10-28T09:00:00+09:00", late: false }] })],
+    ]);
+    assert.doesNotMatch(files.get("2026-10.json")!, /publishedAtEstimated/);
+    const restored = path.join(dir, "restored.db");
+    assert.deepEqual(restoreBackup(files, restored), { dates: 1 });
+    const db = openDb(restored);
+    assert.deepEqual(loadBrief(db, "2026-10-27")?.brief, r.brief);
+    db.close();
   });
 });

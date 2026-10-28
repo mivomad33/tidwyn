@@ -67,6 +67,13 @@ export const MIGRATIONS: Migration[] = [
       `);
     },
   },
+  {
+    // 1.5단계 R3: 발행일을 추정한 출처 표시. 기존 출처는 추정 아님(0)이 된다
+    version: 2,
+    up: (db) => {
+      db.exec("ALTER TABLE sources ADD COLUMN published_at_estimated INTEGER NOT NULL DEFAULT 0");
+    },
+  },
 ];
 
 export function schemaVersion(db: DatabaseSync): number {

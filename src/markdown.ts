@@ -11,7 +11,7 @@ function category(c: Category): string {
 }
 
 function source(s: Source): string {
-  const extra = [s.publishedAt, s.primary ? "대표" : null].filter((x) => x !== null).join(", ");
+  const extra = [s.publishedAt, s.publishedAtEstimated ? "발행일 추정" : null, s.primary ? "대표" : null].filter((x) => x !== null).join(", ");
   const image = s.imageUrl ? ` · [이미지](${s.imageUrl})` : "";
   return `[${s.name}](${s.url}) (${extra})${image}`;
 }

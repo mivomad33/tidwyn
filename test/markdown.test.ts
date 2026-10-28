@@ -58,3 +58,13 @@ describe("4.4-3 마크다운 다시 만들기", () => {
     assert.equal(fs.readFileSync(markdownPath(dataDir, "2026-10-27"), "utf8"), before);
   });
 });
+
+describe("1.5단계 4.3-3 발행일 추정 표시", () => {
+  test("추정 표시가 있는 출처는 발행일 옆에 \"발행일 추정\"이 나온다", () => {
+    const stored = fixtureBrief();
+    stored.brief.sections[0]!.topStories[0]!.sources[1]!.publishedAtEstimated = true;
+    const md = renderMarkdown(stored);
+    assert.ok(md.includes("[예시일보](https://daily.example.org/kr-1) (2026-10-27, 발행일 추정)"));
+    assert.equal(md.match(/발행일 추정/g)?.length, 1);
+  });
+});

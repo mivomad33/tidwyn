@@ -1,6 +1,7 @@
 import type { Brief, Category, Section, ShortNews, Source, TopStory } from "./brief.ts";
 import { CONFIDENCE_LEVELS, SECTIONS, isMajor, isNewMinor, type Confidence, type SectionName } from "./categories.ts";
 import { isValidDate } from "./kst.ts";
+import { findSkew, hostOf, primaryUrls } from "./outlets.ts";
 import { longQuotes } from "./quotes.ts";
 
 // 브리프 데이터 검사(4.2). 어긴 항목마다 위치와 이유를 돌려준다.
@@ -67,6 +68,14 @@ function isHttpUrl(v: string): boolean {
   }
 }
 
+/** 구글 뉴스 같은 중간 주소인지(1.5단계 R4) */
+function isRedirectUrl(v: string): boolean {
+  const host = hostOf(v);
+  return host !== null && (host === "news.google.com" || host.endsWith(".news.google.com"));
+}
+
+const REDIRECT_WHY = "구글 뉴스 중간 주소는 쓸 수 없다. 매체 원문 주소를 웹 검색으로 찾아 넣거나, 못 찾으면 그 출처를 뺀다";
+
 function checkQuotes(c: Checker, text: string | undefined, where: string): void {
   if (text === undefined) return;
   for (const q of longQuotes(text)) {
@@ -99,21 +108,27 @@ function parseSources(c: Checker, o: Obj, where: string, needPrimary: boolean): 
     const w = `${where} 출처 ${i + 1}`;
     const s = c.obj(raw, w);
     if (s === null) return;
-    c.keys(s, ["name", "url", "publishedAt", "imageUrl", "primary"], w);
+    c.keys(s, ["name", "url", "publishedAt", "publishedAtEstimated", "imageUrl", "primary"], w);
     const src: Source = {
       name: c.text(s, "name", "매체명", w),
       url: c.text(s, "url", "원문 링크", w),
       publishedAt: c.text(s, "publishedAt", "발행일", w),
     };
     if (src.url !== "" && !isHttpUrl(src.url)) c.add(`${w} 원문 링크`, `http/https 주소가 아니다: ${src.url}`);
+    else if (isRedirectUrl(src.url)) c.add(`${w} 원문 링크`, `${REDIRECT_WHY}: ${src.url}`);
     if (src.publishedAt !== "" && !isValidDate(src.publishedAt)) c.add(`${w} 발행일`, `YYYY-MM-DD 형식의 날짜가 아니다: ${src.publishedAt}`);
     const image = c.optText(s, "imageUrl", "이미지 주소", w);
     if (image !== undefined) {
       if (!isHttpUrl(image)) c.add(`${w} 이미지 주소`, `http/https 주소가 아니다: ${image}`);
+      else if (isRedirectUrl(image)) c.add(`${w} 이미지 주소`, `${REDIRECT_WHY}: ${image}`);
       src.imageUrl = image;
     }
     if (s.primary !== undefined && s.primary !== null && typeof s.primary !== "boolean") c.add(`${w} 대표 출처`, "true/false여야 한다");
     if (s.primary === true) src.primary = true;
+    if (s.publishedAtEstimated !== undefined && s.publishedAtEstimated !== null) {
+      if (s.publishedAtEstimated !== true) c.add(`${w} 발행일 추정`, "있으면 true여야 한다(추정이 아니면 항목을 뺀다)");
+      else src.publishedAtEstimated = true;
+    }
     sources.push(src);
   });
   if (needPrimary) {
@@ -262,8 +277,15 @@ export function validateBrief(input: unknown, expectedDate: string): ValidateRes
     }
   }
 
+  // 한 매체가 주요 뉴스 대표 출처의 절반을 넘으면 거부한다(1.5단계 R2)
+  const brief: Brief = { targetDate, headline, keywords, sections };
+  const skew = findSkew(primaryUrls(brief).filter(isHttpUrl));
+  if (skew !== null) {
+    c.add(`${w} 대표 출처`, `한 매체(${skew.outlet})가 주요 뉴스 대표 출처 ${skew.total}건 중 ${skew.count}건이다(절반 이하여야 한다). 다른 매체의 기사로 대표 출처를 바꾼다`);
+  }
+
   if (c.violations.length > 0) return { ok: false, violations: c.violations };
-  return { ok: true, brief: { targetDate, headline, keywords, sections } };
+  return { ok: true, brief };
 }
 
 export function formatViolations(violations: Violation[]): string {

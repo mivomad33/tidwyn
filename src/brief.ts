@@ -10,6 +10,8 @@ export interface Source {
   imageUrl?: string;
   /** 대표 출처. 주요 뉴스는 정확히 하나 */
   primary?: boolean;
+  /** 발행 시각을 확인하지 못하고 검색 맥락으로 짐작했으면 true(1.5단계 R3). 있을 때만 넣는다 */
+  publishedAtEstimated?: boolean;
 }
 
 export interface Category {
