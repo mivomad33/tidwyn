@@ -1,7 +1,7 @@
 // 검색(4.3-3, P6, 4단계 4.6-4). Pagefind가 고른 묶음 레코드(날짜·이슈·대상·용어 묶음)에서 맞는 것을 하나씩 되찾아
 // "인물·기관·국가", "용어", "이슈", "뉴스"로 나눠 보인다.
 import { useEffect, useRef, useState, type FormEvent } from "react";
-import { BackLink, Empty, ErrorState, Layout, Loading, useTitle } from "../components/common.tsx";
+import { BackLink, Empty, ErrorState, Layout, Loading, NewsTitle, ReadCheck, useTitle } from "../components/common.tsx";
 import { loadJson } from "../data.ts";
 import { monthDayWeekday } from "../lib/format.ts";
 import { dataUrl } from "../lib/paths.ts";
@@ -215,7 +215,12 @@ function Results({ state, q, onMore }: { state: Extract<State, { status: "ok" }>
               <li key={`${n.date}-${n.story.key}`} className="item">
                 <Link to={briefPath(n.date, n.story.key)} className="item-btn">
                   <span className="cat muted-cat">{monthDayWeekday(n.date)}</span>
-                  <span className={n.story.kind === "top" ? "title" : "title small"}>{n.story.title}</span>
+                  <span className="nrow">
+                    <NewsTitle date={n.date} newsKey={n.story.key} className={n.story.kind === "top" ? "title" : "title small"}>
+                      {n.story.title}
+                    </NewsTitle>
+                    <ReadCheck date={n.date} newsKey={n.story.key} />
+                  </span>
                 </Link>
               </li>
             ))}

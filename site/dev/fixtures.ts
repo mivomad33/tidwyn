@@ -5,7 +5,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { CONFIDENCE_LEVELS, MINORS_BY_MAJOR, SECTIONS, type Major, type SectionName } from "../../src/categories.ts";
-import { ENTITY_FILTERS, ENTITY_FIRST_NEWS, byCount, entityChunkOf, issueEntityChips, entityRecordUrl, termRecordUrl, type EntityKind } from "../../src/siteTypes.ts";
+import { ENTITY_FILTERS, ENTITY_FIRST_NEWS, byCount, dayStoryCount, entityChunkOf, issueEntityChips, entityRecordUrl, termRecordUrl, type EntityKind } from "../../src/siteTypes.ts";
 import { entityListPages } from "../src/lib/entities.ts";
 import { buildTermFiles } from "../src/lib/terms.ts";
 import type {
@@ -546,7 +546,8 @@ export function generateFixtures(opts: FixtureOptions = {}): Fixture {
     .map(([g, ts]) => ({ url: termRecordUrl(g), content: ts.flatMap((t) => [t.name, ...t.aliases, t.description]).join("\n"), language: "ko", meta: { kind: "terms", group: String(g) } }));
 
   const datesDesc = [...datesAsc].reverse();
-  const dates: SiteDates = { version: 1, latestDate: datesDesc[0] ?? null, dates: datesDesc, months: [...new Set(datesDesc.map((x) => x.slice(0, 7)))] };
+  const dayCounts = new Map([...lists.values()].flatMap((l) => l.days.map((d) => [d.date, dayStoryCount(d)] as const)));
+  const dates: SiteDates = { version: 1, latestDate: datesDesc[0] ?? null, dates: datesDesc, months: [...new Set(datesDesc.map((x) => x.slice(0, 7)))], storyCounts: datesDesc.map((d) => dayCounts.get(d) ?? 0) };
 
   const files = new Map<string, string>();
   const json = (v: unknown) => JSON.stringify(v);

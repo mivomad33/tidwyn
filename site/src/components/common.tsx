@@ -1,9 +1,10 @@
-// 여러 화면이 함께 쓰는 컴포넌트(시안 A의 머리 줄, 칩, 분류 줄, 대기·오류 상태)
+// 여러 화면이 함께 쓰는 컴포넌트(시안 A의 머리 줄, 칩, 분류 줄, 대기·오류 상태, 4.5단계 읽음 표시)
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { MAJORS } from "../../../src/categories.ts";
 import { pageTitle } from "../lib/format.ts";
 import { categoryVar } from "../lib/theme.ts";
 import type { Major } from "../lib/types.ts";
+import { readStore, useIsRead } from "../readMarks.ts";
 import { Link, useLocation } from "../router.tsx";
 
 export function useTitle(label: string | undefined): void {
@@ -165,9 +166,15 @@ export function Empty({ children }: { children: ReactNode }) {
   return <p className="state empty">{children}</p>;
 }
 
-export function CategoryLine({ major, minor, extra, isNewMinor }: { major: Major; minor: string; extra?: string; isNewMinor?: boolean }) {
+/** 4.5단계 '전체' 탭에서 줄마다 보이는 섹션 칩(한국·세계·IT·AI) */
+export function SectionChip({ section }: { section: string }) {
+  return <span className="sec">{section}</span>;
+}
+
+export function CategoryLine({ major, minor, extra, isNewMinor, section }: { major: Major; minor: string; extra?: string; isNewMinor?: boolean; section?: string }) {
   return (
     <div className="cat" style={{ color: categoryVar(major) }}>
+      {section && <SectionChip section={section} />}
       {major} · {minor}
       {isNewMinor ? " (새 소분류)" : ""}
       {extra ? ` · ${extra}` : ""}
@@ -175,8 +182,8 @@ export function CategoryLine({ major, minor, extra, isNewMinor }: { major: Major
   );
 }
 
-/** 칩 고르기(카테고리·상태 필터). value가 null이면 "전체" */
-export function ChipFilter<T extends string>({ label, options, value, onChange }: { label: string; options: readonly T[]; value: T | null; onChange: (v: T | null) => void }) {
+/** 칩 고르기(카테고리·상태 필터). value가 null이면 "전체". after는 칩 줄 끝에 구분선 뒤로 붙는다(4.5단계 '안 읽은 것만') */
+export function ChipFilter<T extends string>({ label, options, value, onChange, after }: { label: string; options: readonly T[]; value: T | null; onChange: (v: T | null) => void; after?: ReactNode }) {
   return (
     <div className="chips" role="group" aria-label={label}>
       <button type="button" className={value === null ? "on" : ""} aria-pressed={value === null} onClick={() => onChange(null)}>
@@ -187,7 +194,52 @@ export function ChipFilter<T extends string>({ label, options, value, onChange }
           {o}
         </button>
       ))}
+      {after && (
+        <>
+          <span className="chip-sep" aria-hidden="true" />
+          {after}
+        </>
+      )}
     </div>
+  );
+}
+
+/** 켬·끔 칩 하나(칩 줄 안에서 쓴다) */
+export function ToggleChip({ on, onChange, children }: { on: boolean; onChange: (on: boolean) => void; children: ReactNode }) {
+  return (
+    <button type="button" className={on ? "on" : ""} aria-pressed={on} onClick={() => onChange(!on)}>
+      {children}
+    </button>
+  );
+}
+
+// 4.5단계 읽음 표시(M3, M4). 모든 뉴스 목록이 이 세 가지를 같이 쓴다.
+
+/** 뉴스 제목. 안 읽었으면 굵게, 읽었으면 같은 색의 보통 굵기 */
+export function NewsTitle({ date, newsKey, className, children }: { date: string; newsKey: string; className?: string; children: ReactNode }) {
+  const read = useIsRead(date, newsKey);
+  return <span className={`${className ? `${className} ` : ""}nt ${read ? "read" : "unread"}`}>{children}</span>;
+}
+
+/** 브리프 밖 목록의 줄 끝 체크. 읽은 뉴스에만 보이고 보조 기술에는 "읽음"으로 읽힌다 */
+export function ReadCheck({ date, newsKey }: { date: string; newsKey: string }) {
+  const read = useIsRead(date, newsKey);
+  if (!read) return null;
+  return (
+    <span className="read-mk">
+      <span aria-hidden="true">✓</span>
+      <span className="sr-only">읽음</span>
+    </span>
+  );
+}
+
+/** 브리프의 읽음 버튼(토글, M2). 보이는 동그라미 18px, 누르는 자리 44px */
+export function ReadToggle({ date, newsKey, title }: { date: string; newsKey: string; title: string }) {
+  const read = useIsRead(date, newsKey);
+  return (
+    <button type="button" className={read ? "rd-btn on" : "rd-btn"} aria-pressed={read} aria-label={`읽음: ${title}`} onClick={() => readStore.setRead(date, newsKey, !read)}>
+      <i aria-hidden="true">✓</i>
+    </button>
   );
 }
 

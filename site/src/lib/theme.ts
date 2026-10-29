@@ -11,6 +11,12 @@ export interface Palette {
   chip: string;
   accent: string;
   accentbg: string;
+  /** 4.5단계: 읽음 표시(채운 동그라미, 체크)의 파랑 */
+  check: string;
+  /** 4.5단계: 채운 동그라미 안 체크 글자 */
+  checkInk: string;
+  /** 4.5단계: 안 읽음 동그라미의 연한 테두리(대비 기준보다 연하다, M3에서 감수) */
+  ring: string;
   categories: Record<Major, string>;
 }
 
@@ -22,6 +28,9 @@ export const LIGHT: Palette = {
   chip: "#f5f5f7",
   accent: "#c2410c",
   accentbg: "#fff1e8",
+  check: "#3b7fd0",
+  checkInk: "#ffffff",
+  ring: "#d1d1d6",
   categories: {
     "정치": "#7c3aed",
     "경제": "#c2410c",
@@ -41,6 +50,9 @@ export const DARK: Palette = {
   chip: "#222226",
   accent: "#fb923c",
   accentbg: "#3a2414",
+  check: "#6aa5ec",
+  checkInk: "#161618",
+  ring: "#3a3a3f",
   categories: {
     "정치": "#a78bfa",
     "경제": "#fb923c",
@@ -57,7 +69,7 @@ export function categoryVar(major: Major): string {
 }
 
 function vars(p: Palette): string {
-  const base = `--bg:${p.bg};--fg:${p.fg};--muted:${p.muted};--line:${p.line};--chip:${p.chip};--accent:${p.accent};--accentbg:${p.accentbg};`;
+  const base = `--bg:${p.bg};--fg:${p.fg};--muted:${p.muted};--line:${p.line};--chip:${p.chip};--accent:${p.accent};--accentbg:${p.accentbg};--check:${p.check};--check-ink:${p.checkInk};--ring:${p.ring};`;
   return base + MAJORS.map((m, i) => `--cat-${i}:${p.categories[m]};`).join("");
 }
 
@@ -97,4 +109,14 @@ export function textPairs(p: Palette): { name: string; fg: string; bg: string }[
   ];
   for (const m of MAJORS) pairs.push({ name: `분류 ${m}`, fg: p.categories[m], bg: p.bg });
   return pairs;
+}
+
+/** 4.5단계: 아이콘(읽음 체크) 색 × 바탕 색. WCAG 1.4.11(3:1) 기준. 안 읽음 테두리(ring)는 M3에서 감수해 넣지 않는다 */
+export function iconPairs(p: Palette): { name: string; fg: string; bg: string }[] {
+  return [
+    { name: "읽음 체크(목록)", fg: p.check, bg: p.bg },
+    { name: "읽음 체크(상자)", fg: p.check, bg: p.chip },
+    { name: "채운 동그라미/바탕", fg: p.check, bg: p.bg },
+    { name: "동그라미 안 체크", fg: p.checkInk, bg: p.check },
+  ];
 }

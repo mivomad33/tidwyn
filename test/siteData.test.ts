@@ -111,6 +111,7 @@ describe("3단계 4.1-1 사이트 데이터", () => {
       latestDate: "2026-11-01",
       dates: ["2026-11-01", "2026-10-04", "2026-10-02", "2026-10-01"],
       months: ["2026-11", "2026-10"],
+      storyCounts: DATES.map((d) => storiesOfDate(db, d).length).reverse(),
     });
     db.close();
   });
@@ -302,6 +303,30 @@ describe("3단계 4.1-1 사이트 데이터", () => {
     const chunk0 = parse<IssueChunk>(files, "issue-0.json");
     assert.deepEqual(chunk0.issues[String(c)]!.timeline.map((t) => t.date), ["2026-10-02", "2026-10-01"]);
     assert.deepEqual(chunk0.issues[String(d)]!.timeline.map((t) => t.date), ["2026-10-04"]);
+    db.close();
+  });
+});
+
+describe("4.5단계 4.5-2 날짜별 뉴스 수", () => {
+  test("dates.json의 날짜별 수가 DB에 저장된 그날 뉴스 수(주요 뉴스 + 짧은 소식)와 같다", () => {
+    const db = openDb(path.join(tempDir(), "counts.db"));
+    for (const d of DATES) {
+      const b = brief(d);
+      // 날짜마다 수가 다르게: 10월 4일은 짧은 소식 하나, 11월 1일은 짧은 소식 둘을 뺀다
+      if (d === "2026-10-04") b.sections[0]!.shortNews.pop();
+      if (d === "2026-11-01") b.sections[1]!.shortNews.splice(0, 2);
+      const r = validateBrief(b, d);
+      assert.ok(r.ok, r.ok ? "" : JSON.stringify(r.violations));
+      saveBrief(db, { brief: r.brief, collectedAt: `${d}T23:00:00+09:00`, late: false });
+    }
+    const dates = parse<SiteDates>(buildSiteData(db), "dates.json");
+    const expected = dates.dates.map((d) => {
+      const stored = loadBrief(db, d)!.brief;
+      return stored.sections.reduce((n, s) => n + s.topStories.length + s.shortNews.length, 0);
+    });
+    assert.deepEqual(dates.storyCounts, expected);
+    assert.deepEqual(dates.storyCounts, dates.dates.map((d) => storiesOfDate(db, d).length));
+    assert.equal(new Set(dates.storyCounts).size > 1, true, "날짜마다 수가 달라야 이 확인이 뜻이 있다");
     db.close();
   });
 });

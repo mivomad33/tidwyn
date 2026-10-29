@@ -1,5 +1,7 @@
-// 사이트 소개(4.3-4, P9, P10)
+// 사이트 소개(4.3-4, P9, P10). 4.5단계: 읽은 기록 설명과 지우기(4.6)
+import { useState } from "react";
 import { BackLink, Layout, useTitle } from "../components/common.tsx";
+import { readStore } from "../readMarks.ts";
 
 export const REPO_URL = "https://github.com/mivomad33/tidwyn";
 
@@ -25,6 +27,7 @@ export function AboutPage() {
         <p className="p">브리프와 이슈 글의 저작권은 만든 사람(mivomad33)에게 있고, 다시 쓰거나 퍼 가는 것을 허락하지 않는다. 사이트의 코드는 MIT 라이선스다.</p>
         <h2 className="h">방문 통계</h2>
         <p className="p">Vercel Web Analytics로 페이지 보기 수만 센다. 쿠키를 쓰지 않고, 방문자를 알아볼 수 있는 정보를 모으지 않는다. 검색어는 통계로 보내지 않는다.</p>
+        <ReadMarksSection />
         <h2 className="h">원본 저장소</h2>
         <p className="p">
           <a href={REPO_URL} className="text-link" target="_blank" rel="noopener noreferrer">
@@ -34,5 +37,31 @@ export function AboutPage() {
         </p>
       </article>
     </Layout>
+  );
+}
+
+export const CLEAR_CONFIRM = "읽은 기록을 모두 지운다. 지운 기록은 되돌릴 수 없다.";
+
+function ReadMarksSection() {
+  const [cleared, setCleared] = useState(false);
+  function clear() {
+    if (!window.confirm(CLEAR_CONFIRM)) return;
+    readStore.clear();
+    setCleared(true);
+  }
+  return (
+    <>
+      <h2 className="h">읽은 기록</h2>
+      <p className="p">읽은 뉴스 표시는 이 브라우저에만 저장된다. 어디로도 보내지 않고, 다른 기기나 브라우저와 맞춰지지 않는다.</p>
+      <p className="p">뉴스 날짜로 1년이 지난 기록은 저절로 지워진다. 지운 기록은 되돌릴 수 없다.</p>
+      <div className="actions">
+        <button type="button" className="retry" onClick={clear}>
+          읽은 기록 지우기
+        </button>
+      </div>
+      <p className="done" role="status">
+        {cleared ? "읽은 기록을 지웠다." : ""}
+      </p>
+    </>
   );
 }

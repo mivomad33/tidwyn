@@ -2,7 +2,7 @@
 // 처음에는 색인(term-index.json)과 앞쪽 묶음 몇 개만 받고, 나머지 묶음은 화면에 가까워지면 받는다(4.6-2).
 // `/terms/<id>`로 들어오면 그 용어의 묶음을 받아 그 위치로 가고 강조한다. 흡수된 용어는 남는 용어 주소로 바꾼다.
 import { useEffect, useMemo, useRef, useState, type MouseEvent } from "react";
-import { BackLink, Empty, ErrorState, Layout, Loading, useTitle } from "../components/common.tsx";
+import { BackLink, Empty, ErrorState, Layout, Loading, NewsTitle, ReadCheck, useTitle } from "../components/common.tsx";
 import { retry, useResource } from "../data.ts";
 import { monthDay, shortDate } from "../lib/format.ts";
 import { dataUrl } from "../lib/paths.ts";
@@ -182,12 +182,16 @@ function TermRow({ term, target }: { term: TermItem; target: boolean }) {
           <>
             처음 나온 뉴스:{" "}
             <Link to={briefPath(term.first.date, term.first.key)}>
-              {shortDate(term.first.date, year)} {term.first.title}
+              {shortDate(term.first.date, year)}{" "}
+              <NewsTitle date={term.first.date} newsKey={term.first.key}>
+                {term.first.title}
+              </NewsTitle>
             </Link>
             {" · "}
           </>
         )}
         나온 뉴스 {term.count.toLocaleString("ko-KR")}건
+        {term.first && <ReadCheck date={term.first.date} newsKey={term.first.key} />}
       </small>
     </li>
   );

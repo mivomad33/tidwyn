@@ -878,3 +878,184 @@ li:focus {
   font-weight: 700;
   border-bottom-color: var(--accent);
 }
+
+/* 4.5단계: 읽음 표시(확정 시안 A-1, M3). 안 읽은 뉴스는 굵게, 읽은 뉴스는 같은 글자 색의 보통 굵기 */
+.nt.unread,
+.rows span.nt.unread,
+.title.small.nt.unread {
+  font-weight: 600;
+}
+
+.title.nt.unread {
+  font-weight: 700;
+}
+
+.nt.read,
+.rows span.nt.read,
+.title.nt.read,
+.title.small.nt.read {
+  font-weight: 400;
+}
+
+/* 브리프 밖 목록의 줄 끝 체크 */
+.read-mk {
+  flex: none;
+  font-size: 12px;
+  color: var(--check);
+  margin-left: 6px;
+}
+
+/* 줄 끝에 체크를 두는 목록 줄(제목 묶음 + 체크) */
+.nrow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nrow-txt {
+  flex: 1;
+  min-width: 0;
+}
+
+.nrow .read-mk {
+  margin-left: 0;
+}
+
+/* 브리프의 읽음 버튼: 누르는 자리 44px, 보이는 동그라미 18px */
+.rd-btn {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  margin: 6px 4px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.rd-btn i {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1.5px solid var(--ring);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-style: normal;
+  font-size: 11px;
+  line-height: 1;
+  color: transparent;
+}
+
+.rd-btn.on i {
+  background: var(--check);
+  border-color: var(--check);
+  color: var(--check-ink);
+}
+
+/* 주요 뉴스 줄: 펼치기 버튼 + 읽음 버튼 */
+.item-row {
+  display: flex;
+  align-items: flex-start;
+}
+
+.item-row .item-btn {
+  flex: 1;
+  min-width: 0;
+  padding-right: 0;
+}
+
+/* 짧은 소식 줄: 글(누르면 읽음) + 읽음 버튼 */
+.short.has-toggle {
+  display: flex;
+  align-items: flex-start;
+  padding: 0;
+}
+
+.short-main {
+  flex: 1;
+  min-width: 0;
+  padding: 12px 0 12px 18px;
+}
+
+button.short-text {
+  display: block;
+  width: 100%;
+  text-align: left;
+}
+
+/* 칩 줄 끝 구분선('안 읽은 것만' 앞) */
+.chip-sep {
+  flex: none;
+  width: 1px;
+  align-self: stretch;
+  margin: 4px 2px;
+  background: var(--line);
+}
+
+/* 날짜 목록의 읽은 정도 */
+.row-link.nrow {
+  justify-content: space-between;
+}
+
+.read-prog {
+  flex: none;
+  font-size: 12.5px;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.read-prog .read-mk {
+  margin-left: 0;
+}
+
+/* 사이트 소개의 기록 지우기 */
+.plain .actions {
+  margin-top: 10px;
+}
+
+.plain .done {
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.story li a.nrow,
+.tl a.nrow,
+.rows a.nrow {
+  display: flex;
+}
+
+.nrow > .nt {
+  flex: 1;
+  min-width: 0;
+}
+
+.tl .read-mk,
+.rows .read-mk,
+.tl .read-mk span,
+.rows .read-mk span {
+  font-size: 12px;
+  font-weight: 400;
+}
+
+/* 4.5단계 '전체' 탭: 줄마다 섹션 칩(시안 all-tab.html 안 1) */
+.sec {
+  display: inline-block;
+  font-size: 10.5px;
+  font-weight: 600;
+  line-height: 1.4;
+  padding: 0 6px;
+  margin-right: 6px;
+  border-radius: 4px;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  letter-spacing: 0;
+  vertical-align: 1px;
+}
+
+.short-meta .sec {
+  margin-right: 0;
+}

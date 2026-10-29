@@ -16,6 +16,7 @@ import {
   buildTermFiles,
   byCount,
   compareTerms,
+  dayStoryCount,
   entityChunkOf,
   entityListPages,
   issueEntityChips,
@@ -237,14 +238,6 @@ export function buildSiteData(db: DatabaseSync): Map<string, string> {
   const entities = allEntities(db);
   const terms = allTerms(db);
   const refs = storyRefs(db, entities, terms);
-  const dates: SiteDates = {
-    version: SITE_DATA_VERSION,
-    latestDate: days.at(-1)?.date ?? null,
-    dates: days.map((d) => d.date).reverse(),
-    months: [...new Set(days.map((d) => monthOf(d.date)))].reverse(),
-  };
-  out.set(file(siteFiles.dates), JSON.stringify(dates));
-
   const lists = new Map<string, MonthList>();
   const details = new Map<string, MonthDetail>();
   days.forEach((day, idx) => {
@@ -257,6 +250,17 @@ export function buildSiteData(db: DatabaseSync): Map<string, string> {
     list.days.push(buildDay(db, day, idx > 0 ? days[idx - 1]! : null, dayDetails, refs));
     detail.days[day.date] = dayDetails;
   });
+  const counts = new Map<string, number>();
+  for (const list of lists.values()) for (const d of list.days) counts.set(d.date, dayStoryCount(d));
+  const datesDesc = days.map((d) => d.date).reverse();
+  const dates: SiteDates = {
+    version: SITE_DATA_VERSION,
+    latestDate: days.at(-1)?.date ?? null,
+    dates: datesDesc,
+    months: [...new Set(days.map((d) => monthOf(d.date)))].reverse(),
+    storyCounts: datesDesc.map((d) => counts.get(d) ?? 0),
+  };
+  out.set(file(siteFiles.dates), JSON.stringify(dates));
   for (const [month, list] of lists) out.set(file(siteFiles.list(month)), JSON.stringify(list));
   for (const [month, detail] of details) out.set(file(siteFiles.detail(month)), JSON.stringify(detail));
 

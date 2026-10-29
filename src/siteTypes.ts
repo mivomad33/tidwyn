@@ -203,6 +203,13 @@ export interface SiteDates {
   dates: string[];
   /** 최근 순, `YYYY-MM` */
   months: string[];
+  /** 4.5단계: 날짜마다 그날 뉴스 수(모든 섹션의 주요 뉴스 + 짧은 소식). `dates`와 같은 순서 */
+  storyCounts: number[];
+}
+
+/** 하루의 뉴스 수(모든 섹션의 주요 뉴스 + 짧은 소식) */
+export function dayStoryCount(day: DayList): number {
+  return day.sections.reduce((n, s) => n + s.stories.length, 0);
 }
 
 /** "어제에 이어" 표시(4.2-3). 앞 저장일이 하루 전이면 label은 "어제에 이어", 아니면 "<M월 D일>에 이어" */

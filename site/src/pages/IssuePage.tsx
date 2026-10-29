@@ -1,6 +1,6 @@
 // 이슈 페이지(4.3-2). 흡수된 이슈 주소는 남는 이슈 주소로 바꾸고 합쳐졌다는 줄을 보인다.
 import { useEffect } from "react";
-import { BackLink, CategoryLine, ErrorState, Layout, Loading, useTitle } from "../components/common.tsx";
+import { BackLink, CategoryLine, ErrorState, Layout, Loading, NewsTitle, ReadCheck, useTitle } from "../components/common.tsx";
 import { IssueEntityChips } from "../components/termView.ts";
 import { retry, useResource } from "../data.ts";
 import { issueEntityChips } from "../lib/entities.ts";
@@ -78,9 +78,14 @@ export function IssuePage({ id }: { id: number }) {
           <ol className="tl">
             {issue.timeline.map((t) => (
               <li key={`${t.date}-${t.key}`}>
-                <Link to={briefPath(t.date, t.key)}>
-                  <small>{shortDate(t.date, year)}</small>
-                  <span>{t.title}</span>
+                <Link to={briefPath(t.date, t.key)} className="nrow">
+                  <div className="nrow-txt">
+                    <small>{shortDate(t.date, year)}</small>
+                    <NewsTitle date={t.date} newsKey={t.key}>
+                      {t.title}
+                    </NewsTitle>
+                  </div>
+                  <ReadCheck date={t.date} newsKey={t.key} />
                 </Link>
               </li>
             ))}

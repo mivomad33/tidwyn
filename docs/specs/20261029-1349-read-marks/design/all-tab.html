@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>4.5단계 전체 탭 시안</title>
+<style>
+  body { margin: 0; background: #e9e9ec; font-family: Pretendard, -apple-system, system-ui, sans-serif; color: #222; }
+  h1 { font-size: 20px; margin: 24px 24px 4px; }
+  p.note { margin: 0 24px 16px; color: #555; font-size: 14px; max-width: 900px; line-height: 1.5; }
+  .option { margin: 0 24px 40px; }
+  .option h2 { font-size: 17px; margin: 0 0 4px; }
+  .option p { margin: 0 0 12px; font-size: 13px; color: #555; max-width: 900px; line-height: 1.5; }
+  .phones { display: flex; gap: 20px; flex-wrap: wrap; }
+  .phone { width: 375px; height: 700px; border-radius: 28px; overflow: hidden; position: relative; box-shadow: 0 6px 24px rgba(0,0,0,.15); background: var(--bg); color: var(--fg); }
+  .screen { position: absolute; inset: 0; overflow: hidden; display: flex; flex-direction: column; }
+  .caption { text-align: center; font-size: 12px; color: #666; margin-top: 6px; }
+  /* 3단계 확정 시안 A의 색 + 체크 색(--check)과 빈 체크 테두리(--ring) */
+  .L { --bg: #fff; --fg: #1d1d1f; --muted: #6b6b70; --line: #ececee; --chip: #f5f5f7; --accent: #c2410c; --accentbg: #fff1e8; --ring: #8e8e93; }
+  .D { --bg: #161618; --fg: #ececee; --muted: #9a9aa0; --line: #2a2a2e; --chip: #222226; --accent: #fb923c; --accentbg: #3a2414; --ring: #6b6b70; }
+  .L { --check: #3b7fd0; --soft: #d1d1d6; } .D { --check: #6aa5ec; --soft: #3a3a3f; }
+  .bar { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px 10px; border-bottom: 1px solid var(--line); }
+  .datebtn { font-size: 13px; color: var(--muted); }
+  .icons { display: flex; gap: 14px; color: var(--muted); font-size: 16px; }
+  .body { flex: 1; overflow: hidden; }
+  .headline { padding: 12px 18px; font-size: 13.5px; line-height: 1.5; color: var(--muted); border-bottom: 1px solid var(--line); }
+  .chips { display: flex; gap: 6px; padding: 10px 18px; border-bottom: 1px solid var(--line); overflow: hidden; }
+  .chips span { font-size: 12px; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); white-space: nowrap; }
+  .chips span.on { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+  .chips .sep { border: none; padding: 4px 0; color: var(--line); }
+  .item, .short { display: flex; align-items: flex-start; border-bottom: 1px solid var(--line); }
+  .item .main { flex: 1; padding: 14px 0 14px 18px; }
+  .short .main { flex: 1; padding: 12px 0 12px 18px; }
+  .cat { font-size: 11.5px; font-weight: 600; letter-spacing: .2px; margin-bottom: 4px; }
+  .title { font-size: 17px; font-weight: 700; line-height: 1.4; letter-spacing: -.2px; }
+  .cont { margin-top: 6px; font-size: 12px; color: var(--muted); }
+  .badge { font-size: 11px; padding: 2px 7px; border-radius: 4px; background: var(--accentbg); color: var(--accent); font-weight: 600; margin-right: 6px; }
+  .short-text { font-size: 15px; line-height: 1.55; font-weight: 600; }
+  .short-meta { margin-top: 6px; font-size: 12px; color: var(--muted); }
+  .list-h { font-size: 12.5px; font-weight: 700; color: var(--muted); padding: 0 18px; margin: 16px 0 2px; }
+  .tabs { display: flex; justify-content: space-around; border-top: 1px solid var(--line); padding: 8px 0 14px; font-size: 15px; color: var(--muted); }
+  .tabs .on { color: var(--fg); font-weight: 700; border-bottom: 2px solid var(--accent); }
+  .pad { padding: 16px 18px; }
+  .ptitle { font-size: 22px; font-weight: 800; letter-spacing: -.3px; margin-bottom: 6px; }
+  .meta { font-size: 12px; color: var(--muted); margin-bottom: 10px; }
+  .h { font-size: 12.5px; font-weight: 700; color: var(--muted); margin: 14px 0 4px; }
+  .row { display: flex; align-items: center; gap: 8px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+  .row .txt { flex: 1; }
+  .row small { display: block; font-size: 12px; color: var(--muted); }
+  .row span.t { font-size: 14.5px; font-weight: 600; line-height: 1.45; }
+  .drow { display: flex; justify-content: space-between; align-items: center; padding: 13px 18px; border-bottom: 1px solid var(--line); font-size: 16px; }
+  .drow small { font-size: 12.5px; color: var(--muted); display: flex; align-items: center; gap: 4px; }
+  .mh { font-size: 12.5px; font-weight: 700; color: var(--muted); padding: 0 18px; margin: 16px 0 2px; }
+
+  /* 안 읽은 뉴스는 지금처럼 굵게, 읽은 뉴스는 보통 굵기(색은 그대로) */
+  .rd .title, .rd .short-text, .rd span.t { font-weight: 400; }
+  /* 누르는 자리는 44px, 보이는 동그라미는 18px */
+  .chk { flex: none; width: 44px; height: 44px; margin: 6px 4px 0 0; display: flex; align-items: center; justify-content: center; }
+  .chk i { width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid var(--ring); box-sizing: border-box; display: flex; align-items: center; justify-content: center; font-style: normal; font-size: 11px; line-height: 1; color: transparent; }
+  /* ring: 안 읽음 = 연한 회색 동그라미 / tick: 안 읽음 = 연한 회색 체크만 */
+  .ring .chk i { border-color: var(--soft); }
+  .tick .chk i { border-color: transparent; color: var(--soft); font-size: 14px; font-weight: 700; }
+  .rd .chk i { background: var(--check); border-color: var(--check); color: #fff; font-size: 11px; }
+  .D .rd .chk i { color: #161618; }
+  .mk { flex: none; font-size: 12px; color: var(--check); }
+  .p { font-size: 14px; line-height: 1.65; }
+  .btn { display: inline-block; font-size: 14px; padding: 8px 14px; border-radius: 8px; border: 1px solid var(--line); background: var(--chip); }
+
+  /* 전체 탭: 줄마다 섹션 표시 */
+  .sec { display: inline-block; font-size: 10.5px; font-weight: 600; padding: 1px 6px; margin-right: 6px; border-radius: 4px; border: 1px solid var(--line); color: var(--muted); vertical-align: 1px; letter-spacing: 0; }
+  .sec-text { color: var(--muted); font-weight: 600; }
+  .tabs span { padding-bottom: 2px; }
+</style>
+</head>
+<body>
+<h1>4.5단계 추가 시안: 브리프 '전체' 탭 (폰 375px)</h1>
+<p class="note">2026-10-29 사용자 요청. 하단 탭 맨 앞에 '전체'를 더한다. 전체는 세 섹션을 나누지 않고 한 목록으로 보인다: 주요 뉴스(한국 → 세계 → IT·AI 순, 섹션 안은 순위 순), 그 아래 짧은 소식(같은 순서). 줄마다 섹션을 표시한다. 섹션별 흐름 설명과 "확인되지 않은 내용" 줄은 전체에서는 보이지 않는다(섹션 탭에서 본다). 카테고리 칩·'안 읽은 것만'은 전체 목록에 그대로 걸린다. 마지막으로 고른 탭을 기억해 다음에 그 탭으로 연다. 다른 목록의 링크(#뉴스)로 들어오면 전체 탭에 머문 채 그 뉴스로 간다. 색·글꼴·읽음 표시는 A-1 그대로. 내용은 지어낸 예시다.</p>
+<div id="root"></div>
+<script>
+const tops = [
+  { sec: "한국", cat: "경제 · 거시·정책", color: "#c2410c", title: "가짜 중앙은행, 기준금리 동결하고 양적긴축 속도 늦춘다", cont: "<span class='badge'>어제에 이어</span>이어지는 이야기: 가짜시 경기 흐름", rd: true },
+  { sec: "한국", cat: "정치 · 국회", color: "#1d4ed8", title: "가짜당, 예산안 수정 협상 재개… 처리 시한 이틀 남아", cont: "이어지는 이야기: 가짜 예산안 협상", rd: false },
+  { sec: "세계", cat: "국제 · 외교", color: "#7c3aed", title: "가짜국·예시국 정상, 무역 분쟁 휴전 6개월 연장 합의", cont: "이어지는 이야기: 가짜국 무역 분쟁", rd: false },
+  { sec: "세계", cat: "경제 · 시장", color: "#c2410c", title: "예시국 증시, 반도체 실적 기대에 사흘째 올라", cont: "새 이슈", rd: true },
+  { sec: "IT·AI", cat: "IT·AI · AI 산업", color: "#1d4ed8", title: "가짜AI, 새 언어 모델 공개… 한국어 성능 크게 올려", cont: "이어지는 이야기: 가짜AI 모델 경쟁", rd: false },
+];
+const shorts = [
+  { sec: "한국", text: "가짜시, 다음 달부터 공공자전거 요금 10% 내린다.", meta: "사회 · 교통", rd: true },
+  { sec: "세계", text: "예시국 중앙은행, 물가 목표 유지 밝혀.", meta: "경제 · 거시·정책", rd: false },
+  { sec: "IT·AI", text: "예시 반도체, 3분기 영업이익 시장 예상 웃돌아.", meta: "경제 · 기업", rd: false },
+];
+const chk = `<span class="chk"><i>✓</i></span>`;
+const label = (mode, sec) => mode === "chip" ? `<span class="sec">${sec}</span>` : `<span class="sec-text">${sec} · </span>`;
+function topItem(it, mode) {
+  return `<div class="item${it.rd ? " rd" : ""}"><div class="main"><div class="cat" style="color:${it.color}">${label(mode, it.sec)}${it.cat}</div><div class="title">${it.title}</div><div class="cont">${it.cont}</div></div>${chk}</div>`;
+}
+function shortItem(s, mode) {
+  return `<div class="short${s.rd ? " rd" : ""}"><div class="main"><div class="short-text">${s.text}</div><div class="short-meta">${label(mode, s.sec)}${s.meta}</div></div>${chk}</div>`;
+}
+function bar(t) { return `<div class="bar"><span class="datebtn">${t}</span><span class="icons">⌕ ☰</span></div>`; }
+function chips(unreadOn) {
+  return `<div class="chips"><span class="on">전체</span><span>정치</span><span>경제</span><span>사회</span><span class="sep">|</span><span class="${unreadOn ? "on" : ""}">안 읽은 것만</span></div>`;
+}
+function brief(mode, unreadOn) {
+  const t = unreadOn ? tops.filter((i) => !i.rd) : tops;
+  const s = unreadOn ? shorts.filter((i) => !i.rd) : shorts;
+  return `<div class="screen">${bar("‹ 10월 28일 화요일 ›")}<div class="body">
+    <div class="headline">가짜국과 예시국이 무역 휴전을 늘렸고, 국내는 예산안 협상이 막바지다.</div>
+    ${chips(unreadOn)}
+    ${t.map((x) => topItem(x, mode)).join("")}
+    <div class="list-h">짧은 소식</div>
+    ${s.map((x) => shortItem(x, mode)).join("")}
+  </div><div class="tabs"><span class="on">전체</span><span>한국</span><span>세계</span><span>IT·AI</span></div></div>`;
+}
+document.getElementById("root").innerHTML = `
+  <section class="option"><h2>안 1 (추천): 분류 줄 앞에 작은 섹션 칩</h2><p>테두리만 있는 작은 칩이라 분류 색 글자와 섞이지 않고, 섹션이 한눈에 구별된다.</p><div class="phones">
+    <div><div class="phone L ring">${brief("chip", false)}</div><div class="caption">전체 탭</div></div>
+    <div><div class="phone L ring">${brief("chip", true)}</div><div class="caption">전체 + '안 읽은 것만'</div></div>
+    <div><div class="phone D ring">${brief("chip", false)}</div><div class="caption">전체 탭(다크)</div></div>
+  </div></section>
+  <section class="option"><h2>안 2: 분류 줄 앞에 섹션 글자</h2><p>칩 없이 "한국 · 경제 · 거시·정책"처럼 흐린 글자로 붙인다. 더 조용하지만 분류 글자와 붙어 덜 눈에 띈다.</p><div class="phones">
+    <div><div class="phone L ring">${brief("text", false)}</div><div class="caption">전체 탭</div></div>
+    <div><div class="phone D ring">${brief("text", true)}</div><div class="caption">전체 + '안 읽은 것만'(다크)</div></div>
+  </div></section>`;
+</script>
+</body>
+</html>

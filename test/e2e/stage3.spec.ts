@@ -41,7 +41,7 @@ test.describe("첫 화면과 날짜 이동", () => {
     await tabs.getByRole("button", { name: info.latest.otherSection }).click();
     await expect(tabs.getByRole("button", { name: info.latest.otherSection })).toHaveAttribute("aria-pressed", "true");
     await expect(tabs.getByRole("button", { name: info.latest.firstSection })).toHaveAttribute("aria-pressed", "false");
-    await expect(page.getByRole("button", { name: info.latest.otherTopTitle })).toBeVisible();
+    await expect(page.getByRole("button", { name: info.latest.otherTopTitle, expanded: false })).toBeVisible();
 
     // 분류 칩: 고른 대분류의 뉴스만 남는다(없으면 빈 상태 글)
     const chips = page.getByRole("group", { name: "카테고리" });

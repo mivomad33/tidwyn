@@ -1,7 +1,7 @@
 // 인물·기관·국가 페이지(4.7-4). 그 식별자의 상세 묶음을 받고, 흡수된 식별자면 남는 대상의 묶음을 받아 남는 대상 주소로 바꾼다.
 // 지웠거나 없는 식별자(묶음에 없거나 묶음 파일이 없음)는 없는 페이지다. 등장 뉴스의 나머지는 "더 보기"를 눌렀을 때 받는다.
 import { useEffect, useState } from "react";
-import { BackLink, ErrorState, Layout, Loading, useTitle } from "../components/common.tsx";
+import { BackLink, ErrorState, Layout, Loading, NewsTitle, ReadCheck, useTitle } from "../components/common.tsx";
 import { retry, useResource, type Resource } from "../data.ts";
 import { ENTITY_FIRST_ISSUES, ENTITY_MORE_STEP, resolveEntity } from "../lib/entities.ts";
 import { monthDay, shortDate } from "../lib/format.ts";
@@ -148,9 +148,14 @@ function NewsRows({ news, year }: { news: EntityNews[]; year: string }) {
     <ul className="rows">
       {news.map((n) => (
         <li key={`${n.date}-${n.key}`}>
-          <Link to={briefPath(n.date, n.key)}>
-            <small>{[shortDate(n.date, year), n.issue].filter(Boolean).join(" · ")}</small>
-            <span className={n.kind === "short" ? "small" : undefined}>{n.title}</span>
+          <Link to={briefPath(n.date, n.key)} className="nrow">
+            <div className="nrow-txt">
+              <small>{[shortDate(n.date, year), n.issue].filter(Boolean).join(" · ")}</small>
+              <NewsTitle date={n.date} newsKey={n.key} className={n.kind === "short" ? "small" : undefined}>
+                {n.title}
+              </NewsTitle>
+            </div>
+            <ReadCheck date={n.date} newsKey={n.key} />
           </Link>
         </li>
       ))}

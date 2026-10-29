@@ -1,20 +1,93 @@
-// 날짜별 브리프와 펼친 뉴스 카드(4.2)
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { ALL_MAJORS, CategoryLine, Layout as Shell, ChipFilter, Empty, ErrorState, Footer, Loading, TopBar, useTitle } from "../components/common.tsx";
+// 날짜별 브리프와 펼친 뉴스 카드(4.2). 4.5단계: 읽음 버튼, 펼침·글 누름·링크로 읽음, '안 읽은 것만' 거르기
+import { useEffect, useMemo, useReducer, useRef, useState, type ReactNode } from "react";
+import { ALL_MAJORS, CategoryLine, Layout as Shell, ChipFilter, Empty, ErrorState, Footer, Loading, NewsTitle, ReadCheck, ReadToggle, SectionChip, ToggleChip, TopBar, useTitle } from "../components/common.tsx";
 import { EntityChips, TermBox, TermChips, TermText } from "../components/termView.ts";
 import { retry, useResource, type Resource } from "../data.ts";
-import { daySections, findDay, findStoryTarget, orderSources, sectionView, stateForHash, storyImage, type BriefViewState } from "../lib/brief.ts";
+import { ALL_TAB, BRIEF_TAB_KEY, daySections, findDay, findStoryTarget, orderSources, parseBriefTab, sectionView, stateForHash, storyImage, type BriefTab, type BriefViewState } from "../lib/brief.ts";
 import { monthDay, monthDayWeekday, shortDate } from "../lib/format.ts";
 import { dataUrl } from "../lib/paths.ts";
 import { placeTerms, storyBodyParts, termBoxPlace, toggleTerm } from "../lib/terms.ts";
 import { categoryVar } from "../lib/theme.ts";
 import { adjacentDates, briefPath, hashKey, issuePath, resolveBriefDate, type Route } from "../lib/routes.ts";
-import type { ListStory, MonthDetail, MonthList, SectionName, SiteDates, StoryDetail } from "../lib/types.ts";
+import type { ListStory, MonthDetail, MonthList, SiteDates, StoryDetail } from "../lib/types.ts";
+import { markRead, readStore, useReadVersion } from "../readMarks.ts";
 import { Link, lastNavigation, navigate, useLocation } from "../router.tsx";
 import { NotFoundPage } from "./NotFoundPage.tsx";
 
 export function storyDomId(key: string): string {
   return `story-${key}`;
+}
+
+/** '안 읽은 것만'을 켠 동안 읽은 줄이 사라지기 전에 기다리는 시간(잘못 누른 것을 되돌릴 틈)과 사라지는 시간 */
+const LEAVE_DELAY_MS = 800;
+const LEAVE_MS = 250;
+
+/**
+ * leaving이 켜지면 기다렸다가 줄을 부드럽게 접고 onGone을 부른다. 그 사이 leaving이 꺼지면 그만둔다.
+ * 기기의 '동작 줄이기'를 켰으면 기다린 뒤 바로 사라진다. 그 줄에 키보드 위치가 있었으면 다음(없으면 앞) 줄의 읽음 버튼으로 옮긴다.
+ */
+function useLeave(leaving: boolean, onGone: () => void) {
+  const ref = useRef<HTMLLIElement>(null);
+  const gone = useRef(onGone);
+  useEffect(() => {
+    gone.current = onGone;
+  });
+  useEffect(() => {
+    const el = ref.current;
+    if (!leaving || !el) return;
+    let anim: Animation | null = null;
+    const finish = () => {
+      moveFocusFrom(el);
+      gone.current();
+    };
+    const timer = window.setTimeout(() => {
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return finish();
+      el.style.overflow = "hidden";
+      anim = el.animate(
+        [
+          { height: `${el.offsetHeight}px`, opacity: 1 },
+          { height: "0px", opacity: 0, paddingTop: "0px", paddingBottom: "0px", marginTop: "0px", marginBottom: "0px", borderWidth: "0px" },
+        ],
+        { duration: LEAVE_MS, easing: "ease-in", fill: "forwards" },
+      );
+      anim.onfinish = finish;
+    }, LEAVE_DELAY_MS);
+    return () => {
+      window.clearTimeout(timer);
+      if (anim) {
+        anim.onfinish = null;
+        anim.cancel();
+      }
+      el.style.overflow = "";
+    };
+  }, [leaving]);
+  return ref;
+}
+
+function moveFocusFrom(el: HTMLElement): void {
+  if (!el.contains(document.activeElement)) return;
+  const rows = [...document.querySelectorAll<HTMLElement>("main li[id^=story-]")].filter((r) => r === el || !r.dataset.leaving);
+  const i = rows.indexOf(el);
+  const to = rows[i + 1] ?? rows[i - 1];
+  const target = to?.querySelector<HTMLElement>("button.rd-btn") ?? document.getElementById("main");
+  target?.focus({ preventScroll: true });
+}
+
+/** 마지막으로 고른 탭(없거나 읽을 수 없으면 한국). 저장소를 쓸 수 없어도 오류 없이 기본 탭이다 */
+function storedTab(): BriefTab {
+  try {
+    return parseBriefTab(window.localStorage.getItem(BRIEF_TAB_KEY));
+  } catch {
+    return parseBriefTab(null);
+  }
+}
+
+function rememberTab(tab: BriefTab): void {
+  try {
+    window.localStorage.setItem(BRIEF_TAB_KEY, tab);
+  } catch {
+    // 기억하지 못해도 이 화면에서는 고른 탭을 보인다
+  }
 }
 
 export function BriefPage({ route }: { route: Route }) {
@@ -28,10 +101,24 @@ export function BriefPage({ route }: { route: Route }) {
   const day = listRes.status === "ok" && date ? findDay(listRes.data, date) : null;
   const key = hashKey(loc.hash);
 
-  const [view, setView] = useState<BriefViewState>({ section: "한국", major: null, expanded: null });
+  // 읽음이 바뀌면 다시 그려 '안 읽은 것만'의 숨길 줄을 다시 정한다
+  useReadVersion();
+  const [, refresh] = useReducer((n: number) => n + 1, 0);
+  const [view, setView] = useState<BriefViewState>(() => ({ section: storedTab(), major: null, expanded: null }));
   useEffect(() => {
     if (day) setView((v) => stateForHash(day, key, v));
   }, [day, key]);
+
+  // `#<뉴스 키>`로 화면이 열리면(카드 펼치기, 다른 목록의 링크, 직접 연 주소, 새로 고침, 뒤로 가기) 그 뉴스는 읽음이다(M1, 4.2-3)
+  useEffect(() => {
+    if (day && date && key && findStoryTarget(day, key)) markRead(date, key);
+  }, [day, date, key]);
+
+  // '안 읽은 것만'(4.4). 읽었고 펼치지 않았고 `#` 대상이 아닌 뉴스를 숨긴다. 켤 때·섹션이나 날짜를 바꿀 때 이미 그런 뉴스는
+  // 바로 숨기고(gone), 켠 동안 그렇게 된 뉴스는 잠깐 뒤 부드럽게 사라진 다음 gone에 든다(사용자 결정 2026-10-29).
+  // round는 칩을 켤 때마다 올라 다시 잡게 한다.
+  const [unread, setUnread] = useState({ on: false, round: 0 });
+  const hidden = useRef<{ token: string; gone: Set<string> } | null>(null);
 
   // 펼친 카드가 있을 때만 그 달의 본문 파일을 받는다(4.3-7)
   const expanded = day && view.expanded && findStoryTarget(day, view.expanded) ? view.expanded : null;
@@ -47,7 +134,7 @@ export function BriefPage({ route }: { route: Route }) {
     const target = findStoryTarget(day, key);
     if (!target) return;
     if (target.kind === "top" && (view.expanded !== key || detailRes.status === "loading" || detailRes.status === "idle")) return;
-    if (view.section !== target.section) return;
+    if (view.section !== ALL_TAB && view.section !== target.section) return;
     const el = document.getElementById(storyDomId(key));
     if (!el) return;
     scrolledFor.current = token;
@@ -74,9 +161,28 @@ export function BriefPage({ route }: { route: Route }) {
   if (!day) return <NotFoundPage />;
 
   const sections = daySections(day);
-  const current = sections.includes(view.section) ? view.section : sections[0]!;
+  const tabs: BriefTab[] = [ALL_TAB, ...sections];
+  const current = tabs.includes(view.section) ? view.section : sections[0]!;
+  const all = current === ALL_TAB;
   const sv = sectionView(day, current, view.major);
   const hasStories = sv.top.length + sv.short.length > 0;
+  const token = `${date}|${current}|${unread.round}`;
+  if (unread.on && hidden.current?.token !== token) {
+    const gone = readStore.readKeys(date);
+    if (key) gone.delete(key);
+    if (expanded) gone.delete(expanded);
+    hidden.current = { token, gone };
+  }
+  const hide = unread.on ? hidden.current! : null;
+  // 펼친 카드와 `#<뉴스 키>`로 들어온 뉴스는 읽었어도 보인다(4.4-1). 접으면 사라진다
+  const leaving = (s: ListStory) => !!hide && s.key !== expanded && s.key !== key && readStore.isRead(date, s.key);
+  const shown = (s: ListStory) => !leaving(s) || !hide!.gone.has(s.key);
+  const onGone = (k: string) => {
+    hidden.current?.gone.add(k);
+    refresh();
+  };
+  const tops = sv.top.filter(shown);
+  const shorts = sv.short.filter(shown);
 
   function setHash(k: string | null) {
     navigate(briefPath(date!, k ?? undefined), { replace: true, quiet: true });
@@ -85,13 +191,17 @@ export function BriefPage({ route }: { route: Route }) {
     // 펼침 상태는 주소의 `#<뉴스 키>`를 따른다(stateForHash)
     setHash(expanded === k ? null : k);
   }
-  function chooseSection(s: SectionName) {
+  function chooseSection(s: BriefTab) {
+    rememberTab(s);
     setView((v) => ({ ...v, section: s, expanded: null }));
     if (key) setHash(null);
     window.scrollTo({ top: 0 });
   }
   function chooseMajor(m: BriefViewState["major"]) {
     setView((v) => ({ ...v, major: m }));
+  }
+  function chooseUnread(on: boolean) {
+    setUnread((u) => ({ on, round: on ? u.round + 1 : u.round }));
   }
 
   return (
@@ -109,14 +219,26 @@ export function BriefPage({ route }: { route: Route }) {
             </div>
           )}
         </div>
-        <ChipFilter label="카테고리" options={ALL_MAJORS} value={view.major} onChange={chooseMajor} />
+        <ChipFilter
+          label="카테고리"
+          options={ALL_MAJORS}
+          value={view.major}
+          onChange={chooseMajor}
+          after={
+            <ToggleChip on={unread.on} onChange={chooseUnread}>
+              안 읽은 것만
+            </ToggleChip>
+          }
+        />
         <h2 className="sr-only">{current} 뉴스</h2>
         {sv.section?.flow && view.major === null && <p className="flow">{sv.section.flow}</p>}
         {!hasStories && <Empty>{view.major ? "이 분류의 뉴스가 없다." : "이 섹션의 뉴스가 없다."}</Empty>}
-        {sv.top.length > 0 && (
+        {hasStories && tops.length + shorts.length === 0 && <Empty>안 읽은 뉴스가 없다.</Empty>}
+        {tops.length > 0 && (
           <ul className="list">
-            {sv.top.map((s) => (
+            {tops.map((s) => (
               <TopItem
+                showSection={all}
                 key={s.key}
                 story={s}
                 date={date}
@@ -124,18 +246,20 @@ export function BriefPage({ route }: { route: Route }) {
                 onToggle={() => toggle(s.key)}
                 detail={detailRes}
                 onRetry={() => retry([detailUrl])}
+                leaving={leaving(s)}
+                onGone={() => onGone(s.key)}
               />
             ))}
           </ul>
         )}
-        {sv.short.length > 0 && (
+        {shorts.length > 0 && (
           <section aria-labelledby="short-h">
             <h3 id="short-h" className="h list-h">
               짧은 소식
             </h3>
             <ul className="list">
-              {sv.short.map((s) => (
-                <ShortItem key={s.key} story={s} targeted={key === s.key} />
+              {shorts.map((s) => (
+                <ShortItem key={s.key} story={s} date={date} targeted={key === s.key} showSection={all} leaving={leaving(s)} onGone={() => onGone(s.key)} />
               ))}
             </ul>
           </section>
@@ -144,7 +268,7 @@ export function BriefPage({ route }: { route: Route }) {
       </main>
       <Footer />
       <nav className="tabs" aria-label="섹션">
-        {sections.map((s) => (
+        {tabs.map((s) => (
           <button key={s} type="button" className={s === current ? "on" : ""} aria-pressed={s === current} onClick={() => chooseSection(s)}>
             {s}
           </button>
@@ -194,16 +318,27 @@ function ContLine({ story }: { story: ListStory }) {
 
 type DetailState = Resource<MonthDetail>;
 
-function TopItem({ story, date, open, onToggle, detail, onRetry }: { story: ListStory; date: string; open: boolean; onToggle: () => void; detail: DetailState; onRetry: () => void }) {
+interface LeaveProps {
+  leaving: boolean;
+  onGone: () => void;
+}
+
+function TopItem({ story, date, open, onToggle, detail, onRetry, showSection, leaving, onGone }: { story: ListStory; date: string; open: boolean; onToggle: () => void; detail: DetailState; onRetry: () => void; showSection: boolean } & LeaveProps) {
   const id = storyDomId(story.key);
+  const ref = useLeave(leaving, onGone);
   const body = detail.status === "ok" ? detail.data.days[date]?.[story.key] : undefined;
   return (
-    <li id={id} tabIndex={-1} className={open ? "item open" : "item"}>
-      <button type="button" className="item-btn" aria-expanded={open} aria-controls={open ? `${id}-body` : undefined} onClick={onToggle}>
-        <CategoryLine major={story.category.major} minor={story.category.minor} isNewMinor={open && story.category.isNewMinor} />
-        <span className="title">{story.title}</span>
-        {!open && <ContLine story={story} />}
-      </button>
+    <li ref={ref} id={id} tabIndex={-1} className={open ? "item open" : "item"} data-leaving={leaving || undefined}>
+      <div className="item-row">
+        <button type="button" className="item-btn" aria-expanded={open} aria-controls={open ? `${id}-body` : undefined} onClick={onToggle}>
+          <CategoryLine major={story.category.major} minor={story.category.minor} isNewMinor={open && story.category.isNewMinor} section={showSection ? story.section : undefined} />
+          <NewsTitle date={date} newsKey={story.key} className="title">
+            {story.title}
+          </NewsTitle>
+          {!open && <ContLine story={story} />}
+        </button>
+        <ReadToggle date={date} newsKey={story.key} title={story.title} />
+      </div>
       {open && (
         <div id={`${id}-body`} className="detail">
           {detail.status === "error" && <ErrorState onRetry={onRetry} />}
@@ -255,9 +390,14 @@ function StoryBody({ story, detail, date }: { story: ListStory; detail: StoryDet
             <ol aria-label="이전 전개">
               {detail.previous.map((p) => (
                 <li key={`${p.date}-${p.key}`}>
-                  <Link to={briefPath(p.date, p.key)}>
-                    <em>{shortDate(p.date, year)}</em>
-                    {p.title}
+                  <Link to={briefPath(p.date, p.key)} className="nrow">
+                    <div className="nrow-txt">
+                      <em>{shortDate(p.date, year)}</em>
+                      <NewsTitle date={p.date} newsKey={p.key}>
+                        {p.title}
+                      </NewsTitle>
+                    </div>
+                    <ReadCheck date={p.date} newsKey={p.key} />
                   </Link>
                 </li>
               ))}
@@ -348,17 +488,27 @@ function StoryBody({ story, detail, date }: { story: ListStory; detail: StoryDet
   );
 }
 
-function ShortItem({ story, targeted }: { story: ListStory; targeted: boolean }) {
+/** 짧은 소식 줄. 글을 누르면(키보드 Enter·Space 포함) 읽음이 되고, 이슈 링크는 읽음으로 바꾸지 않는다(4.2-2) */
+function ShortItem({ story, date, targeted, showSection, leaving, onGone }: { story: ListStory; date: string; targeted: boolean; showSection: boolean } & LeaveProps) {
+  const ref = useLeave(leaving, onGone);
   return (
-    <li id={storyDomId(story.key)} tabIndex={-1} className={targeted ? "short target" : "short"}>
-      <p className="short-text">{story.title}</p>
-      <div className="short-meta">
-        <span className="cat-inline" style={{ color: categoryVar(story.category.major) }}>
-          {story.category.major} · {story.category.minor}
-        </span>
-        {story.continues && <span className="badge">{story.continues.label}</span>}
-        {story.issue && <Link to={issuePath(story.issue.id)}>{story.issue.name}</Link>}
+    <li ref={ref} id={storyDomId(story.key)} tabIndex={-1} className={targeted ? "short has-toggle target" : "short has-toggle"} data-leaving={leaving || undefined}>
+      <div className="short-main">
+        <button type="button" className="short-text" onClick={() => markRead(date, story.key)}>
+          <NewsTitle date={date} newsKey={story.key}>
+            {story.title}
+          </NewsTitle>
+        </button>
+        <div className="short-meta">
+          {showSection && <SectionChip section={story.section} />}
+          <span className="cat-inline" style={{ color: categoryVar(story.category.major) }}>
+            {story.category.major} · {story.category.minor}
+          </span>
+          {story.continues && <span className="badge">{story.continues.label}</span>}
+          {story.issue && <Link to={issuePath(story.issue.id)}>{story.issue.name}</Link>}
+        </div>
       </div>
+      <ReadToggle date={date} newsKey={story.key} title={story.title} />
     </li>
   );
 }
