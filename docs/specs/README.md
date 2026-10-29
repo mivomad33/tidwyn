@@ -7,4 +7,4 @@
 | 20261028-0926 | [local-collection](20261028-0926-local-collection/spec.md) | 신규 개발 | 완료 | 1단계: 로컬 브리핑 스킬로 뉴스를 수집해 SQLite에 쌓고 백업한다 |
 | 20261028-1359 | [source-improvement](20261028-1359-source-improvement/spec.md) | 변경 건 | 완료 | 1.5단계: /brief가 통신사·주요 매체를 출처로 확인하게 하고 출처 쏠림을 막는다 |
 | 20261028-1527 | [issue-linking](20261028-1527-issue-linking/spec.md) | 변경 건 | 완료 | 2단계: 뉴스를 이슈로 엮어 이전 전개, 이슈 요약, 관련 이슈를 보이고 중복 이슈를 합친다 |
-| 20261028-1839 | [public-site](20261028-1839-public-site/spec.md) | 변경 건 | 사용자 확인 대기 | 3단계: DB의 브리프와 이슈를 Vercel 공개 사이트로 빌드·배포하고 원본 저장소를 공개한다 |
+| 20261028-1839 | [public-site](20261028-1839-public-site/spec.md) | 변경 건 | 완료 | 3단계: DB의 브리프와 이슈를 Vercel 공개 사이트로 빌드·배포하고 원본 저장소를 공개한다 |
