@@ -1,5 +1,5 @@
 {
-  "formatVersion": 2,
+  "formatVersion": 3,
   "month": "2026-10",
   "briefs": [
     {
@@ -2108,5 +2108,9 @@
       "collectedAt": "2026-10-29T08:55:24+09:00",
       "late": false
     }
+  ],
+  "extracted": [
+    "2026-10-27",
+    "2026-10-28"
   ]
 }

@@ -1,0 +1,3131 @@
+{
+  "formatVersion": 3,
+  "entities": [
+    {
+      "id": 1,
+      "kind": "기관",
+      "name": "한국은행",
+      "aliases": [
+        "한은",
+        "Bank of Korea"
+      ],
+      "description": "대한민국의 중앙은행",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-27/한국-1",
+      "mergedInto": null
+    },
+    {
+      "id": 2,
+      "kind": "국가",
+      "name": "대한민국",
+      "aliases": [
+        "한국",
+        "South Korea"
+      ],
+      "description": "동아시아 한반도 남쪽의 나라",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-27/한국-1",
+      "mergedInto": null
+    },
+    {
+      "id": 3,
+      "kind": "인물",
+      "name": "김건희",
+      "aliases": [
+        "Kim Keon-hee"
+      ],
+      "description": "윤석열 전 대통령의 부인",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-27/한국-2",
+      "mergedInto": null
+    },
+    {
+      "id": 4,
+      "kind": "기관",
+      "name": "대한민국 대법원",
+      "aliases": [
+        "대법원",
+        "Supreme Court of Korea"
+      ],
+      "description": "대한민국 최고 법원",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-27/한국-2",
+      "mergedInto": null
+    },
+    {
+      "id": 5,
+      "kind": "기관",
+      "name": "서울특별시",
+      "aliases": [
+        "서울시",
+        "Seoul Metropolitan Government"
+      ],
+      "description": "대한민국 수도 서울의 지방자치단체",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-27/한국-3",
+      "mergedInto": null
+    },
+    {
+      "id": 6,
+      "kind": "기관",
+      "name": "서울주택도시개발공사",
+      "aliases": [
+        "SH",
+        "SH공사"
+      ],
+      "description": "서울시 산하 주택·도시개발 공기업",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-27/한국-3",
+      "mergedInto": null
+    },
+    {
+      "id": 7,
+      "kind": "인물",
+      "name": "조희대",
+      "aliases": [
+        "Jo Hee-de"
+      ],
+      "description": "대한민국 대법원장",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-27/한국-4",
+      "mergedInto": null
+    },
+    {
+      "id": 8,
+      "kind": "기관",
+      "name": "더불어민주당",
+      "aliases": [
+        "민주당",
+        "Democratic Party of Korea"
+      ],
+      "description": "대한민국의 정당",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-27/한국-4",
+      "mergedInto": null
+    },
+    {
+      "id": 9,
+      "kind": "기관",
+      "name": "국민의힘",
+      "aliases": [
+        "People Power Party"
+      ],
+      "description": "대한민국의 정당",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-27/한국-4",
+      "mergedInto": null
+    },
+    {
+      "id": 10,
+      "kind": "기관",
+      "name": "조국혁신당",
+      "aliases": [
+        "Rebuilding Korea Party"
+      ],
+      "description": "대한민국의 정당",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-27/한국-4",
+      "mergedInto": null
+    },
+    {
+      "id": 11,
+      "kind": "인물",
+      "name": "정동영",
+      "aliases": [
+        "Chung Dong-young"
+      ],
+      "description": "대한민국 통일부 장관",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-27/한국-5",
+      "mergedInto": null
+    },
+    {
+      "id": 12,
+      "kind": "국가",
+      "name": "북한",
+      "aliases": [
+        "조선민주주의인민공화국",
+        "North Korea"
+      ],
+      "description": "한반도 북쪽의 나라",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-27/한국-5",
+      "mergedInto": null
+    },
+    {
+      "id": 13,
+      "kind": "기관",
+      "name": "유엔 안전보장이사회",
+      "aliases": [
+        "안보리",
+        "UN Security Council"
+      ],
+      "description": "국제 평화와 안보를 맡는 유엔 기구",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-27/한국-5",
+      "mergedInto": null
+    },
+    {
+      "id": 14,
+      "kind": "인물",
+      "name": "임성근",
+      "aliases": [
+        "Lim Seong-geun"
+      ],
+      "description": "전 해병대 제1사단장",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-27/한국-6",
+      "mergedInto": null
+    },
+    {
+      "id": 15,
+      "kind": "기관",
+      "name": "대한민국 해병대",
+      "aliases": [
+        "해병대",
+        "ROK Marine Corps"
+      ],
+      "description": "대한민국 해군 소속 상륙 작전 부대",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-27/한국-6",
+      "mergedInto": null
+    },
+    {
+      "id": 16,
+      "kind": "기관",
+      "name": "아주대학교병원",
+      "aliases": [
+        "아주대병원"
+      ],
+      "description": "경기도 수원의 대학병원",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-27/한국-7",
+      "mergedInto": null
+    },
+    {
+      "id": 17,
+      "kind": "기관",
+      "name": "보건복지부",
+      "aliases": [
+        "복지부",
+        "Ministry of Health and Welfare"
+      ],
+      "description": "대한민국의 보건·복지 담당 정부 부처",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-27/한국-7",
+      "mergedInto": null
+    },
+    {
+      "id": 18,
+      "kind": "인물",
+      "name": "정은경",
+      "aliases": [
+        "Jeong Eun-kyeong"
+      ],
+      "description": "대한민국 보건복지부 장관",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-27/한국-7",
+      "mergedInto": null
+    },
+    {
+      "id": 19,
+      "kind": "기관",
+      "name": "경기남부경찰청",
+      "aliases": [],
+      "description": "경기도 남부 지역을 맡는 경찰 기관",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-27/한국-7",
+      "mergedInto": null
+    },
+    {
+      "id": 20,
+      "kind": "인물",
+      "name": "지만원",
+      "aliases": [
+        "Ji Man-won"
+      ],
+      "description": "보수 성향 논객",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-27/한국-s1",
+      "mergedInto": null
+    },
+    {
+      "id": 21,
+      "kind": "기관",
+      "name": "국제원자력기구",
+      "aliases": [
+        "IAEA",
+        "International Atomic Energy Agency"
+      ],
+      "description": "원자력의 평화적 이용과 안전을 다루는 국제기구",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-27/한국-s2",
+      "mergedInto": null
+    },
+    {
+      "id": 22,
+      "kind": "인물",
+      "name": "강신철",
+      "aliases": [],
+      "description": "대한민국 국방부 장관",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-27/한국-s3",
+      "mergedInto": null
+    },
+    {
+      "id": 23,
+      "kind": "인물",
+      "name": "피트 헤그세스",
+      "aliases": [
+        "헤그세스",
+        "Pete Hegseth"
+      ],
+      "description": "미국 국방장관",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-27/한국-s3",
+      "mergedInto": null
+    },
+    {
+      "id": 24,
+      "kind": "국가",
+      "name": "이스라엘",
+      "aliases": [
+        "Israel"
+      ],
+      "description": "중동 지중해 동쪽 연안의 나라",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-27/세계-1",
+      "mergedInto": null
+    },
+    {
+      "id": 25,
+      "kind": "인물",
+      "name": "베냐민 네타냐후",
+      "aliases": [
+        "네타냐후",
+        "Benjamin Netanyahu"
+      ],
+      "description": "이스라엘 총리, 리쿠드당 대표",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-27/세계-1",
+      "mergedInto": null
+    },
+    {
+      "id": 26,
+      "kind": "인물",
+      "name": "가디 아이젠코트",
+      "aliases": [
+        "아이젠코트",
+        "Gadi Eisenkot"
+      ],
+      "description": "이스라엘 정치인, 전 이스라엘군 합참의장",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-27/세계-1",
+      "mergedInto": null
+    },
+    {
+      "id": 27,
+      "kind": "기관",
+      "name": "리쿠드당",
+      "aliases": [
+        "리쿠드",
+        "Likud"
+      ],
+      "description": "이스라엘의 우파 정당",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-27/세계-1",
+      "mergedInto": null
+    },
+    {
+      "id": 28,
+      "kind": "기관",
+      "name": "하마스",
+      "aliases": [
+        "Hamas"
+      ],
+      "description": "가자지구를 근거지로 한 팔레스타인 무장 정파",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-27/세계-1",
+      "mergedInto": null
+    },
+    {
+      "id": 29,
+      "kind": "국가",
+      "name": "우크라이나",
+      "aliases": [
+        "Ukraine"
+      ],
+      "description": "동유럽의 나라",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-27/세계-2",
+      "mergedInto": null
+    },
+    {
+      "id": 30,
+      "kind": "국가",
+      "name": "러시아",
+      "aliases": [
+        "Russia"
+      ],
+      "description": "유라시아 북부의 나라",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-27/세계-2",
+      "mergedInto": null
+    },
+    {
+      "id": 31,
+      "kind": "인물",
+      "name": "멜라니아 트럼프",
+      "aliases": [
+        "Melania Trump"
+      ],
+      "description": "미국 대통령 부인",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-27/세계-2",
+      "mergedInto": null
+    },
+    {
+      "id": 32,
+      "kind": "인물",
+      "name": "블라디미르 푸틴",
+      "aliases": [
+        "푸틴",
+        "Vladimir Putin"
+      ],
+      "description": "러시아 대통령",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-27/세계-2",
+      "mergedInto": null
+    },
+    {
+      "id": 33,
+      "kind": "국가",
+      "name": "브라질",
+      "aliases": [
+        "Brazil"
+      ],
+      "description": "남아메리카 최대의 나라",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-27/세계-3",
+      "mergedInto": null
+    },
+    {
+      "id": 34,
+      "kind": "인물",
+      "name": "루이스 이나시우 룰라 다시우바",
+      "aliases": [
+        "룰라",
+        "Lula",
+        "Luiz Inácio Lula da Silva"
+      ],
+      "description": "브라질 대통령",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-27/세계-3",
+      "mergedInto": null
+    },
+    {
+      "id": 35,
+      "kind": "인물",
+      "name": "플라비우 보우소나루",
+      "aliases": [
+        "Flávio Bolsonaro"
+      ],
+      "description": "브라질 우파 정치인",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-27/세계-3",
+      "mergedInto": null
+    },
+    {
+      "id": 36,
+      "kind": "국가",
+      "name": "콩고민주공화국",
+      "aliases": [
+        "민주콩고",
+        "DR Congo"
+      ],
+      "description": "아프리카 중부의 나라",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-27/세계-4",
+      "mergedInto": null
+    },
+    {
+      "id": 37,
+      "kind": "기관",
+      "name": "세계보건기구",
+      "aliases": [
+        "WHO",
+        "World Health Organization"
+      ],
+      "description": "보건 분야를 맡는 유엔 전문기구",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-27/세계-4",
+      "mergedInto": null
+    },
+    {
+      "id": 38,
+      "kind": "기관",
+      "name": "미국 법무부",
+      "aliases": [
+        "법무부",
+        "US Department of Justice"
+      ],
+      "description": "미국 연방 정부의 법 집행·소추 부처",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-27/세계-5",
+      "mergedInto": null
+    },
+    {
+      "id": 39,
+      "kind": "인물",
+      "name": "제임스 코미",
+      "aliases": [
+        "코미",
+        "James Comey"
+      ],
+      "description": "전 미국 연방수사국(FBI) 국장",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-27/세계-5",
+      "mergedInto": null
+    },
+    {
+      "id": 40,
+      "kind": "인물",
+      "name": "도널드 트럼프",
+      "aliases": [
+        "트럼프",
+        "Donald Trump"
+      ],
+      "description": "미국 대통령",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-27/세계-5",
+      "mergedInto": null
+    },
+    {
+      "id": 41,
+      "kind": "기관",
+      "name": "미국 연방수사국",
+      "aliases": [
+        "FBI",
+        "Federal Bureau of Investigation"
+      ],
+      "description": "미국 법무부 소속 수사 기관",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-27/세계-5",
+      "mergedInto": null
+    },
+    {
+      "id": 42,
+      "kind": "국가",
+      "name": "미국",
+      "aliases": [
+        "미합중국",
+        "United States"
+      ],
+      "description": "북아메리카의 나라",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-27/세계-s4",
+      "mergedInto": null
+    },
+    {
+      "id": 43,
+      "kind": "인물",
+      "name": "해리 케인",
+      "aliases": [
+        "Harry Kane"
+      ],
+      "description": "잉글랜드 축구 국가대표 공격수",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-27/세계-s1",
+      "mergedInto": null
+    },
+    {
+      "id": 44,
+      "kind": "인물",
+      "name": "알렉시아 푸테야스",
+      "aliases": [
+        "Alexia Putellas"
+      ],
+      "description": "스페인 여자 축구 선수",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-27/세계-s1",
+      "mergedInto": null
+    },
+    {
+      "id": 45,
+      "kind": "국가",
+      "name": "요르단",
+      "aliases": [
+        "Jordan"
+      ],
+      "description": "중동의 나라",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-27/세계-s2",
+      "mergedInto": null
+    },
+    {
+      "id": 46,
+      "kind": "국가",
+      "name": "시리아",
+      "aliases": [
+        "Syria"
+      ],
+      "description": "중동 지중해 동쪽의 나라",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-27/세계-s2",
+      "mergedInto": null
+    },
+    {
+      "id": 47,
+      "kind": "인물",
+      "name": "킬리안 음바페",
+      "aliases": [
+        "음바페",
+        "Kylian Mbappé"
+      ],
+      "description": "프랑스 축구 국가대표 공격수",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-27/세계-s3",
+      "mergedInto": null
+    },
+    {
+      "id": 48,
+      "kind": "국가",
+      "name": "중국",
+      "aliases": [
+        "중화인민공화국",
+        "China"
+      ],
+      "description": "동아시아의 나라",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-27/세계-s3",
+      "mergedInto": null
+    },
+    {
+      "id": 49,
+      "kind": "국가",
+      "name": "수단",
+      "aliases": [
+        "Sudan"
+      ],
+      "description": "아프리카 북동부의 나라",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-27/세계-s4",
+      "mergedInto": null
+    },
+    {
+      "id": 50,
+      "kind": "기관",
+      "name": "앤트로픽",
+      "aliases": [
+        "Anthropic"
+      ],
+      "description": "AI 모델 클로드를 만드는 미국 AI 기업",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-27/IT·AI-1",
+      "mergedInto": null
+    },
+    {
+      "id": 51,
+      "kind": "기관",
+      "name": "미국 증권거래위원회",
+      "aliases": [
+        "SEC",
+        "Securities and Exchange Commission"
+      ],
+      "description": "미국의 증권 시장 감독 기관",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-27/IT·AI-1",
+      "mergedInto": null
+    },
+    {
+      "id": 52,
+      "kind": "기관",
+      "name": "나스닥",
+      "aliases": [
+        "Nasdaq"
+      ],
+      "description": "미국의 증권거래소",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-27/IT·AI-1",
+      "mergedInto": null
+    },
+    {
+      "id": 53,
+      "kind": "기관",
+      "name": "마이크로소프트",
+      "aliases": [
+        "Microsoft",
+        "MS"
+      ],
+      "description": "미국의 소프트웨어·클라우드 기업",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-27/IT·AI-2",
+      "mergedInto": null
+    },
+    {
+      "id": 54,
+      "kind": "기관",
+      "name": "브로드컴",
+      "aliases": [
+        "Broadcom"
+      ],
+      "description": "미국의 반도체 기업",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-27/IT·AI-3",
+      "mergedInto": null
+    },
+    {
+      "id": 55,
+      "kind": "기관",
+      "name": "블랙스톤",
+      "aliases": [
+        "Blackstone"
+      ],
+      "description": "미국의 자산운용사",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-27/IT·AI-3",
+      "mergedInto": null
+    },
+    {
+      "id": 56,
+      "kind": "기관",
+      "name": "메타",
+      "aliases": [
+        "Meta",
+        "메타 플랫폼스"
+      ],
+      "description": "페이스북·인스타그램을 운영하는 미국 기업",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-27/IT·AI-3",
+      "mergedInto": null
+    },
+    {
+      "id": 57,
+      "kind": "기관",
+      "name": "애플",
+      "aliases": [
+        "Apple"
+      ],
+      "description": "아이폰을 만드는 미국 기업",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-27/IT·AI-4",
+      "mergedInto": null
+    },
+    {
+      "id": 58,
+      "kind": "기관",
+      "name": "아이픽스잇",
+      "aliases": [
+        "iFixit"
+      ],
+      "description": "전자기기 수리 정보·부품을 다루는 미국 업체",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-27/IT·AI-4",
+      "mergedInto": null
+    },
+    {
+      "id": 59,
+      "kind": "기관",
+      "name": "코히어",
+      "aliases": [
+        "Cohere"
+      ],
+      "description": "캐나다의 AI 기업",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-27/IT·AI-5",
+      "mergedInto": null
+    },
+    {
+      "id": 60,
+      "kind": "기관",
+      "name": "알리바바",
+      "aliases": [
+        "Alibaba"
+      ],
+      "description": "중국의 전자상거래·클라우드 기업",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-27/IT·AI-5",
+      "mergedInto": null
+    },
+    {
+      "id": 61,
+      "kind": "기관",
+      "name": "방송미디어통신위원회",
+      "aliases": [
+        "방미통위"
+      ],
+      "description": "대한민국의 방송·통신 규제 기관",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-27/IT·AI-s2",
+      "mergedInto": null
+    },
+    {
+      "id": 62,
+      "kind": "기관",
+      "name": "구글",
+      "aliases": [
+        "Google"
+      ],
+      "description": "미국의 인터넷·검색 기업",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-27/IT·AI-s2",
+      "mergedInto": null
+    },
+    {
+      "id": 63,
+      "kind": "기관",
+      "name": "SK하이닉스",
+      "aliases": [
+        "SK hynix"
+      ],
+      "description": "한국의 메모리 반도체 기업",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-28/한국-1",
+      "mergedInto": null
+    },
+    {
+      "id": 64,
+      "kind": "기관",
+      "name": "삼성전자",
+      "aliases": [
+        "Samsung Electronics"
+      ],
+      "description": "한국의 전자·반도체 기업",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-28/한국-1",
+      "mergedInto": null
+    },
+    {
+      "id": 65,
+      "kind": "기관",
+      "name": "엔비디아",
+      "aliases": [
+        "NVIDIA"
+      ],
+      "description": "미국의 AI 칩·GPU 기업",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-28/한국-1",
+      "mergedInto": null
+    },
+    {
+      "id": 66,
+      "kind": "기관",
+      "name": "대신증권",
+      "aliases": [
+        "Daishin Securities"
+      ],
+      "description": "한국의 증권사",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-28/한국-2",
+      "mergedInto": null
+    },
+    {
+      "id": 67,
+      "kind": "기관",
+      "name": "미래에셋자산운용",
+      "aliases": [
+        "Mirae Asset Global Investments"
+      ],
+      "description": "한국의 자산운용사",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-28/한국-2",
+      "mergedInto": null
+    },
+    {
+      "id": 68,
+      "kind": "기관",
+      "name": "빗썸",
+      "aliases": [
+        "Bithumb"
+      ],
+      "description": "한국의 가상자산 거래소",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-28/한국-2",
+      "mergedInto": null
+    },
+    {
+      "id": 69,
+      "kind": "기관",
+      "name": "국가안보실",
+      "aliases": [],
+      "description": "대한민국 대통령 직속 안보 정책 조정 기구",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-28/한국-2",
+      "mergedInto": null
+    },
+    {
+      "id": 70,
+      "kind": "인물",
+      "name": "이태한",
+      "aliases": [],
+      "description": "6·3 지방선거 관련 사건 특별검사(선관위특검)",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-28/한국-3",
+      "mergedInto": null
+    },
+    {
+      "id": 71,
+      "kind": "기관",
+      "name": "중앙선거관리위원회",
+      "aliases": [
+        "선관위",
+        "National Election Commission"
+      ],
+      "description": "대한민국 선거와 국민투표를 관리하는 헌법기관",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-28/한국-3",
+      "mergedInto": null
+    },
+    {
+      "id": 72,
+      "kind": "인물",
+      "name": "장동혁",
+      "aliases": [
+        "Jang Dong-hyuk"
+      ],
+      "description": "국민의힘 대표",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-28/한국-3",
+      "mergedInto": null
+    },
+    {
+      "id": 73,
+      "kind": "기관",
+      "name": "국립과학수사연구원",
+      "aliases": [
+        "국과수",
+        "National Forensic Service"
+      ],
+      "description": "대한민국 행정안전부 소속 과학수사 감정 기관",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-28/한국-3",
+      "mergedInto": null
+    },
+    {
+      "id": 74,
+      "kind": "기관",
+      "name": "엘리엇 매니지먼트",
+      "aliases": [
+        "엘리엇",
+        "Elliott Management"
+      ],
+      "description": "미국의 헤지펀드 운용사",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-28/한국-4",
+      "mergedInto": null
+    },
+    {
+      "id": 75,
+      "kind": "기관",
+      "name": "대한민국 법무부",
+      "aliases": [
+        "Ministry of Justice of Korea"
+      ],
+      "description": "대한민국의 법무·검찰 행정 담당 정부 부처",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-28/한국-4",
+      "mergedInto": null
+    },
+    {
+      "id": 76,
+      "kind": "기관",
+      "name": "국민연금공단",
+      "aliases": [
+        "국민연금",
+        "National Pension Service"
+      ],
+      "description": "대한민국 국민연금을 운용하는 공공기관",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-28/한국-4",
+      "mergedInto": null
+    },
+    {
+      "id": 77,
+      "kind": "기관",
+      "name": "삼성물산",
+      "aliases": [
+        "Samsung C&T"
+      ],
+      "description": "한국의 건설·상사 기업",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-28/한국-4",
+      "mergedInto": null
+    },
+    {
+      "id": 78,
+      "kind": "기관",
+      "name": "대한민국 국방부",
+      "aliases": [
+        "Ministry of National Defense"
+      ],
+      "description": "대한민국의 국방 담당 정부 부처",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-28/한국-6",
+      "mergedInto": null
+    },
+    {
+      "id": 79,
+      "kind": "인물",
+      "name": "박종준",
+      "aliases": [
+        "Park Jong-joon"
+      ],
+      "description": "전 대통령경호처장",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-28/한국-7",
+      "mergedInto": null
+    },
+    {
+      "id": 80,
+      "kind": "인물",
+      "name": "윤석열",
+      "aliases": [
+        "Yoon Suk Yeol"
+      ],
+      "description": "대한민국 전 대통령",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-28/한국-7",
+      "mergedInto": null
+    },
+    {
+      "id": 81,
+      "kind": "기관",
+      "name": "대통령경호처",
+      "aliases": [
+        "경호처",
+        "Presidential Security Service"
+      ],
+      "description": "대한민국 대통령 경호를 맡는 기관",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-28/한국-7",
+      "mergedInto": null
+    },
+    {
+      "id": 82,
+      "kind": "기관",
+      "name": "고위공직자범죄수사처",
+      "aliases": [
+        "공수처"
+      ],
+      "description": "고위공직자 범죄를 수사하는 대한민국 독립 수사기관",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-28/한국-7",
+      "mergedInto": null
+    },
+    {
+      "id": 83,
+      "kind": "인물",
+      "name": "김성훈",
+      "aliases": [],
+      "description": "전 대통령경호처 차장",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-28/한국-7",
+      "mergedInto": null
+    },
+    {
+      "id": 84,
+      "kind": "인물",
+      "name": "이재명",
+      "aliases": [
+        "Lee Jae-myung"
+      ],
+      "description": "대한민국 대통령",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-28/한국-s1",
+      "mergedInto": null
+    },
+    {
+      "id": 85,
+      "kind": "기관",
+      "name": "전국민주노동조합총연맹",
+      "aliases": [
+        "민주노총",
+        "KCTU"
+      ],
+      "description": "대한민국의 전국 단위 노동조합 총연맹",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-28/한국-s1",
+      "mergedInto": null
+    },
+    {
+      "id": 86,
+      "kind": "기관",
+      "name": "공정거래위원회",
+      "aliases": [
+        "공정위",
+        "KFTC"
+      ],
+      "description": "대한민국의 경쟁·공정거래 감독 기관",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-28/한국-s2",
+      "mergedInto": null
+    },
+    {
+      "id": 87,
+      "kind": "기관",
+      "name": "농심",
+      "aliases": [
+        "Nongshim"
+      ],
+      "description": "한국의 식품 기업",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-28/한국-s2",
+      "mergedInto": null
+    },
+    {
+      "id": 88,
+      "kind": "기관",
+      "name": "오뚜기",
+      "aliases": [
+        "Ottogi"
+      ],
+      "description": "한국의 식품 기업",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-28/한국-s2",
+      "mergedInto": null
+    },
+    {
+      "id": 89,
+      "kind": "국가",
+      "name": "스페인",
+      "aliases": [
+        "Spain"
+      ],
+      "description": "유럽 이베리아반도의 나라",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-28/세계-1",
+      "mergedInto": null
+    },
+    {
+      "id": 90,
+      "kind": "기관",
+      "name": "렌페",
+      "aliases": [
+        "Renfe"
+      ],
+      "description": "스페인 국영 철도 운영사",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-28/세계-1",
+      "mergedInto": null
+    },
+    {
+      "id": 91,
+      "kind": "기관",
+      "name": "이리오",
+      "aliases": [
+        "Iryo"
+      ],
+      "description": "스페인의 민간 고속철도 운영사",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-28/세계-1",
+      "mergedInto": null
+    },
+    {
+      "id": 92,
+      "kind": "기관",
+      "name": "아디프",
+      "aliases": [
+        "Adif"
+      ],
+      "description": "스페인 철도 선로·신호를 관리하는 국영 기관",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-28/세계-1",
+      "mergedInto": null
+    },
+    {
+      "id": 93,
+      "kind": "인물",
+      "name": "오스카르 푸엔테",
+      "aliases": [
+        "Óscar Puente"
+      ],
+      "description": "스페인 교통장관",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-28/세계-1",
+      "mergedInto": null
+    },
+    {
+      "id": 94,
+      "kind": "인물",
+      "name": "페드로 산체스",
+      "aliases": [
+        "산체스",
+        "Pedro Sánchez"
+      ],
+      "description": "스페인 총리",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-28/세계-1",
+      "mergedInto": null
+    },
+    {
+      "id": 95,
+      "kind": "기관",
+      "name": "미국 연방준비제도",
+      "aliases": [
+        "연준",
+        "Fed",
+        "Federal Reserve"
+      ],
+      "description": "미국의 중앙은행 제도",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-28/세계-2",
+      "mergedInto": null
+    },
+    {
+      "id": 96,
+      "kind": "인물",
+      "name": "케빈 워시",
+      "aliases": [
+        "워시",
+        "Kevin Warsh"
+      ],
+      "description": "미국 연방준비제도 의장",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-28/세계-2",
+      "mergedInto": null
+    },
+    {
+      "id": 97,
+      "kind": "인물",
+      "name": "리사 쿡",
+      "aliases": [
+        "Lisa Cook"
+      ],
+      "description": "미국 연방준비제도 이사",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-28/세계-2",
+      "mergedInto": null
+    },
+    {
+      "id": 98,
+      "kind": "인물",
+      "name": "베스 해맥",
+      "aliases": [
+        "Beth Hammack"
+      ],
+      "description": "미국 클리블랜드 연방준비은행 총재",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-28/세계-2",
+      "mergedInto": null
+    },
+    {
+      "id": 99,
+      "kind": "기관",
+      "name": "야샤르",
+      "aliases": [
+        "Yashar"
+      ],
+      "description": "가디 아이젠코트가 이끄는 이스라엘 정당",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-28/세계-3",
+      "mergedInto": null
+    },
+    {
+      "id": 100,
+      "kind": "인물",
+      "name": "이츠하크 헤르초그",
+      "aliases": [
+        "헤르초그",
+        "Isaac Herzog"
+      ],
+      "description": "이스라엘 대통령",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-28/세계-3",
+      "mergedInto": null
+    },
+    {
+      "id": 101,
+      "kind": "인물",
+      "name": "볼로디미르 젤렌스키",
+      "aliases": [
+        "젤렌스키",
+        "Volodymyr Zelensky"
+      ],
+      "description": "우크라이나 대통령",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-28/세계-4",
+      "mergedInto": null
+    },
+    {
+      "id": 102,
+      "kind": "인물",
+      "name": "자이르 보우소나루",
+      "aliases": [
+        "Jair Bolsonaro"
+      ],
+      "description": "브라질 전 대통령",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-28/세계-5",
+      "mergedInto": null
+    },
+    {
+      "id": 103,
+      "kind": "국가",
+      "name": "영국",
+      "aliases": [
+        "United Kingdom",
+        "UK"
+      ],
+      "description": "유럽 서북부의 섬나라",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-28/세계-6",
+      "mergedInto": null
+    },
+    {
+      "id": 104,
+      "kind": "인물",
+      "name": "존 힐리",
+      "aliases": [
+        "힐리",
+        "John Healey"
+      ],
+      "description": "영국 재무장관",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-28/세계-6",
+      "mergedInto": null
+    },
+    {
+      "id": 105,
+      "kind": "기관",
+      "name": "영국 예산책임청",
+      "aliases": [
+        "OBR",
+        "Office for Budget Responsibility"
+      ],
+      "description": "영국 정부의 경제·재정 전망을 내는 독립 기관",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-28/세계-6",
+      "mergedInto": null
+    },
+    {
+      "id": 106,
+      "kind": "기관",
+      "name": "캐나다은행",
+      "aliases": [
+        "캐나다 중앙은행",
+        "Bank of Canada"
+      ],
+      "description": "캐나다의 중앙은행",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-28/세계-s1",
+      "mergedInto": null
+    },
+    {
+      "id": 107,
+      "kind": "국가",
+      "name": "이란",
+      "aliases": [
+        "Iran"
+      ],
+      "description": "중동의 나라",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-28/세계-s2",
+      "mergedInto": null
+    },
+    {
+      "id": 108,
+      "kind": "국가",
+      "name": "인도",
+      "aliases": [
+        "India"
+      ],
+      "description": "남아시아의 나라",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-28/세계-s4",
+      "mergedInto": null
+    },
+    {
+      "id": 109,
+      "kind": "인물",
+      "name": "돌로레스 우에르타",
+      "aliases": [
+        "Dolores Huerta"
+      ],
+      "description": "미국 노동·민권 운동가, 농장노동자연합 공동 설립자",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-28/세계-s5",
+      "mergedInto": null
+    },
+    {
+      "id": 110,
+      "kind": "기관",
+      "name": "미국 농장노동자연합",
+      "aliases": [
+        "농장노동자연합",
+        "UFW",
+        "United Farm Workers"
+      ],
+      "description": "미국 농장 노동자의 노동조합",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-28/세계-s5",
+      "mergedInto": null
+    },
+    {
+      "id": 111,
+      "kind": "기관",
+      "name": "알파벳",
+      "aliases": [
+        "Alphabet"
+      ],
+      "description": "구글의 모회사인 미국 기업",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-28/IT·AI-2",
+      "mergedInto": null
+    },
+    {
+      "id": 112,
+      "kind": "기관",
+      "name": "오라클",
+      "aliases": [
+        "Oracle"
+      ],
+      "description": "미국의 데이터베이스·클라우드 기업",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-28/IT·AI-2",
+      "mergedInto": null
+    },
+    {
+      "id": 113,
+      "kind": "기관",
+      "name": "오픈AI",
+      "aliases": [
+        "OpenAI"
+      ],
+      "description": "챗GPT를 만드는 미국 AI 기업",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-28/IT·AI-4",
+      "mergedInto": null
+    },
+    {
+      "id": 114,
+      "kind": "인물",
+      "name": "젠슨 황",
+      "aliases": [
+        "Jensen Huang"
+      ],
+      "description": "엔비디아 최고경영자",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-28/IT·AI-4",
+      "mergedInto": null
+    },
+    {
+      "id": 115,
+      "kind": "기관",
+      "name": "허깅페이스",
+      "aliases": [
+        "Hugging Face"
+      ],
+      "description": "AI 모델·데이터 공유 플랫폼을 운영하는 기업",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-28/IT·AI-5",
+      "mergedInto": null
+    },
+    {
+      "id": 116,
+      "kind": "기관",
+      "name": "그로크",
+      "aliases": [
+        "Groq"
+      ],
+      "description": "미국의 AI 추론 칩 기업",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-28/IT·AI-5",
+      "mergedInto": null
+    },
+    {
+      "id": 117,
+      "kind": "기관",
+      "name": "깃허브",
+      "aliases": [
+        "GitHub"
+      ],
+      "description": "마이크로소프트 소유의 코드 저장소 플랫폼",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-28/IT·AI-7",
+      "mergedInto": null
+    },
+    {
+      "id": 118,
+      "kind": "국가",
+      "name": "말레이시아",
+      "aliases": [
+        "Malaysia"
+      ],
+      "description": "동남아시아의 나라",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-28/IT·AI-s2",
+      "mergedInto": null
+    },
+    {
+      "id": 119,
+      "kind": "기관",
+      "name": "아마존",
+      "aliases": [
+        "Amazon"
+      ],
+      "description": "미국의 전자상거래·클라우드 기업",
+      "describedOn": "2026-10-29",
+      "describedStory": "2026-10-28/IT·AI-s3",
+      "mergedInto": null
+    }
+  ],
+  "terms": [
+    {
+      "id": 1,
+      "name": "국내총생산",
+      "aliases": [
+        "GDP"
+      ],
+      "description": "한 나라 안에서 일정 기간 만든 물건과 서비스의 가치를 모두 더한 값이다. 나라 경제 규모와 성장 정도를 재는 대표 지표다.",
+      "mergedInto": null
+    },
+    {
+      "id": 2,
+      "name": "속보치",
+      "aliases": [],
+      "description": "통계 기관이 자료가 다 모이기 전에 먼저 내놓는 첫 추정값이다. 나중에 자료가 더해지면 잠정치, 확정치로 고쳐진다.",
+      "mergedInto": null
+    },
+    {
+      "id": 3,
+      "name": "알선수재",
+      "aliases": [],
+      "description": "공무원의 일을 알선해 주는 대가로 돈이나 물건을 받는 범죄다. 특정범죄가중처벌법은 이를 무겁게 처벌한다.",
+      "mergedInto": null
+    },
+    {
+      "id": 4,
+      "name": "전원합의체",
+      "aliases": [],
+      "description": "대법원장과 대법관 전원이 함께 심리하는 재판부다. 중요한 법률 해석이나 판례 변경이 필요한 사건을 맡는다.",
+      "mergedInto": null
+    },
+    {
+      "id": 5,
+      "name": "별건 구속",
+      "aliases": [],
+      "description": "수사 중인 사건이 아닌 다른 사건을 이유로 사람을 구속하는 것이다. 본래 사건 수사를 위한 편법이라는 비판을 받는다.",
+      "mergedInto": null
+    },
+    {
+      "id": 6,
+      "name": "대응 2단계",
+      "aliases": [],
+      "description": "소방당국의 화재 대응 단계 중 하나로, 여러 소방서의 인력과 장비를 함께 동원하는 수준이다. 단계가 높을수록 동원 규모가 크다.",
+      "mergedInto": null
+    },
+    {
+      "id": 7,
+      "name": "국정조사",
+      "aliases": [],
+      "description": "국회가 특정 국정 사안을 정해 조사하는 제도다. 증인을 부르고 자료를 요구할 수 있다.",
+      "mergedInto": null
+    },
+    {
+      "id": 8,
+      "name": "필리버스터",
+      "aliases": [
+        "무제한 토론"
+      ],
+      "description": "소수파 의원이 긴 발언으로 표결을 늦추는 의사 진행 방해다. 한국 국회에서는 무제한 토론 제도로 운영된다.",
+      "mergedInto": null
+    },
+    {
+      "id": 9,
+      "name": "삼권분립",
+      "aliases": [],
+      "description": "국가 권력을 입법·행정·사법으로 나눠 서로 견제하게 하는 원리다. 한 기관에 권력이 몰리는 것을 막기 위한 것이다.",
+      "mergedInto": null
+    },
+    {
+      "id": 10,
+      "name": "비무장지대",
+      "aliases": [
+        "DMZ"
+      ],
+      "description": "군사분계선 남북으로 각각 2km씩 군대와 무기를 두지 않기로 한 지역이다. 1953년 정전협정으로 만들어졌다.",
+      "mergedInto": null
+    },
+    {
+      "id": 11,
+      "name": "군사분계선",
+      "aliases": [
+        "MDL"
+      ],
+      "description": "한국전쟁 정전협정으로 정한 남북 사이의 경계선이다. 휴전선이라고도 부른다.",
+      "mergedInto": null
+    },
+    {
+      "id": 12,
+      "name": "정전협정",
+      "aliases": [
+        "휴전협정"
+      ],
+      "description": "1953년 한국전쟁의 전투를 멈추기로 한 협정이다. 전쟁을 끝내는 평화협정이 아니라 싸움을 멈춘 상태를 정한 것이다.",
+      "mergedInto": null
+    },
+    {
+      "id": 13,
+      "name": "업무상과실치사상",
+      "aliases": [],
+      "description": "업무를 하면서 주의 의무를 소홀히 해 사람을 죽거나 다치게 한 범죄다. 일반 과실보다 무겁게 처벌한다.",
+      "mergedInto": null
+    },
+    {
+      "id": 14,
+      "name": "금고",
+      "aliases": [
+        "금고형"
+      ],
+      "description": "교도소에 가두지만 노역은 시키지 않는 형벌이다. 징역보다 가벼운 자유형이다.",
+      "mergedInto": null
+    },
+    {
+      "id": 15,
+      "name": "압수수색",
+      "aliases": [],
+      "description": "수사기관이 법원 영장을 받아 장소를 뒤지고 증거물을 가져가는 강제 수사다.",
+      "mergedInto": null
+    },
+    {
+      "id": 16,
+      "name": "크네세트",
+      "aliases": [
+        "Knesset"
+      ],
+      "description": "이스라엘의 단원제 의회로 의석은 120석이다.",
+      "mergedInto": null
+    },
+    {
+      "id": 17,
+      "name": "연립정부",
+      "aliases": [
+        "연정"
+      ],
+      "description": "한 정당이 과반을 얻지 못했을 때 여러 정당이 손잡고 함께 꾸리는 정부다.",
+      "mergedInto": null
+    },
+    {
+      "id": 18,
+      "name": "출구조사",
+      "aliases": [],
+      "description": "투표를 마치고 나온 유권자에게 누구를 찍었는지 물어 결과를 미리 추정하는 조사다.",
+      "mergedInto": null
+    },
+    {
+      "id": 19,
+      "name": "국지 휴전",
+      "aliases": [],
+      "description": "전쟁 전체가 아니라 특정 지역에서만 전투를 멈추기로 한 것이다. 주로 구호나 대피를 위해 맺는다.",
+      "mergedInto": null
+    },
+    {
+      "id": 20,
+      "name": "보베스파 지수",
+      "aliases": [
+        "Ibovespa",
+        "보베스파"
+      ],
+      "description": "브라질 상파울루 증권거래소의 대표 주가지수다.",
+      "mergedInto": null
+    },
+    {
+      "id": 21,
+      "name": "헤알화",
+      "aliases": [
+        "헤알",
+        "BRL"
+      ],
+      "description": "브라질의 법정 화폐다.",
+      "mergedInto": null
+    },
+    {
+      "id": 22,
+      "name": "결선 투표",
+      "aliases": [],
+      "description": "첫 투표에서 과반 득표자가 없을 때 상위 후보끼리 다시 겨루는 투표다.",
+      "mergedInto": null
+    },
+    {
+      "id": 23,
+      "name": "에볼라",
+      "aliases": [
+        "에볼라 바이러스병",
+        "Ebola"
+      ],
+      "description": "에볼라 바이러스로 생기는 감염병으로 고열과 출혈을 일으키고 치사율이 높다. 환자의 체액에 닿으면 옮는다.",
+      "mergedInto": null
+    },
+    {
+      "id": 24,
+      "name": "분디부교 바이러스",
+      "aliases": [
+        "Bundibugyo virus"
+      ],
+      "description": "에볼라를 일으키는 바이러스 종류 중 하나다. 우간다 분디부교 지역에서 처음 확인되어 이름이 붙었다.",
+      "mergedInto": null
+    },
+    {
+      "id": 25,
+      "name": "공소시효",
+      "aliases": [],
+      "description": "범죄가 일어난 뒤 일정 기간이 지나면 기소할 수 없게 하는 제도다.",
+      "mergedInto": null
+    },
+    {
+      "id": 26,
+      "name": "공소 기각",
+      "aliases": [],
+      "description": "기소 절차에 법적 문제가 있을 때 법원이 유무죄를 따지지 않고 재판을 끝내는 것이다.",
+      "mergedInto": null
+    },
+    {
+      "id": 27,
+      "name": "S-1",
+      "aliases": [
+        "증권신고서"
+      ],
+      "description": "미국에서 상장하려는 회사가 증권거래위원회에 내는 등록 서류다. 사업 내용, 재무 상태, 위험 요인을 담는다.",
+      "mergedInto": null
+    },
+    {
+      "id": 28,
+      "name": "기업공개",
+      "aliases": [
+        "IPO"
+      ],
+      "description": "비상장 회사가 주식을 일반 투자자에게 처음 팔고 증권거래소에 상장하는 것이다.",
+      "mergedInto": null
+    },
+    {
+      "id": 29,
+      "name": "영업손실",
+      "aliases": [],
+      "description": "회사가 본업에서 번 돈보다 쓴 돈이 많아 생긴 손실이다. 투자 평가손익 같은 영업 외 항목은 빼고 계산한다.",
+      "mergedInto": null
+    },
+    {
+      "id": 30,
+      "name": "희망퇴직",
+      "aliases": [
+        "자발적 퇴직"
+      ],
+      "description": "회사가 보상을 내걸고 직원이 스스로 퇴직을 신청하게 하는 인력 감축 방식이다.",
+      "mergedInto": null
+    },
+    {
+      "id": 31,
+      "name": "특수목적회사",
+      "aliases": [
+        "SPV",
+        "SPC"
+      ],
+      "description": "특정 사업이나 거래 하나만을 위해 만든 회사다. 자금 조달 위험을 본사와 떼어 놓는 데 쓴다.",
+      "mergedInto": null
+    },
+    {
+      "id": 32,
+      "name": "증자",
+      "aliases": [
+        "유상증자"
+      ],
+      "description": "회사가 새 주식을 발행해 자본금을 늘리는 것이다.",
+      "mergedInto": null
+    },
+    {
+      "id": 33,
+      "name": "폴더블폰",
+      "aliases": [
+        "폴더블"
+      ],
+      "description": "화면을 접었다 펼 수 있는 스마트폰이다.",
+      "mergedInto": null
+    },
+    {
+      "id": 34,
+      "name": "AI 에이전트",
+      "aliases": [
+        "에이전트"
+      ],
+      "description": "사람이 맡긴 목표를 위해 스스로 도구를 쓰고 여러 단계를 실행하는 AI 프로그램이다.",
+      "mergedInto": null
+    },
+    {
+      "id": 35,
+      "name": "공개 모델",
+      "aliases": [
+        "오픈 웨이트 모델",
+        "오픈소스 모델"
+      ],
+      "description": "학습된 가중치를 공개해 누구나 내려받아 직접 실행하거나 고칠 수 있는 AI 모델이다.",
+      "mergedInto": null
+    },
+    {
+      "id": 36,
+      "name": "고대역폭 메모리",
+      "aliases": [
+        "HBM"
+      ],
+      "description": "D램 칩을 여러 층 쌓아 데이터를 한꺼번에 많이 주고받게 만든 메모리다. AI 서버의 GPU 옆에 붙여 쓴다.",
+      "mergedInto": null
+    },
+    {
+      "id": 37,
+      "name": "사이드카",
+      "aliases": [],
+      "description": "선물 가격이 크게 움직일 때 프로그램 매매 주문을 5분간 멈추는 증시 안정 장치다.",
+      "mergedInto": null
+    },
+    {
+      "id": 38,
+      "name": "주주환원",
+      "aliases": [],
+      "description": "회사가 번 돈을 배당이나 자사주 매입으로 주주에게 돌려주는 것이다.",
+      "mergedInto": null
+    },
+    {
+      "id": 39,
+      "name": "API",
+      "aliases": [
+        "응용 프로그래밍 인터페이스"
+      ],
+      "description": "프로그램끼리 정해진 방식으로 데이터와 기능을 주고받게 하는 연결 규칙이다.",
+      "mergedInto": null
+    },
+    {
+      "id": 40,
+      "name": "보이스피싱",
+      "aliases": [],
+      "description": "전화로 기관이나 지인을 사칭해 돈이나 금융 정보를 빼내는 사기다.",
+      "mergedInto": null
+    },
+    {
+      "id": 41,
+      "name": "내사",
+      "aliases": [],
+      "description": "수사기관이 정식 수사에 들어가기 전에 범죄 혐의가 있는지 살피는 조사 단계다.",
+      "mergedInto": null
+    },
+    {
+      "id": 42,
+      "name": "특별검사",
+      "aliases": [
+        "특검"
+      ],
+      "description": "특정 사건을 수사하고 기소하기 위해 법률에 따라 따로 임명하는 검사다. 정치적 독립이 필요한 사건에 쓴다.",
+      "mergedInto": null
+    },
+    {
+      "id": 43,
+      "name": "재검표",
+      "aliases": [],
+      "description": "개표 결과를 확인하려고 투표지를 다시 세는 것이다. 결과가 바뀌면 당선인이 달라질 수 있다.",
+      "mergedInto": null
+    },
+    {
+      "id": 44,
+      "name": "투자자-국가 분쟁 해결",
+      "aliases": [
+        "ISDS",
+        "투자자-국가 소송"
+      ],
+      "description": "외국 투자자가 투자한 나라의 정부 조치로 손해를 봤다며 국제 중재로 배상을 청구하는 제도다. 투자협정이나 자유무역협정에 근거한다.",
+      "mergedInto": null
+    },
+    {
+      "id": 45,
+      "name": "환송중재",
+      "aliases": [],
+      "description": "법원이 중재 판정을 취소하거나 돌려보낸 뒤 중재판정부가 사건을 다시 심리하는 것이다.",
+      "mergedInto": null
+    },
+    {
+      "id": 46,
+      "name": "지연이자",
+      "aliases": [],
+      "description": "갚아야 할 돈을 늦게 갚을 때 늦어진 기간만큼 더 내는 이자다.",
+      "mergedInto": null
+    },
+    {
+      "id": 47,
+      "name": "합계출산율",
+      "aliases": [],
+      "description": "여성 한 명이 평생 낳을 것으로 예상되는 아이 수다. 인구가 유지되려면 약 2.1명이 필요하다.",
+      "mergedInto": null
+    },
+    {
+      "id": 48,
+      "name": "한미안보협의회의",
+      "aliases": [
+        "SCM"
+      ],
+      "description": "한국과 미국 국방장관이 해마다 만나 동맹의 안보 현안을 논의하는 최고위 협의체다.",
+      "mergedInto": null
+    },
+    {
+      "id": 49,
+      "name": "전시작전통제권",
+      "aliases": [
+        "전작권",
+        "OPCON"
+      ],
+      "description": "전쟁이 났을 때 군의 작전을 지휘하는 권한이다. 한국군의 전시작전통제권은 한미연합사령관이 갖고 있다.",
+      "mergedInto": null
+    },
+    {
+      "id": 50,
+      "name": "특수공무집행방해",
+      "aliases": [],
+      "description": "여러 명이 함께하거나 위험한 물건을 들고 공무원의 직무 집행을 막는 범죄다. 일반 공무집행방해보다 무겁게 처벌한다.",
+      "mergedInto": null
+    },
+    {
+      "id": 51,
+      "name": "직권남용",
+      "aliases": [
+        "직권남용권리행사방해"
+      ],
+      "description": "공무원이 직무상 권한을 함부로 써서 다른 사람에게 의무 없는 일을 시키거나 권리 행사를 방해하는 범죄다.",
+      "mergedInto": null
+    },
+    {
+      "id": 52,
+      "name": "범인도피",
+      "aliases": [],
+      "description": "죄를 지은 사람을 숨겨 주거나 달아나게 도와주는 범죄다.",
+      "mergedInto": null
+    },
+    {
+      "id": 53,
+      "name": "기준금리",
+      "aliases": [
+        "정책금리"
+      ],
+      "description": "중앙은행이 정하는 기본 금리다. 시중 금리와 물가, 환율에 두루 영향을 준다.",
+      "mergedInto": null
+    },
+    {
+      "id": 54,
+      "name": "포워드 가이던스",
+      "aliases": [
+        "선제적 안내"
+      ],
+      "description": "중앙은행이 앞으로의 금리 방향을 미리 알려 시장의 기대를 이끄는 방식이다.",
+      "mergedInto": null
+    },
+    {
+      "id": 55,
+      "name": "연방공개시장위원회",
+      "aliases": [
+        "FOMC"
+      ],
+      "description": "미국 연방준비제도에서 기준금리 등 통화정책을 정하는 회의체다.",
+      "mergedInto": null
+    },
+    {
+      "id": 56,
+      "name": "과도정부",
+      "aliases": [
+        "임시정부"
+      ],
+      "description": "새 정부가 꾸려질 때까지 임시로 나랏일을 맡는 정부다.",
+      "mergedInto": null
+    },
+    {
+      "id": 57,
+      "name": "면책 특권",
+      "aliases": [],
+      "description": "의원 등 특정 직위에 있는 사람이 일정 범위에서 법적 책임이나 체포를 피할 수 있게 한 권리다.",
+      "mergedInto": null
+    },
+    {
+      "id": 58,
+      "name": "은행 추가 법인세",
+      "aliases": [
+        "은행 추가세",
+        "bank surcharge"
+      ],
+      "description": "영국이 일정 규모 이상 은행의 이익에 일반 법인세에 더해 매기는 세금이다.",
+      "mergedInto": null
+    },
+    {
+      "id": 59,
+      "name": "재정 여유분",
+      "aliases": [
+        "headroom"
+      ],
+      "description": "정부가 스스로 정한 재정 원칙을 어기지 않고 더 쓸 수 있는 돈의 여유다.",
+      "mergedInto": null
+    },
+    {
+      "id": 60,
+      "name": "경상 적자",
+      "aliases": [],
+      "description": "정부의 일상 지출이 세금 등 수입보다 많은 상태다. 도로·건물 같은 투자 지출은 빼고 계산한다.",
+      "mergedInto": null
+    },
+    {
+      "id": 61,
+      "name": "인앱결제",
+      "aliases": [],
+      "description": "앱 안에서 앱마켓 운영사의 결제 시스템으로 돈을 내는 방식이다. 운영사가 결제액의 일부를 수수료로 가져간다.",
+      "mergedInto": null
+    },
+    {
+      "id": 62,
+      "name": "과징금",
+      "aliases": [],
+      "description": "법을 어긴 사업자에게 행정기관이 매기는 금전 제재다. 형벌인 벌금과는 다르다.",
+      "mergedInto": null
+    },
+    {
+      "id": 63,
+      "name": "시정명령",
+      "aliases": [],
+      "description": "행정기관이 법 위반을 바로잡으라고 사업자에게 내리는 명령이다.",
+      "mergedInto": null
+    },
+    {
+      "id": 64,
+      "name": "잉여현금흐름",
+      "aliases": [
+        "FCF"
+      ],
+      "description": "회사가 영업으로 번 현금에서 설비투자에 쓴 돈을 뺀 값이다. 실제로 자유롭게 쓸 수 있는 현금을 보여 준다.",
+      "mergedInto": null
+    },
+    {
+      "id": 65,
+      "name": "설비투자",
+      "aliases": [
+        "자본지출",
+        "CAPEX"
+      ],
+      "description": "공장, 장비, 데이터센터처럼 오래 쓰는 자산을 사거나 짓는 데 들이는 돈이다.",
+      "mergedInto": null
+    },
+    {
+      "id": 66,
+      "name": "주당순이익",
+      "aliases": [
+        "EPS"
+      ],
+      "description": "회사의 순이익을 발행 주식 수로 나눈 값이다. 주식 한 주가 번 이익을 뜻한다.",
+      "mergedInto": null
+    },
+    {
+      "id": 67,
+      "name": "OLED",
+      "aliases": [
+        "유기발광다이오드"
+      ],
+      "description": "전기를 받으면 스스로 빛을 내는 유기 물질로 만든 디스플레이다. 백라이트가 필요 없어 얇고 검은색을 깊게 표현한다.",
+      "mergedInto": null
+    },
+    {
+      "id": 68,
+      "name": "탠덤 OLED",
+      "aliases": [],
+      "description": "발광층을 두 겹으로 쌓은 OLED 패널이다. 밝기와 수명을 높일 수 있다.",
+      "mergedInto": null
+    },
+    {
+      "id": 69,
+      "name": "TPU",
+      "aliases": [
+        "텐서 처리 장치"
+      ],
+      "description": "구글이 AI 계산에 맞춰 직접 설계한 전용 칩이다.",
+      "mergedInto": null
+    },
+    {
+      "id": 70,
+      "name": "GPU",
+      "aliases": [
+        "그래픽 처리 장치"
+      ],
+      "description": "많은 계산을 동시에 처리하는 칩이다. 원래 그래픽용이었지만 지금은 AI 학습과 실행에 널리 쓴다.",
+      "mergedInto": null
+    },
+    {
+      "id": 71,
+      "name": "추가 자료 요구",
+      "aliases": [
+        "세컨드 리퀘스트"
+      ],
+      "description": "미국 경쟁 당국이 기업 인수합병을 깊이 심사하려고 당사자에게 자료를 더 요구하는 절차다.",
+      "mergedInto": null
+    },
+    {
+      "id": 72,
+      "name": "취약점",
+      "aliases": [
+        "보안 취약점"
+      ],
+      "description": "공격자가 악용해 시스템을 침입하거나 망가뜨릴 수 있는 소프트웨어의 결함이다.",
+      "mergedInto": null
+    },
+    {
+      "id": 73,
+      "name": "모델 가중치",
+      "aliases": [
+        "가중치"
+      ],
+      "description": "AI 모델이 학습으로 얻은 수많은 숫자 값이다. 이것이 있으면 모델을 직접 실행할 수 있다.",
+      "mergedInto": null
+    }
+  ],
+  "entityLinks": [
+    {
+      "story": "2026-10-27/IT·AI-1",
+      "entity": 50
+    },
+    {
+      "story": "2026-10-27/IT·AI-1",
+      "entity": 51
+    },
+    {
+      "story": "2026-10-27/IT·AI-1",
+      "entity": 52
+    },
+    {
+      "story": "2026-10-27/IT·AI-2",
+      "entity": 53
+    },
+    {
+      "story": "2026-10-27/IT·AI-3",
+      "entity": 50
+    },
+    {
+      "story": "2026-10-27/IT·AI-3",
+      "entity": 54
+    },
+    {
+      "story": "2026-10-27/IT·AI-3",
+      "entity": 55
+    },
+    {
+      "story": "2026-10-27/IT·AI-3",
+      "entity": 56
+    },
+    {
+      "story": "2026-10-27/IT·AI-4",
+      "entity": 57
+    },
+    {
+      "story": "2026-10-27/IT·AI-4",
+      "entity": 58
+    },
+    {
+      "story": "2026-10-27/IT·AI-5",
+      "entity": 59
+    },
+    {
+      "story": "2026-10-27/IT·AI-5",
+      "entity": 60
+    },
+    {
+      "story": "2026-10-27/IT·AI-s1",
+      "entity": 40
+    },
+    {
+      "story": "2026-10-27/IT·AI-s2",
+      "entity": 57
+    },
+    {
+      "story": "2026-10-27/IT·AI-s2",
+      "entity": 61
+    },
+    {
+      "story": "2026-10-27/IT·AI-s2",
+      "entity": 62
+    },
+    {
+      "story": "2026-10-27/IT·AI-s3",
+      "entity": 50
+    },
+    {
+      "story": "2026-10-27/IT·AI-s3",
+      "entity": 52
+    },
+    {
+      "story": "2026-10-27/세계-1",
+      "entity": 24
+    },
+    {
+      "story": "2026-10-27/세계-1",
+      "entity": 25
+    },
+    {
+      "story": "2026-10-27/세계-1",
+      "entity": 26
+    },
+    {
+      "story": "2026-10-27/세계-1",
+      "entity": 27
+    },
+    {
+      "story": "2026-10-27/세계-1",
+      "entity": 28
+    },
+    {
+      "story": "2026-10-27/세계-2",
+      "entity": 29
+    },
+    {
+      "story": "2026-10-27/세계-2",
+      "entity": 30
+    },
+    {
+      "story": "2026-10-27/세계-2",
+      "entity": 31
+    },
+    {
+      "story": "2026-10-27/세계-2",
+      "entity": 32
+    },
+    {
+      "story": "2026-10-27/세계-3",
+      "entity": 33
+    },
+    {
+      "story": "2026-10-27/세계-3",
+      "entity": 34
+    },
+    {
+      "story": "2026-10-27/세계-3",
+      "entity": 35
+    },
+    {
+      "story": "2026-10-27/세계-4",
+      "entity": 36
+    },
+    {
+      "story": "2026-10-27/세계-4",
+      "entity": 37
+    },
+    {
+      "story": "2026-10-27/세계-5",
+      "entity": 38
+    },
+    {
+      "story": "2026-10-27/세계-5",
+      "entity": 39
+    },
+    {
+      "story": "2026-10-27/세계-5",
+      "entity": 40
+    },
+    {
+      "story": "2026-10-27/세계-5",
+      "entity": 41
+    },
+    {
+      "story": "2026-10-27/세계-s1",
+      "entity": 43
+    },
+    {
+      "story": "2026-10-27/세계-s1",
+      "entity": 44
+    },
+    {
+      "story": "2026-10-27/세계-s2",
+      "entity": 45
+    },
+    {
+      "story": "2026-10-27/세계-s2",
+      "entity": 46
+    },
+    {
+      "story": "2026-10-27/세계-s3",
+      "entity": 47
+    },
+    {
+      "story": "2026-10-27/세계-s3",
+      "entity": 48
+    },
+    {
+      "story": "2026-10-27/세계-s4",
+      "entity": 42
+    },
+    {
+      "story": "2026-10-27/세계-s4",
+      "entity": 49
+    },
+    {
+      "story": "2026-10-27/한국-1",
+      "entity": 1
+    },
+    {
+      "story": "2026-10-27/한국-1",
+      "entity": 2
+    },
+    {
+      "story": "2026-10-27/한국-2",
+      "entity": 3
+    },
+    {
+      "story": "2026-10-27/한국-2",
+      "entity": 4
+    },
+    {
+      "story": "2026-10-27/한국-3",
+      "entity": 5
+    },
+    {
+      "story": "2026-10-27/한국-3",
+      "entity": 6
+    },
+    {
+      "story": "2026-10-27/한국-4",
+      "entity": 4
+    },
+    {
+      "story": "2026-10-27/한국-4",
+      "entity": 7
+    },
+    {
+      "story": "2026-10-27/한국-4",
+      "entity": 8
+    },
+    {
+      "story": "2026-10-27/한국-4",
+      "entity": 9
+    },
+    {
+      "story": "2026-10-27/한국-4",
+      "entity": 10
+    },
+    {
+      "story": "2026-10-27/한국-5",
+      "entity": 9
+    },
+    {
+      "story": "2026-10-27/한국-5",
+      "entity": 11
+    },
+    {
+      "story": "2026-10-27/한국-5",
+      "entity": 12
+    },
+    {
+      "story": "2026-10-27/한국-5",
+      "entity": 13
+    },
+    {
+      "story": "2026-10-27/한국-6",
+      "entity": 4
+    },
+    {
+      "story": "2026-10-27/한국-6",
+      "entity": 14
+    },
+    {
+      "story": "2026-10-27/한국-6",
+      "entity": 15
+    },
+    {
+      "story": "2026-10-27/한국-7",
+      "entity": 16
+    },
+    {
+      "story": "2026-10-27/한국-7",
+      "entity": 17
+    },
+    {
+      "story": "2026-10-27/한국-7",
+      "entity": 18
+    },
+    {
+      "story": "2026-10-27/한국-7",
+      "entity": 19
+    },
+    {
+      "story": "2026-10-27/한국-s1",
+      "entity": 20
+    },
+    {
+      "story": "2026-10-27/한국-s2",
+      "entity": 21
+    },
+    {
+      "story": "2026-10-27/한국-s3",
+      "entity": 22
+    },
+    {
+      "story": "2026-10-27/한국-s3",
+      "entity": 23
+    },
+    {
+      "story": "2026-10-28/IT·AI-1",
+      "entity": 57
+    },
+    {
+      "story": "2026-10-28/IT·AI-1",
+      "entity": 61
+    },
+    {
+      "story": "2026-10-28/IT·AI-1",
+      "entity": 62
+    },
+    {
+      "story": "2026-10-28/IT·AI-2",
+      "entity": 53
+    },
+    {
+      "story": "2026-10-28/IT·AI-2",
+      "entity": 62
+    },
+    {
+      "story": "2026-10-28/IT·AI-2",
+      "entity": 111
+    },
+    {
+      "story": "2026-10-28/IT·AI-2",
+      "entity": 112
+    },
+    {
+      "story": "2026-10-28/IT·AI-3",
+      "entity": 57
+    },
+    {
+      "story": "2026-10-28/IT·AI-4",
+      "entity": 50
+    },
+    {
+      "story": "2026-10-28/IT·AI-4",
+      "entity": 54
+    },
+    {
+      "story": "2026-10-28/IT·AI-4",
+      "entity": 62
+    },
+    {
+      "story": "2026-10-28/IT·AI-4",
+      "entity": 65
+    },
+    {
+      "story": "2026-10-28/IT·AI-4",
+      "entity": 113
+    },
+    {
+      "story": "2026-10-28/IT·AI-4",
+      "entity": 114
+    },
+    {
+      "story": "2026-10-28/IT·AI-5",
+      "entity": 38
+    },
+    {
+      "story": "2026-10-28/IT·AI-5",
+      "entity": 65
+    },
+    {
+      "story": "2026-10-28/IT·AI-5",
+      "entity": 115
+    },
+    {
+      "story": "2026-10-28/IT·AI-5",
+      "entity": 116
+    },
+    {
+      "story": "2026-10-28/IT·AI-6",
+      "entity": 62
+    },
+    {
+      "story": "2026-10-28/IT·AI-7",
+      "entity": 117
+    },
+    {
+      "story": "2026-10-28/IT·AI-s2",
+      "entity": 42
+    },
+    {
+      "story": "2026-10-28/IT·AI-s2",
+      "entity": 118
+    },
+    {
+      "story": "2026-10-28/IT·AI-s3",
+      "entity": 119
+    },
+    {
+      "story": "2026-10-28/IT·AI-s4",
+      "entity": 50
+    },
+    {
+      "story": "2026-10-28/세계-1",
+      "entity": 89
+    },
+    {
+      "story": "2026-10-28/세계-1",
+      "entity": 90
+    },
+    {
+      "story": "2026-10-28/세계-1",
+      "entity": 91
+    },
+    {
+      "story": "2026-10-28/세계-1",
+      "entity": 92
+    },
+    {
+      "story": "2026-10-28/세계-1",
+      "entity": 93
+    },
+    {
+      "story": "2026-10-28/세계-1",
+      "entity": 94
+    },
+    {
+      "story": "2026-10-28/세계-2",
+      "entity": 95
+    },
+    {
+      "story": "2026-10-28/세계-2",
+      "entity": 96
+    },
+    {
+      "story": "2026-10-28/세계-2",
+      "entity": 97
+    },
+    {
+      "story": "2026-10-28/세계-2",
+      "entity": 98
+    },
+    {
+      "story": "2026-10-28/세계-3",
+      "entity": 24
+    },
+    {
+      "story": "2026-10-28/세계-3",
+      "entity": 25
+    },
+    {
+      "story": "2026-10-28/세계-3",
+      "entity": 26
+    },
+    {
+      "story": "2026-10-28/세계-3",
+      "entity": 27
+    },
+    {
+      "story": "2026-10-28/세계-3",
+      "entity": 99
+    },
+    {
+      "story": "2026-10-28/세계-3",
+      "entity": 100
+    },
+    {
+      "story": "2026-10-28/세계-4",
+      "entity": 29
+    },
+    {
+      "story": "2026-10-28/세계-4",
+      "entity": 30
+    },
+    {
+      "story": "2026-10-28/세계-4",
+      "entity": 31
+    },
+    {
+      "story": "2026-10-28/세계-4",
+      "entity": 32
+    },
+    {
+      "story": "2026-10-28/세계-4",
+      "entity": 101
+    },
+    {
+      "story": "2026-10-28/세계-5",
+      "entity": 33
+    },
+    {
+      "story": "2026-10-28/세계-5",
+      "entity": 34
+    },
+    {
+      "story": "2026-10-28/세계-5",
+      "entity": 35
+    },
+    {
+      "story": "2026-10-28/세계-5",
+      "entity": 40
+    },
+    {
+      "story": "2026-10-28/세계-5",
+      "entity": 42
+    },
+    {
+      "story": "2026-10-28/세계-5",
+      "entity": 102
+    },
+    {
+      "story": "2026-10-28/세계-6",
+      "entity": 103
+    },
+    {
+      "story": "2026-10-28/세계-6",
+      "entity": 104
+    },
+    {
+      "story": "2026-10-28/세계-6",
+      "entity": 105
+    },
+    {
+      "story": "2026-10-28/세계-s1",
+      "entity": 106
+    },
+    {
+      "story": "2026-10-28/세계-s2",
+      "entity": 107
+    },
+    {
+      "story": "2026-10-28/세계-s3",
+      "entity": 42
+    },
+    {
+      "story": "2026-10-28/세계-s3",
+      "entity": 107
+    },
+    {
+      "story": "2026-10-28/세계-s4",
+      "entity": 108
+    },
+    {
+      "story": "2026-10-28/세계-s5",
+      "entity": 109
+    },
+    {
+      "story": "2026-10-28/세계-s5",
+      "entity": 110
+    },
+    {
+      "story": "2026-10-28/한국-1",
+      "entity": 63
+    },
+    {
+      "story": "2026-10-28/한국-1",
+      "entity": 64
+    },
+    {
+      "story": "2026-10-28/한국-1",
+      "entity": 65
+    },
+    {
+      "story": "2026-10-28/한국-2",
+      "entity": 12
+    },
+    {
+      "story": "2026-10-28/한국-2",
+      "entity": 66
+    },
+    {
+      "story": "2026-10-28/한국-2",
+      "entity": 67
+    },
+    {
+      "story": "2026-10-28/한국-2",
+      "entity": 68
+    },
+    {
+      "story": "2026-10-28/한국-2",
+      "entity": 69
+    },
+    {
+      "story": "2026-10-28/한국-3",
+      "entity": 9
+    },
+    {
+      "story": "2026-10-28/한국-3",
+      "entity": 70
+    },
+    {
+      "story": "2026-10-28/한국-3",
+      "entity": 71
+    },
+    {
+      "story": "2026-10-28/한국-3",
+      "entity": 72
+    },
+    {
+      "story": "2026-10-28/한국-3",
+      "entity": 73
+    },
+    {
+      "story": "2026-10-28/한국-4",
+      "entity": 74
+    },
+    {
+      "story": "2026-10-28/한국-4",
+      "entity": 75
+    },
+    {
+      "story": "2026-10-28/한국-4",
+      "entity": 76
+    },
+    {
+      "story": "2026-10-28/한국-4",
+      "entity": 77
+    },
+    {
+      "story": "2026-10-28/한국-5",
+      "entity": 2
+    },
+    {
+      "story": "2026-10-28/한국-6",
+      "entity": 9
+    },
+    {
+      "story": "2026-10-28/한국-6",
+      "entity": 22
+    },
+    {
+      "story": "2026-10-28/한국-6",
+      "entity": 23
+    },
+    {
+      "story": "2026-10-28/한국-6",
+      "entity": 78
+    },
+    {
+      "story": "2026-10-28/한국-7",
+      "entity": 79
+    },
+    {
+      "story": "2026-10-28/한국-7",
+      "entity": 80
+    },
+    {
+      "story": "2026-10-28/한국-7",
+      "entity": 81
+    },
+    {
+      "story": "2026-10-28/한국-7",
+      "entity": 82
+    },
+    {
+      "story": "2026-10-28/한국-7",
+      "entity": 83
+    },
+    {
+      "story": "2026-10-28/한국-s1",
+      "entity": 84
+    },
+    {
+      "story": "2026-10-28/한국-s1",
+      "entity": 85
+    },
+    {
+      "story": "2026-10-28/한국-s2",
+      "entity": 86
+    },
+    {
+      "story": "2026-10-28/한국-s2",
+      "entity": 87
+    },
+    {
+      "story": "2026-10-28/한국-s2",
+      "entity": 88
+    },
+    {
+      "story": "2026-10-28/한국-s4",
+      "entity": 5
+    }
+  ],
+  "termLinks": [
+    {
+      "story": "2026-10-27/IT·AI-1",
+      "term": 27,
+      "surface": "S-1"
+    },
+    {
+      "story": "2026-10-27/IT·AI-1",
+      "term": 28,
+      "surface": "기업공개"
+    },
+    {
+      "story": "2026-10-27/IT·AI-1",
+      "term": 29,
+      "surface": "영업손실"
+    },
+    {
+      "story": "2026-10-27/IT·AI-2",
+      "term": 30,
+      "surface": "희망퇴직"
+    },
+    {
+      "story": "2026-10-27/IT·AI-3",
+      "term": 31,
+      "surface": "특수목적회사"
+    },
+    {
+      "story": "2026-10-27/IT·AI-3",
+      "term": 32,
+      "surface": "증자"
+    },
+    {
+      "story": "2026-10-27/IT·AI-4",
+      "term": 33,
+      "surface": "폴더블폰"
+    },
+    {
+      "story": "2026-10-27/IT·AI-5",
+      "term": 34,
+      "surface": "AI 에이전트"
+    },
+    {
+      "story": "2026-10-27/IT·AI-5",
+      "term": 35,
+      "surface": "공개 모델"
+    },
+    {
+      "story": "2026-10-27/세계-1",
+      "term": 16,
+      "surface": "크네세트"
+    },
+    {
+      "story": "2026-10-27/세계-1",
+      "term": 17,
+      "surface": "연립정부"
+    },
+    {
+      "story": "2026-10-27/세계-1",
+      "term": 18,
+      "surface": "출구조사"
+    },
+    {
+      "story": "2026-10-27/세계-2",
+      "term": 19,
+      "surface": "국지 휴전"
+    },
+    {
+      "story": "2026-10-27/세계-3",
+      "term": 20,
+      "surface": "보베스파 지수"
+    },
+    {
+      "story": "2026-10-27/세계-3",
+      "term": 21,
+      "surface": "헤알화"
+    },
+    {
+      "story": "2026-10-27/세계-3",
+      "term": 22,
+      "surface": "결선 투표"
+    },
+    {
+      "story": "2026-10-27/세계-4",
+      "term": 23,
+      "surface": "에볼라"
+    },
+    {
+      "story": "2026-10-27/세계-4",
+      "term": 24,
+      "surface": "분디부교 바이러스"
+    },
+    {
+      "story": "2026-10-27/세계-5",
+      "term": 25,
+      "surface": "공소시효"
+    },
+    {
+      "story": "2026-10-27/세계-5",
+      "term": 26,
+      "surface": "공소 기각"
+    },
+    {
+      "story": "2026-10-27/한국-1",
+      "term": 1,
+      "surface": "GDP"
+    },
+    {
+      "story": "2026-10-27/한국-1",
+      "term": 2,
+      "surface": "속보치"
+    },
+    {
+      "story": "2026-10-27/한국-2",
+      "term": 3,
+      "surface": "알선수재"
+    },
+    {
+      "story": "2026-10-27/한국-2",
+      "term": 4,
+      "surface": "전원합의체"
+    },
+    {
+      "story": "2026-10-27/한국-2",
+      "term": 5,
+      "surface": "별건 구속"
+    },
+    {
+      "story": "2026-10-27/한국-3",
+      "term": 6,
+      "surface": "대응 2단계"
+    },
+    {
+      "story": "2026-10-27/한국-4",
+      "term": 7,
+      "surface": "국정조사"
+    },
+    {
+      "story": "2026-10-27/한국-4",
+      "term": 8,
+      "surface": "필리버스터"
+    },
+    {
+      "story": "2026-10-27/한국-4",
+      "term": 9,
+      "surface": "삼권분립"
+    },
+    {
+      "story": "2026-10-27/한국-5",
+      "term": 10,
+      "surface": "DMZ"
+    },
+    {
+      "story": "2026-10-27/한국-5",
+      "term": 11,
+      "surface": "군사분계선"
+    },
+    {
+      "story": "2026-10-27/한국-5",
+      "term": 12,
+      "surface": "정전협정"
+    },
+    {
+      "story": "2026-10-27/한국-6",
+      "term": 13,
+      "surface": "업무상과실치사상"
+    },
+    {
+      "story": "2026-10-27/한국-6",
+      "term": 14,
+      "surface": "금고"
+    },
+    {
+      "story": "2026-10-27/한국-7",
+      "term": 15,
+      "surface": "압수수색"
+    },
+    {
+      "story": "2026-10-28/IT·AI-1",
+      "term": 61,
+      "surface": "인앱결제"
+    },
+    {
+      "story": "2026-10-28/IT·AI-1",
+      "term": 62,
+      "surface": "과징금"
+    },
+    {
+      "story": "2026-10-28/IT·AI-1",
+      "term": 63,
+      "surface": "시정명령"
+    },
+    {
+      "story": "2026-10-28/IT·AI-2",
+      "term": 64,
+      "surface": "잉여현금흐름"
+    },
+    {
+      "story": "2026-10-28/IT·AI-2",
+      "term": 65,
+      "surface": "설비투자"
+    },
+    {
+      "story": "2026-10-28/IT·AI-2",
+      "term": 66,
+      "surface": "주당순이익"
+    },
+    {
+      "story": "2026-10-28/IT·AI-3",
+      "term": 67,
+      "surface": "OLED"
+    },
+    {
+      "story": "2026-10-28/IT·AI-3",
+      "term": 68,
+      "surface": "탠덤 OLED"
+    },
+    {
+      "story": "2026-10-28/IT·AI-4",
+      "term": 69,
+      "surface": "TPU"
+    },
+    {
+      "story": "2026-10-28/IT·AI-4",
+      "term": 70,
+      "surface": "GPU"
+    },
+    {
+      "story": "2026-10-28/IT·AI-5",
+      "term": 71,
+      "surface": "추가 자료 요구"
+    },
+    {
+      "story": "2026-10-28/IT·AI-6",
+      "term": 72,
+      "surface": "취약점"
+    },
+    {
+      "story": "2026-10-28/IT·AI-6",
+      "term": 73,
+      "surface": "모델 가중치"
+    },
+    {
+      "story": "2026-10-28/IT·AI-7",
+      "term": 34,
+      "surface": "에이전트"
+    },
+    {
+      "story": "2026-10-28/세계-2",
+      "term": 53,
+      "surface": "기준금리"
+    },
+    {
+      "story": "2026-10-28/세계-2",
+      "term": 54,
+      "surface": "포워드 가이던스"
+    },
+    {
+      "story": "2026-10-28/세계-2",
+      "term": 55,
+      "surface": "FOMC"
+    },
+    {
+      "story": "2026-10-28/세계-3",
+      "term": 17,
+      "surface": "연정"
+    },
+    {
+      "story": "2026-10-28/세계-3",
+      "term": 18,
+      "surface": "출구조사"
+    },
+    {
+      "story": "2026-10-28/세계-3",
+      "term": 56,
+      "surface": "과도정부"
+    },
+    {
+      "story": "2026-10-28/세계-4",
+      "term": 19,
+      "surface": "국지 휴전"
+    },
+    {
+      "story": "2026-10-28/세계-5",
+      "term": 22,
+      "surface": "결선투표"
+    },
+    {
+      "story": "2026-10-28/세계-5",
+      "term": 57,
+      "surface": "면책 특권"
+    },
+    {
+      "story": "2026-10-28/세계-6",
+      "term": 58,
+      "surface": "은행 추가 법인세"
+    },
+    {
+      "story": "2026-10-28/세계-6",
+      "term": 59,
+      "surface": "재정 여유분"
+    },
+    {
+      "story": "2026-10-28/세계-6",
+      "term": 60,
+      "surface": "경상 적자"
+    },
+    {
+      "story": "2026-10-28/한국-1",
+      "term": 36,
+      "surface": "고대역폭 메모리"
+    },
+    {
+      "story": "2026-10-28/한국-1",
+      "term": 37,
+      "surface": "사이드카"
+    },
+    {
+      "story": "2026-10-28/한국-1",
+      "term": 38,
+      "surface": "주주환원"
+    },
+    {
+      "story": "2026-10-28/한국-2",
+      "term": 39,
+      "surface": "API"
+    },
+    {
+      "story": "2026-10-28/한국-2",
+      "term": 40,
+      "surface": "보이스피싱"
+    },
+    {
+      "story": "2026-10-28/한국-2",
+      "term": 41,
+      "surface": "내사"
+    },
+    {
+      "story": "2026-10-28/한국-3",
+      "term": 42,
+      "surface": "특검"
+    },
+    {
+      "story": "2026-10-28/한국-3",
+      "term": 43,
+      "surface": "재검표"
+    },
+    {
+      "story": "2026-10-28/한국-4",
+      "term": 44,
+      "surface": "ISDS"
+    },
+    {
+      "story": "2026-10-28/한국-4",
+      "term": 45,
+      "surface": "환송중재"
+    },
+    {
+      "story": "2026-10-28/한국-4",
+      "term": 46,
+      "surface": "지연이자"
+    },
+    {
+      "story": "2026-10-28/한국-5",
+      "term": 47,
+      "surface": "합계출산율"
+    },
+    {
+      "story": "2026-10-28/한국-6",
+      "term": 48,
+      "surface": "SCM"
+    },
+    {
+      "story": "2026-10-28/한국-6",
+      "term": 49,
+      "surface": "전작권"
+    },
+    {
+      "story": "2026-10-28/한국-7",
+      "term": 50,
+      "surface": "특수공무집행방해"
+    },
+    {
+      "story": "2026-10-28/한국-7",
+      "term": 51,
+      "surface": "직권남용"
+    },
+    {
+      "story": "2026-10-28/한국-7",
+      "term": 52,
+      "surface": "범인도피"
+    }
+  ],
+  "merges": [],
+  "noMerge": [],
+  "deletedNames": []
+}
