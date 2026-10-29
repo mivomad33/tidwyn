@@ -493,11 +493,159 @@ li:focus {
   margin-top: 4px;
 }
 
-.rel a {
+.rel a,
+.rel button {
   font-size: 13px;
   padding: 5px 10px;
   border-radius: 999px;
   border: 1px solid var(--line);
+}
+
+.rel small {
+  color: var(--muted);
+  font-size: 11px;
+  margin-left: 4px;
+}
+
+.rel .on {
+  background: var(--fg);
+  color: var(--bg);
+  border-color: var(--fg);
+}
+
+.rel .on small {
+  color: var(--bg);
+}
+
+/* 4단계: 펼친 카드의 용어 밑줄과 설명 상자(확정 시안 D) */
+.term {
+  display: inline;
+  font: inherit;
+  line-height: inherit;
+  text-align: inherit;
+  white-space: normal;
+  border-bottom: 1.5px dotted var(--accent);
+  border-radius: 0;
+}
+
+.term.open {
+  background: var(--accentbg);
+  border-radius: 3px;
+}
+
+.tbox {
+  margin: 8px 0;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: var(--chip);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.tbox b {
+  display: block;
+  font-size: 13px;
+  margin-bottom: 2px;
+}
+
+.tbox a {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--accent);
+}
+
+.facts .tbox {
+  font-weight: normal;
+}
+
+/* 4단계: 대상 페이지의 등장 뉴스 줄 */
+.rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.rows li {
+  border-bottom: 1px solid var(--line);
+}
+
+.rows a {
+  display: block;
+  padding: 10px 0;
+}
+
+.rows small {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.rows span {
+  font-size: 14.5px;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.rows span.small {
+  font-weight: 400;
+}
+
+.more.tight {
+  padding: 12px 0;
+}
+
+/* 4단계: 용어 사전 */
+.idx {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent);
+  margin: 12px 0 0;
+  scroll-margin-top: 60px;
+}
+
+.gl {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 13.5px;
+  line-height: 1.55;
+  scroll-margin-top: 60px;
+}
+
+.gl.target {
+  background: var(--chip);
+  margin: 0 -18px;
+  padding: 12px 18px;
+}
+
+.gl h3 {
+  font-size: 15px;
+  margin: 0 0 2px;
+}
+
+.gl p {
+  margin: 0;
+}
+
+.gl .aliases {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.gl small {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.gl small a {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.gl-wait {
+  padding: 12px 0;
 }
 
 /* 이슈 페이지 */

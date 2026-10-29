@@ -75,13 +75,20 @@ async function buildSearchIndex(records: SearchRecordInput[], outputPath: string
       const res = await index.addCustomRecord({ url: rec.url, content: rec.content, language: rec.language, meta: rec.meta, filters: rec.filters });
       if (res.errors.length) fail(`검색 레코드(${rec.url})를 넣지 못했다: ${res.errors.join("; ")}`);
     }
-    const written = await index.writeFiles({ outputPath });
-    if (written.errors.length) fail(`검색 색인을 쓰지 못했다: ${written.errors.join("; ")}`);
+    // writeFiles는 응답 뒤에도 파일 쓰기가 끝나지 않을 때가 있어(close가 서비스를 끝내면 빈 파일이 남는다)
+    // 파일 내용을 받아 직접 쓴다
+    const got = await index.getFiles();
+    if (got.errors.length) fail(`검색 색인을 만들지 못했다: ${got.errors.join("; ")}`);
+    fs.mkdirSync(outputPath, { recursive: true });
+    for (const file of got.files) {
+      const rel = file.path.split(/[\\/]/).join("/");
+      if (rel.split("/").some((part) => part === ".." || part === "") || PAGEFIND_UNUSED.test(rel)) continue;
+      const dest = path.join(outputPath, rel);
+      fs.mkdirSync(path.dirname(dest), { recursive: true });
+      fs.writeFileSync(dest, file.content);
+    }
   } finally {
     await pagefind.close();
-  }
-  for (const name of fs.readdirSync(outputPath)) {
-    if (PAGEFIND_UNUSED.test(name)) fs.rmSync(path.join(outputPath, name));
   }
 }
 

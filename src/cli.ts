@@ -13,7 +13,10 @@ import { linkableDates, unlinkedCount, unlinkedStories } from "./issues.ts";
 import { kstDate, kstIso, kstStamp } from "./kst.ts";
 import { applyLinkPlan, checkLinkFile, renderLinkWork, renderSearch } from "./links.ts";
 import { markdownPath, writeMarkdown } from "./markdown.ts";
+import { applyRefPlan, checkRefFile, renderRefSearch, renderRefWork } from "./extract.ts";
 import { applyMerges, checkMergeFile, describeMerges, markMergeChecked, mergeCandidates, mergeDue, renderMergeCandidates, unmerge } from "./merge.ts";
+import { applyRefMerges, checkRefMerges, deleteRef, describeRefMerges, refMergeCandidates, renderRefMergeCandidates, unmergeRef, type RefMergeEntry } from "./refMerge.ts";
+import { deletedNameWarning, ensureNameKey, extractableDates, isExtracted, readNameKey, refState, type RefItem } from "./refs.ts";
 import { priorityRatio } from "./outlets.ts";
 import { requireRepo } from "./paths.ts";
 import { commitsOfRefs, describeFindings, homeValue, localBranches, precheck } from "./precheck.ts";
@@ -24,6 +27,7 @@ import {
   buildSite,
   cliVercel,
   deployOutput,
+  deployPreview,
   fetchGet,
   formatMb,
   gitRemote,
@@ -39,6 +43,7 @@ import {
   RUNS_DIR,
   candidatesFile,
   linkWorkFile,
+  refWorkFile,
   mergeWorkFile,
   readRun,
   updateRun,
@@ -46,10 +51,12 @@ import {
   writeRun,
   type BackupResult,
   type DeployResult,
+  type ExtractResult,
   type ImagesResult,
   type LinkResult,
   type MergeStepResult,
   type PushResult,
+  type RefMergeDone,
   type RunState,
   type SiteResult,
 } from "./run.ts";
@@ -115,6 +122,7 @@ const USAGE = `명령:
   site --run <파일> | --data-dir <폴더>   사이트 빌드(<데이터 폴더>/site/)와 결과물 검사
   deploy --run <파일>            실제 실행이면 결과물 검사 → Vercel 운영 배포 → 배포 뒤 점검(시험·지정 모드는 건너뜀)
   deploy --dir <결과물> --db <DB>   손으로 하는 배포(실행 기록 없이, 모드와 상관없이 배포한다)
+  deploy --dir <결과물> --preview  미리보기 배포(운영 주소는 바뀌지 않는다, 로그인해야 열린다)
   push --run <파일>              실제 실행이면 원격보다 앞선 data 커밋에 공개 전 점검 → git push origin data
   precheck [--refs main,data]    공개 전 점검(기본: 모든 로컬 브랜치의 이력 + 추적하는 지금 파일)
   summary --run <파일>           실행 끝 출력
@@ -128,8 +136,15 @@ const USAGE = `명령:
   merge-list --run <파일>                 합치기 주기 확인과 후보 목록(work/merges.candidates.md)
   merge-check --run <파일>                합치기 파일(work/merges.json) 검사
   merge-apply --run <파일>                검사 → 합치기 → 점검일 갱신 → 마크다운
-  merges [--run <파일>]                   합치기 기록 목록
-  unmerge --id <번호>                     합치기 하나 되돌리기(사용자가 직접 실행, /brief는 실행하지 않음)`;
+  merges [--run <파일>]                   합치기 기록 목록(이슈, 대상·용어)
+  unmerge --id <번호>                     합치기 하나 되돌리기(사용자가 직접 실행, /brief는 실행하지 않음)
+인물·기관·국가와 용어(4단계):
+  refs --run <파일> --date <날짜>         그날 뉴스와 후보 대상·용어 목록(work/<날짜>.refs.md)
+  ref-search [--run <파일>] --q <낱말>    이름·별칭·설명으로 대상·용어 찾기(지운 이름과 같으면 알린다)
+  ref-check --run <파일> --date <날짜>    뽑기 파일(work/<날짜>.refs.json) 검사
+  ref-apply --run <파일> --date <날짜>    검사 → 적용 → 뽑기 완료(실패하면 실행 기록에 남긴다)
+  ref-unmerge --id <번호>                 대상·용어 합치기 하나 되돌리기(사용자가 직접 실행, /brief는 실행하지 않음)
+  ref-delete --entity <번호> | --term <번호>   대상이나 용어 하나 지우기(사용자가 직접 실행, /brief는 실행하지 않음)`;
 
 function opts(argv: string[], options: Record<string, { type: "string" | "boolean" }>) {
   return parseNodeArgs({ args: argv, options, allowPositionals: false, strict: true }).values as Record<string, string | boolean | undefined>;
@@ -183,12 +198,16 @@ function cmdStart(argv: string[], ctx: Context): number {
   const db = openDb(s.dbPath);
   let targets: string[];
   let linkDates: string[];
+  let extractDates: string[];
+  let warning: string | null;
   let mergeLine: string;
   try {
     const plan = planTargets(db, now, s.startDate);
     if (plan.firstDateToRecord !== null) recordFirstCollectionDate(db, plan.firstDateToRecord);
     targets = plan.dates;
     linkDates = linkableDates(db);
+    extractDates = extractableDates(db);
+    warning = deletedNameWarning(db, readNameKey(s.dataDir));
     const due = mergeDue(db, kstDate(now));
     mergeLine = due.due ? `이번 실행 끝에 한다(마지막 점검 ${due.checkedOn})` : due.nextOn === null ? "아직 연결한 이슈가 없다" : `다음 점검 ${due.nextOn}`;
   } finally {
@@ -207,6 +226,8 @@ function cmdStart(argv: string[], ctx: Context): number {
     backup: null,
     linkDates,
     links: {},
+    extractDates,
+    extracts: {},
     site: null,
     deploy: null,
     push: null,
@@ -219,6 +240,8 @@ function cmdStart(argv: string[], ctx: Context): number {
       `- 대상 날짜: ${targets.length > 0 ? targets.join(", ") : "없음(빠진 날짜가 없다)"}`,
       ...targets.map((d) => `  - ${d} 작업 파일: ${workFile(s.dataDir, d)}`),
       `- 이슈를 연결할 저장된 날짜(소급·재시도): ${linkDates.length > 0 ? linkDates.join(", ") : "없음"}`,
+      `- 뽑기할 저장된 날짜(채우기·재시도): ${extractDates.length > 0 ? extractDates.join(", ") : "없음"}`,
+      ...(warning === null ? [] : [`- 경고: ${warning}`]),
       `- 합치기: ${mergeLine}`,
     ].join("\n"),
   );
@@ -435,6 +458,7 @@ function cmdSummary(argv: string[], ctx: Context): number {
     for (const x of f.failures) lines.push(`  - ${x.feed}: ${x.reason}`);
   }
   lines.push(...issueSummaryLines(s));
+  lines.push(...extractSummaryLines(s));
   lines.push(...imageSummaryLines(s, saved));
   lines.push(`- 백업: ${describeBackup(s.backup)}`);
   lines.push(...siteSummaryLines(s));
@@ -687,7 +711,9 @@ function cmdMergeList(argv: string[], ctx: Context): number {
       return EXIT.ok;
     }
     const pairs = mergeCandidates(db);
-    if (pairs.length === 0) {
+    const refPairs = refMergeCandidates(db);
+    const total = pairs.length + refPairs.length;
+    if (total === 0) {
       markMergeChecked(db, today);
       record({ status: "none", candidates: 0 });
       ctx.out(`합치기: 할 일 있음(마지막 점검 ${due.checkedOn}). 후보가 없어 합친 것 없이 점검일을 ${today}로 바꿨다.`);
@@ -695,9 +721,12 @@ function cmdMergeList(argv: string[], ctx: Context): number {
     }
     const file = mergeWorkFile(state.dataDir, "candidates.md");
     fs.mkdirSync(path.dirname(file), { recursive: true });
-    fs.writeFileSync(file, renderMergeCandidates(db, pairs));
-    record({ status: "pending", candidates: pairs.length });
-    ctx.out(`합치기: 할 일 있음(마지막 점검 ${due.checkedOn}). 후보 ${pairs.length}쌍: ${file}\n합치기 파일을 쓸 곳: ${mergeWorkFile(state.dataDir, "json")}`);
+    fs.writeFileSync(file, `${renderMergeCandidates(db, pairs).trimEnd()}\n\n${renderRefMergeCandidates(db, refPairs).join("\n").trimEnd()}\n`);
+    record({ status: "pending", candidates: total });
+    const entityPairs = refPairs.filter((p) => p.item === "entity").length;
+    ctx.out(
+      `합치기: 할 일 있음(마지막 점검 ${due.checkedOn}). 후보 이슈 ${pairs.length}쌍, 대상 ${entityPairs}쌍, 용어 ${refPairs.length - entityPairs}쌍: ${file}\n합치기 파일을 쓸 곳: ${mergeWorkFile(state.dataDir, "json")}`,
+    );
     return EXIT.ok;
   } finally {
     db.close();
@@ -714,12 +743,13 @@ function cmdMergeCheck(argv: string[], ctx: Context): number {
   }
   const db = openExistingDb(state.dbPath);
   try {
-    const r = checkMergeFile(db, file.data);
+    let refs: RefMergeEntry[] = [];
+    const r = checkMergeFile(db, file.data, { keys: REF_MERGE_KEYS, check: (c, root) => (refs = checkRefMerges(c, db, root)) });
     if (!r.ok) {
       ctx.out(`합치기 검사 실패, 위반 ${r.violations.length}개:\n${formatViolations(r.violations)}`);
       return EXIT.failed;
     }
-    ctx.out(`합치기 검사 통과: ${r.merges.length}쌍.`);
+    ctx.out(`합치기 검사 통과: 이슈 ${r.merges.length}쌍, 대상·용어 ${refs.length}쌍.`);
     return EXIT.ok;
   } finally {
     db.close();
@@ -740,12 +770,26 @@ function cmdMergeApply(argv: string[], ctx: Context): number {
   if (!file.ok) return fail(file.reason);
   const db = openExistingDb(state.dbPath);
   try {
-    const checked = checkMergeFile(db, file.data);
+    let refEntries: RefMergeEntry[] = [];
+    const checked = checkMergeFile(db, file.data, { keys: REF_MERGE_KEYS, check: (c, root) => (refEntries = checkRefMerges(c, db, root)) });
     if (!checked.ok) return fail("합치기 파일이 검사를 통과하지 못했다", checked.violations);
     const names = new Map<number, string>();
     for (const m of checked.merges) for (const id of [m.survivor, m.absorbed]) names.set(id, getIssueName(db, id));
-    const ids = applyMerges(db, checked.merges, kstDate(ctx.now()));
-    if (ids.length === 0) {
+    const refName = (item: RefItem, id: number) => refState(db, item, id)?.name ?? "";
+    const refNames = refEntries.map((m) => ({ survivor: refName(m.item, m.survivor), absorbed: refName(m.item, m.absorbed) }));
+    const today = kstDate(ctx.now());
+    let refIds: number[] = [];
+    const ids = applyMerges(db, checked.merges, today, () => (refIds = applyRefMerges(db, refEntries, today)));
+    const refs: RefMergeDone[] = refEntries.map((m, i) => ({
+      id: refIds[i]!,
+      item: m.item,
+      survivor: m.survivor,
+      survivorName: refNames[i]!.survivor,
+      absorbed: m.absorbed,
+      absorbedName: refNames[i]!.absorbed,
+      reason: m.reason,
+    }));
+    if (ids.length === 0 && refs.length === 0) {
       const prev = readRun(runFile).merge;
       record({ status: "none", candidates: prev?.status === "pending" || prev?.status === "none" ? prev.candidates : 0 });
       ctx.out(`합친 것 없음. 점검일을 ${kstDate(ctx.now())}로 바꿨다.`);
@@ -759,13 +803,22 @@ function cmdMergeApply(argv: string[], ctx: Context): number {
       absorbedName: names.get(m.absorbed) ?? "",
       reason: m.reason,
     }));
-    record({ status: "merged", merges });
+    record(refs.length > 0 ? { status: "merged", merges, refs } : { status: "merged", merges });
     const lines = merges.map((m) => `- 합치기 ${m.id}: 이슈 ${m.absorbed}(${m.absorbedName}) → 이슈 ${m.survivor}(${m.survivorName}). 되돌리기: node src/cli.ts unmerge --id ${m.id}`);
-    ctx.out([`합침: ${merges.length}쌍. 점검일을 ${kstDate(ctx.now())}로 바꿨다.`, ...lines, rerender(db, state.dataDir)].join("\n"));
+    lines.push(...refs.map(refMergeLine));
+    ctx.out([`합침: 이슈 ${merges.length}쌍, 대상·용어 ${refs.length}쌍. 점검일을 ${today}로 바꿨다.`, ...lines, rerender(db, state.dataDir)].join("\n"));
     return EXIT.ok;
   } finally {
     db.close();
   }
+}
+
+/** 합치기 파일에서 4단계 대상·용어 합치기를 적는 항목 */
+const REF_MERGE_KEYS = ["entityMerges", "termMerges"];
+
+function refMergeLine(m: RefMergeDone): string {
+  const label = m.item === "entity" ? "대상" : "용어";
+  return `- 대상·용어 합치기 ${m.id}: ${label} ${m.absorbed}(${m.absorbedName}) → ${label} ${m.survivor}(${m.survivorName}). 이유: ${m.reason}. 되돌리기: node src/cli.ts ref-unmerge --id ${m.id}`;
 }
 
 function getIssueName(db: ReturnType<typeof openDb>, id: number): string {
@@ -776,7 +829,8 @@ function cmdMerges(argv: string[], ctx: Context): number {
   const v = opts(argv, { run: { type: "string" } });
   const db = openExistingDb(dataTarget(v.run, ctx).dbPath);
   try {
-    ctx.out(describeMerges(db));
+    const refs = describeRefMerges(db);
+    ctx.out(refs.length > 0 ? `${describeMerges(db)}\n${refs.join("\n")}` : describeMerges(db));
     return EXIT.ok;
   } finally {
     db.close();
@@ -856,16 +910,240 @@ function issueSummaryLines(s: RunState): string[] {
   else if (m.status === "pending") lines.push(`- 합치기: 후보 ${m.candidates}쌍을 만들었지만 적용하지 않았다(점검일을 바꾸지 않았다, 다음 실행이 다시 한다)`);
   else if (m.status === "none") lines.push(`- 합치기: 점검했고 합친 것이 없다(후보 ${m.candidates}쌍)`);
   else if (m.status === "merged") {
-    lines.push(`- 합치기: ${m.merges.length}쌍을 합쳤다`);
+    lines.push(m.refs === undefined ? `- 합치기: ${m.merges.length}쌍을 합쳤다` : `- 합치기: 이슈 ${m.merges.length}쌍, 대상·용어 ${m.refs.length}쌍을 합쳤다`);
     for (const x of m.merges) {
       lines.push(`  - 이슈 ${x.absorbed}(${x.absorbedName}) → 이슈 ${x.survivor}(${x.survivorName}). 이유: ${x.reason}. 되돌리기: node src/cli.ts unmerge --id ${x.id}`);
     }
+    for (const x of m.refs ?? []) lines.push(`  ${refMergeLine(x)}`);
   } else {
     lines.push(`- 합치기 실패(점검일을 바꾸지 않았다, 다음 실행이 다시 한다): ${m.reason}`);
     if (m.violations) for (const vi of m.violations) lines.push(`  - ${vi.where}: ${vi.why}`);
   }
   const index = issueIndexPath(s.dataDir);
   lines.push(`- 이슈 목록: ${fs.existsSync(index) ? index : `아직 없다(${index})`}`);
+  return lines;
+}
+
+// ---- 인물·기관·국가와 용어(4단계) ----
+
+function cmdRefs(argv: string[], ctx: Context): number {
+  const v = opts(argv, { run: { type: "string" }, date: { type: "string" } });
+  const state = readRun(need(v, "run"));
+  const date = need(v, "date");
+  const db = openExistingDb(state.dbPath);
+  try {
+    requireStored(db, date);
+    if (isExtracted(db, date)) {
+      ctx.out(`할 일 없음(${date}): 이미 뽑기를 마친 날짜다.`);
+      return EXIT.ok;
+    }
+    const work = renderRefWork(db, date);
+    const file = refWorkFile(state.dataDir, date, "refs.md");
+    fs.mkdirSync(path.dirname(file), { recursive: true });
+    fs.writeFileSync(file, work.text);
+    ctx.out(`뉴스 ${work.stories}건, 후보 대상 ${work.entities}개, 후보 용어 ${work.terms}개: ${file}\n뽑기 파일을 쓸 곳: ${refWorkFile(state.dataDir, date, "refs.json")}`);
+    return EXIT.ok;
+  } finally {
+    db.close();
+  }
+}
+
+function cmdRefSearch(argv: string[], ctx: Context): number {
+  const v = opts(argv, { run: { type: "string" }, q: { type: "string" } });
+  const q = need(v, "q");
+  const t = dataTarget(v.run, ctx);
+  const db = openExistingDb(t.dbPath);
+  try {
+    ctx.out(renderRefSearch(db, q, readNameKey(t.dataDir)));
+    return EXIT.ok;
+  } finally {
+    db.close();
+  }
+}
+
+function cmdRefCheck(argv: string[], ctx: Context): number {
+  const v = opts(argv, { run: { type: "string" }, date: { type: "string" } });
+  const state = readRun(need(v, "run"));
+  const date = need(v, "date");
+  const file = readJson(refWorkFile(state.dataDir, date, "refs.json"), "뽑기 파일");
+  if (!file.ok) {
+    ctx.out(`뽑기 검사 실패(${date}):\n- 뽑기 파일: ${file.reason}`);
+    return EXIT.failed;
+  }
+  const db = openExistingDb(state.dbPath);
+  try {
+    requireStored(db, date);
+    const r = checkRefFile(db, file.data, date, readNameKey(state.dataDir));
+    if (!r.ok) {
+      ctx.out(`뽑기 검사 실패(${date}), 위반 ${r.violations.length}개:\n${formatViolations(r.violations)}`);
+      return EXIT.failed;
+    }
+    ctx.out(`뽑기 검사 통과(${date}): 뉴스 ${r.plan.stories.length}건, 새 대상 ${r.plan.newEntities.length}개, 새 용어 ${r.plan.newTerms.length}개, 고침 ${r.plan.entityUpdates.length + r.plan.termUpdates.length}개.`);
+    return EXIT.ok;
+  } finally {
+    db.close();
+  }
+}
+
+function cmdRefApply(argv: string[], ctx: Context): number {
+  const v = opts(argv, { run: { type: "string" }, date: { type: "string" } });
+  const runFile = need(v, "run");
+  const state = readRun(runFile);
+  const date = need(v, "date");
+  const record = (r: ExtractResult) => updateRun(runFile, (s) => ((s.extracts ??= {})[date] = r));
+  const db = openExistingDb(state.dbPath);
+  try {
+    requireStored(db, date);
+    if (isExtracted(db, date)) {
+      record({ status: "nothing" });
+      ctx.out(`할 일 없음(${date}): 이미 뽑기를 마친 날짜다. 바꾼 것이 없다.`);
+      return EXIT.ok;
+    }
+    const file = readJson(refWorkFile(state.dataDir, date, "refs.json"), "뽑기 파일");
+    if (!file.ok) {
+      record({ status: "failed", reason: file.reason });
+      ctx.out(`뽑기를 적용하지 않음(${date}): ${file.reason}`);
+      return EXIT.failed;
+    }
+    const checked = checkRefFile(db, file.data, date, readNameKey(state.dataDir));
+    if (!checked.ok) {
+      record({ status: "failed", reason: "뽑기 파일이 검사를 통과하지 못했다", violations: checked.violations });
+      ctx.out(`뽑기를 적용하지 않음(${date}), 위반 ${checked.violations.length}개(뉴스와 이슈 연결은 그대로 두고 다음 실행이 다시 뽑는다):\n${formatViolations(checked.violations)}`);
+      return EXIT.failed;
+    }
+    const applied = applyRefPlan(db, checked.plan, kstDate(ctx.now()));
+    record(applied);
+    ctx.out(
+      applied.status === "applied"
+        ? `뽑기 적용함(${date}): 대상 연결 ${applied.entityLinks}개, 용어 연결 ${applied.termLinks}개, 새 대상 ${applied.newEntities}개, 새 용어 ${applied.newTerms}개, 고친 한 줄 설명 ${applied.descriptions}개.`
+        : `할 일 없음(${date}).`,
+    );
+    return EXIT.ok;
+  } finally {
+    db.close();
+  }
+}
+
+/** 사용자가 직접 실행하는 명령(되돌리기, 지우기)의 공통 준비: 실행 조건(S12), DB 확인, 바꾸기 전 사본 */
+function userCommandDb(ctx: Context): { s: Settings; snapshot: string | null } | { exit: number } {
+  const s = resolveSettings({ cwd: ctx.cwd, env: ctx.env, args: { test: false, startDate: null }, now: ctx.now() });
+  const cond = checkRunCondition(s);
+  if (!cond.ok) {
+    ctx.out(cond.message);
+    return { exit: EXIT.refused };
+  }
+  if (!fs.existsSync(s.dbPath)) {
+    ctx.out(`DB가 없다: ${s.dbPath}`);
+    return { exit: EXIT.failed };
+  }
+  const now = ctx.now();
+  const snapshot = takeSnapshot(s.dataDir, s.dbPath, now);
+  pruneSnapshots(s.dataDir, now);
+  return { s, snapshot };
+}
+
+/** 대상·용어 합치기 되돌리기(4.3-3). 사용자가 직접 실행한다 */
+function cmdRefUnmerge(argv: string[], ctx: Context): number {
+  const v = opts(argv, { id: { type: "string" } });
+  const raw = need(v, "id");
+  const id = Number(raw);
+  if (!Number.isInteger(id) || id <= 0) throw new UsageError(`--id는 대상·용어 합치기 기록 번호여야 한다: ${raw}`);
+  const prep = userCommandDb(ctx);
+  if ("exit" in prep) return prep.exit;
+  const db = openExistingDb(prep.s.dbPath);
+  try {
+    const r = unmergeRef(db, id, kstDate(ctx.now()));
+    if (!r.ok) {
+      ctx.out(`되돌리지 않음: ${r.reason}`);
+      return EXIT.failed;
+    }
+    const label = r.merge.item === "entity" ? "대상" : "용어";
+    ctx.out(
+      [
+        `되돌림: 대상·용어 합치기 ${id} (${label} ${r.merge.absorbed}을(를) ${label} ${r.merge.survivor}에서 되살렸다). 두 ${label}는 다음 합치기 후보에서 빠진다.`,
+        `- 실행 전 사본: ${prep.snapshot}`,
+        "- 백업과 사이트 배포는 다음 /brief 실행이 한다.",
+      ].join("\n"),
+    );
+    return EXIT.ok;
+  } finally {
+    db.close();
+  }
+}
+
+/** 대상·용어 지우기(4.3-4, E13). 사용자가 직접 실행한다 */
+function cmdRefDelete(argv: string[], ctx: Context): number {
+  const v = opts(argv, { entity: { type: "string" }, term: { type: "string" } });
+  if ((typeof v.entity === "string") === (typeof v.term === "string")) throw new UsageError("--entity와 --term 중 하나만 준다");
+  const item: RefItem = typeof v.entity === "string" ? "entity" : "term";
+  const raw = (v.entity ?? v.term) as string;
+  const id = Number(raw);
+  if (!Number.isInteger(id) || id <= 0) throw new UsageError(`식별자는 양의 정수여야 한다: ${raw}`);
+  const prep = userCommandDb(ctx);
+  if ("exit" in prep) return prep.exit;
+  const db = openExistingDb(prep.s.dbPath);
+  try {
+    const label = item === "entity" ? "대상" : "용어";
+    const pre = refState(db, item, id);
+    if (pre === null || pre.deleted || pre.mergedInto !== null) {
+      const r = deleteRef(db, item, id, { key: Buffer.alloc(0), fp: "" }, kstDate(ctx.now()));
+      ctx.out(`지우지 않음: ${r.ok ? "" : r.reason}`);
+      return EXIT.failed;
+    }
+    const key = ensureNameKey(prep.s.dataDir);
+    const r = deleteRef(db, item, id, key, kstDate(ctx.now()));
+    if (!r.ok) {
+      ctx.out(`지우지 않음: ${r.reason}`);
+      return EXIT.failed;
+    }
+    ctx.out(
+      [
+        `지움: ${label} ${id}${r.ids.length > 1 ? `(흡수되어 있던 ${label} ${r.ids.slice(1).join(", ")} 포함)` : ""}.`,
+        `- 지운 이름(다음 뽑기에서 같은 이름을 거부한다): ${r.names.join(", ")}`,
+        `- 끊은 연결: ${r.links}개${r.maskedMerges > 0 ? `, 가린 합치기 기록: ${r.maskedMerges}개(되돌리기를 거부한다)` : ""}`,
+        `- 실행 전 사본: ${prep.snapshot}`,
+        "- 다음 /brief 실행이 백업하고 사이트에 배포한다. 그때부터 사이트와 검색에서 빠지고 그 주소는 없는 페이지가 된다.",
+        "- 남는 곳: 이미 push된 data 브랜치의 지난 백업 이력, 뉴스 본문(제목·요약·본문), 이슈 이름·별칭·요약(바꾸지 않는다).",
+        "- 바로 내리려면 docs/operations.md의 손으로 하는 배포(main에서 site 빌드 뒤 deploy --dir --db)를 쓴다.",
+        "- 지우기는 되돌리지 않는다. 되돌리려면 실행 전 사본으로 복원한다(docs/operations.md).",
+      ].join("\n"),
+    );
+    return EXIT.ok;
+  } finally {
+    db.close();
+  }
+}
+
+/** 실행 요약의 뽑기 줄(4.5-2). 앞 단계 실행 기록(extractDates 없음)에는 붙이지 않는다 */
+function extractSummaryLines(s: RunState): string[] {
+  if (s.extractDates === undefined) return [];
+  const lines: string[] = [];
+  const results = s.extracts ?? {};
+  const saved = s.targetDates.filter((d) => s.results[d]?.status === "saved");
+  const dates = [...new Set([...s.extractDates, ...saved, ...Object.keys(results)])].sort();
+  if (dates.length > 0) lines.push("- 인물·기관·국가와 용어 뽑기:");
+  for (const d of dates) {
+    const r = results[d];
+    if (r === undefined) lines.push(`  - ${d}: 뽑기 결과가 기록되지 않았다(다음 실행이 다시 뽑는다)`);
+    else if (r.status === "applied") {
+      lines.push(`  - ${d}: 대상 연결 ${r.entityLinks}개, 용어 연결 ${r.termLinks}개(새 대상 ${r.newEntities}개, 새 용어 ${r.newTerms}개, 고친 한 줄 설명 ${r.descriptions}개)`);
+    } else if (r.status === "nothing") lines.push(`  - ${d}: 할 일 없음(이미 뽑음)`);
+    else {
+      lines.push(`  - ${d}: 뽑기 실패(뉴스와 이슈 연결은 그대로, 다음 실행이 다시 뽑는다): ${r.reason}`);
+      if (r.violations) for (const vi of r.violations) lines.push(`    - ${vi.where}: ${vi.why}`);
+    }
+  }
+  if (fs.existsSync(s.dbPath)) {
+    const db = openExistingDb(s.dbPath);
+    try {
+      const n = extractableDates(db).length;
+      lines.push(n > 0 ? `- 아직 뽑기 안 한 날짜: ${n}개(다음 실행이 뽑는다)` : "- 아직 뽑기 안 한 날짜: 없음");
+      const warning = deletedNameWarning(db, readNameKey(s.dataDir));
+      if (warning !== null) lines.push(`- 경고: ${warning}`);
+    } finally {
+      db.close();
+    }
+  }
   return lines;
 }
 
@@ -878,7 +1156,8 @@ function homeOf(ctx: Context): string | null {
 function describeSite(r: SiteResult | null): string[] {
   if (r === null) return ["실행하지 않았다"];
   if (r.status === "failed") return [`실패(배포하지 않는다, 다음 실행이 다시 빌드한다): ${r.reason}`, ...(r.findings ?? []).map((f) => `  - ${f}`)];
-  const lines = [`브리프 날짜 ${r.dates}개, 이슈 ${r.issues}개, 결과물 ${formatMb(r.bytes)}, 파일 ${r.files}개`];
+  const refs = r.entities === undefined ? "" : `, 인물·기관·국가 ${r.entities}개, 용어 ${r.terms ?? 0}개`;
+  const lines = [`브리프 날짜 ${r.dates}개, 이슈 ${r.issues}개, 결과물 ${formatMb(r.bytes)}, 파일 ${r.files}개${refs}`];
   if (r.bytes > WARN_BYTES || r.files > WARN_FILES) {
     lines.push(`  - 경고: Vercel 무료 한도(100MB, 파일 15,000개)에 가깝다(문턱 ${formatMb(WARN_BYTES)}, ${WARN_FILES.toLocaleString("en-US")}개). docs/operations.md의 한도 대응을 본다`);
   }
@@ -954,7 +1233,17 @@ function cmdSite(argv: string[], ctx: Context): number {
 
 /** 배포(4.6). --run은 실제 실행에서만 배포한다. --dir/--db는 손으로 하는 배포다(4.9-2) */
 async function cmdDeploy(argv: string[], ctx: Context): Promise<number> {
-  const v = opts(argv, { run: { type: "string" }, dir: { type: "string" }, db: { type: "string" } });
+  const v = opts(argv, { run: { type: "string" }, dir: { type: "string" }, db: { type: "string" }, preview: { type: "boolean" } });
+  if (v.preview === true) {
+    if (typeof v.run === "string" || typeof v.db === "string") throw new UsageError("--preview는 --dir과만 쓴다");
+    const p = deployPreview({ repoDir: requireRepo(ctx.cwd).toplevel, outDir: path.resolve(ctx.cwd, need(v, "dir")), home: homeOf(ctx), vercel: ctx.runVercel ?? cliVercel });
+    if (p.status === "failed") {
+      ctx.out([`미리보기 배포: 실패: ${p.reason}`, ...(p.findings ?? []).map((f) => `  - ${f}`)].join("\n"));
+      return EXIT.failed;
+    }
+    ctx.out(`미리보기 배포함: ${p.url}\n- 운영 주소(${"https://tidwyn.vercel.app"})는 바뀌지 않았다.\n- Vercel 배포 보호로 로그인해야 열린다(보호가 꺼져 있으면 누구나 연다. docs/operations.md).`);
+    return EXIT.ok;
+  }
   const deps = { repoDir: requireRepo(ctx.cwd).toplevel, home: homeOf(ctx), vercel: ctx.runVercel ?? cliVercel, httpGet: ctx.httpGet ?? fetchGet, retry: ctx.checkRetry ?? DEFAULT_CHECK_RETRY };
   let result: DeployResult;
   if (typeof v.run === "string") {
@@ -1038,6 +1327,12 @@ const COMMANDS: Record<string, (argv: string[], ctx: Context) => number> = {
   "merge-apply": cmdMergeApply,
   merges: cmdMerges,
   unmerge: cmdUnmerge,
+  refs: cmdRefs,
+  "ref-search": cmdRefSearch,
+  "ref-check": cmdRefCheck,
+  "ref-apply": cmdRefApply,
+  "ref-unmerge": cmdRefUnmerge,
+  "ref-delete": cmdRefDelete,
   site: cmdSite,
   push: cmdPush,
   precheck: cmdPrecheck,

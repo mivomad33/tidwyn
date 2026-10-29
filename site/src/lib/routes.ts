@@ -1,5 +1,6 @@
 // 주소 해석(4.2-1, 4.3, P4). 화면(DOM) 없이 테스트한다.
-import type { SiteIssueList } from "./types.ts";
+import { parseEntityFilter } from "./entities.ts";
+import type { EntityFilter, SiteIssueList } from "./types.ts";
 
 export type Route =
   | { name: "latest" }
@@ -8,6 +9,10 @@ export type Route =
   | { name: "issues" }
   | { name: "issue"; id: number }
   | { name: "search"; q: string }
+  | { name: "entities"; filter: EntityFilter }
+  | { name: "entity"; id: number }
+  /** 용어 사전. id가 있으면 그 용어 위치로 가서 강조한다 */
+  | { name: "terms"; id: number | null }
   | { name: "about" }
   | { name: "notFound" };
 
@@ -39,8 +44,14 @@ export function parseRoute(pathname: string, search = ""): Route {
   if (p === "/issues") return { name: "issues" };
   if (p === "/about") return { name: "about" };
   if (p === "/search") return { name: "search", q: new URLSearchParams(search).get("q") ?? "" };
+  if (p === "/entities") return { name: "entities", filter: parseEntityFilter(new URLSearchParams(search).get("kind")) };
+  if (p === "/terms") return { name: "terms", id: null };
   const issue = /^\/issues\/(0|[1-9]\d{0,15})$/.exec(p);
   if (issue) return { name: "issue", id: Number(issue[1]) };
+  const entity = /^\/entities\/(0|[1-9]\d{0,15})$/.exec(p);
+  if (entity) return { name: "entity", id: Number(entity[1]) };
+  const term = /^\/terms\/(0|[1-9]\d{0,15})$/.exec(p);
+  if (term) return { name: "terms", id: Number(term[1]) };
   const date = /^\/(\d{4}-\d{2}-\d{2})$/.exec(p);
   if (date && isValidDate(date[1]!)) return { name: "brief", date: date[1]! };
   return { name: "notFound" };
@@ -49,6 +60,11 @@ export function parseRoute(pathname: string, search = ""): Route {
 /** 앱 안에서 화면을 옮긴 뒤 초점을 둘 요소의 id. 검색어 없는 검색 화면은 바로 입력하게 입력란, 나머지는 본문 */
 export function focusTargetId(route: Route): "q" | "main" {
   return route.name === "search" && !route.q ? "q" : "main";
+}
+
+/** 화면이 스스로 스크롤·초점을 정하는 주소(용어 주소는 그 용어로 간다). 앱의 화면 이동 처리가 맨 위로 올리지 않는다 */
+export function selfScrolls(route: Route): boolean {
+  return route.name === "terms" && route.id !== null;
 }
 
 /** 브리프 주소의 날짜를 저장된 날짜와 맞춘다. `/`는 가장 최근 날짜, 저장되지 않은 날짜는 null(없는 페이지) */
@@ -94,6 +110,22 @@ export function briefPath(date: string, key?: string): string {
 
 export function issuePath(id: number): string {
   return `/issues/${id}`;
+}
+
+export function entitiesPath(filter: EntityFilter = "all"): string {
+  return filter === "all" ? "/entities" : `/entities?kind=${filter}`;
+}
+
+export function entityPath(id: number): string {
+  return `/entities/${id}`;
+}
+
+export function termsPath(): string {
+  return "/terms";
+}
+
+export function termPath(id: number): string {
+  return `/terms/${id}`;
 }
 
 export function searchPath(q: string): string {

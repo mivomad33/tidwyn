@@ -14,3 +14,6 @@ node_modules/
 
 # Vercel CLI 연결 정보(커밋하지 않는다)
 .vercel/
+
+# 명세서 화면 확인 스크린샷(실제 데이터로 찍으면 공개 저장소에 이름·사진이 실린다). 로컬에만 둔다.
+/docs/specs/*/screenshots/

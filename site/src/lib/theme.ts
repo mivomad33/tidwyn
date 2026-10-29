@@ -92,6 +92,8 @@ export function textPairs(p: Palette): { name: string; fg: string; bg: string }[
     { name: "강조/상자", fg: p.accent, bg: p.chip },
     { name: "표시", fg: p.accent, bg: p.accentbg },
     { name: "고른 칩", fg: p.bg, bg: p.fg },
+    // 4단계: 펼친 카드에서 누른 용어 낱말(강조 바탕 위 본문 글자)
+    { name: "강조된 낱말", fg: p.fg, bg: p.accentbg },
   ];
   for (const m of MAJORS) pairs.push({ name: `분류 ${m}`, fg: p.categories[m], bg: p.bg });
   return pairs;

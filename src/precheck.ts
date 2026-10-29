@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { git, gitBuffer } from "./git.ts";
+import { NAME_KEY_FILE } from "./refs.ts";
 import { SNAPSHOT_NAME_RE } from "./snapshot.ts";
 
 // 공개 전 점검(3단계 4.7-3)과 결과물 검사(4.1-4)가 함께 쓰는 검사.
@@ -30,6 +31,7 @@ export type FindingKind =
   | "허용 목록 밖 메일 주소"
   | "백업 파일 이름"
   | "실행 기록·작업 파일"
+  | "지운 이름 키 파일"
   | "읽지 못한 파일";
 
 export interface Finding {
@@ -114,13 +116,14 @@ export function isBinary(content: Buffer): boolean {
   return content.subarray(0, 8000).includes(0);
 }
 
-/** 이름으로 찾는 것: SQLite 파일, 실행 전 사본, .env 파일 */
+/** 이름으로 찾는 것: SQLite 파일, 실행 전 사본, .env 파일, 지운 이름 키 파일(4단계 E15) */
 export function nameKinds(file: string): FindingKind[] {
   const base = path.posix.basename(file.replaceAll("\\", "/"));
   const kinds: FindingKind[] = [];
   if (SNAPSHOT_NAME_RE.test(base)) kinds.push("실행 전 사본");
   else if (/\.(?:db|db-journal|db-wal|db-shm|sqlite|sqlite3)$/i.test(base)) kinds.push("SQLite 파일");
   if (/^\.env(?:\..+)?$/i.test(base)) kinds.push(".env 파일");
+  if (base === NAME_KEY_FILE) kinds.push("지운 이름 키 파일");
   return kinds;
 }
 

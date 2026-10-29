@@ -1,7 +1,16 @@
 // 사이트 데이터 불러오기. 같은 파일은 한 번만 받고, 실패하면 다시 시도할 수 있다(4.3-5).
 import { useEffect, useSyncExternalStore } from "react";
 
-type Entry = { status: "loading" } | { status: "ok"; data: unknown } | { status: "error"; error: string };
+type Entry = { status: "loading" } | { status: "ok"; data: unknown } | { status: "error"; error: string; notFound: boolean };
+
+/** 받지 못한 파일. 404면 notFound다(묶음 파일이 없는 식별자를 없는 페이지로 보이기 위해) */
+class HttpError extends Error {
+  readonly status: number;
+  constructor(status: number) {
+    super(`HTTP ${status}`);
+    this.status = status;
+  }
+}
 
 const entries = new Map<string, Entry>();
 const pending = new Map<string, Promise<unknown>>();
@@ -21,7 +30,7 @@ export function loadJson<T>(url: string): Promise<T> {
   entries.set(url, { status: "loading" });
   const p = fetch(url)
     .then((res) => {
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      if (!res.ok) throw new HttpError(res.status);
       return res.json() as Promise<unknown>;
     })
     .then(
@@ -30,7 +39,7 @@ export function loadJson<T>(url: string): Promise<T> {
         return data;
       },
       (err: unknown) => {
-        entries.set(url, { status: "error", error: err instanceof Error ? err.message : String(err) });
+        entries.set(url, { status: "error", error: err instanceof Error ? err.message : String(err), notFound: err instanceof HttpError && err.status === 404 });
         throw err;
       },
     )
@@ -58,7 +67,7 @@ function subscribe(l: () => void): () => void {
   return () => listeners.delete(l);
 }
 
-export type Resource<T> = { status: "idle" } | { status: "loading" } | { status: "ok"; data: T } | { status: "error"; error: string };
+export type Resource<T> = { status: "idle" } | { status: "loading" } | { status: "ok"; data: T } | { status: "error"; error: string; notFound: boolean };
 
 /** 주소가 null이면 받지 않는다(idle) */
 export function useResource<T>(url: string | null): Resource<T> {

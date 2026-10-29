@@ -13,10 +13,12 @@
     "verify": "pnpm typecheck && pnpm lint && pnpm test",
     "site:build": "node site/build.ts",
     "site:dev": "node site/dev/fixtures.ts --out .test-data/site-dev && node site/build.ts --data .test-data/site-dev --out .test-data/site-dev-out && node site/dev/serve.ts .test-data/site-dev-out",
-    "site:preview": "node site/dev/serve.ts"
+    "site:preview": "node site/dev/serve.ts",
+    "e2e": "playwright test"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.64.1",
     "@types/node": "^24.19.2",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",

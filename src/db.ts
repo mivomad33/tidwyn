@@ -122,6 +122,76 @@ export const MIGRATIONS: Migration[] = [
       `);
     },
   },
+  {
+    // 4단계 4.1: 대상(인물·기관·국가)과 용어, 뉴스와의 연결, 날짜별 뽑기 완료, 대상·용어 합치기 기록, 지운 이름.
+    // 기존 날짜는 모두 뽑기 안 함이 된다(extracted_dates에 없음). AUTOINCREMENT라 식별자를 다시 쓰지 않는다(4.1-1).
+    // 지운 대상·용어는 행을 지우지 않고 이름·별칭·설명을 비운 채 deleted로 남긴다(식별자가 복원 뒤에도 다시 쓰이지 않게, E15).
+    version: 4,
+    up: (db) => {
+      db.exec(`
+        CREATE TABLE entities (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          kind TEXT NOT NULL CHECK (kind IN ('인물', '기관', '국가')),
+          name TEXT NOT NULL,
+          aliases TEXT NOT NULL,
+          description TEXT NOT NULL,
+          described_on TEXT,
+          described_story TEXT,
+          merged_into INTEGER REFERENCES entities(id),
+          deleted INTEGER NOT NULL DEFAULT 0
+        );
+        CREATE TABLE terms (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          name TEXT NOT NULL,
+          aliases TEXT NOT NULL,
+          description TEXT NOT NULL,
+          merged_into INTEGER REFERENCES terms(id),
+          deleted INTEGER NOT NULL DEFAULT 0
+        );
+        CREATE TABLE story_entities (
+          story_id INTEGER NOT NULL REFERENCES stories(id) ON DELETE CASCADE,
+          entity_id INTEGER NOT NULL REFERENCES entities(id),
+          PRIMARY KEY (story_id, entity_id)
+        );
+        CREATE INDEX story_entities_entity ON story_entities(entity_id);
+        CREATE TABLE story_terms (
+          story_id INTEGER NOT NULL REFERENCES stories(id) ON DELETE CASCADE,
+          term_id INTEGER NOT NULL REFERENCES terms(id),
+          surface TEXT,
+          PRIMARY KEY (story_id, term_id)
+        );
+        CREATE INDEX story_terms_term ON story_terms(term_id);
+        CREATE TABLE extracted_dates (
+          target_date TEXT PRIMARY KEY REFERENCES briefs(target_date) ON DELETE CASCADE
+        );
+        CREATE TABLE ref_merges (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          item TEXT NOT NULL CHECK (item IN ('entity', 'term')),
+          merged_on TEXT NOT NULL,
+          survivor INTEGER NOT NULL,
+          absorbed INTEGER NOT NULL,
+          reason TEXT NOT NULL,
+          record TEXT NOT NULL,
+          undone_on TEXT,
+          masked INTEGER NOT NULL DEFAULT 0
+        );
+        CREATE TABLE ref_no_merge (
+          item TEXT NOT NULL CHECK (item IN ('entity', 'term')),
+          a INTEGER NOT NULL,
+          b INTEGER NOT NULL,
+          PRIMARY KEY (item, a, b),
+          CHECK (a < b)
+        );
+        CREATE TABLE deleted_names (
+          scope TEXT NOT NULL,
+          hash TEXT NOT NULL,
+          key_fp TEXT NOT NULL,
+          deleted_on TEXT NOT NULL,
+          PRIMARY KEY (scope, hash, key_fp)
+        );
+      `);
+    },
+  },
 ];
 
 export function schemaVersion(db: DatabaseSync): number {

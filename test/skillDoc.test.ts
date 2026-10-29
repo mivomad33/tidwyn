@@ -6,7 +6,10 @@ import { COMMAND_NAMES } from "../src/cli.ts";
 import { openDb } from "../src/db.ts";
 import { createIssue, linkStory, storiesOfDate } from "../src/issues.ts";
 import { checkLinkFile } from "../src/links.ts";
+import { checkRefFile } from "../src/extract.ts";
 import { checkMergeFile } from "../src/merge.ts";
+import { checkRefMerges } from "../src/refMerge.ts";
+import { createEntity, createTerm } from "../src/refs.ts";
 import { saveBrief } from "../src/store.ts";
 import { validateBrief } from "../src/validate.ts";
 import { PROJECT_ROOT, cleanupTemp, sampleBrief, tempDir } from "./helpers.ts";
@@ -86,5 +89,48 @@ describe("3단계 4.5-1 스킬 문서의 명령과 실행 순서", () => {
     assert.match(SKILL, /앞 명령이 실패해도\(종료 코드 1\) 멈추지 않고 다음 명령과 19단계로 넘어간다/);
     assert.match(SKILL, /시험 모드와 데이터 폴더 지정 실행은 빌드만 한다/);
     assert.match(SKILL, /빌드가 실패했으면 배포하지 않는다/);
+  });
+});
+
+describe("4단계 4.9-1 스킬 문서의 뽑기", () => {
+  test("뽑기 파일 형식 예시가(빠진 뉴스를 빈 목록으로 채우면) 검사를 통과한다", () => {
+    // 예시의 본문 표기가 본문에 나오고, 대상 3(가짜 중앙은행)이 있는 DB
+    const brief = sampleBrief("2026-10-27");
+    brief.sections[0]!.topStories[0]!.background = "가짜 중앙은행은 양적완화를 끝냈다.";
+    const v = validateBrief(brief, "2026-10-27");
+    assert.ok(v.ok);
+    const db = openDb(path.join(tempDir(), "t.db"));
+    saveBrief(db, { brief: v.brief, collectedAt: "2026-10-27T23:00:00+09:00", late: false });
+    for (const name of ["가짜 협회", "가짜 연구소", "가짜 중앙은행"]) createEntity(db, { kind: "기관", name, aliases: [], description: "가짜 기관", describedOn: null, describedStory: null });
+    const ex = exampleAfter("### 뽑기 파일 형식") as { stories: { story: string; entities: unknown[]; terms: unknown[] }[] };
+    const seen = new Set(ex.stories.map((s) => s.story));
+    for (const s of storiesOfDate(db, "2026-10-27")) if (!seen.has(s.key)) ex.stories.push({ story: s.key, entities: [], terms: [] });
+    const r = checkRefFile(db, ex, "2026-10-27", null);
+    assert.ok(r.ok, r.ok ? "" : JSON.stringify(r.violations));
+    db.close();
+  });
+  test("대상·용어 합치기 파일 형식 예시가 검사를 통과한다", () => {
+    const db = openDb(path.join(tempDir(), "t.db"));
+    createEntity(db, { kind: "기관", name: "가짜 중앙은행", aliases: [], description: "가짜 기관", describedOn: null, describedStory: null });
+    createEntity(db, { kind: "기관", name: "가짜중앙은행", aliases: [], description: "가짜 기관", describedOn: null, describedStory: null });
+    createTerm(db, { name: "양적완화", aliases: [], description: "지어낸 설명이다." });
+    createTerm(db, { name: "QE", aliases: [], description: "지어낸 설명이다." });
+    const ex = exampleAfter("### 대상·용어 합치기 파일 형식");
+    const r = checkMergeFile(db, ex, { keys: ["entityMerges", "termMerges"], check: (c, root) => checkRefMerges(c, db, root) });
+    assert.ok(r.ok, r.ok ? "" : JSON.stringify(r.violations));
+    db.close();
+  });
+  test("뽑기 순서·명령·기준과 하지 않는 것이 적혀 있다", () => {
+    const rows = SKILL.split("\n").filter((l) => /^\| \d+(-\d+)? \|/.test(l));
+    const at = (n: string) => rows.findIndex((r) => r.startsWith(`| ${n} |`));
+    assert.ok(at("7") < at("7-1") && at("7-1") < at("8"), "채우기 뽑기는 소급 연결 뒤, 새 날짜 조사 전이다");
+    assert.ok(at("12") < at("12-1") && at("12-1") < at("13"), "그 날짜 뽑기는 연결 직후다");
+    for (const cmd of ["refs", "ref-search", "ref-check", "ref-apply"]) assert.match(SKILL, new RegExp(`node src/cli\\.ts ${cmd} `), cmd);
+    assert.match(SKILL, /`ref-unmerge`\)와 대상·용어 지우기\(`ref-delete`\)도 실행하지 않는다/);
+    assert.match(SKILL, /뽑기\(7-1단계, 12-1단계\)도 서브에이전트에 맡기지 않고 메인이 한다/);
+    assert.match(SKILL, /뽑기 파일\(`<데이터 폴더>\/work\/<날짜>\.refs\.json`\)/);
+    for (const rule of [/공인만/, /일반인은 이름이 기사에 나와도 뽑지 않는다/, /중립적 사실만/, /도시·해협 같은 장소는 뽑지 않는다/, /시점에 따라 바뀌지 않는 정의/, /최대 2번/, /웹 검색을 하거나 원문 페이지를 읽지 않는다/]) {
+      assert.match(SKILL, rule);
+    }
   });
 });

@@ -4,6 +4,7 @@ import path from "node:path";
 import { openExistingDb } from "./db.ts";
 import { gitTry } from "./git.ts";
 import { allIssues } from "./issues.ts";
+import { allEntities, allTerms, isLive } from "./refs.ts";
 import { commitsAhead, describeFindings, precheck } from "./precheck.ts";
 import type { DeployResult, PostDeployCheck, PushResult, SiteResult } from "./run.ts";
 import { checkOutput } from "./siteCheck.ts";
@@ -123,6 +124,8 @@ export function buildSite(input: BuildInput): SiteResult {
   if (!fs.existsSync(input.dbPath)) return { status: "failed", outDir, reason: `DB가 없다: ${input.dbPath}` };
   let dates: number;
   let issues: number;
+  let entities: number;
+  let terms: number;
   try {
     const db = openExistingDb(input.dbPath);
     try {
@@ -130,6 +133,8 @@ export function buildSite(input: BuildInput): SiteResult {
       const records = buildSearchRecords(db);
       dates = storedDates(db).length;
       issues = allIssues(db).filter((i) => i.mergedInto === null).length;
+      entities = allEntities(db).filter((e) => isLive(e) && e.count > 0).length;
+      terms = allTerms(db).filter((t) => isLive(t) && t.count > 0).length;
       fs.rmSync(inputDir, { recursive: true, force: true });
       for (const [rel, content] of files) {
         const file = path.join(inputDir, rel);
@@ -155,7 +160,7 @@ export function buildSite(input: BuildInput): SiteResult {
   if (check.findings.length > 0) {
     return { status: "failed", outDir, reason: `결과물 검사에 걸렸다(${check.findings.length}건)`, findings: describeFindings(check.findings) };
   }
-  return { status: "built", outDir, dates, issues, files: check.files, bytes: check.bytes };
+  return { status: "built", outDir, dates, issues, entities, terms, files: check.files, bytes: check.bytes };
 }
 
 // ---- 배포 ----
@@ -178,9 +183,9 @@ export interface CheckRetry {
 
 export const DEFAULT_CHECK_RETRY: CheckRetry = { attempts: 6, sleep: () => new Promise((r) => setTimeout(r, 5000)) };
 
-/** vercel에 넘기는 인자. 결과물 폴더만 프로젝트 tidwyn에 운영 배포한다(--create-if-missing 없음, 토큰 없음) */
-export function vercelDeployArgs(outDir: string): string[] {
-  return ["deploy", outDir, "--scope", VERCEL_SCOPE, "--project", VERCEL_PROJECT, "--prod", "--yes"];
+/** vercel에 넘기는 인자. 결과물 폴더만 프로젝트 tidwyn에 운영 배포한다(--create-if-missing 없음, 토큰 없음). preview면 --prod 없이 미리보기로 올린다(4단계 E12) */
+export function vercelDeployArgs(outDir: string, preview = false): string[] {
+  return ["deploy", outDir, "--scope", VERCEL_SCOPE, "--project", VERCEL_PROJECT, ...(preview ? [] : ["--prod"]), "--yes"];
 }
 
 function latestStoredDate(dbPath: string): string | null {
@@ -244,6 +249,34 @@ export async function deployOutput(input: DeployInput): Promise<DeployResult> {
   const deploymentUrl = [...`${r.stdout}\n${r.stderr}`.matchAll(/https:\/\/[^\s"']+\.vercel\.app\b/g)].map((m) => m[0]).find((u) => u !== PRODUCTION_URL) ?? null;
   const check2 = await postDeployCheck(input.httpGet, latestStoredDate(input.dbPath), input.retry ?? DEFAULT_CHECK_RETRY);
   return { status: "deployed", url: PRODUCTION_URL, deploymentUrl, check: check2 };
+}
+
+export interface PreviewInput {
+  repoDir: string;
+  outDir: string;
+  home: string | null;
+  vercel: VercelRunner;
+}
+
+export type PreviewResult = { status: "deployed"; url: string } | { status: "failed"; reason: string; findings?: string[] };
+
+/**
+ * 미리보기 배포(4단계 4.8-1): 결과물 검사를 통과한 결과물 폴더만 --prod 없이 올린다. 운영 별칭은 바뀌지 않는다.
+ * 미리보기는 Vercel 배포 보호로 로그인해야 열린다(보호가 꺼져 있으면 공개된다, docs/operations.md).
+ */
+export function deployPreview(input: PreviewInput): PreviewResult {
+  if (!fs.existsSync(input.outDir) || !fs.statSync(input.outDir).isDirectory()) return { status: "failed", reason: `결과물 폴더가 없다: ${input.outDir}` };
+  const check = checkOutput(input.outDir, input.home);
+  if (check.findings.length > 0) {
+    return { status: "failed", reason: `결과물 검사에 걸려 올리지 않았다(${check.findings.length}건)`, findings: describeFindings(check.findings) };
+  }
+  const r = input.vercel(vercelDeployArgs(input.outDir, true), input.repoDir);
+  if (r.status !== 0) {
+    return { status: "failed", reason: `vercel deploy가 실패했다(종료 코드 ${r.status ?? "없음"}): ${tail(r.error ?? `${r.stdout}\n${r.stderr}`, 8)}` };
+  }
+  const url = [...`${r.stdout}\n${r.stderr}`.matchAll(/https:\/\/[^\s"']+\.vercel\.app\b/g)].map((m) => m[0]).find((u) => u !== PRODUCTION_URL) ?? null;
+  if (url === null) return { status: "failed", reason: "vercel 출력에서 미리보기 주소를 찾지 못했다" };
+  return { status: "deployed", url };
 }
 
 // ---- push ----

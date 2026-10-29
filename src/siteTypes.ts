@@ -15,10 +15,179 @@ export const siteFiles = {
   detail: (month: string) => `detail-${month}.json`,
   issueList: "issue-list.json",
   issueChunk: (chunk: number) => `issue-${chunk}.json`,
+  /** 4단계: 대상 목록(거르기 하나와 쪽 번호마다), 대상 상세 묶음, 상세 묶음의 나머지 뉴스, 용어 색인과 첫 자음 묶음 */
+  entityList: (filter: EntityFilter, page: number) => `entity-list-${filter}-${page}.json`,
+  entityChunk: (chunk: number) => `entity-${chunk}.json`,
+  entityNews: (chunk: number) => `entity-news-${chunk}.json`,
+  termIndex: "term-index.json",
+  termGroup: (group: number) => `term-group-${group}.json`,
 } as const;
 
 export function issueChunkOf(id: number): number {
   return Math.floor(id / ISSUE_CHUNK_SIZE);
+}
+
+// ---- 4단계: 인물·기관·국가(대상)와 용어 ----
+
+export const ENTITY_KINDS = ["인물", "기관", "국가"] as const;
+export type EntityKind = (typeof ENTITY_KINDS)[number];
+
+/** 대상 목록 거르기: 전체와 종류 셋. 파일 이름에 쓴다 */
+export const ENTITY_FILTERS = ["all", "person", "org", "country"] as const;
+export type EntityFilter = (typeof ENTITY_FILTERS)[number];
+export const ENTITY_FILTER_KIND: Record<Exclude<EntityFilter, "all">, EntityKind> = { person: "인물", org: "기관", country: "국가" };
+
+/** 대상 상세는 식별자를 이 크기로 묶은 파일에 둔다(이슈와 같은 크기, 파일 수 한도 4.6-2) */
+export const ENTITY_CHUNK_SIZE = 100;
+/** 대상 목록 한 쪽의 줄 수. 거르기마다 첫 쪽만 처음에 받는다(4.6-2) */
+export const ENTITY_LIST_PAGE_SIZE = 300;
+/** 대상 상세 묶음에 넣는 등장 뉴스 수(최근 순). 나머지는 entity-news 묶음으로 "더 보기"에서 받는다 */
+export const ENTITY_FIRST_NEWS = 20;
+
+/** 이슈 페이지의 등장 대상 최대 수 */
+export const ISSUE_ENTITY_LIMIT = 10;
+
+export function entityChunkOf(id: number): number {
+  return Math.floor(id / ENTITY_CHUNK_SIZE);
+}
+
+/**
+ * 검색 레코드 주소(3단계 P6을 넓힘). 이슈처럼 묶어서 레코드 하나로 둔다:
+ * 대상은 상세 묶음(entityChunkOf) 하나에 레코드 하나(meta kind "entities", chunk),
+ * 용어는 첫 자음 묶음(termGroupOf) 하나에 레코드 하나(meta kind "terms", group). 흡수·지운 것은 넣지 않는다.
+ */
+export function entityRecordUrl(chunk: number): string {
+  return `/entities/chunk/${chunk}`;
+}
+
+export function termRecordUrl(group: number): string {
+  return `/terms/group/${group}`;
+}
+
+/** 용어 사전의 첫 자음 묶음. 된소리는 예사소리 묶음에 넣고, 한글이 아닌 첫 글자(영문·숫자 등)는 마지막 묶음이다 */
+export const TERM_GROUPS = ["ㄱ", "ㄴ", "ㄷ", "ㄹ", "ㅁ", "ㅂ", "ㅅ", "ㅇ", "ㅈ", "ㅊ", "ㅋ", "ㅌ", "ㅍ", "ㅎ", "영문·숫자"] as const;
+
+/** 한글 음절의 초성 19개 → 묶음 번호(된소리 ㄲㄸㅃㅆㅉ는 예사소리) */
+const CHOSEONG_GROUP = [0, 0, 1, 2, 2, 3, 4, 5, 5, 6, 6, 7, 8, 8, 9, 10, 11, 12, 13];
+/** 낱자 자음(ㄱ~ㅎ) → 묶음 번호 */
+const JAMO_GROUP: Record<string, number> = { ㄱ: 0, ㄲ: 0, ㄴ: 1, ㄷ: 2, ㄸ: 2, ㄹ: 3, ㅁ: 4, ㅂ: 5, ㅃ: 5, ㅅ: 6, ㅆ: 6, ㅇ: 7, ㅈ: 8, ㅉ: 8, ㅊ: 9, ㅋ: 10, ㅌ: 11, ㅍ: 12, ㅎ: 13 };
+
+/** 용어 이름의 첫 자음 묶음 번호(TERM_GROUPS의 위치) */
+export function termGroupOf(name: string): number {
+  const ch = name.trim().normalize("NFC").charAt(0);
+  const code = ch.charCodeAt(0);
+  if (code >= 0xac00 && code <= 0xd7a3) return CHOSEONG_GROUP[Math.floor((code - 0xac00) / 588)]!;
+  return JAMO_GROUP[ch] ?? TERM_GROUPS.length - 1;
+}
+
+/** 용어 사전 순서: 묶음 순, 묶음 안에서는 한국어 가나다순(영문은 대소문자 무시, 숫자가 앞), 같으면 식별자 순 */
+export function compareTerms(a: { id: number; name: string }, b: { id: number; name: string }): number {
+  return termGroupOf(a.name) - termGroupOf(b.name) || a.name.localeCompare(b.name, "ko", { numeric: true, sensitivity: "base" }) || a.id - b.id;
+}
+
+/** 펼친 카드의 대상 칩 */
+export interface EntityRef {
+  id: number;
+  name: string;
+  kind: EntityKind;
+  description: string;
+}
+
+/** 펼친 카드의 용어. surface는 본문에 나온 표기(없으면 항목이 없다, 칩으로만 연다) */
+export interface TermRef {
+  id: number;
+  name: string;
+  description: string;
+  surface?: string;
+}
+
+/** 이슈 페이지의 등장 대상: 그 이슈 뉴스에 나온 횟수 */
+export interface IssueEntity {
+  id: number;
+  name: string;
+  count: number;
+}
+
+/** 흡수된 식별자 → 남는 것(사슬을 끝까지 따라간 값)과 합친 날짜 */
+export type MergedMap = Record<string, { into: number; on: string | null }>;
+
+export interface EntityListItem {
+  id: number;
+  name: string;
+  kind: EntityKind;
+  description: string;
+  latestDate: string;
+  /** 등장한 뉴스 수 */
+  count: number;
+}
+
+/** `entity-list-<거르기>-<쪽>.json`: 최근 등장일 순(같으면 뉴스 수 많은 순, 식별자 순). 대상이 없어도 0쪽은 있다 */
+export interface EntityListPage {
+  filter: EntityFilter;
+  page: number;
+  pages: number;
+  total: number;
+  items: EntityListItem[];
+}
+
+/** 대상이 등장한 뉴스 한 건 */
+export interface EntityNews {
+  date: string;
+  key: string;
+  kind: "top" | "short";
+  /** 주요 뉴스는 제목, 짧은 소식은 요약 */
+  title: string;
+  /** 주 이슈 이름(흡수된 이슈는 남는 이슈). 없으면 null */
+  issue: string | null;
+}
+
+export interface EntityDetail extends EntityListItem {
+  aliases: string[];
+  firstDate: string;
+  /** 등장한 이슈: 대상이 나온 뉴스의 주 이슈(흡수된 이슈는 남는 이슈로 묶는다)와 그 뉴스 수. 많은 순, 같으면 식별자 순 */
+  issues: IssueEntity[];
+  /** 최근 순 처음 ENTITY_FIRST_NEWS건 */
+  news: EntityNews[];
+  /** news 뒤에 더 있는 뉴스 수(entity-news 묶음에 있다) */
+  moreNews: number;
+}
+
+/** `entity-<묶음>.json`: 흡수·지운 것은 entities에 없다. 흡수된 식별자는 merged에만 있다 */
+export interface EntityChunk {
+  entities: Record<string, EntityDetail>;
+  merged: MergedMap;
+}
+
+/** `entity-news-<묶음>.json`: 대상 식별자 → news 뒤의 나머지 뉴스(최근 순). 더 있는 대상만 넣는다 */
+export interface EntityNewsChunk {
+  news: Record<string, EntityNews[]>;
+}
+
+export interface TermItem {
+  id: number;
+  name: string;
+  aliases: string[];
+  description: string;
+  /** 처음 나온 뉴스(가장 이른 연결) */
+  first: { date: string; key: string; title: string } | null;
+  /** 나온 뉴스 수 */
+  count: number;
+}
+
+/** `term-index.json`: 용어 사전 첫 화면. 용어가 없어도 있다 */
+export interface TermIndex {
+  total: number;
+  /** TERM_GROUPS 순서 그대로, 용어 수가 0인 묶음 포함 */
+  groups: { group: number; label: string; count: number }[];
+  /** 용어 식별자 → 묶음 번호(흡수·지운 것 제외) */
+  ids: Record<string, number>;
+  merged: MergedMap;
+}
+
+/** `term-group-<묶음>.json`: 그 묶음의 용어, compareTerms 순. 용어가 있는 묶음만 파일이 있다 */
+export interface TermGroupFile {
+  group: number;
+  terms: TermItem[];
 }
 
 export interface IssueRef {
@@ -97,6 +266,9 @@ export interface StoryDetail {
   extras: IssueRef[];
   /** 그날 기준 이전 전개(P5), 가까운 것부터 최대 3건 */
   previous: { date: string; key: string; title: string }[];
+  /** 4단계: 이 뉴스의 대상(식별자 순)과 용어(식별자 순). 없으면 항목을 뺀다 */
+  entities?: EntityRef[];
+  terms?: TermRef[];
 }
 
 /** `detail-YYYY-MM.json` */
@@ -130,6 +302,8 @@ export interface IssueDetail extends IssueListItem {
   /** 모든 전개, 최근 순 */
   timeline: { date: string; key: string; title: string }[];
   related: IssueRef[];
+  /** 4단계: 등장 대상(횟수 순, 같으면 식별자 순, 최대 10개). 없으면 항목을 뺀다 */
+  entities?: IssueEntity[];
 }
 
 /** `issue-<묶음>.json` */
@@ -144,4 +318,57 @@ export interface SearchRecord {
   language: "ko";
   meta?: Record<string, string>;
   filters?: Record<string, string[]>;
+}
+
+// 4단계: 대상 목록 쪽과 용어 사전 파일을 만드는 순수 함수. 빌드(src/siteData.ts)와 지어낸 데이터·화면 쪽이 같이 쓴다.
+
+export function matchesEntityFilter(item: { kind: EntityKind }, filter: EntityFilter): boolean {
+  return filter === "all" || ENTITY_FILTER_KIND[filter] === item.kind;
+}
+
+/** 목록 순서: 최근 등장일이 늦은 것부터, 같으면 뉴스 수가 많은 것, 같으면 식별자 순 */
+export function compareEntityItems(a: EntityListItem, b: EntityListItem): number {
+  if (a.latestDate !== b.latestDate) return a.latestDate < b.latestDate ? 1 : -1;
+  return b.count - a.count || a.id - b.id;
+}
+
+/** 거르기 하나의 목록 쪽들(정렬·거르기·쪽 나누기). 대상이 없어도 0쪽은 있다 */
+export function entityListPages(items: EntityListItem[], filter: EntityFilter, pageSize = ENTITY_LIST_PAGE_SIZE): EntityListPage[] {
+  const sorted = items.filter((i) => matchesEntityFilter(i, filter)).sort(compareEntityItems);
+  const pages = Math.max(1, Math.ceil(sorted.length / pageSize));
+  return Array.from({ length: pages }, (_, page) => ({ filter, page, pages, total: sorted.length, items: sorted.slice(page * pageSize, (page + 1) * pageSize) }));
+}
+
+/** 용어 사전 순서로 정렬한다(묶음 순, 가나다순, 영문·숫자는 마지막) */
+export function sortTerms<T extends { id: number; name: string }>(items: T[]): T[] {
+  return [...items].sort(compareTerms);
+}
+
+/** 용어 사전 색인(term-index.json)과 묶음 파일 내용 */
+export function buildTermFiles(items: TermItem[], merged: MergedMap): { index: TermIndex; groups: Map<number, TermItem[]> } {
+  const groups = new Map<number, TermItem[]>();
+  for (const t of sortTerms(items)) {
+    const g = termGroupOf(t.name);
+    if (!groups.has(g)) groups.set(g, []);
+    groups.get(g)!.push(t);
+  }
+  const ids: Record<string, number> = {};
+  for (const t of [...items].sort((a, b) => a.id - b.id)) ids[String(t.id)] = termGroupOf(t.name);
+  const index: TermIndex = {
+    total: items.length,
+    groups: TERM_GROUPS.map((label, group) => ({ group, label, count: groups.get(group)?.length ?? 0 })),
+    ids,
+    merged,
+  };
+  return { index, groups };
+}
+
+/** 등장 횟수 순, 같으면 식별자 순(이슈 페이지의 등장 대상, 대상 페이지의 등장 이슈) */
+export function byCount<T extends { id: number; count: number }>(items: Iterable<T>): T[] {
+  return [...items].sort((a, b) => b.count - a.count || a.id - b.id);
+}
+
+/** 이슈 페이지의 등장 대상: 횟수 순, 같으면 식별자 순, 최대 ISSUE_ENTITY_LIMIT개 */
+export function issueEntityChips(entities: IssueEntity[] | undefined): IssueEntity[] {
+  return byCount(entities ?? []).slice(0, ISSUE_ENTITY_LIMIT);
 }

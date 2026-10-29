@@ -25,7 +25,7 @@ import {
   type IssueStatus,
 } from "./issues.ts";
 import { checkSummary } from "./links.ts";
-import { Checker, type Violation } from "./validate.ts";
+import { Checker, type Obj, type Violation } from "./validate.ts";
 
 // 합치기와 되돌리기(2단계 4.3)
 
@@ -52,32 +52,38 @@ export function markMergeChecked(db: DatabaseSync, today: string): void {
 }
 
 /** 이름·별칭의 글자 두 개씩 묶음(공백 무시) */
-function bigrams(names: string[]): Set<string> {
+function bigrams(names: string[], normalize: (s: string) => string): Set<string> {
   const out = new Set<string>();
   for (const n of names) {
-    const s = normalizeName(n);
+    const s = normalize(n);
     if (s.length === 1) out.add(s);
     for (let i = 0; i + 1 < s.length; i++) out.add(s.slice(i, i + 2));
   }
   return out;
 }
 
-export interface MergePairCandidate {
-  a: Issue;
-  b: Issue;
+export interface SimilarPair<T> {
+  a: T;
+  b: T;
   score: number;
 }
 
 /**
- * 비슷한 이슈 쌍 후보(4.3-2). 이름·별칭의 두 글자 묶음이 얼마나 겹치는지로 재고, 같은 대분류면 기준을 낮춘다.
- * 흡수된 이슈, 연결이 없는 이슈, "합치지 않음" 쌍은 뺀다.
+ * 비슷한 쌍(이슈 4.3-2, 4단계 대상·용어 4.3-1이 함께 쓴다). 이름·별칭의 두 글자 묶음이 얼마나 겹치는지로 잰다:
+ * 겹친 묶음 수 / 두 쪽 중 작은 묶음 수. threshold가 null이면 비교하지 않는 쌍이다. 점수 높은 순, 같으면 식별자 순, 최대 limit쌍.
  */
-export function mergeCandidates(db: DatabaseSync): MergePairCandidate[] {
-  const issues = allIssues(db).filter((i) => i.mergedInto === null && i.count > 0);
+export function similarPairs<T extends { id: number }>(
+  items: T[],
+  names: (x: T) => string[],
+  threshold: (a: T, b: T) => number | null,
+  skip: (a: number, b: number) => boolean,
+  limit: number,
+  normalize: (s: string) => string = normalizeName,
+): SimilarPair<T>[] {
   const grams = new Map<number, Set<string>>();
   const index = new Map<string, number[]>();
-  for (const i of issues) {
-    const g = bigrams([i.name, ...i.aliases]);
+  for (const i of items) {
+    const g = bigrams(names(i), normalize);
     grams.set(i.id, g);
     for (const x of g) {
       const list = index.get(x) ?? [];
@@ -94,18 +100,35 @@ export function mergeCandidates(db: DatabaseSync): MergePairCandidate[] {
       }
     }
   }
-  const byId = new Map(issues.map((i) => [i.id, i]));
-  const out: MergePairCandidate[] = [];
+  const byId = new Map(items.map((i) => [i.id, i]));
+  const out: SimilarPair<T>[] = [];
   for (const [k, n] of shared) {
     const [x, y] = k.split(":").map(Number) as [number, number];
     const a = byId.get(x)!;
     const b = byId.get(y)!;
-    if (isNoMergePair(db, x, y)) continue;
+    const t = threshold(a, b);
+    if (t === null || skip(x, y)) continue;
     const score = n / Math.min(grams.get(x)!.size, grams.get(y)!.size);
-    const threshold = a.category.major === b.category.major ? 0.5 : 0.7;
-    if (score >= threshold) out.push({ a, b, score });
+    if (score >= t) out.push({ a, b, score });
   }
-  return out.sort((p, q) => q.score - p.score || p.a.id - q.a.id || p.b.id - q.b.id).slice(0, MERGE_CANDIDATE_LIMIT);
+  return out.sort((p, q) => q.score - p.score || p.a.id - q.a.id || p.b.id - q.b.id).slice(0, limit);
+}
+
+export type MergePairCandidate = SimilarPair<Issue>;
+
+/**
+ * 비슷한 이슈 쌍 후보(4.3-2). 이름·별칭의 두 글자 묶음이 얼마나 겹치는지로 재고, 같은 대분류면 기준을 낮춘다.
+ * 흡수된 이슈, 연결이 없는 이슈, "합치지 않음" 쌍은 뺀다.
+ */
+export function mergeCandidates(db: DatabaseSync): MergePairCandidate[] {
+  const issues = allIssues(db).filter((i) => i.mergedInto === null && i.count > 0);
+  return similarPairs(
+    issues,
+    (i) => [i.name, ...i.aliases],
+    (a, b) => (a.category.major === b.category.major ? 0.5 : 0.7),
+    (x, y) => isNoMergePair(db, x, y),
+    MERGE_CANDIDATE_LIMIT,
+  );
 }
 
 function categoryText(c: Category): string {
@@ -147,11 +170,12 @@ export type MergeCheck = { ok: true; merges: MergeEntry[] } | { ok: false; viola
 /**
  * 합치기 파일 검사(4.3-3). 한 파일 안에서 연달아 흡수되는 경우(흡수되는 이슈가 다른 항목의 남는 이슈이거나 두 번 흡수됨)는 거부한다.
  */
-export function checkMergeFile(db: DatabaseSync, data: unknown): MergeCheck {
+export function checkMergeFile(db: DatabaseSync, data: unknown, more: { keys: string[]; check: (c: Checker, root: Obj) => void } | null = null): MergeCheck {
   const c = new Checker();
   const root = c.obj(data, "합치기 파일");
   if (root === null) return { ok: false, violations: c.violations };
-  c.keys(root, ["merges"], "합치기 파일");
+  c.keys(root, ["merges", ...(more?.keys ?? [])], "합치기 파일");
+  more?.check(c, root);
   const merges: MergeEntry[] = [];
   const list = c.arr(root, "merges", "merges", "합치기 파일");
   const checkId = (v: unknown, where: string): number | null => {
@@ -303,10 +327,11 @@ function mergeOne(db: DatabaseSync, m: MergeEntry, today: string): number {
   return Number(r.lastInsertRowid);
 }
 
-/** 검사를 통과한 합치기를 한 트랜잭션으로 적용하고 점검일을 바꾼다. 만든 합치기 기록 번호들 */
-export function applyMerges(db: DatabaseSync, merges: MergeEntry[], today: string): number[] {
+/** 검사를 통과한 합치기를 한 트랜잭션으로 적용하고 점검일을 바꾼다. 만든 합치기 기록 번호들. more는 같은 트랜잭션에서 함께 적용할 것(4단계 대상·용어) */
+export function applyMerges(db: DatabaseSync, merges: MergeEntry[], today: string, more: (() => void) | null = null): number[] {
   return inTransaction(db, () => {
     const ids = merges.map((m) => mergeOne(db, m, today));
+    more?.();
     markMergeChecked(db, today);
     return ids;
   });

@@ -92,6 +92,11 @@ export function storiesOfDate(db: DatabaseSync, date: string): StoryRef[] {
   return (db.prepare(`${STORY_SELECT} WHERE se.target_date = ? ORDER BY ${ORDER}`).all(date) as unknown as StoryRow[]).map(toStory);
 }
 
+/** 다른 표와 이어 붙여 고른 뉴스(전개 순서). 4단계 대상·용어 연결이 쓴다 */
+export function storiesJoined(db: DatabaseSync, join: string, where: string, ...args: (string | number)[]): StoryRef[] {
+  return (db.prepare(`${STORY_SELECT} ${join} WHERE ${where} ORDER BY ${ORDER}`).all(...args) as unknown as StoryRow[]).map(toStory);
+}
+
 /** 한 날짜에서 이슈가 없는 뉴스 */
 export function unlinkedStories(db: DatabaseSync, date: string): StoryRef[] {
   const sql = `${STORY_SELECT} WHERE se.target_date = ? AND NOT EXISTS (SELECT 1 FROM story_issues si WHERE si.story_id = st.id) ORDER BY ${ORDER}`;

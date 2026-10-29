@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>4단계 확정 시안</title>
+<style>
+  body { margin: 0; background: #e9e9ec; font-family: Pretendard, -apple-system, system-ui, sans-serif; color: #222; }
+  h1 { font-size: 20px; margin: 24px 24px 4px; }
+  p.note { margin: 0 24px 16px; color: #555; font-size: 14px; max-width: 900px; line-height: 1.5; }
+  .option { margin: 0 24px 40px; }
+  .option h2 { font-size: 17px; margin: 0 0 4px; }
+  .option p { margin: 0 0 12px; font-size: 13px; color: #555; max-width: 900px; line-height: 1.5; }
+  .phones { display: flex; gap: 20px; flex-wrap: wrap; }
+  .phone { width: 375px; height: 760px; border-radius: 28px; overflow: hidden; position: relative; box-shadow: 0 6px 24px rgba(0,0,0,.15); background: var(--bg); color: var(--fg); }
+  .screen { position: absolute; inset: 0; overflow: hidden; display: flex; flex-direction: column; }
+  .caption { text-align: center; font-size: 12px; color: #666; margin-top: 6px; }
+  /* 3단계 확정 시안 A의 색 */
+  .A { --bg: #fff; --fg: #1d1d1f; --muted: #6b6b70; --line: #ececee; --chip: #f5f5f7; --accent: #c2410c; --accentbg: #fff1e8; }
+  .Ad { --bg: #161618; --fg: #ececee; --muted: #9a9aa0; --line: #2a2a2e; --chip: #222226; --accent: #fb923c; --accentbg: #3a2414; }
+  .bar { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px 10px; border-bottom: 1px solid var(--line); background: var(--bg); }
+  .datebtn { font-size: 13px; color: var(--muted); }
+  .icons { display: flex; gap: 14px; color: var(--muted); font-size: 16px; }
+  .body { flex: 1; overflow: hidden; }
+  .cat { font-size: 11.5px; font-weight: 600; letter-spacing: .2px; margin-bottom: 4px; }
+  .title { font-size: 17px; font-weight: 700; line-height: 1.4; letter-spacing: -.2px; }
+  .detail { padding: 16px 18px; }
+  .detail .title { font-size: 21px; }
+  .story { margin: 12px 0; padding: 12px; border-radius: 10px; background: var(--chip); font-size: 13px; line-height: 1.5; }
+  .story b { display: block; font-size: 12px; color: var(--accent); }
+  .sum { font-size: 15.5px; line-height: 1.65; }
+  .h { font-size: 12.5px; font-weight: 700; color: var(--muted); margin: 14px 0 4px; }
+  .p { font-size: 14px; line-height: 1.65; }
+  .src { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+  .src span { font-size: 12px; padding: 4px 8px; border: 1px solid var(--line); border-radius: 6px; }
+  .rel { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
+  .rel span { font-size: 13px; padding: 5px 10px; border-radius: 999px; border: 1px solid var(--line); }
+  .rel span small { color: var(--muted); font-size: 11px; margin-left: 4px; }
+  .term { border-bottom: 1.5px dotted var(--accent); }
+  .term.open { background: var(--accentbg); border-radius: 3px; }
+  .tbox { margin: 8px 0; padding: 10px 12px; border-radius: 8px; background: var(--chip); font-size: 13px; line-height: 1.55; }
+  .tbox b { display: block; font-size: 13px; margin-bottom: 2px; }
+  .tbox a { display: block; margin-top: 4px; font-size: 12px; color: var(--accent); }
+  .on { background: var(--fg); color: var(--bg); border-color: var(--fg) !important; }
+  .on small { color: var(--bg) !important; }
+  .iss { padding: 16px 18px; }
+  .iss .name { font-size: 22px; font-weight: 800; letter-spacing: -.3px; line-height: 1.3; }
+  .iss .meta { font-size: 12px; color: var(--muted); margin: 6px 0 12px; line-height: 1.5; }
+  .iss .summary { font-size: 14px; line-height: 1.7; padding: 12px 14px; border-left: 3px solid var(--accent); background: var(--chip); border-radius: 0 8px 8px 0; }
+  .row { padding: 10px 0; border-bottom: 1px solid var(--line); }
+  .row small { display: block; font-size: 12px; color: var(--muted); }
+  .row span { font-size: 14.5px; font-weight: 600; line-height: 1.45; }
+  .chips { display: flex; gap: 6px; padding: 4px 0 8px; }
+  .chips span { font-size: 12px; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); }
+  .gl { padding: 12px 0; border-bottom: 1px solid var(--line); font-size: 13.5px; line-height: 1.55; }
+  .gl b { font-size: 15px; display: block; margin-bottom: 2px; }
+  .gl small { display: block; color: var(--muted); font-size: 12px; margin-top: 4px; }
+  .idx { font-size: 12px; font-weight: 700; color: var(--accent); margin-top: 12px; }
+  .more { margin-top: 12px; text-align: center; font-size: 13px; color: var(--accent); }
+</style>
+</head>
+<body>
+<h1>4단계 확정 시안: 인물·기관·국가와 용어 사전 (폰 375px)</h1>
+<p class="note">2026-10-29 사용자가 D(본문 밑줄 + 칩 줄, 누른 낱말 강조)를 골랐다. 3단계 확정 시안 A의 색·글꼴·간격을 그대로 쓴다. 내용은 지어낸 예시다. 넓은 화면은 3단계 규칙대로 가운데 한 단이고, 다크 모드는 기기 설정을 따른다. 용어 설명은 토글이다(같은 낱말이나 칩을 다시 누르면 닫히고, 다른 용어를 누르면 그 설명으로 바뀐다). 고르지 않은 시안은 options/compare.html에 있다.</p>
+<div id="root">
+  <section class="option"><h2>펼친 뉴스 카드</h2><p>본문에 처음 나온 용어에 점선 밑줄. 누르면 낱말이 강조되고 문단 바로 아래에 설명이 펼쳐진다. 카드 아래 '인물·기관·국가' 칩(누르면 그 페이지)과 '용어' 칩(누르면 같은 설명이 펼쳐지고 칩이 강조된다). '테이퍼링'처럼 본문에 표기가 없는 용어는 칩으로만 연다.</p><div class="phones">
+    <div><div class="phone A"><div class="screen"><div class="bar"><span class="datebtn">‹ 10월 27일</span><span class="icons">⌕ ☰</span></div><div class="body"><div class="detail">
+  <div class="cat" style="color:var(--accent)">경제 · 거시·정책</div>
+  <div class="title">가짜 중앙은행, 기준금리 동결하고 양적긴축 속도 늦춘다</div>
+  <div class="story"><b>이어지는 이야기 · 가짜시 경기 흐름 ›</b></div>
+  <div class="sum">가짜 중앙은행이 <span class="term">기준금리</span>를 3.0%로 묶고, <span class="term">양적긴축</span> 속도를 늦추겠다고 밝혔다.</div>
+  
+  <div class="h">왜 중요한가</div><div class="p">시중에 풀린 돈을 거둬들이는 속도가 느려져 대출 금리 부담이 덜어질 수 있다.</div>
+  <div class="h">인물·기관·국가</div><div class="rel"><span>김가짜<small>중앙은행 총재</small></span><span>가짜 중앙은행</span><span>가짜국</span></div>
+  <div class="h">용어</div><div class="rel"><span>기준금리</span><span class="">양적긴축</span><span>테이퍼링</span></div>
+  <div class="h">출처</div><div class="src"><span>가짜일보 ↗</span><span>가짜경제 ↗</span></div>
+  </div></div></div></div><div class="caption">닫힌 상태</div></div><div><div class="phone A"><div class="screen"><div class="bar"><span class="datebtn">‹ 10월 27일</span><span class="icons">⌕ ☰</span></div><div class="body"><div class="detail">
+  <div class="cat" style="color:var(--accent)">경제 · 거시·정책</div>
+  <div class="title">가짜 중앙은행, 기준금리 동결하고 양적긴축 속도 늦춘다</div>
+  <div class="story"><b>이어지는 이야기 · 가짜시 경기 흐름 ›</b></div>
+  <div class="sum">가짜 중앙은행이 <span class="term">기준금리</span>를 3.0%로 묶고, <span class="term open">양적긴축</span> 속도를 늦추겠다고 밝혔다.</div>
+  <div class="tbox"><b>양적긴축</b>중앙은행이 사들였던 채권을 팔거나 만기 때 다시 사지 않아 시중의 돈을 줄이는 정책이다.<a>용어 사전에서 보기 ›</a></div>
+  <div class="h">왜 중요한가</div><div class="p">시중에 풀린 돈을 거둬들이는 속도가 느려져 대출 금리 부담이 덜어질 수 있다.</div>
+  <div class="h">인물·기관·국가</div><div class="rel"><span>김가짜<small>중앙은행 총재</small></span><span>가짜 중앙은행</span><span>가짜국</span></div>
+  <div class="h">용어</div><div class="rel"><span>기준금리</span><span class="on">양적긴축</span><span>테이퍼링</span></div>
+  <div class="h">출처</div><div class="src"><span>가짜일보 ↗</span><span>가짜경제 ↗</span></div>
+  </div></div></div></div><div class="caption">'양적긴축'을 누른 상태</div></div><div><div class="phone A Ad"><div class="screen"><div class="bar"><span class="datebtn">‹ 10월 27일</span><span class="icons">⌕ ☰</span></div><div class="body"><div class="detail">
+  <div class="cat" style="color:var(--accent)">경제 · 거시·정책</div>
+  <div class="title">가짜 중앙은행, 기준금리 동결하고 양적긴축 속도 늦춘다</div>
+  <div class="story"><b>이어지는 이야기 · 가짜시 경기 흐름 ›</b></div>
+  <div class="sum">가짜 중앙은행이 <span class="term">기준금리</span>를 3.0%로 묶고, <span class="term open">양적긴축</span> 속도를 늦추겠다고 밝혔다.</div>
+  <div class="tbox"><b>양적긴축</b>중앙은행이 사들였던 채권을 팔거나 만기 때 다시 사지 않아 시중의 돈을 줄이는 정책이다.<a>용어 사전에서 보기 ›</a></div>
+  <div class="h">왜 중요한가</div><div class="p">시중에 풀린 돈을 거둬들이는 속도가 느려져 대출 금리 부담이 덜어질 수 있다.</div>
+  <div class="h">인물·기관·국가</div><div class="rel"><span>김가짜<small>중앙은행 총재</small></span><span>가짜 중앙은행</span><span>가짜국</span></div>
+  <div class="h">용어</div><div class="rel"><span>기준금리</span><span class="on">양적긴축</span><span>테이퍼링</span></div>
+  <div class="h">출처</div><div class="src"><span>가짜일보 ↗</span><span>가짜경제 ↗</span></div>
+  </div></div></div></div><div class="caption">다크</div></div>
+  </div></section>
+  <section class="option"><h2>인물·기관·국가와 용어 사전</h2><p>목록은 종류 칩으로 거른다. 개별 페이지는 한 줄 설명, 별칭, 등장한 이슈(뉴스 수), 등장한 뉴스(최근 순, 더 보기). 용어 사전은 가나다순 한 화면이다.</p><div class="phones">
+    <div><div class="phone A"><div class="screen"><div class="bar"><span class="datebtn">‹ 메뉴</span><span class="icons">⌕ ☰</span></div><div class="body"><div class="iss">
+  <div class="name">인물·기관·국가</div>
+  <div class="meta">최근 등장 순</div>
+  <div class="chips"><span class="on">전체</span><span>인물</span><span>기관</span><span>국가</span></div>
+  <div class="row"><small>인물 · 최근 10-27 · 뉴스 5건</small><span>김가짜</span><small>가짜 중앙은행 총재</small></div>
+  <div class="row"><small>기관 · 최근 10-27 · 뉴스 9건</small><span>가짜 중앙은행</span><small>가짜국의 중앙은행</small></div>
+  <div class="row"><small>국가 · 최근 10-27 · 뉴스 21건</small><span>가짜국</span><small>가짜 대륙 동쪽의 공화국</small></div>
+  <div class="row"><small>기관 · 최근 10-26 · 뉴스 3건</small><span>가짜전자</span><small>가짜국의 반도체·전자 기업</small></div>
+  </div></div></div></div><div class="caption">인물·기관·국가 목록</div></div><div><div class="phone A"><div class="screen"><div class="bar"><span class="datebtn">‹ 인물·기관·국가</span><span class="icons">⌕ ☰</span></div><div class="body"><div class="iss">
+  <div class="cat" style="color:var(--muted)">인물</div>
+  <div class="name">김가짜</div>
+  <div class="meta">가짜 중앙은행 총재<br>별칭: Kim Gajja · 처음 10-02 · 최근 10-27 · 뉴스 5건</div>
+  <div class="h">등장한 이슈</div>
+  <div class="rel"><span>가짜시 경기 흐름<small>4</small></span><span>가짜 중앙은행 금리<small>1</small></span></div>
+  <div class="h">등장한 뉴스</div>
+  <div class="row"><small>10-27 · 가짜시 경기 흐름</small><span>가짜 중앙은행, 기준금리 동결하고 양적긴축 속도 늦춘다</span></div>
+  <div class="row"><small>10-21 · 가짜시 경기 흐름</small><span>가짜 중앙은행, 성장 전망 상향 시사</span></div>
+  <div class="row"><small>10-14 · 가짜 중앙은행 금리</small><span>김가짜 총재 "물가 목표 아직 멀다"</span></div>
+  <div class="more">더 보기</div>
+  </div></div></div></div><div class="caption">인물 페이지</div></div><div><div class="phone A"><div class="screen"><div class="bar"><span class="datebtn">‹ 메뉴</span><span class="icons">⌕ ☰</span></div><div class="body"><div class="iss">
+  <div class="name">용어 사전</div>
+  <div class="meta">용어 3개 · 가나다순</div>
+  <div class="idx">ㄱ</div>
+  <div class="gl"><b>기준금리</b>중앙은행이 정하는 정책 금리로, 은행 대출·예금 금리의 기준이 된다.<small>처음 나온 뉴스: 10-02 가짜시 2분기 성장률 0.4%로 확정 · 나온 뉴스 4건</small></div>
+  <div class="idx">ㅇ</div>
+  <div class="gl"><b>양적긴축</b>별칭: QT<br>중앙은행이 사들였던 채권을 팔거나 만기 때 다시 사지 않아 시중의 돈을 줄이는 정책이다.<small>처음 나온 뉴스: 10-27 가짜 중앙은행, 기준금리 동결 · 나온 뉴스 1건</small></div>
+  <div class="gl"><b>유상증자</b>회사가 새 주식을 발행해 투자자에게 돈을 받고 파는 것이다.<small>처음 나온 뉴스: 10-14 가짜전자 유상증자 결정 · 나온 뉴스 1건</small></div>
+  </div></div></div></div><div class="caption">용어 사전</div></div>
+  </div></section>
+  <section class="option"><h2>이슈 페이지</h2><p>타임라인 아래, 관련 이슈 위에 '등장 인물·기관·국가'를 더한다(이 이슈 뉴스에 나온 횟수 순).</p><div class="phones">
+    <div><div class="phone A"><div class="screen"><div class="bar"><span class="datebtn">‹ 이슈</span><span class="icons">⌕ ☰</span></div><div class="body"><div class="iss">
+  <div class="cat" style="color:var(--accent)">경제 · 거시·정책 · 진행 중</div>
+  <div class="name">가짜시 경기 흐름</div>
+  <div class="meta">2026-10-02 시작 · 최근 10-27 · 전개 4건</div>
+  <div class="summary">가짜시 경기가 반도체 수출 덕에 회복세다. 다음 달 중앙은행의 전망 수정이 다음에 볼 것이다.</div>
+  <div class="h">타임라인</div>
+  <div class="row"><small>10-27</small><span>가짜 중앙은행, 기준금리 동결하고 양적긴축 속도 늦춘다</span></div>
+  <div class="row"><small>10-21</small><span>가짜 중앙은행, 성장 전망 상향 시사</span></div>
+  <div class="h">등장 인물·기관·국가</div>
+  <div class="rel"><span>가짜 중앙은행<small>4</small></span><span>김가짜<small>3</small></span><span>가짜국<small>2</small></span></div>
+  <div class="h">관련 이슈</div><div class="rel"><span>가짜 중앙은행 금리</span></div>
+  </div></div></div></div><div class="caption">이슈 페이지</div></div>
+  </div></section></div>
+
+</body>
+</html>

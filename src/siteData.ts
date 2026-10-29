@@ -6,11 +6,35 @@ import { allIssues, developments, relatedIssues, resolveIssue, storyKey, type Is
 import { addDays } from "./kst.ts";
 import type { BriefIssues } from "./markdown.ts";
 import { listMerges } from "./merge.ts";
+import { listRefMerges } from "./refMerge.ts";
+import { allEntities, allTerms, isLive, resolveRef, storiesOfRef, type Entity, type RefItem, type Term } from "./refs.ts";
 import {
+  ENTITY_FILTERS,
+  ENTITY_FIRST_NEWS,
   SITE_DATA_DIR,
   SITE_DATA_VERSION,
+  buildTermFiles,
+  byCount,
+  compareTerms,
+  entityChunkOf,
+  entityListPages,
+  issueEntityChips,
+  entityRecordUrl,
   issueChunkOf,
   siteFiles,
+  termGroupOf,
+  termRecordUrl,
+  type EntityChunk,
+  type EntityDetail,
+  type EntityListItem,
+  type EntityNews,
+  type EntityNewsChunk,
+  type EntityRef,
+  type IssueEntity,
+  type MergedMap,
+  type TermGroupFile,
+  type TermItem,
+  type TermRef,
   type Continues,
   type DayList,
   type IssueChunk,
@@ -67,7 +91,37 @@ function orderSources(sources: Source[]): Source[] {
   return [...sources.filter((s) => s.primary === true), ...sources.filter((s) => s.primary !== true)];
 }
 
-function buildDay(db: DatabaseSync, day: DayData, prev: DayData | null, details: Record<string, StoryDetail>): DayList {
+/** 4단계: 뉴스(전역 키 `날짜/키`)별 대상·용어 칩. 흡수·지운 것은 연결이 없으므로 나오지 않는다 */
+interface StoryRefs {
+  entities: Map<string, EntityRef[]>;
+  terms: Map<string, TermRef[]>;
+}
+
+function storyRefs(db: DatabaseSync, entities: Entity[], terms: Term[]): StoryRefs {
+  const out: StoryRefs = { entities: new Map(), terms: new Map() };
+  for (const e of entities.filter(isLive)) {
+    for (const s of storiesOfRef(db, "entity", e.id)) {
+      const k = `${s.date}/${s.key}`;
+      const list = out.entities.get(k) ?? [];
+      list.push({ id: e.id, name: e.name, kind: e.kind, description: e.description });
+      out.entities.set(k, list);
+    }
+  }
+  for (const t of terms.filter(isLive)) {
+    for (const s of storiesOfRef(db, "term", t.id)) {
+      const k = `${s.date}/${s.key}`;
+      const list = out.terms.get(k) ?? [];
+      const ref: TermRef = { id: t.id, name: t.name, description: t.description };
+      if (s.surface !== null) ref.surface = s.surface;
+      list.push(ref);
+      out.terms.set(k, list);
+    }
+  }
+  for (const m of [out.entities, out.terms]) for (const list of m.values()) list.sort((a, b) => a.id - b.id);
+  return out;
+}
+
+function buildDay(db: DatabaseSync, day: DayData, prev: DayData | null, details: Record<string, StoryDetail>, refs: StoryRefs): DayList {
   const prevIssues = prev === null ? new Set<number>() : primaryIssuesOf(db, prev);
   const listStory = (key: string, base: Omit<ListStory, "issue" | "newIssue" | "continues">): ListStory => {
     const info = day.issues.get(key);
@@ -94,6 +148,10 @@ function buildDay(db: DatabaseSync, day: DayData, prev: DayData | null, details:
         previous: info ? info.previous.map((p) => ({ date: p.date, key: p.key, title: p.title })) : [],
       };
       if (t.analogy !== undefined) detail.analogy = t.analogy;
+      const ents = refs.entities.get(`${day.date}/${key}`);
+      if (ents) detail.entities = ents;
+      const terms = refs.terms.get(`${day.date}/${key}`);
+      if (terms) detail.terms = terms;
       details[key] = detail;
     }
     sec.shortNews.forEach((n, i) => {
@@ -129,13 +187,31 @@ function buildIssueList(db: DatabaseSync, live: Issue[]): SiteIssueList {
   return { issues: live.map(listItem), merged };
 }
 
-function buildIssueDetail(db: DatabaseSync, i: Issue, names: Map<number, string>): IssueDetail {
-  const timeline = developments(db, i.id)
+/** 이슈 페이지의 등장 대상(4.6-1): 그 이슈 전개 뉴스에 나온 횟수 순, 같으면 식별자 순, 최대 ISSUE_ENTITY_LIMIT개 */
+function issueEntities(devs: { date: string; key: string }[], refs: StoryRefs): IssueEntity[] {
+  const counts = new Map<number, IssueEntity>();
+  for (const d of devs) {
+    for (const e of refs.entities.get(`${d.date}/${d.key}`) ?? []) {
+      const c = counts.get(e.id) ?? { id: e.id, name: e.name, count: 0 };
+      c.count++;
+      counts.set(e.id, c);
+    }
+  }
+  return issueEntityChips([...counts.values()]);
+}
+
+function buildIssueDetail(db: DatabaseSync, i: Issue, names: Map<number, string>, refs: StoryRefs): IssueDetail {
+  const devs = developments(db, i.id);
+  const timeline = devs
+    .slice()
     .reverse()
     .map((d) => ({ date: d.date, key: d.key, title: d.title }));
   const relatedIds = [...new Set(relatedIssues(db, i.id).map((r) => resolveIssue(db, r)))].filter((r) => r !== i.id).sort((a, b) => a - b);
   const related: IssueRef[] = relatedIds.map((id) => ({ id, name: names.get(id) ?? "" }));
-  return { ...listItem(i), aliases: i.aliases, summary: i.summary, timeline, related };
+  const detail: IssueDetail = { ...listItem(i), aliases: i.aliases, summary: i.summary, timeline, related };
+  const ents = issueEntities(devs, refs);
+  if (ents.length > 0) detail.entities = ents;
+  return detail;
 }
 
 /** 이슈 묶음 번호 → 그 묶음의 흡수되지 않은 이슈(식별자 순) */
@@ -158,6 +234,9 @@ function file(name: string): string {
 export function buildSiteData(db: DatabaseSync): Map<string, string> {
   const out = new Map<string, string>();
   const days = loadDays(db);
+  const entities = allEntities(db);
+  const terms = allTerms(db);
+  const refs = storyRefs(db, entities, terms);
   const dates: SiteDates = {
     version: SITE_DATA_VERSION,
     latestDate: days.at(-1)?.date ?? null,
@@ -175,7 +254,7 @@ export function buildSiteData(db: DatabaseSync): Map<string, string> {
     let detail = details.get(month);
     if (!detail) details.set(month, (detail = { month, days: {} }));
     const dayDetails: Record<string, StoryDetail> = {};
-    list.days.push(buildDay(db, day, idx > 0 ? days[idx - 1]! : null, dayDetails));
+    list.days.push(buildDay(db, day, idx > 0 ? days[idx - 1]! : null, dayDetails, refs));
     detail.days[day.date] = dayDetails;
   });
   for (const [month, list] of lists) out.set(file(siteFiles.list(month)), JSON.stringify(list));
@@ -186,8 +265,92 @@ export function buildSiteData(db: DatabaseSync): Map<string, string> {
   const names = new Map(allIssues(db).map((i) => [i.id, i.name]));
   for (const [chunk, issues] of issueChunks(live)) {
     const data: IssueChunk = { issues: {} };
-    for (const i of issues) data.issues[String(i.id)] = buildIssueDetail(db, i, names);
+    for (const i of issues) data.issues[String(i.id)] = buildIssueDetail(db, i, names, refs);
     out.set(file(siteFiles.issueChunk(chunk)), JSON.stringify(data));
+  }
+  for (const [name, content] of buildEntityFiles(db, entities)) out.set(file(name), content);
+  for (const [name, content] of termSiteFiles(db, terms)) out.set(file(name), content);
+  return out;
+}
+
+/** 흡수된 식별자 → 최종 남는 것과 합친 날짜(되돌리지 않은 마지막 합치기). 남는 것이 지워졌으면 넣지 않는다(없는 페이지) */
+function mergedMap(db: DatabaseSync, item: RefItem, list: (Entity | Term)[], wanted: (id: number) => boolean): MergedMap {
+  const merges = listRefMerges(db).filter((m) => m.item === item);
+  const live = new Set(list.filter(isLive).map((x) => x.id));
+  const out: MergedMap = {};
+  for (const x of list) {
+    if (x.mergedInto === null || x.deleted || !wanted(x.id)) continue;
+    const into = resolveRef(db, item, x.id);
+    if (!live.has(into)) continue;
+    const m = merges.filter((r) => r.absorbed === x.id && r.undoneOn === null).at(-1);
+    out[String(x.id)] = { into, on: m?.mergedOn ?? null };
+  }
+  return out;
+}
+
+function entityListItem(e: Entity): EntityListItem {
+  return { id: e.id, name: e.name, kind: e.kind, description: e.description, latestDate: e.latestDate ?? "", count: e.count };
+}
+
+/** 대상 목록 쪽 파일, 상세 묶음, 나머지 뉴스 묶음(4.6-1, 4.6-2) */
+function buildEntityFiles(db: DatabaseSync, entities: Entity[]): Map<string, string> {
+  const out = new Map<string, string>();
+  const live = entities.filter((e) => isLive(e) && e.count > 0);
+  const items = live.map(entityListItem);
+  for (const filter of ENTITY_FILTERS) for (const data of entityListPages(items, filter)) out.set(siteFiles.entityList(filter, data.page), JSON.stringify(data));
+  const issueName = new Map(allIssues(db).map((i) => [i.id, i.name]));
+  const chunks = new Map<number, { detail: EntityChunk; more: EntityNewsChunk }>();
+  const chunkOf = (id: number) => {
+    const c = entityChunkOf(id);
+    let x = chunks.get(c);
+    if (!x) chunks.set(c, (x = { detail: { entities: {}, merged: {} }, more: { news: {} } }));
+    return x;
+  };
+  for (const e of [...live].sort((a, b) => a.id - b.id)) {
+    const stories = storiesOfRef(db, "entity", e.id);
+    const issues = new Map<number, number>();
+    const news: EntityNews[] = [];
+    for (const s of stories.slice().reverse()) {
+      const primary = db.prepare("SELECT issue_id FROM story_issues WHERE story_id = ? AND is_primary = 1").get(s.id) as { issue_id: number } | undefined;
+      const issue = primary ? resolveIssue(db, primary.issue_id) : null;
+      if (issue !== null) issues.set(issue, (issues.get(issue) ?? 0) + 1);
+      news.push({ date: s.date, key: s.key, kind: s.kind, title: s.title, issue: issue === null ? null : (issueName.get(issue) ?? null) });
+    }
+    const detail: EntityDetail = {
+      ...entityListItem(e),
+      aliases: e.aliases,
+      firstDate: e.firstDate ?? "",
+      issues: byCount([...issues].map(([id, count]) => ({ id, name: issueName.get(id) ?? "", count }))),
+      news: news.slice(0, ENTITY_FIRST_NEWS),
+      moreNews: Math.max(0, news.length - ENTITY_FIRST_NEWS),
+    };
+    const c = chunkOf(e.id);
+    c.detail.entities[String(e.id)] = detail;
+    if (news.length > ENTITY_FIRST_NEWS) c.more.news[String(e.id)] = news.slice(ENTITY_FIRST_NEWS);
+  }
+  const merged = mergedMap(db, "entity", entities, () => true);
+  for (const [id, m] of Object.entries(merged)) chunkOf(Number(id)).detail.merged[id] = m;
+  for (const [c, x] of [...chunks].sort((a, b) => a[0] - b[0])) {
+    out.set(siteFiles.entityChunk(c), JSON.stringify(x.detail));
+    if (Object.keys(x.more.news).length > 0) out.set(siteFiles.entityNews(c), JSON.stringify(x.more));
+  }
+  return out;
+}
+
+function termItem(db: DatabaseSync, t: Term): TermItem {
+  const first = storiesOfRef(db, "term", t.id)[0];
+  return { id: t.id, name: t.name, aliases: t.aliases, description: t.description, first: first ? { date: first.date, key: first.key, title: first.title } : null, count: t.count };
+}
+
+/** 용어 색인과 첫 자음 묶음 파일(4.6-1, 4.7-5) */
+function termSiteFiles(db: DatabaseSync, terms: Term[]): Map<string, string> {
+  const out = new Map<string, string>();
+  const items = terms.filter((t) => isLive(t) && t.count > 0).map((t) => termItem(db, t));
+  const { index, groups } = buildTermFiles(items, mergedMap(db, "term", terms, () => true));
+  out.set(siteFiles.termIndex, JSON.stringify(index));
+  for (const [group, list] of [...groups].sort((a, b) => a[0] - b[0])) {
+    const data: TermGroupFile = { group, terms: list };
+    out.set(siteFiles.termGroup(group), JSON.stringify(data));
   }
   return out;
 }
@@ -226,6 +389,23 @@ export function buildSearchRecords(db: DatabaseSync): SearchRecord[] {
   for (const [chunk, issues] of issueChunks(liveIssues(db))) {
     const parts = issues.flatMap((i) => [i.name, ...i.aliases, i.summary]);
     records.push({ url: issueRecordUrl(chunk), content: parts.join("\n"), language: "ko", meta: { kind: "issues", chunk: String(chunk) } });
+  }
+  // 4단계 4.6-4: 대상은 상세 묶음마다, 용어는 첫 자음 묶음마다 레코드 하나(흡수·지운 것과 연결 없는 것은 넣지 않는다)
+  const entityChunks = new Map<number, string[]>();
+  for (const e of allEntities(db).filter((x) => isLive(x) && x.count > 0)) {
+    const c = entityChunkOf(e.id);
+    entityChunks.set(c, [...(entityChunks.get(c) ?? []), e.name, ...e.aliases, e.description]);
+  }
+  for (const [c, parts] of [...entityChunks].sort((a, b) => a[0] - b[0])) {
+    records.push({ url: entityRecordUrl(c), content: parts.join("\n"), language: "ko", meta: { kind: "entities", chunk: String(c) } });
+  }
+  const termGroups = new Map<number, string[]>();
+  for (const t of allTerms(db).filter((x) => isLive(x) && x.count > 0).sort(compareTerms)) {
+    const g = termGroupOf(t.name);
+    termGroups.set(g, [...(termGroups.get(g) ?? []), t.name, ...t.aliases, t.description]);
+  }
+  for (const [g, parts] of [...termGroups].sort((a, b) => a[0] - b[0])) {
+    records.push({ url: termRecordUrl(g), content: parts.join("\n"), language: "ko", meta: { kind: "terms", group: String(g) } });
   }
   return records;
 }

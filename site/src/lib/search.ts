@@ -1,9 +1,12 @@
 // 검색 결과 되찾기(4.3-3, P6, 4.1-3).
-// 검색 레코드는 묶음이다: 뉴스는 날짜 하나가 레코드 하나(`/<날짜>`), 이슈는 식별자 100개 묶음이 레코드 하나(`/issues/chunk/<n>`).
+// 검색 레코드는 묶음이다: 뉴스는 날짜 하나가 레코드 하나(`/<날짜>`), 이슈는 식별자 100개 묶음이 레코드 하나(`/issues/chunk/<n>`),
+// 대상(인물·기관·국가)은 상세 묶음 하나가 레코드 하나(`/entities/chunk/<n>`), 용어는 첫 자음 묶음 하나가 레코드 하나(`/terms/group/<g>`).
 // Pagefind가 고른 레코드마다 그 날짜·묶음의 사이트 데이터를 받아, 검색어에 맞는 뉴스·이슈를 하나씩 골라낸다.
 // 맞춤 규칙은 Pagefind와 같게 낱말 앞부분 맞춤이다("반도체"가 "반도체가"에 맞는다).
-import type { DayList, IssueChunk, IssueDetail, ListStory, StoryDetail } from "./types.ts";
+import type { DayList, EntityChunk, EntityDetail, IssueChunk, IssueDetail, ListStory, StoryDetail, TermGroupFile, TermItem } from "./types.ts";
 import { SECTION_ORDER } from "./brief.ts";
+import { compareEntityItems } from "./entities.ts";
+import { sortTerms } from "./terms.ts";
 
 export function normalize(text: string): string {
   return text.normalize("NFC").toLowerCase();
@@ -70,16 +73,41 @@ export function matchIssues(chunk: IssueChunk, terms: string[], merged: Record<s
   return pickBest(issues, (i) => countMatches(issueText(i), terms), terms.length);
 }
 
-export type SearchHit = { kind: "news"; date: string } | { kind: "issues"; chunk: number };
+export function entityText(entity: EntityDetail): string {
+  return [entity.name, ...entity.aliases, entity.description].join("\n");
+}
+
+/** 걸린 대상 묶음에서 검색어에 맞는 대상(이름·별칭·한 줄 설명). 묶음에는 흡수·지운 대상이 없다. 목록 순서(최근 등장 순) */
+export function matchEntities(chunk: EntityChunk, terms: string[]): EntityDetail[] {
+  const items = Object.values(chunk.entities).sort(compareEntityItems);
+  return pickBest(items, (e) => countMatches(entityText(e), terms), terms.length);
+}
+
+export function termText(term: TermItem): string {
+  return [term.name, ...term.aliases, term.description].join("\n");
+}
+
+/** 걸린 용어 묶음에서 검색어에 맞는 용어(이름·별칭·설명). 용어 사전 순서 */
+export function matchTerms(group: TermGroupFile, terms: string[]): TermItem[] {
+  return pickBest(sortTerms(group.terms), (t) => countMatches(termText(t), terms), terms.length);
+}
+
+export type SearchHit = { kind: "news"; date: string } | { kind: "issues"; chunk: number } | { kind: "entities"; chunk: number } | { kind: "terms"; group: number };
 
 /** Pagefind 결과의 레코드 정보(meta, 없으면 주소)를 읽는다. 모르는 모양이면 null */
 export function parseHit(url: string, meta: Record<string, string> | undefined): SearchHit | null {
   if (meta?.kind === "news" && meta.date && /^\d{4}-\d{2}-\d{2}$/.test(meta.date)) return { kind: "news", date: meta.date };
   if (meta?.kind === "issues" && meta.chunk && /^\d+$/.test(meta.chunk)) return { kind: "issues", chunk: Number(meta.chunk) };
+  if (meta?.kind === "entities" && meta.chunk && /^\d+$/.test(meta.chunk)) return { kind: "entities", chunk: Number(meta.chunk) };
+  if (meta?.kind === "terms" && meta.group && /^\d+$/.test(meta.group)) return { kind: "terms", group: Number(meta.group) };
   const news = /^\/(\d{4}-\d{2}-\d{2})\/?$/.exec(url);
   if (news) return { kind: "news", date: news[1]! };
   const issues = /^\/issues\/chunk\/(\d+)\/?$/.exec(url);
   if (issues) return { kind: "issues", chunk: Number(issues[1]) };
+  const entities = /^\/entities\/chunk\/(\d+)\/?$/.exec(url);
+  if (entities) return { kind: "entities", chunk: Number(entities[1]) };
+  const termGroup = /^\/terms\/group\/(\d+)\/?$/.exec(url);
+  if (termGroup) return { kind: "terms", group: Number(termGroup[1]) };
   return null;
 }
 

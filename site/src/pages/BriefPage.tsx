@@ -1,10 +1,12 @@
 // 날짜별 브리프와 펼친 뉴스 카드(4.2)
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { ALL_MAJORS, CategoryLine, Layout as Shell, ChipFilter, Empty, ErrorState, Footer, Loading, TopBar, useTitle } from "../components/common.tsx";
+import { EntityChips, TermBox, TermChips, TermText } from "../components/termView.ts";
 import { retry, useResource, type Resource } from "../data.ts";
 import { daySections, findDay, findStoryTarget, orderSources, sectionView, stateForHash, storyImage, type BriefViewState } from "../lib/brief.ts";
 import { monthDay, monthDayWeekday, shortDate } from "../lib/format.ts";
 import { dataUrl } from "../lib/paths.ts";
+import { placeTerms, storyBodyParts, termBoxPlace, toggleTerm } from "../lib/terms.ts";
 import { categoryVar } from "../lib/theme.ts";
 import { adjacentDates, briefPath, hashKey, issuePath, resolveBriefDate, type Route } from "../lib/routes.ts";
 import type { ListStory, MonthDetail, MonthList, SectionName, SiteDates, StoryDetail } from "../lib/types.ts";
@@ -227,6 +229,17 @@ function StoryImage({ src }: { src: string }) {
 function StoryBody({ story, detail, date }: { story: ListStory; detail: StoryDetail; date: string }) {
   const image = storyImage(detail.sources);
   const year = date.slice(0, 4);
+  const terms = useMemo(() => detail.terms ?? [], [detail]);
+  const entities = detail.entities ?? [];
+  const placement = useMemo(() => placeTerms(storyBodyParts(detail), terms), [detail, terms]);
+  // 열린 용어 설명(한 카드에 하나, E8). 카드를 접으면 이 컴포넌트가 사라져 닫힌다
+  const [openTerm, setOpenTerm] = useState<number | null>(null);
+  const boxId = `${storyDomId(story.key)}-term`;
+  const openRef = terms.find((t) => t.id === openTerm) ?? null;
+  const boxAt = openRef ? termBoxPlace(openTerm, placement) : null;
+  const onToggle = (id: number) => setOpenTerm((v) => toggleTerm(v, id));
+  const text = (part: string) => <TermText segments={placement.segments[part] ?? []} openId={openTerm} onToggle={onToggle} boxId={boxId} />;
+  const box = (part: string): ReactNode => (openRef && boxAt === part ? <TermBox term={openRef} id={boxId} Link={Link} /> : null);
   return (
     <>
       {image && <StoryImage src={image} />}
@@ -254,17 +267,23 @@ function StoryBody({ story, detail, date }: { story: ListStory; detail: StoryDet
           )}
         </div>
       )}
-      <p className="sum">{detail.summary}</p>
+      <p className="sum">{text("summary")}</p>
+      {box("summary")}
       <h4 className="h">왜 중요한가</h4>
-      <p className="p">{detail.whyItMatters}</p>
+      <p className="p">{text("why")}</p>
+      {box("why")}
       <h4 className="h">배경</h4>
-      <p className="p">{detail.background}</p>
+      <p className="p">{text("background")}</p>
+      {box("background")}
       {detail.keyFacts.length > 0 && (
         <>
           <h4 className="h">핵심</h4>
           <ul className="p facts">
-            {detail.keyFacts.map((f, i) => (
-              <li key={i}>{f}</li>
+            {detail.keyFacts.map((_, i) => (
+              <li key={i}>
+                {text(`fact-${i}`)}
+                {box(`fact-${i}`)}
+              </li>
             ))}
           </ul>
         </>
@@ -272,11 +291,26 @@ function StoryBody({ story, detail, date }: { story: ListStory; detail: StoryDet
       {detail.analogy && (
         <>
           <h4 className="h">비유</h4>
-          <p className="p">{detail.analogy}</p>
+          <p className="p">{text("analogy")}</p>
+          {box("analogy")}
         </>
       )}
       <h4 className="h">전망</h4>
-      <p className="p">{detail.outlook}</p>
+      <p className="p">{text("outlook")}</p>
+      {box("outlook")}
+      {entities.length > 0 && (
+        <>
+          <h4 className="h">인물·기관·국가</h4>
+          <EntityChips entities={entities} Link={Link} />
+        </>
+      )}
+      {terms.length > 0 && (
+        <>
+          <h4 className="h">용어</h4>
+          <TermChips terms={terms} openId={openTerm} onToggle={onToggle} boxId={boxId} />
+          {box("chips")}
+        </>
+      )}
       <h4 className="h">확인 정도</h4>
       <p className="p">{detail.confidence}</p>
       {detail.extras.length > 0 && (

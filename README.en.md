@@ -12,6 +12,8 @@ A personal news archive. Every day, AI gathers Korean, world, and IT/AI news, re
 
 - **Daily briefs:** Top stories and short items in three sections (Korea, World, IT/AI). Each story has a one-line summary, why it matters, background, key facts, outlook, and sources.
 - **Ongoing stories:** Stories are linked into issues, with earlier developments, an issue summary, a timeline, and related issues.
+- **People, organizations, and countries:** Each one that appears in the news has a page with a one-line description and the stories and issues it appears in.
+- **Glossary:** Difficult terms are collected with plain explanations. Tapping an underlined word in an expanded card opens its explanation right there.
 - **Browsing:** Category filters, a date list, an issue list, and on-site search, all usable on a phone.
 
 ## How it works

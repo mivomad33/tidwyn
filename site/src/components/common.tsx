@@ -33,6 +33,8 @@ const MENU: [string, string][] = [
   ["/", "최근 브리프"],
   ["/dates", "날짜 목록"],
   ["/issues", "이슈 목록"],
+  ["/entities", "인물·기관·국가"],
+  ["/terms", "용어 사전"],
   ["/search", "검색"],
   ["/about", "사이트 소개"],
 ];
@@ -131,6 +133,8 @@ export function Footer() {
       <nav aria-label="바닥 메뉴">
         <Link to="/about">사이트 소개</Link>
         <Link to="/issues">이슈 목록</Link>
+        <Link to="/entities">인물·기관·국가</Link>
+        <Link to="/terms">용어 사전</Link>
         <Link to="/dates">날짜 목록</Link>
       </nav>
     </footer>

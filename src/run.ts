@@ -26,12 +26,29 @@ export type LinkResult =
   | { status: "nothing" }
   | { status: "failed"; reason: string; violations?: Violation[] };
 
-/** 합치기 단계 결과(2단계 4.3) */
+/** 날짜별 뽑기 결과(4단계 4.2) */
+export type ExtractResult =
+  | { status: "applied"; entityLinks: number; termLinks: number; newEntities: number; newTerms: number; descriptions: number }
+  | { status: "nothing" }
+  | { status: "failed"; reason: string; violations?: Violation[] };
+
+/** 합친 대상·용어 하나(4단계 4.3) */
+export interface RefMergeDone {
+  id: number;
+  item: "entity" | "term";
+  survivor: number;
+  survivorName: string;
+  absorbed: number;
+  absorbedName: string;
+  reason: string;
+}
+
+/** 합치기 단계 결과(2단계 4.3). 후보 수에는 4단계 대상·용어 쌍도 든다. refs는 4단계 대상·용어 합치기 */
 export type MergeStepResult =
   | { status: "notDue"; nextOn: string | null }
   | { status: "pending"; candidates: number }
   | { status: "none"; candidates: number }
-  | { status: "merged"; merges: { id: number; survivor: number; survivorName: string; absorbed: number; absorbedName: string; reason: string }[] }
+  | { status: "merged"; merges: { id: number; survivor: number; survivorName: string; absorbed: number; absorbedName: string; reason: string }[]; refs?: RefMergeDone[] }
   | { status: "failed"; reason: string; violations?: Violation[] };
 
 /** 지난 날짜 이미지 채우기 결과(3단계 4.4-2) */
@@ -39,7 +56,7 @@ export type ImagesResult = { status: "done"; filled: number; failures: FeedFailu
 
 /** 사이트 빌드 결과(3단계 4.1, 4.5) */
 export type SiteResult =
-  | { status: "built"; outDir: string; dates: number; issues: number; files: number; bytes: number }
+  | { status: "built"; outDir: string; dates: number; issues: number; entities?: number; terms?: number; files: number; bytes: number }
   | { status: "failed"; outDir: string; reason: string; findings?: string[] };
 
 /** 배포 뒤 점검(3단계 4.6-3) */
@@ -74,6 +91,9 @@ export interface RunState {
   linkDates?: string[];
   links?: Record<string, LinkResult>;
   merge?: MergeStepResult;
+  /** start 때 뽑기 안 한 저장된 날짜(4단계 4.2-1). 앞 단계 실행 기록에는 없다 */
+  extractDates?: string[];
+  extracts?: Record<string, ExtractResult>;
   /** 지난 날짜 이미지 채우기(3단계). 1·1.5·2단계 실행 기록에는 없다 */
   images?: ImagesResult;
   /** 사이트 빌드·배포·push(3단계). start가 null로 두고 각 명령이 채운다. 앞 단계 실행 기록에는 없다 */
@@ -88,6 +108,11 @@ export function workFile(dataDir: string, date: string): string {
 
 /** 날짜의 연결 작업 파일: 연결할 뉴스와 후보 이슈(md), Claude가 쓰는 연결 파일(links.json) */
 export function linkWorkFile(dataDir: string, date: string, kind: "issues.md" | "links.json"): string {
+  return path.join(dataDir, WORK_DIR, `${date}.${kind}`);
+}
+
+/** 날짜의 뽑기 작업 파일: 그날 뉴스와 후보 대상·용어(md), Claude가 쓰는 뽑기 파일(json). 4단계 4.2 */
+export function refWorkFile(dataDir: string, date: string, kind: "refs.md" | "refs.json"): string {
   return path.join(dataDir, WORK_DIR, `${date}.${kind}`);
 }
 

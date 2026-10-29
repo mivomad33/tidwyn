@@ -1,7 +1,9 @@
 // 이슈 페이지(4.3-2). 흡수된 이슈 주소는 남는 이슈 주소로 바꾸고 합쳐졌다는 줄을 보인다.
 import { useEffect } from "react";
 import { BackLink, CategoryLine, ErrorState, Layout, Loading, useTitle } from "../components/common.tsx";
+import { IssueEntityChips } from "../components/termView.ts";
 import { retry, useResource } from "../data.ts";
+import { issueEntityChips } from "../lib/entities.ts";
 import { monthDay, shortDate } from "../lib/format.ts";
 import { chunkOf, dataUrl } from "../lib/paths.ts";
 import { briefPath, issuePath, resolveIssueId } from "../lib/routes.ts";
@@ -85,6 +87,12 @@ export function IssuePage({ id }: { id: number }) {
           </ol>
         ) : (
           <p className="p muted">아직 전개가 없다.</p>
+        )}
+        {issueEntityChips(issue.entities).length > 0 && (
+          <>
+            <h2 className="h">등장 인물·기관·국가</h2>
+            <IssueEntityChips entities={issue.entities} Link={Link} />
+          </>
         )}
         {issue.related.length > 0 && (
           <>

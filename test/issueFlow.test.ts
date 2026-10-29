@@ -277,13 +277,13 @@ function v2Db(file: string): void {
 }
 
 describe("2단계 4.1-3 마이그레이션", () => {
-  test("버전 2 DB를 새 코드로 열면 버전 3이 되고, 브리프가 그대로이며 모든 뉴스가 이슈 없음이다", () => {
+  test("버전 2 DB를 새 코드로 열면 버전 4가 되고, 브리프가 그대로이며 모든 뉴스가 이슈 없음이다", () => {
     const file = path.join(tempDir(), "t.db");
     v2Db(file);
     const r = validateBrief(sampleBrief("2026-10-26"), "2026-10-26");
     assert.ok(r.ok);
     const db = openDb(file);
-    assert.equal(schemaVersion(db), 3);
+    assert.equal(schemaVersion(db), 4);
     assert.deepEqual(loadBrief(db, "2026-10-26")?.brief, r.brief);
     assert.deepEqual(linkableDates(db), ["2026-10-26"]);
     assert.equal(unlinkedCount(db), KEYS.length);
@@ -307,7 +307,7 @@ describe("2단계 4.8-4 머지 뒤 첫 실행의 실행 전 사본", () => {
       return v;
     };
     assert.equal(version(path.join(dataDir, "snapshots", snaps[0]!)), 2);
-    assert.equal(version(path.join(dataDir, "tidwyn.db")), 3);
+    assert.equal(version(path.join(dataDir, "tidwyn.db")), 4);
   });
 });
 

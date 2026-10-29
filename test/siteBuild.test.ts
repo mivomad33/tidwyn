@@ -10,6 +10,14 @@ import { generateFixtures, writeFixtures } from "../site/dev/fixtures.ts";
 import { FIRST_SCREEN_BUDGET, measureOutput } from "../site/size.ts";
 import { matchDayStories, matchIssues, parseHit, queryTerms } from "../site/src/lib/search.ts";
 import { cleanupTemp, tempDir } from "./helpers.ts";
+import type { EntityChunk, EntityListPage, EntityNewsChunk, IssueDetail, TermGroupFile, TermIndex } from "../src/siteTypes.ts";
+import { measureScreens } from "../site/size.ts";
+import { matchEntities, matchTerms } from "../site/src/lib/search.ts";
+import { resolveStatic } from "../site/hosting.ts";
+import { resolveEntity } from "../site/src/lib/entities.ts";
+import { placeTerms, resolveTerm, storyBodyParts } from "../site/src/lib/terms.ts";
+import { buildSearchRecords, buildSiteData } from "../src/siteData.ts";
+import { DELETED_TEXTS, refSiteDb } from "./refsFixture.ts";
 
 // 사이트 빌드(4.1-2·4.1-4·4.3-3·4.3-7·4.6-1·4.6-2). 지어낸 데이터만 쓰고 네트워크를 쓰지 않는다.
 
@@ -159,5 +167,135 @@ describe("지어낸 데이터", () => {
       for (const d of (JSON.parse(content) as MonthList).days) for (const s of d.sections) for (const st of s.stories) if (st.continues) labels.add(st.continues.label === "어제에 이어" ? "어제" : "날짜");
     }
     assert.deepEqual([...labels].sort(), ["날짜", "어제"]);
+  });
+});
+
+describe("4단계 사이트 빌드: 인물·기관·국가와 용어 사전", () => {
+  const work = tempDir("tidwyn-site4-");
+  const dataDir = path.join(work, "data");
+  const out = path.join(work, "out");
+  const fx = writeFixtures(dataDir, { days: 6 });
+  const data = (name: string) => path.join(out, "site-data", name);
+
+  test("새 파일이 결과물에 있고, 새 화면 주소는 화면 틀로 간다(4.6-1, 4.7-6)", async () => {
+    await buildSite({ dataDir, outDir: out });
+    const files = new Set(listFilesRecursive(out));
+    for (const f of ["all", "person", "org", "country"]) assert.ok(files.has(`site-data/entity-list-${f}-0.json`), f);
+    for (const f of ["site-data/entity-0.json", "site-data/entity-news-0.json", "site-data/term-index.json", "site-data/term-group-0.json"]) assert.ok(files.has(f), f);
+    const exists = (p: string) => files.has(p);
+    for (const p of ["/entities", "/entities/1", "/terms", "/terms/1"]) assert.deepEqual(resolveStatic(p, exists), { kind: "fallback" }, p);
+    assert.deepEqual(resolveStatic("/site-data/entity-999.json", exists), { kind: "notFound" }, "없는 묶음은 404(화면은 없는 페이지)");
+  });
+
+  test("흡수된 대상·용어는 남는 것으로 가고, 지운 대상은 어디에도 없다(4.7-4, 4.7-5)", () => {
+    const chunk = readJson<EntityChunk>(data("entity-0.json"));
+    const { merged, deleted } = fx.info.entities;
+    assert.ok(merged && deleted);
+    assert.deepEqual(resolveEntity(merged.id, chunk), { kind: "merged", into: merged.into, on: merged.on });
+    assert.equal(resolveEntity(merged.into, chunk)?.kind, "entity");
+    assert.equal(resolveEntity(deleted.id, chunk), null);
+    const all = readJson<EntityListPage>(data("entity-list-all-0.json"));
+    assert.ok(!all.items.some((i) => i.id === deleted.id || i.id === merged.id));
+    assert.ok(!fs.readFileSync(path.join(dataDir, "search-records.json"), "utf8").includes(deleted.name), "지운 대상은 검색 레코드에 없다");
+    const index = readJson<TermIndex>(data("term-index.json"));
+    const tm = fx.info.terms.merged!;
+    assert.equal(resolveTerm(tm.id, index)?.id, tm.into);
+    assert.equal(resolveTerm(fx.info.terms.deleted!, index), null);
+    assert.equal(index.total, Object.keys(index.ids).length);
+  });
+
+  test("뉴스가 많은 대상은 처음 20건과 나머지 묶음, 거르기 쪽은 종류만 담는다(4.7-3, 4.7-4)", () => {
+    const chunk = readJson<EntityChunk>(data("entity-0.json"));
+    const many = Object.values(chunk.entities).find((e) => e.moreNews > 0)!;
+    assert.ok(many, "더 보기가 있는 대상");
+    assert.equal(many.news.length, 20);
+    const rest = readJson<EntityNewsChunk>(data("entity-news-0.json")).news[String(many.id)]!;
+    assert.equal(rest.length, many.moreNews);
+    assert.equal(many.news.length + rest.length, many.count);
+    const dates = [...many.news, ...rest].map((n) => n.date);
+    assert.deepEqual(dates, [...dates].sort().reverse(), "최근 순");
+    const person = readJson<EntityListPage>(data("entity-list-person-0.json"));
+    assert.ok(person.items.length > 0 && person.items.every((i) => i.kind === "인물"));
+  });
+
+  test("본문 표기가 두 번 나오는 용어와 표기 없는 용어가 있고, 밑줄은 하나다(E8)", () => {
+    const { twice, noSurface } = fx.info.terms;
+    assert.ok(twice && noSurface !== null);
+    const detail = readJson<MonthDetail>(data(`detail-${twice.date.slice(0, 7)}.json`)).days[twice.date]![twice.key]!;
+    const term = detail.terms!.find((t) => t.id === twice.termId)!;
+    const body = storyBodyParts(detail).map((p) => p.text).join("\n");
+    assert.ok(body.split(term.surface!).length - 1 >= 2, "표기가 본문에 두 번 이상 나온다");
+    const placement = placeTerms(storyBodyParts(detail), detail.terms!);
+    assert.equal(Object.values(placement.segments).flat().filter((s) => s.termId === term.id).length, 1);
+    assert.ok(detail.terms!.some((t) => t.id === noSurface && t.surface === undefined));
+    const issue = Object.values(readJson<IssueChunk>(data("issue-0.json")).issues).find((i: IssueDetail) => i.entities?.length);
+    assert.ok(issue && issue.entities!.length <= 10);
+  });
+
+  test("4.6-4 색인에서 대상 영어 별칭·용어 이름·별칭으로 찾고, 걸린 묶음에서 개별 대상·용어를 되찾는다. 지운 대상은 찾지 못한다", async () => {
+    const hits = await searchOutput(out, ["Gajja Electronics", "양적긴축", "QT", fx.info.entities.deleted!.name]);
+    const entityHits = hits.get("Gajja Electronics")!.map((h) => parseHit(h.url, h.meta)).filter((h) => h?.kind === "entities");
+    assert.ok(entityHits.length > 0, JSON.stringify(hits.get("Gajja Electronics")));
+    const found = entityHits.flatMap((h) => (h?.kind === "entities" ? matchEntities(readJson<EntityChunk>(data(`entity-${h.chunk}.json`)), queryTerms("Gajja Electronics")) : []));
+    assert.ok(found.some((e) => e.name === "가짜전자"), found.map((e) => e.name).join(", "));
+    assert.ok(found.every((e) => e.aliases.some((a) => a.startsWith("Gajja Electronics"))), "별칭이 맞는 대상만 되찾는다");
+    for (const q of ["양적긴축", "QT"]) {
+      const termHits = hits.get(q)!.map((h) => parseHit(h.url, h.meta)).filter((h) => h?.kind === "terms");
+      const terms = termHits.flatMap((h) => (h?.kind === "terms" ? matchTerms(readJson<TermGroupFile>(data(`term-group-${h.group}.json`)), queryTerms(q)) : []));
+      assert.ok(terms.some((t) => t.name === "양적긴축"), q);
+    }
+    const gone = hits.get(fx.info.entities.deleted!.name)!.map((h) => parseHit(h.url, h.meta));
+    const goneFound = gone.flatMap((h) => (h?.kind === "entities" ? matchEntities(readJson<EntityChunk>(data(`entity-${h.chunk}.json`)), queryTerms(fx.info.entities.deleted!.name)) : []));
+    assert.ok(!goneFound.some((e) => e.id === fx.info.entities.deleted!.id));
+  });
+
+  test("4.6-2 대상·용어가 많고 뉴스가 아주 많은 대상이 있어도 새 화면이 처음 받는 데이터가 각각 gzip 300KB 이하다", async () => {
+    const big = path.join(work, "big");
+    const bigOut = path.join(work, "big-out");
+    const bfx = writeFixtures(big, { end: "2026-10-31", days: 60, top: 6, short: 8, issues: 600, entities: 3000, terms: 1500, hub: true, contiguous: true });
+    await buildSite({ dataDir: big, outDir: bigOut });
+    const screens = measureScreens(bigOut);
+    assert.equal(screens.length, 6, screens.map((s) => s.name).join(", "));
+    const hub = readJson<EntityChunk>(path.join(bigOut, "site-data", "entity-0.json")).entities["1"]!;
+    assert.equal(bfx.info.entities.most, 1);
+    assert.ok(hub.count >= 2500, `대상 1의 뉴스 ${hub.count}건`);
+    const index = readJson<TermIndex>(path.join(bigOut, "site-data", "term-index.json"));
+    assert.ok(index.total > 500, `용어 ${index.total}개`);
+    for (const s of screens) assert.ok(s.gzip <= FIRST_SCREEN_BUDGET, `${s.name} gzip ${s.gzip}B`);
+    assert.ok(screens.find((s) => s.name.startsWith("용어 사전"))!.files.length < index.groups.filter((g) => g.count > 0).length, "용어 사전은 묶음을 모두 받지 않는다");
+    assert.ok(measureOutput(bigOut).firstScreen.gzip <= FIRST_SCREEN_BUDGET);
+  });
+});
+
+describe("4단계 4.6-4 DB에서 만든 검색 색인", () => {
+  test("조사가 붙은 이름(가짜전자가)을 조사 없는 검색어로 찾고, 대상 별칭과 용어 이름으로 찾으며, 지운 대상은 찾지 못한다", async () => {
+    const { db } = refSiteDb();
+    const work = tempDir("tidwyn-site-refs-");
+    const dataDir = path.join(work, "data");
+    const out = path.join(work, "out");
+    for (const [rel, content] of buildSiteData(db)) {
+      fs.mkdirSync(path.dirname(path.join(dataDir, rel)), { recursive: true });
+      fs.writeFileSync(path.join(dataDir, rel), content);
+    }
+    fs.writeFileSync(path.join(dataDir, "search-records.json"), JSON.stringify(buildSearchRecords(db)));
+    db.close();
+    await buildSite({ dataDir, outDir: out });
+    const data = (name: string) => path.join(out, "site-data", name);
+    const hits = await searchOutput(out, ["가짜전자", "Gajja Electronics", "양적완화", DELETED_TEXTS[0]!]);
+    const parsed = (q: string) => hits.get(q)!.map((h) => parseHit(h.url, h.meta));
+    // 뉴스 본문 "가짜전자가 새 칩을 공개했다."
+    const news = parsed("가짜전자").filter((h) => h?.kind === "news");
+    assert.ok(news.length > 0, JSON.stringify(hits.get("가짜전자")));
+    const day = readJson<MonthList>(data("list-2026-10.json")).days.find((d) => d.date === "2026-10-28")!;
+    const stories = matchDayStories(day, readJson<MonthDetail>(data("detail-2026-10.json")).days["2026-10-28"], queryTerms("가짜전자"));
+    assert.ok(stories.some((s) => s.key === "세계-1"), stories.map((s) => s.key).join(", "));
+    for (const q of ["가짜전자", "Gajja Electronics"]) {
+      const found = parsed(q).flatMap((h) => (h?.kind === "entities" ? matchEntities(readJson<EntityChunk>(data(`entity-${h.chunk}.json`)), queryTerms(q)) : []));
+      assert.ok(found.some((e) => e.name === "가짜전자"), q);
+    }
+    const terms = parsed("양적완화").flatMap((h) => (h?.kind === "terms" ? matchTerms(readJson<TermGroupFile>(data(`term-group-${h.group}.json`)), queryTerms("양적완화")) : []));
+    assert.ok(terms.some((t) => t.name === "양적완화"));
+    const gone = parsed(DELETED_TEXTS[0]!).flatMap((h) => (h?.kind === "entities" ? matchEntities(readJson<EntityChunk>(data(`entity-${h.chunk}.json`)), queryTerms(DELETED_TEXTS[0]!)) : []));
+    assert.deepEqual(gone, []);
   });
 });

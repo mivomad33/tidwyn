@@ -13,5 +13,5 @@
     "verbatimModuleSyntax": true,
     "skipLibCheck": true
   },
-  "include": ["src", "test", "site/build.ts", "site/viteConfig.ts", "site/hosting.ts", "site/size.ts", "site/dev", "site/src/lib"]
+  "include": ["src", "test", "site/build.ts", "site/viteConfig.ts", "site/hosting.ts", "site/size.ts", "site/dev", "site/src/lib", "playwright.config.ts"]
 }

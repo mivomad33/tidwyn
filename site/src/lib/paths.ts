@@ -9,6 +9,11 @@ export const dataUrl = {
   detail: (month: string) => `${DATA_BASE}detail-${month}.json`,
   issueList: () => `${DATA_BASE}issue-list.json`,
   issueChunk: (chunk: number) => `${DATA_BASE}issue-${chunk}.json`,
+  entityList: (filter: string, page: number) => `${DATA_BASE}entity-list-${filter}-${page}.json`,
+  entityChunk: (chunk: number) => `${DATA_BASE}entity-${chunk}.json`,
+  entityNews: (chunk: number) => `${DATA_BASE}entity-news-${chunk}.json`,
+  termIndex: () => `${DATA_BASE}term-index.json`,
+  termGroup: (group: number) => `${DATA_BASE}term-group-${group}.json`,
 };
 
 /** 이슈 식별자 묶음 크기(siteTypes의 ISSUE_CHUNK_SIZE와 같다) */
