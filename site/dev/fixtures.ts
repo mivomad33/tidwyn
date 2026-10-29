@@ -2,12 +2,14 @@
 // node site/dev/fixtures.ts --out <폴더> [--end 2026-10-27] [--days 7] [--top 5] [--short 5] [--issues 40]
 //   [--entities 30] [--terms 24] [--hub]   (4단계: 인물·기관·국가와 용어. --hub는 대상 1을 모든 뉴스에 붙인다(5년치 측정용))
 //   [--schedules 0]   (5단계: 일정 수. 0이면 빈 일정 색인만 만든다)
+//   [--indicators 0] [--indicators-all]   (6단계: 지표 값의 햇수. 0이면 지표 파일을 만들지 않는다. --indicators-all은 12개 모두 공개·값 있음(크기 측정용))
 // <폴더>/site-data/*.json과 <폴더>/search-records.json을 만든다. 같은 인자면 같은 결과다.
 import fs from "node:fs";
 import path from "node:path";
 import { CONFIDENCE_LEVELS, MINORS_BY_MAJOR, SECTIONS, type Major, type SectionName } from "../../src/categories.ts";
 import { ENTITY_FILTERS, ENTITY_FIRST_NEWS, byCount, dayStoryCount, entityChunkOf, issueEntityChips, entityRecordUrl, termRecordUrl, type EntityKind } from "../../src/siteTypes.ts";
 import { addDays, rng } from "./random.ts";
+import { fixtureIndicators, type IndicatorFixtureInfo } from "./indicatorFixtures.ts";
 import { fixtureSchedules, type FixtureStory, type ScheduleFixtureInfo } from "./scheduleFixtures.ts";
 import { entityListPages } from "../src/lib/entities.ts";
 import { buildTermFiles } from "../src/lib/terms.ts";
@@ -57,6 +59,10 @@ export interface FixtureOptions {
   hub?: boolean;
   /** 5단계: 일정 수(흡수된 것 하나와 지운 것 하나 포함, 20개 이상일 때). 없거나 0이면 빈 일정 색인만 만들고 다른 파일은 그대로다 */
   schedules?: number;
+  /** 6단계: 지표 값의 햇수(지표 12개, 휴장일, 이슈의 2할이 지표 1~3개). 없거나 0이면 지표 파일을 만들지 않고 다른 파일은 그대로다 */
+  indicators?: number;
+  /** 6단계: 지표 12개 모두 공개하고 값을 둔다. 아니면 브렌트유는 공개를 끈 지표, 코스닥은 값이 하나도 없는 공개 지표다 */
+  indicatorsAll?: boolean;
 }
 
 export interface Fixture {
@@ -78,6 +84,8 @@ export interface Fixture {
     };
     /** 5단계: 일정을 만들었을 때만 */
     schedules: ScheduleFixtureInfo | null;
+    /** 6단계: 지표를 만들었을 때만 */
+    indicators: IndicatorFixtureInfo | null;
   };
 }
 
@@ -458,6 +466,15 @@ export function generateFixtures(opts: FixtureOptions = {}): Fixture {
     if (chips) card.schedules = chips;
   }
 
+  // 6단계: 지표. 난수는 따로 두고, 지표가 없으면 다른 파일을 바꾸지 않는다
+  const ind = opts.indicators
+    ? fixtureIndicators({ dates: datesAsc, issues: activeIssues.map((i) => ({ id: i.id, name: i.name, startDate: i.timeline[0]?.date ?? null, latestDate: i.timeline.at(-1)?.date ?? null })), years: opts.indicators, all: opts.indicatorsAll })
+    : null;
+  if (ind) for (const l of lists.values()) for (const day of l.days) {
+    const chips = ind.chips.get(day.date);
+    if (chips) day.indicators = chips;
+  }
+
   const chunks = new Map<number, IssueChunk>();
   for (const i of activeIssues) {
     const related = activeIssues.filter((o) => o.id !== i.id && o.major === i.major).slice(0, 2).map((o) => ({ id: o.id, name: o.name }));
@@ -469,6 +486,8 @@ export function generateFixtures(opts: FixtureOptions = {}): Fixture {
     if (issueEntities.length) detail.entities = issueEntities;
     const issueSchedules = sched.byIssue.get(i.id);
     if (issueSchedules) detail.schedules = issueSchedules;
+    const issueIndicators = ind?.byIssue.get(i.id);
+    if (issueIndicators) detail.indicators = issueIndicators;
     const c = Math.floor(i.id / 100);
     if (!chunks.has(c)) chunks.set(c, { issues: {} });
     chunks.get(c)!.issues[String(i.id)] = detail;
@@ -574,6 +593,7 @@ export function generateFixtures(opts: FixtureOptions = {}): Fixture {
   files.set("site-data/term-index.json", json(termFiles.index));
   for (const [g, terms] of [...termFiles.groups].sort((a, b) => a[0] - b[0])) files.set(`site-data/term-group-${g}.json`, json({ group: g, terms }));
   for (const [name, content] of sched.files) files.set(`site-data/${name}`, content);
+  for (const [name, content] of ind?.files ?? []) files.set(`site-data/${name}`, content);
   files.set("search-records.json", json([...newsRecords, ...issueRecords, ...entityRecords, ...termRecords]));
   const most = entityDetails.reduce<EntityDetail | null>((m, e) => (!m || e.count > m.count ? e : m), null);
   return {
@@ -585,6 +605,7 @@ export function generateFixtures(opts: FixtureOptions = {}): Fixture {
       entities: { merged: entityMerged, deleted: entityDeletedId === null ? null : { id: entityDeletedId, name: entities[entityDeletedId - 1]!.name }, most: most?.id ?? null },
       terms: { merged: termMerged, deleted: termDeletedId, twice, noSurface: noSurfaceTerm?.id ?? null },
       schedules: sched.info,
+      indicators: ind?.info ?? null,
     },
   };
 }
@@ -608,7 +629,7 @@ if (import.meta.main) {
   };
   const out = get("--out");
   if (!out) {
-    console.error("사용법: node site/dev/fixtures.ts --out <폴더> [--end YYYY-MM-DD] [--days N] [--top N] [--short N] [--issues N] [--contiguous] [--entities N] [--terms N] [--hub] [--schedules N]");
+    console.error("사용법: node site/dev/fixtures.ts --out <폴더> [--end YYYY-MM-DD] [--days N] [--top N] [--short N] [--issues N] [--contiguous] [--entities N] [--terms N] [--hub] [--schedules N] [--indicators N] [--indicators-all]");
     process.exit(1);
   }
   const num = (name: string) => (get(name) ? Number(get(name)) : undefined);
@@ -623,6 +644,8 @@ if (import.meta.main) {
     terms: num("--terms"),
     hub: args.includes("--hub"),
     schedules: num("--schedules"),
+    indicators: num("--indicators"),
+    indicatorsAll: args.includes("--indicators-all"),
   });
   console.log(`가짜 사이트 데이터: ${out} (날짜 ${fx.dates.length}개, 파일 ${fx.files.size}개)`);
 }

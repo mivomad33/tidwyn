@@ -1,8 +1,9 @@
-// 날짜별 브리프와 펼친 뉴스 카드(4.2). 4.5단계: 읽음 버튼, 펼침·글 누름·링크로 읽음, '안 읽은 것만' 거르기. 5단계: '이번 주 일정'과 카드의 일정 칩
+// 날짜별 브리프와 펼친 뉴스 카드(4.2). 4.5단계: 읽음 버튼, 펼침·글 누름·링크로 읽음, '안 읽은 것만' 거르기. 5단계: 카드의 일정 칩. 6단계: 브리프 위 '이번 주 일정 | 지표' 상자
 import { useEffect, useMemo, useReducer, useRef, useState, type ReactNode } from "react";
 import { kstDate } from "../../../src/kst.ts";
 import { ALL_MAJORS, CategoryLine, Layout as Shell, ChipFilter, Empty, ErrorState, Footer, Loading, NewsTitle, ReadCheck, ReadToggle, SectionChip, ToggleChip, TopBar, useTitle } from "../components/common.tsx";
-import { ScheduleChips, WeekBox } from "../components/scheduleView.ts";
+import { BriefBox } from "../components/briefBox.ts";
+import { ScheduleChips } from "../components/scheduleView.ts";
 import { EntityChips, TermBox, TermChips, TermText } from "../components/termView.ts";
 import { retry, useResource, type Resource } from "../data.ts";
 import { ALL_TAB, BRIEF_TAB_KEY, daySections, findDay, findStoryTarget, orderSources, parseBriefTab, sectionView, stateForHash, storyImage, type BriefTab, type BriefViewState } from "../lib/brief.ts";
@@ -15,7 +16,7 @@ import type { DayList, ListStory, MonthDetail, MonthList, SiteDates, StoryDetail
 import { readStored, writeStored } from "../lib/storage.ts";
 import { markRead, readStore, useReadVersion } from "../readMarks.ts";
 import { Link, lastNavigation, navigate, useLocation } from "../router.tsx";
-import { browserStorage, useRemembered, weekCollapsed } from "../storage.ts";
+import { boxTab, browserStorage, useRemembered, weekCollapsed } from "../storage.ts";
 import { NotFoundPage } from "./NotFoundPage.tsx";
 
 export function storyDomId(key: string): string {
@@ -216,7 +217,7 @@ export function BriefPage({ route }: { route: Route }) {
             </div>
           )}
         </div>
-        {day.week && <WeekLine week={day.week} />}
+        <TopBox day={day} />
         <ChipFilter
           label="카테고리"
           options={ALL_MAJORS}
@@ -276,11 +277,12 @@ export function BriefPage({ route }: { route: Route }) {
   );
 }
 
-/** '이번 주 일정'(4.7-4). 섹션 탭·대분류 칩과 관계없이 같고, 접은 상태는 다른 날짜와 다음 방문에도 이어진다 */
-function WeekLine({ week }: { week: NonNullable<DayList["week"]> }) {
+/** '이번 주 일정 | 지표' 상자(6단계 4.7-1). 섹션 탭·대분류 칩과 관계없이 같고, 접은 상태와 고른 탭은 다른 날짜와 다음 방문에도 이어진다 */
+function TopBox({ day }: { day: DayList }) {
   const collapsed = useRemembered(weekCollapsed);
+  const tab = useRemembered(boxTab);
   const today = useMemo(() => kstDate(new Date()), []);
-  return <WeekBox week={week} collapsed={collapsed} onToggle={() => weekCollapsed.set(!collapsed)} today={today} Link={Link} />;
+  return <BriefBox day={day} tab={tab} collapsed={collapsed} onTab={(t) => boxTab.set(t)} onToggle={() => weekCollapsed.set(!collapsed)} today={today} Link={Link} />;
 }
 
 function DateNav({ date, prev, next }: { date: string; prev: string | null; next: string | null }) {

@@ -81,6 +81,7 @@ const MENU: [string, string][] = [
   ["/dates", "날짜 목록"],
   ["/issues", "이슈 목록"],
   ["/schedules", "일정"],
+  ["/indicators", "지표"],
   ["/entities", "인물·기관·국가"],
   ["/terms", "용어 사전"],
   ["/search", "검색"],
@@ -182,6 +183,7 @@ export function Footer() {
         <Link to="/about">사이트 소개</Link>
         <Link to="/issues">이슈 목록</Link>
         <Link to="/schedules">일정</Link>
+        <Link to="/indicators">지표</Link>
         <Link to="/entities">인물·기관·국가</Link>
         <Link to="/terms">용어 사전</Link>
         <Link to="/dates">날짜 목록</Link>

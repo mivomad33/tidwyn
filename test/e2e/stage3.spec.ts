@@ -173,7 +173,7 @@ test.describe("검색·메뉴·사이트 소개", () => {
     await btn.click();
     await expect(btn).toHaveAttribute("aria-expanded", "true");
     const menu = page.getByRole("navigation", { name: "사이트 메뉴" });
-    await expect(menu.getByRole("link")).toHaveText(["최근 브리프", "날짜 목록", "이슈 목록", "일정", "인물·기관·국가", "용어 사전", "검색", "사이트 소개"]);
+    await expect(menu.getByRole("link")).toHaveText(["최근 브리프", "날짜 목록", "이슈 목록", "일정", "지표", "인물·기관·국가", "용어 사전", "검색", "사이트 소개"]);
     // Esc로 닫으면 메뉴 단추로 초점이 돌아온다
     await page.keyboard.press("Escape");
     await expect(menu).toHaveCount(0);
@@ -202,7 +202,8 @@ test.describe("검색·메뉴·사이트 소개", () => {
     await expect(page).toHaveTitle("사이트 소개 · Tidwyn");
     for (const h of ["Tidwyn은", "저작권", "방문 통계", "원본 저장소"]) await expect(page.getByRole("heading", { level: 2, name: h })).toBeVisible();
     const external = page.locator("article a[href^='https://']");
-    await expect(external).toHaveCount(2);
+    // 6단계: FRED API 이용 약관 링크가 더해졌다(4.7-6)
+    await expect(external).toHaveCount(3);
     for (const a of await external.all()) {
       await expect(a).toHaveAttribute("target", "_blank");
       await expect(a).toHaveAttribute("rel", /noopener/);

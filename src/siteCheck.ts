@@ -6,16 +6,17 @@ import { contentFindings, nameKinds, type Finding } from "./precheck.ts";
 
 /** 글자 모양 검사를 하는 텍스트 파일 확장자. 나머지(Pagefind 색인 조각, wasm, 글꼴, 이미지)는 건너뛴다 */
 const TEXT_EXTENSIONS = new Set([".html", ".htm", ".js", ".mjs", ".cjs", ".css", ".json", ".txt", ".xml", ".svg", ".map", ".webmanifest"]);
-/** 백업 파일 이름(backup.ts의 월별 JSON, issues.json, refs.json, schedules.json, meta.json). 사이트 데이터 이름은 이것과 겹치지 않는다 */
-const BACKUP_NAME_RE = /^(?:\d{4}-\d{2}\.json|issues\.json|refs\.json|schedules\.json|meta\.json)$/;
+/** 백업 파일 이름(backup.ts의 월별 JSON, issues.json, refs.json, schedules.json, indicators.json, meta.json). 사이트 데이터 이름은 이것과 겹치지 않는다 */
+const BACKUP_NAME_RE = /^(?:\d{4}-\d{2}\.json|issues\.json|refs\.json|schedules\.json|indicators\.json|meta\.json)$/;
 /**
  * 실행 기록(`runs/<YYYYMMDD-HHMMSS>.json`), 작업 파일·후보 목록(`work/<날짜>.json`, `.candidates.*`, `.issues.md`, `.links.json`,
- * `.refs.md`, `.refs.json`, `.schedules.md`, `.schedules.json`, `merges.*`)
+ * `.refs.md`, `.refs.json`, `.schedules.md`, `.schedules.json`, `merges.*`, 6단계 지표 판단 `indicators.candidates-<번호>.md`, `indicators.judge-<번호>.json`)
  */
 const RUN_FILE_RES = [
   /^\d{8}-\d{6}\.json$/,
   /^\d{4}-\d{2}-\d{2}\.(?:json|candidates\.json|candidates\.md|issues\.md|links\.json|refs\.md|refs\.json|schedules\.md|schedules\.json)$/,
   /^merges\.(?:json|candidates\.md)$/,
+  /^indicators\.(?:candidates-\d+\.md|judge-\d+\.json)$/,
 ];
 /** 데이터 폴더의 작업 폴더 이름. 결과물 안에 이런 폴더가 있으면 데이터 폴더가 섞인 것이다 */
 const DATA_DIRS = new Set(["runs", "work", "snapshots", "backup", "site-input"]);
@@ -35,7 +36,7 @@ function walk(dir: string, rel: string, out: string[]): void {
 }
 
 /** 결과물 폴더를 검사하고 파일 수와 전체 크기를 센다 */
-export function checkOutput(outDir: string, home: string | null): OutputCheck {
+export function checkOutput(outDir: string, home: string | null, secrets: readonly string[] = []): OutputCheck {
   const files: string[] = [];
   walk(outDir, "", files);
   files.sort();
@@ -51,7 +52,7 @@ export function checkOutput(outDir: string, home: string | null): OutputCheck {
     if (RUN_FILE_RES.some((re) => re.test(base)) || rel.split("/").slice(0, -1).some((d) => DATA_DIRS.has(d))) findings.push({ where: rel, kind: "실행 기록·작업 파일" });
     if (!st.isFile()) continue;
     const textScan = TEXT_EXTENSIONS.has(path.posix.extname(base).toLowerCase());
-    findings.push(...contentFindings(rel, rel, fs.readFileSync(abs), home, textScan));
+    findings.push(...contentFindings(rel, rel, fs.readFileSync(abs), home, textScan, secrets));
   }
   return { findings, files: files.length, bytes };
 }

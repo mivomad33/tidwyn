@@ -1,4 +1,4 @@
-// 일정 줄·결과 문구·펼친 카드의 일정 칩·'이번 주 일정' 상자·이슈 페이지의 일정(5단계 4.7, 확정 시안 design/site.html).
+// 일정 줄·결과 문구·펼친 카드의 일정 칩·브리프 위 상자의 일정 목록·이슈 페이지의 일정(5단계 4.7, 확정 시안 design/site.html).
 // 상태는 부르는 쪽이 갖고, 여기는 그리기만 한다. 테스트가 react-dom/server로 그려 보도록 termView.ts처럼
 // JSX와 화면 이동기(router.tsx)를 쓰지 않는다: 링크 컴포넌트는 부르는 쪽이 넘긴다.
 // 일정 줄은 뉴스가 아니라 읽음 표시를 하지 않는다(4.5단계 M3·M4).
@@ -53,39 +53,32 @@ export function ScheduleChips({ schedules, Link }: { schedules: ScheduleChip[] |
 export const WEEK_LIST_ID = "week-list";
 
 /**
- * 브리프 위 '이번 주 일정'(4.7-4, C10). 제목 '이번 주 일정 ▴'가 토글이고, 접으면 배경 없는 한 줄 '이번 주 일정 N ▾'만 남는다.
+ * 브리프 위 상자(6단계 4.7-1, components/briefBox.ts)의 일정 탭 목록: 그 주 일정 최대 5줄(5단계 4.7-4).
  * 줄마다 "MM-DD 요일"과 이름, 작은 결과 문구(링크 아님). 줄 전체가 일정 화면의 그 일정으로 가는 링크다(링크 안에 링크를 두지 않는다).
  */
-export function WeekBox({ week, collapsed, onToggle, today, Link }: { week: WeekSchedules; collapsed: boolean; onToggle: () => void; today: string; Link: LinkLike }) {
-  const toggle = h(
-    "button",
-    { type: "button", className: "week-toggle", "aria-expanded": !collapsed, "aria-controls": collapsed ? undefined : WEEK_LIST_ID, onClick: onToggle },
-    collapsed ? `이번 주 일정 ${week.total}` : "이번 주 일정",
-    h("span", { "aria-hidden": true }, collapsed ? " ▾" : " ▴"),
-  );
-  if (collapsed) return h("section", { className: "week closed", "aria-label": "이번 주 일정" }, h("div", { className: "week-h" }, toggle));
+export function WeekRows({ week, today, Link }: { week: WeekSchedules; today: string; Link: LinkLike }) {
   return h(
-    "section",
-    { className: "week", "aria-label": "이번 주 일정" },
-    h("div", { className: "week-h" }, toggle, h(Link, { to: schedulesPath({ list: true }) }, "일정 전체", arrow())),
-    h(
-      "ul",
-      { id: WEEK_LIST_ID },
-      ...week.items.map((x) => {
-        const parts = outcomeParts(x.outcome, today);
-        return h(
-          "li",
-          { key: x.id },
-          h(
-            Link,
-            { to: schedulePath(x.id), className: "wrow" },
-            h("b", null, weekRowDate(x.due)),
-            h("span", null, x.name, parts.length ? h("small", null, parts.map((p) => p.text).join(" · ")) : null),
-          ),
-        );
-      }),
-    ),
+    "ul",
+    { id: WEEK_LIST_ID },
+    ...week.items.map((x) => {
+      const parts = outcomeParts(x.outcome, today);
+      return h(
+        "li",
+        { key: x.id },
+        h(
+          Link,
+          { to: schedulePath(x.id), className: "wrow" },
+          h("b", null, weekRowDate(x.due)),
+          h("span", null, x.name, parts.length ? h("small", null, parts.map((p) => p.text).join(" · ")) : null),
+        ),
+      );
+    }),
   );
+}
+
+/** 일정 탭 아래 줄의 '일정 전체 ›'(기억한 보기와 관계없이 목록으로) */
+export function WeekAllLink({ Link }: { Link: LinkLike }) {
+  return h(Link, { to: schedulesPath({ list: true }) }, "일정 전체", arrow());
 }
 
 function IssueScheduleRow({ line, today, Link }: { line: ScheduleLine; today: string; Link: LinkLike }) {

@@ -1,5 +1,13 @@
 // 사이트 데이터 형식은 src/siteTypes.ts가 정한다. 화면 코드는 형식만 가져온다(값은 가져오지 않는다).
 export type {
+  IndicatorCard,
+  IndicatorChip,
+  IndicatorList,
+  IndicatorMetaInfo,
+  IndicatorPoint,
+  IndicatorReading,
+  IndicatorSeries,
+  IssueIndicator,
   Continues,
   DayList,
   EntityChunk,

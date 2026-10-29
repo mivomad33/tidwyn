@@ -25,6 +25,9 @@ export const siteFiles = {
   scheduleIndex: "schedule-index.json",
   scheduleMonth: (month: string) => `schedule-month-${month}.json`,
   scheduleRef: (chunk: number) => `schedule-ref-${chunk}.json`,
+  /** 6단계: 지표 목록(카드·관련 이슈), 지표마다의 최근 5년 값 */
+  indicatorList: "indicator-list.json",
+  indicatorSeries: (id: string) => `indicator-${id}.json`,
 } as const;
 
 export function issueChunkOf(id: number): number {
@@ -348,6 +351,8 @@ export interface DayList {
   sections: ListSection[];
   /** 5단계: '이번 주 일정'. 없으면 항목을 뺀다 */
   week?: WeekSchedules;
+  /** 6단계: 브리프 위 상자의 지표 칩(그 브리프 날짜 이하의 가장 최근 값). 없으면 항목을 뺀다 */
+  indicators?: IndicatorChip[];
 }
 
 /** `list-YYYY-MM.json` */
@@ -416,6 +421,8 @@ export interface IssueDetail extends IssueListItem {
   entities?: IssueEntity[];
   /** 5단계: 관련 일정 전체(예정일 순). 다가오는·지난 구분과 개수 제한은 화면이 보는 사람의 오늘로 한다. 없으면 항목을 뺀다 */
   schedules?: ScheduleLine[];
+  /** 6단계: 고른 공개 지표와 그래프 기간(이슈 시작일 30일 전부터 그 지표의 마지막 값 날짜까지). 없으면 항목을 뺀다 */
+  indicators?: IssueIndicator[];
 }
 
 /** `issue-<묶음>.json` */
@@ -484,3 +491,68 @@ export function byCount<T extends { id: number; count: number }>(items: Iterable
 export function issueEntityChips(entities: IssueEntity[] | undefined): IssueEntity[] {
   return byCount(entities ?? []).slice(0, ISSUE_ENTITY_LIMIT);
 }
+
+// ---- 6단계: 지표 ----
+
+export type IndicatorGroupName = "한국" | "미국·국제";
+
+/** 지표의 표시 정보. change는 전날 대비 표시 방식(abs: 단위 그대로의 차이, pct: 퍼센트 변화, pp: 퍼센트포인트) */
+export interface IndicatorMetaInfo {
+  id: string;
+  name: string;
+  group: IndicatorGroupName;
+  unit: string;
+  freq: "day" | "month";
+  decimals: number;
+  change: "abs" | "pct" | "pp";
+  /** 물가: 값이 전년 동월 대비 상승률(%)이다 */
+  yoy: boolean;
+  credit: string;
+}
+
+/** [날짜, 값]. 일별은 `YYYY-MM-DD`, 월별은 `YYYY-MM` */
+export type IndicatorPoint = [string, number];
+
+/** 값 하나와 바로 앞 값 대비 변화(change 방식, 앞 값이 없으면 null) */
+export interface IndicatorReading {
+  date: string;
+  value: number;
+  change: number | null;
+}
+
+export interface IndicatorCard extends IndicatorMetaInfo {
+  /** 마지막 값. 값이 하나도 없으면 null(카드와 상자에서 뺀다) */
+  last: IndicatorReading | null;
+  /** 마지막 값 기준 최근 1년 값(작은 그래프) */
+  spark: IndicatorPoint[];
+  /** 그 지표를 고른 이슈(최근 업데이트 순) */
+  issues: IssueRef[];
+}
+
+/** `indicator-list.json`. asOf는 공개 일별 지표의 마지막 값 날짜 중 가장 늦은 날 */
+export interface IndicatorList {
+  asOf: string | null;
+  indicators: IndicatorCard[];
+}
+
+/** `indicator-<식별자>.json`: 마지막 값 기준 최근 5년 값 */
+export interface IndicatorSeries {
+  id: string;
+  points: IndicatorPoint[];
+}
+
+/** 브리프 위 상자의 칩 하나 */
+export interface IndicatorChip extends IndicatorReading {
+  id: string;
+  name: string;
+  unit: string;
+  decimals: number;
+  kind: "abs" | "pct" | "pp";
+}
+
+export interface IssueIndicator {
+  id: string;
+  from: string;
+  to: string;
+}
+

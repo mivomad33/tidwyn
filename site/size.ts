@@ -5,6 +5,8 @@
 // 대상 목록의 거르기마다 0쪽, 뉴스가 가장 많은 대상의 페이지(그 상세 묶음), 용어 사전 첫 화면(색인과 처음 받는 묶음).
 // 5단계(4.6-2): 일정 화면이 처음 받는 사이트 데이터(색인, 목록의 다가오는 일정 첫 묶음, 달력의 이번 달)도 잰다.
 // 브리프 첫 화면의 '이번 주 일정'은 달 목록 파일(list-*.json)에 들어 있어 첫 화면 크기에 이미 들어간다.
+// 6단계(4.6-2): 지표 페이지(지표 목록)와 지표 하나의 페이지(지표 목록 + 그 지표의 5년 값, 가장 큰 지표로)가 처음 받는 사이트 데이터도 잰다.
+// 브리프 위 상자의 지표 칩도 달 목록 파일에 들어 있어 첫 화면 크기에 들어간다.
 import fs from "node:fs";
 import path from "node:path";
 import { gzipSync } from "node:zlib";
@@ -77,6 +79,21 @@ export function measureScheduleScreen(outDir: string, today: string): ScreenData
   return screen(outDir, `일정 화면(${today})`, [`site-data/${siteFiles.scheduleIndex}`, ...firstLoadMonths(index, today).map((m) => `site-data/${siteFiles.scheduleMonth(m)}`)]);
 }
 
+/** 6단계: 지표 페이지와 지표 하나의 페이지(5년 값 파일이 가장 큰 지표)가 처음 받는 사이트 데이터 */
+export function measureIndicatorScreens(outDir: string): ScreenData[] {
+  const data = path.join(outDir, "site-data");
+  const list = `site-data/${siteFiles.indicatorList}`;
+  const series = fs
+    .readdirSync(data)
+    .filter((n) => /^indicator-[a-z0-9]+\.json$/.test(n) && n !== siteFiles.indicatorList)
+    .map((n) => ({ n, size: fs.statSync(path.join(data, n)).size }))
+    .sort((a, b) => b.size - a.size || a.n.localeCompare(b.n));
+  const out = [screen(outDir, "지표 페이지", [list])];
+  const biggest = series[0];
+  if (biggest) out.push(screen(outDir, `지표 하나의 페이지(${biggest.n.slice("indicator-".length, -".json".length)})`, [list, `site-data/${biggest.n}`]));
+  return out;
+}
+
 if (import.meta.main) {
   const dir = process.argv[2];
   if (!dir) {
@@ -100,5 +117,11 @@ if (import.meta.main) {
     const sc = measureScheduleScreen(dir, today);
     console.log(`${sc.name}: gzip ${(sc.gzip / 1024).toFixed(1)}KB (한도 ${FIRST_SCREEN_BUDGET / 1024}KB)${sc.gzip > FIRST_SCREEN_BUDGET ? " 넘음" : ""}`);
     for (const f of sc.files) console.log(`  ${f.path}: gzip ${(f.gzip / 1024).toFixed(1)}KB`);
+  }
+  if (fs.existsSync(path.join(dir, "site-data", siteFiles.indicatorList))) {
+    for (const sc of measureIndicatorScreens(dir)) {
+      console.log(`${sc.name}: gzip ${(sc.gzip / 1024).toFixed(1)}KB (한도 ${FIRST_SCREEN_BUDGET / 1024}KB)${sc.gzip > FIRST_SCREEN_BUDGET ? " 넘음" : ""}`);
+      for (const f of sc.files) console.log(`  ${f.path}: gzip ${(f.gzip / 1024).toFixed(1)}KB`);
+    }
   }
 }

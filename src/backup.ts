@@ -21,6 +21,7 @@ import type { Major } from "./categories.ts";
 import { listScheduleMerges, type ScheduleMergeRow } from "./scheduleMerge.ts";
 import { allSchedules, hasScheduleData, markScheduled, scheduledDates, storiesOfSchedule, type ScheduleOutcome, type ScheduleRole } from "./schedules.ts";
 import { listMerges, type MergeRecord } from "./merge.ts";
+import { buildIndicatorsBackup, hasIndicatorData, restoreIndicatorsBackup, type IndicatorsBackup } from "./indicatorStore.ts";
 import { listRefMerges, type RefMergeRecord } from "./refMerge.ts";
 import { allEntities, allTerms, extractedDates, hasRefData, markExtracted, storiesOfRef, type EntityKind, type RefItem } from "./refs.ts";
 import { getFirstCollectionDate, loadBrief, recordFirstCollectionDate, saveBrief, storedDates } from "./store.ts";
@@ -31,19 +32,22 @@ import { getFirstCollectionDate, loadBrief, recordFirstCollectionDate, saveBrief
 // 대상·용어 데이터가 없으면 refs.json을 쓰지 않고, 뽑기 완료 날짜가 없는 달은 extracted를 쓰지 않는다.
 // 형식 4(5단계 4.4-1): 일정 데이터를 schedules.json에 따로 두고, 달 파일에 일정 뽑기 완료 날짜(scheduled)를 둔다.
 // 일정 데이터가 없으면 schedules.json을 쓰지 않고, 일정 뽑기 완료 날짜가 없는 달은 scheduled를 쓰지 않는다.
+// 형식 5(6단계 4.4-1): 지표 값(백업하지 않는 코스피·코스닥 빼고, 지표마다 출처 표시와 함께), 이슈-지표 연결과 판단 여부,
+// 합치기마다의 지표 기록을 indicators.json에 둔다. 지표 데이터가 없으면 이 파일을 쓰지 않는다.
 
-export const BACKUP_FORMAT_VERSION = 4;
+export const BACKUP_FORMAT_VERSION = 5;
 /**
  * 복원할 수 있는 형식 버전. 형식 1 백업은 이슈 없이, 형식 1·2 백업은 대상·용어 없이 모든 날짜가 뽑기 안 함으로,
- * 형식 1·2·3 백업은 일정 없이 모든 날짜가 일정 뽑기 안 함으로 복원된다
+ * 형식 1·2·3 백업은 일정 없이 모든 날짜가 일정 뽑기 안 함으로, 형식 1~4 백업은 지표 값 없이 모든 이슈가 지표 판단 안 함으로 복원된다
  */
-const READABLE_VERSIONS = [1, 2, 3, 4];
+const READABLE_VERSIONS = [1, 2, 3, 4, 5];
 export const BACKUP_DIR = "backup";
 export const DATA_REF = "refs/heads/data";
 const META_FILE = "meta.json";
 const ISSUES_FILE = "issues.json";
 const REFS_FILE = "refs.json";
 const SCHEDULES_FILE = "schedules.json";
+const INDICATORS_FILE = "indicators.json";
 const MONTH_RE = /^\d{4}-\d{2}\.json$/;
 
 interface MetaFile {
@@ -82,7 +86,7 @@ interface RefsFile {
 }
 
 function isBackupFile(name: string): boolean {
-  return name === META_FILE || name === ISSUES_FILE || name === REFS_FILE || name === SCHEDULES_FILE || MONTH_RE.test(name);
+  return name === META_FILE || name === ISSUES_FILE || name === REFS_FILE || name === SCHEDULES_FILE || name === INDICATORS_FILE || MONTH_RE.test(name);
 }
 
 function buildRefsFile(db: DatabaseSync): RefsFile {
@@ -240,6 +244,7 @@ export function buildBackup(db: DatabaseSync): Map<string, string> {
   if (hasIssueData(db)) files.set(ISSUES_FILE, toJson(buildIssuesFile(db)));
   if (hasRefData(db)) files.set(REFS_FILE, toJson(buildRefsFile(db)));
   if (hasScheduleData(db)) files.set(SCHEDULES_FILE, toJson(buildSchedulesFile(db)));
+  if (hasIndicatorData(db)) files.set(INDICATORS_FILE, toJson(buildIndicatorsBackup(db, BACKUP_FORMAT_VERSION)));
   const extracted = extractedDates(db);
   const scheduled = scheduledDates(db);
   const byMonth = new Map<string, StoredBrief[]>();
@@ -365,6 +370,9 @@ export function restoreBackup(files: Map<string, string>, outPath: string, force
   const schedulesText = files.get(SCHEDULES_FILE);
   const schedules = schedulesText === undefined ? null : (JSON.parse(schedulesText) as SchedulesFile);
   if (schedules !== null) checkVersion(SCHEDULES_FILE, schedules);
+  const indicatorsText = files.get(INDICATORS_FILE);
+  const indicators = indicatorsText === undefined ? null : (JSON.parse(indicatorsText) as IndicatorsBackup);
+  if (indicators !== null) checkVersion(INDICATORS_FILE, indicators);
   const tmp = `${outPath}.restoring`;
   fs.rmSync(tmp, { force: true });
   const db = openDb(tmp);
@@ -379,12 +387,13 @@ export function restoreBackup(files: Map<string, string>, outPath: string, force
     }
     if (meta.firstLinkedOn !== undefined) setMeta(db, FIRST_LINKED_KEY, meta.firstLinkedOn);
     if (meta.mergeCheckedOn !== undefined) setMeta(db, MERGE_CHECKED_KEY, meta.mergeCheckedOn);
-    if (issues !== null || refs !== null || schedules !== null || months.some((m) => m.extracted !== undefined || m.scheduled !== undefined)) {
+    if (issues !== null || refs !== null || schedules !== null || indicators !== null || months.some((m) => m.extracted !== undefined || m.scheduled !== undefined)) {
       db.exec("BEGIN");
       try {
         if (issues !== null) restoreIssues(db, issues);
         if (refs !== null) restoreRefs(db, refs);
         if (schedules !== null) restoreSchedules(db, schedules);
+        if (indicators !== null) restoreIndicatorsBackup(db, indicators);
         for (const m of months) for (const d of m.extracted ?? []) markExtracted(db, d);
         for (const m of months) for (const d of m.scheduled ?? []) markScheduled(db, d);
         db.exec("COMMIT");

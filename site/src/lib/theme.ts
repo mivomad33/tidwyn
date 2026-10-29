@@ -17,6 +17,11 @@ export interface Palette {
   checkInk: string;
   /** 4.5단계: 안 읽음 동그라미의 연한 테두리(대비 기준보다 연하다, M3에서 감수) */
   ring: string;
+  /** 6단계: 지표가 오르면 빨강, 내리면 파랑(국내 관례, X8) */
+  up: string;
+  down: string;
+  /** 6단계: 그래프 선. 이슈 그래프의 뉴스 점과 고른 값 표시는 강조색(accent)이다 */
+  plot: string;
   categories: Record<Major, string>;
 }
 
@@ -31,6 +36,9 @@ export const LIGHT: Palette = {
   check: "#3b7fd0",
   checkInk: "#ffffff",
   ring: "#d1d1d6",
+  up: "#c62828",
+  down: "#1d4ed8",
+  plot: "#1d1d1f",
   categories: {
     "정치": "#7c3aed",
     "경제": "#c2410c",
@@ -53,6 +61,9 @@ export const DARK: Palette = {
   check: "#6aa5ec",
   checkInk: "#161618",
   ring: "#3a3a3f",
+  up: "#f87171",
+  down: "#7aa7ff",
+  plot: "#ececee",
   categories: {
     "정치": "#a78bfa",
     "경제": "#fb923c",
@@ -69,7 +80,7 @@ export function categoryVar(major: Major): string {
 }
 
 function vars(p: Palette): string {
-  const base = `--bg:${p.bg};--fg:${p.fg};--muted:${p.muted};--line:${p.line};--chip:${p.chip};--accent:${p.accent};--accentbg:${p.accentbg};--check:${p.check};--check-ink:${p.checkInk};--ring:${p.ring};`;
+  const base = `--bg:${p.bg};--fg:${p.fg};--muted:${p.muted};--line:${p.line};--chip:${p.chip};--accent:${p.accent};--accentbg:${p.accentbg};--check:${p.check};--check-ink:${p.checkInk};--ring:${p.ring};--up:${p.up};--down:${p.down};--plot:${p.plot};`;
   return base + MAJORS.map((m, i) => `--cat-${i}:${p.categories[m]};`).join("");
 }
 
@@ -111,6 +122,8 @@ export function textPairs(p: Palette): { name: string; fg: string; bg: string }[
   // 5단계: 일정 주소로 강조된 일정 줄(강조 바탕), 달 단위 "날짜 미정" 상자(상자 바탕), 달력의 고른 날
   pairs.push({ name: "흐린 글자/강조된 일정", fg: p.muted, bg: p.accentbg }, { name: "고른 날짜", fg: p.bg, bg: p.fg });
   for (const m of MAJORS) pairs.push({ name: `분류 ${m}/강조된 일정`, fg: p.categories[m], bg: p.accentbg }, { name: `분류 ${m}/상자`, fg: p.categories[m], bg: p.chip });
+  // 6단계: 지표의 오름·내림 글자(카드·페이지는 바탕, 브리프 위 상자의 칩은 상자 바탕)
+  pairs.push({ name: "오름", fg: p.up, bg: p.bg }, { name: "오름/상자", fg: p.up, bg: p.chip }, { name: "내림", fg: p.down, bg: p.bg }, { name: "내림/상자", fg: p.down, bg: p.chip });
   return pairs;
 }
 
@@ -121,5 +134,8 @@ export function iconPairs(p: Palette): { name: string; fg: string; bg: string }[
     { name: "읽음 체크(상자)", fg: p.check, bg: p.chip },
     { name: "채운 동그라미/바탕", fg: p.check, bg: p.bg },
     { name: "동그라미 안 체크", fg: p.checkInk, bg: p.check },
+    // 6단계: 그래프 선(카드의 작은 그래프 포함)과 이슈 뉴스 점·고른 값 점(강조색)
+    { name: "그래프 선", fg: p.plot, bg: p.bg },
+    { name: "그래프 점", fg: p.accent, bg: p.bg },
   ];
 }

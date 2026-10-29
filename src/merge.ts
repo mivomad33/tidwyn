@@ -1,4 +1,5 @@
 import type { DatabaseSync } from "node:sqlite";
+import { mergeIndicators, unmergeIndicators } from "./indicatorStore.ts";
 import type { Category } from "./brief.ts";
 import { addDays } from "./kst.ts";
 import {
@@ -324,7 +325,9 @@ function mergeOne(db: DatabaseSync, m: MergeEntry, today: string): number {
   const r = db
     .prepare("INSERT INTO merges (merged_on, survivor, absorbed, reason, record) VALUES (?, ?, ?, ?, ?)")
     .run(today, m.survivor, m.absorbed, m.reason, JSON.stringify(record));
-  return Number(r.lastInsertRowid);
+  const id = Number(r.lastInsertRowid);
+  mergeIndicators(db, id, m.survivor, m.absorbed);
+  return id;
 }
 
 /** 검사를 통과한 합치기를 한 트랜잭션으로 적용하고 점검일을 바꾼다. 만든 합치기 기록 번호들. more는 같은 트랜잭션에서 함께 적용할 것(4단계 대상·용어) */
@@ -436,6 +439,7 @@ export function unmerge(db: DatabaseSync, mergeId: number, today: string): Unmer
     const restore = changedAfter ? {} : { summary: before.survivor.summary, status: before.survivor.status };
     updateIssue(db, S, { aliases, ...restore });
     addNoMergePair(db, S, A);
+    unmergeIndicators(db, m.id, S, A, laterIntoS.map((x) => x.id));
     db.prepare("UPDATE merges SET undone_on = ? WHERE id = ?").run(today, m.id);
     return { ok: true as const, merge: { ...m, undoneOn: today } };
   });

@@ -32,6 +32,7 @@ export type FindingKind =
   | "백업 파일 이름"
   | "실행 기록·작업 파일"
   | "지운 이름 키 파일"
+  | "키 값이 들어 있음"
   | "읽지 못한 파일";
 
 export interface Finding {
@@ -73,8 +74,8 @@ function emailAllowed(email: string, domain: string): boolean {
   return FILE_EXTENSIONS.has(d.slice(d.lastIndexOf(".") + 1));
 }
 
-/** 글 속 걸리는 모양(홈 경로, 비밀 값, 허용 목록 밖 메일). 종류마다 걸린 줄 번호(앞 5개) */
-export function scanText(text: string, home: string | null): Map<FindingKind, number[]> {
+/** 글 속 걸리는 모양(홈 경로, 비밀 값, 허용 목록 밖 메일, 출처 API 키 값). 종류마다 걸린 줄 번호(앞 5개) */
+export function scanText(text: string, home: string | null, secrets: readonly string[] = []): Map<FindingKind, number[]> {
   const hits = new Map<FindingKind, number[]>();
   const add = (kind: FindingKind, line: number) => {
     const list = hits.get(kind) ?? [];
@@ -86,6 +87,7 @@ export function scanText(text: string, home: string | null): Map<FindingKind, nu
     const n = i + 1;
     if (home !== null && l.includes(home)) add("홈 폴더 절대 경로", n);
     for (const p of SECRET_PATTERNS) if (p.re.test(l)) add(p.kind, n);
+    if (secrets.some((x) => l.includes(x))) add("키 값이 들어 있음", n);
     if (l.includes("@")) {
       for (const m of l.matchAll(EMAIL_RE)) {
         if (!emailAllowed(m[0], m[1]!)) {
@@ -128,15 +130,20 @@ export function nameKinds(file: string): FindingKind[] {
 }
 
 /** 내용으로 찾는 것: SQLite 머리(이름으로 이미 걸리면 빼고), 텍스트 파일의 글자 모양. textScan이 false면 글자 모양 검사를 하지 않는다 */
-export function contentFindings(where: string, name: string, content: Buffer, home: string | null, textScan = true): Finding[] {
+export function contentFindings(where: string, name: string, content: Buffer, home: string | null, textScan = true, secrets: readonly string[] = []): Finding[] {
   if (isSqlite(content)) return nameKinds(name).some((k) => k === "SQLite 파일" || k === "실행 전 사본") ? [] : [{ where, kind: "SQLite 파일" }];
-  if (!textScan || isBinary(content)) return [];
-  return [...scanText(content.toString("utf8"), home)].map(([kind, lines]) => ({ where, kind, lines }));
+  if (!textScan || isBinary(content)) return secretFindings(where, content, secrets);
+  return [...scanText(content.toString("utf8"), home, secrets)].map(([kind, lines]) => ({ where, kind, lines }));
+}
+
+/** 글자 모양 검사를 하지 않는 파일에도 키 값은 찾는다(6단계 4.8-2) */
+function secretFindings(where: string, content: Buffer, secrets: readonly string[]): Finding[] {
+  return secrets.some((x) => content.includes(x)) ? [{ where, kind: "키 값이 들어 있음" }] : [];
 }
 
 /** 파일 하나(이름과 내용)의 모든 검사 */
-export function fileFindings(where: string, name: string, content: Buffer, home: string | null, textScan = true): Finding[] {
-  return [...nameKinds(name).map((kind): Finding => ({ where, kind })), ...contentFindings(where, name, content, home, textScan)];
+export function fileFindings(where: string, name: string, content: Buffer, home: string | null, textScan = true, secrets: readonly string[] = []): Finding[] {
+  return [...nameKinds(name).map((kind): Finding => ({ where, kind })), ...contentFindings(where, name, content, home, textScan, secrets)];
 }
 
 // ---- git 저장소 검사 ----
@@ -227,6 +234,8 @@ export interface PrecheckInput {
   /** 실행하는 사람의 홈 폴더 값. null이면 홈 경로 검사를 하지 않는다 */
   home: string | null;
   noreply?: string;
+  /** 찾을 출처 API 키 값(6단계 4.8-2). 걸려도 값은 출력하지 않는다 */
+  secrets?: readonly string[];
 }
 
 export interface PrecheckResult {
@@ -239,6 +248,7 @@ export interface PrecheckResult {
 /** 공개 전 점검(4.7-3) */
 export function precheck(input: PrecheckInput): PrecheckResult {
   const { repo, home } = input;
+  const secrets = input.secrets ?? [];
   const noreply = (input.noreply ?? REPO_NOREPLY).toLowerCase();
   const findings: Finding[] = [];
   const seen = new Set<string>();
@@ -254,7 +264,7 @@ export function precheck(input: PrecheckInput): PrecheckResult {
     const short = c.sha.slice(0, 7);
     if (c.authorEmail.toLowerCase() !== noreply) push({ where: `커밋 ${short} 작성자`, kind: "커밋 이메일이 noreply 주소가 아니다" });
     if (c.committerEmail.toLowerCase() !== noreply) push({ where: `커밋 ${short} 커미터`, kind: "커밋 이메일이 noreply 주소가 아니다" });
-    for (const [kind, lines] of scanText(c.message, home)) push({ where: `커밋 ${short} 메시지`, kind, lines });
+    for (const [kind, lines] of scanText(c.message, home, secrets)) push({ where: `커밋 ${short} 메시지`, kind, lines });
   }
 
   // 커밋 트리의 파일: 이름은 경로마다, 내용은 블롭마다 한 번
@@ -288,15 +298,15 @@ export function precheck(input: PrecheckInput): PrecheckResult {
     const content = blobs.get(sha);
     const where = `커밋 ${w.commit} ${w.path}`;
     if (content === undefined) push({ where, kind: "읽지 못한 파일" });
-    else for (const f of contentFindings(where, w.path, content, home)) push(f);
+    else for (const f of contentFindings(where, w.path, content, home, true, secrets)) push(f);
   }
   for (const t of tracked) {
     const where = `지금 파일 ${t.path}`;
     const indexContent = blobs.get(t.sha);
-    if (indexContent !== undefined) for (const f of fileFindings(where, t.path, indexContent, home)) push(f);
+    if (indexContent !== undefined) for (const f of fileFindings(where, t.path, indexContent, home, true, secrets)) push(f);
     const file = path.join(repo, t.path);
     const stat = fs.lstatSync(file, { throwIfNoEntry: false }); // 작업 트리에서 지운 파일이면 없다
-    if (stat?.isFile()) for (const f of fileFindings(where, t.path, fs.readFileSync(file), home)) push(f);
+    if (stat?.isFile()) for (const f of fileFindings(where, t.path, fs.readFileSync(file), home, true, secrets)) push(f);
   }
   return { findings, commits: input.commits.length, blobs: blobWhere.size, files: tracked.length };
 }

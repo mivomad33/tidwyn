@@ -6,6 +6,8 @@ import { DatesPage } from "./pages/DatesPage.tsx";
 import { EntitiesPage } from "./pages/EntitiesPage.tsx";
 import { EntityPage } from "./pages/EntityPage.tsx";
 import { GlossaryPage } from "./pages/GlossaryPage.tsx";
+import { IndicatorPage } from "./pages/IndicatorPage.tsx";
+import { IndicatorsPage } from "./pages/IndicatorsPage.tsx";
 import { IssuePage } from "./pages/IssuePage.tsx";
 import { IssuesPage } from "./pages/IssuesPage.tsx";
 import { NotFoundPage } from "./pages/NotFoundPage.tsx";
@@ -51,6 +53,10 @@ export function App() {
       return <GlossaryPage id={route.id} />;
     case "schedules":
       return <SchedulesPage key={route.id ?? "all"} id={route.id} list={route.list} />;
+    case "indicators":
+      return <IndicatorsPage />;
+    case "indicator":
+      return <IndicatorPage key={route.id} id={route.id} />;
     case "search":
       return <SearchPage q={route.q} />;
     case "about":

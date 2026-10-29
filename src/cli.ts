@@ -30,7 +30,12 @@ import {
 import { getSchedule, isScheduled, schedulableDates } from "./schedules.ts";
 import { deletedNameWarning, ensureNameKey, extractableDates, isExtracted, readNameKey, refState, type RefItem } from "./refs.ts";
 import { priorityRatio } from "./outlets.ts";
-import { requireRepo } from "./paths.ts";
+import { repoInfo, requireRepo } from "./paths.ts";
+import { indicatorDef } from "./indicators.ts";
+import { fetchAllIndicators, fetchHttp, type HttpJson, type IndicatorFetchResult } from "./indicatorFetch.ts";
+import { applyJudgeFile, checkJudgeFile, judgeBatches, judgeWorkFile, readJudgeFile, renderJudgeCandidates } from "./indicatorJudge.ts";
+import { unjudgedIssues } from "./indicatorStore.ts";
+import { readKeys, secretValues } from "./keys.ts";
 import { commitsOfRefs, describeFindings, homeValue, localBranches, precheck } from "./precheck.ts";
 import {
   DEFAULT_CHECK_RETRY,
@@ -66,6 +71,7 @@ import {
   type DeployResult,
   type ExtractResult,
   type ImagesResult,
+  type JudgeResult,
   type LinkResult,
   type MergeStepResult,
   type PushResult,
@@ -110,6 +116,10 @@ export interface Context {
   checkRetry?: CheckRetry;
   /** 원격 저장소 작업(3단계 4.5-1의 push). 없으면 git */
   remote?: RemoteGit;
+  /** 지표 출처 요청(6단계 4.2). 없으면 fetch */
+  indicatorHttp?: HttpJson;
+  /** 지표 출처 요청 사이·다시 시도 간격(밀리초). 없으면 0.3초·2초 */
+  indicatorGapMs?: number;
 }
 
 /** 의존성 잠금 파일대로, 잠금 파일을 바꾸지 않고 대화형 확인 없이 설치한다 */
@@ -166,7 +176,12 @@ const USAGE = `명령:
   schedule-check --run <파일> --date <날짜>   일정 파일(work/<날짜>.schedules.json) 검사
   schedule-apply --run <파일> --date <날짜>   검사 → 적용 → 일정 뽑기 완료(실패하면 실행 기록에 남긴다)
   schedule-unmerge --id <번호>            일정 합치기 하나 되돌리기(사용자가 직접 실행, /brief는 실행하지 않음)
-  schedule-delete --id <번호>             일정 하나 지우기(사용자가 직접 실행, /brief는 실행하지 않음)`;
+  schedule-delete --id <번호>             일정 하나 지우기(사용자가 직접 실행, /brief는 실행하지 않음)
+지표(6단계):
+  indicator-list --run <파일>             지표 판단 안 한 이슈를 파일로 나눠 후보 목록(work/indicators.candidates-<번호>.md)
+  indicator-check --run <파일> --file <번호>   판단 파일(work/indicators.judge-<번호>.json) 검사
+  indicator-apply --run <파일> --file <번호>   검사 → 파일 단위로 적용(실패하면 실행 기록에 남긴다)
+  indicator-fetch --run <파일>            12개 지표를 ECOS·FRED에서 받아 저장(지표 하나가 실패해도 계속한다)`;
 
 function opts(argv: string[], options: Record<string, { type: "string" | "boolean" }>) {
   return parseNodeArgs({ args: argv, options, allowPositionals: false, strict: true }).values as Record<string, string | boolean | undefined>;
@@ -224,6 +239,7 @@ function cmdStart(argv: string[], ctx: Context): number {
   let scheduleDates: string[];
   let warning: string | null;
   let mergeLine: string;
+  let unjudged: number;
   try {
     const plan = planTargets(db, now, s.startDate);
     if (plan.firstDateToRecord !== null) recordFirstCollectionDate(db, plan.firstDateToRecord);
@@ -233,6 +249,7 @@ function cmdStart(argv: string[], ctx: Context): number {
     scheduleDates = schedulableDates(db);
     warning = deletedNameWarning(db, readNameKey(s.dataDir));
     const due = mergeDue(db, kstDate(now));
+    unjudged = unjudgedIssues(db).length;
     mergeLine = due.due ? `이번 실행 끝에 한다(마지막 점검 ${due.checkedOn})` : due.nextOn === null ? "아직 연결한 이슈가 없다" : `다음 점검 ${due.nextOn}`;
   } finally {
     db.close();
@@ -257,6 +274,7 @@ function cmdStart(argv: string[], ctx: Context): number {
     site: null,
     deploy: null,
     push: null,
+    unjudgedAtStart: unjudged,
   };
   writeRun(runFile, state);
   ctx.out(
@@ -270,6 +288,8 @@ function cmdStart(argv: string[], ctx: Context): number {
       `- 일정 뽑기할 저장된 날짜(채우기·재시도): ${scheduleDates.length > 0 ? scheduleDates.join(", ") : "없음"}`,
       ...(warning === null ? [] : [`- 경고: ${warning}`]),
       `- 합치기: ${mergeLine}`,
+      `- 지표 판단 안 한 이슈: ${unjudged}개`,
+      keyLine(ctx),
     ].join("\n"),
   );
   return EXIT.ok;
@@ -487,6 +507,7 @@ function cmdSummary(argv: string[], ctx: Context): number {
   lines.push(...issueSummaryLines(s));
   lines.push(...extractSummaryLines(s));
   lines.push(...scheduleSummaryLines(s));
+  lines.push(...indicatorSummaryLines(s));
   lines.push(...imageSummaryLines(s, saved));
   lines.push(`- 백업: ${describeBackup(s.backup)}`);
   lines.push(...siteSummaryLines(s));
@@ -1418,6 +1439,190 @@ function scheduleSummaryLines(s: RunState): string[] {
 
 // ---- 사이트·배포·push(3단계) ----
 
+// ---- 지표(6단계) ----
+
+/** 실제 데이터 폴더의 실행 기록이면 지금도 실행 조건(S12)을 따르는지 다시 본다(4.2-1). 맞지 않으면 메시지를 출력하고 종료 코드를 돌려준다 */
+function indicatorCondition(state: RunState, ctx: Context): number | null {
+  if (state.mode !== "real") return null;
+  const s = resolveSettings({ cwd: ctx.cwd, env: ctx.env, args: { test: false, startDate: null }, now: ctx.now() });
+  const cond = checkRunCondition(s);
+  if (cond.ok) return null;
+  ctx.out(cond.message);
+  return EXIT.refused;
+}
+
+/** 키 읽는 곳: 메인 작업 폴더(데이터 폴더와 같은 기준, worktree에서도 같다) */
+function keyDirOf(ctx: Context): string {
+  return requireRepo(ctx.cwd).mainRoot;
+}
+
+function secretsOf(ctx: Context): string[] {
+  const repo = repoInfo(ctx.cwd);
+  return secretValues(ctx.env, repo === null ? ctx.cwd : repo.mainRoot);
+}
+
+function keyLine(ctx: Context): string {
+  const k = readKeys(ctx.env, keyDirOf(ctx));
+  return `- 키: ECOS ${k.ECOS_API_KEY === null ? "없음" : "있음"}, FRED ${k.FRED_API_KEY === null ? "없음" : "있음"}`;
+}
+
+/** 판단할 이슈를 파일로 나눠 후보 목록을 쓴다(4.3-2). 나눈 결과를 실행 기록에 남긴다 */
+function cmdIndicatorList(argv: string[], ctx: Context): number {
+  const v = opts(argv, { run: { type: "string" } });
+  const runFile = need(v, "run");
+  const state = readRun(runFile);
+  const refused = indicatorCondition(state, ctx);
+  if (refused !== null) return refused;
+  const db = openExistingDb(state.dbPath);
+  try {
+    const batches = judgeBatches(db);
+    // 앞 목록에서 적용한 파일과 결과만 남기고, 새 파일은 그 뒤 번호로 매긴다(다른 이슈 묶음에 앞 결과가 붙지 않게)
+    const prev = state.indicatorJudge;
+    const kept = (prev?.files ?? []).filter((f) => prev!.results[String(f.n)]?.status === "applied");
+    const start = Math.max(0, ...kept.map((f) => f.n));
+    const files = batches.map((issues, i) => ({ n: start + i + 1, issues }));
+    const results = Object.fromEntries(kept.map((f) => [String(f.n), prev!.results[String(f.n)]!]));
+    updateRun(runFile, (s) => (s.indicatorJudge = { files: [...kept, ...files], results }));
+    if (batches.length === 0) {
+      ctx.out("지표 판단: 판단할 이슈가 없다.");
+      return EXIT.ok;
+    }
+    const lines = [`지표 판단: 이슈 ${batches.flat().length}개, 파일 ${batches.length}개.`];
+    for (const f of files) {
+      const md = judgeWorkFile(state.dataDir, f.n, "candidates.md");
+      const json = judgeWorkFile(state.dataDir, f.n, "judge.json");
+      fs.mkdirSync(path.dirname(md), { recursive: true });
+      fs.rmSync(json, { force: true });
+      fs.writeFileSync(md, renderJudgeCandidates(db, f.n, files.at(-1)!.n, f.issues, json));
+      lines.push(`- 파일 ${f.n}: 이슈 ${f.issues.length}개. 후보 목록: ${md} → 판단 파일: ${json}`);
+    }
+    ctx.out(lines.join("\n"));
+    return EXIT.ok;
+  } finally {
+    db.close();
+  }
+}
+
+function judgeFileArg(state: RunState, v: Record<string, string | boolean | undefined>): { n: number; issues: number[] } {
+  const raw = need(v, "file");
+  const n = Number(raw);
+  const f = state.indicatorJudge?.files.find((x) => x.n === n);
+  if (!f) throw new UsageError(`--file ${raw}은(는) 이번 실행의 지표 판단 파일 번호가 아니다(먼저 indicator-list)`);
+  return f;
+}
+
+function cmdIndicatorCheck(argv: string[], ctx: Context): number {
+  const v = opts(argv, { run: { type: "string" }, file: { type: "string" } });
+  const state = readRun(need(v, "run"));
+  const refused = indicatorCondition(state, ctx);
+  if (refused !== null) return refused;
+  const f = judgeFileArg(state, v);
+  const file = readJudgeFile(judgeWorkFile(state.dataDir, f.n, "judge.json"));
+  if (!file.ok) {
+    ctx.out(`지표 판단 검사 실패(파일 ${f.n}):\n- ${file.reason}`);
+    return EXIT.failed;
+  }
+  const r = checkJudgeFile(file.data, f.issues);
+  if (!r.ok) {
+    ctx.out(`지표 판단 검사 실패(파일 ${f.n}), 위반 ${r.violations.length}개:\n${formatViolations(r.violations)}`);
+    return EXIT.failed;
+  }
+  ctx.out(`지표 판단 검사 통과(파일 ${f.n}): 이슈 ${r.entries.length}개, 지표를 고른 이슈 ${r.entries.filter((e) => e.indicators.length > 0).length}개.`);
+  return EXIT.ok;
+}
+
+/** 검사 → 파일 단위로 적용(4.3-3). 실패하면 아무것도 적용하지 않고 실행 기록에 남긴다(4.3-5) */
+function cmdIndicatorApply(argv: string[], ctx: Context): number {
+  const v = opts(argv, { run: { type: "string" }, file: { type: "string" } });
+  const runFile = need(v, "run");
+  const state = readRun(runFile);
+  const refused = indicatorCondition(state, ctx);
+  if (refused !== null) return refused;
+  const f = judgeFileArg(state, v);
+  const record = (r: JudgeResult) => updateRun(runFile, (s) => (s.indicatorJudge!.results[String(f.n)] = r));
+  const file = readJudgeFile(judgeWorkFile(state.dataDir, f.n, "judge.json"));
+  if (!file.ok) {
+    record({ status: "failed", reason: file.reason });
+    ctx.out(`적용하지 않음(파일 ${f.n}): ${file.reason}`);
+    return EXIT.failed;
+  }
+  const r = checkJudgeFile(file.data, f.issues);
+  if (!r.ok) {
+    record({ status: "failed", reason: "판단 파일이 검사를 통과하지 못했다", violations: r.violations });
+    ctx.out(`적용하지 않음(파일 ${f.n}), 위반 ${r.violations.length}개:\n${formatViolations(r.violations)}`);
+    return EXIT.failed;
+  }
+  const db = openExistingDb(state.dbPath);
+  try {
+    const chosen = applyJudgeFile(db, r.entries);
+    record({ status: "applied", issues: r.entries.length, chosen });
+    ctx.out(`적용함(파일 ${f.n}): 이슈 ${r.entries.length}개를 판단함으로, 지표를 고른 이슈 ${chosen}개.`);
+    return EXIT.ok;
+  } finally {
+    db.close();
+  }
+}
+
+/** 12개 지표를 출처에서 받는다(4.2). 지표 하나가 실패해도 실패로 끝내지 않는다(X9-②) */
+async function cmdIndicatorFetch(argv: string[], ctx: Context): Promise<number> {
+  const v = opts(argv, { run: { type: "string" } });
+  const runFile = need(v, "run");
+  const state = readRun(runFile);
+  const refused = indicatorCondition(state, ctx);
+  if (refused !== null) return refused;
+  const db = openExistingDb(state.dbPath);
+  let result: IndicatorFetchResult;
+  try {
+    const gap = ctx.indicatorGapMs;
+    result = await fetchAllIndicators(db, { http: ctx.indicatorHttp ?? fetchHttp, keys: readKeys(ctx.env, keyDirOf(ctx)), today: kstDate(ctx.now()), retryGapMs: gap ?? 2000 }, gap ?? 300);
+  } finally {
+    db.close();
+  }
+  updateRun(runFile, (s) => (s.indicatorFetch = result));
+  ctx.out(["지표 받기:", ...indicatorFetchLines(result)].join("\n"));
+  return EXIT.ok;
+}
+
+function indicatorFetchLines(r: IndicatorFetchResult): string[] {
+  return Object.entries(r.indicators).map(([id, x]) => {
+    const name = indicatorDef(id)?.name ?? id;
+    if (x.status === "ok") return `  - ${name}: 받은 값 ${x.received}개(새 값 ${x.added}, 바뀐 값 ${x.changed}${x.removed > 0 ? `, 없어진 값 ${x.removed}` : ""}), 저장 ${x.total}개, 마지막 ${x.last ?? "없음"}`;
+    return `  - ${name}: 실패(${x.reason}). 저장 값 ${x.total}개는 그대로, 다음 실행이 다시 받는다`;
+  });
+}
+
+/** 실행 요약의 지표 줄(4.5-2). 앞 단계 실행 기록(지표 항목 없음)에는 붙이지 않는다 */
+function indicatorSummaryLines(s: RunState): string[] {
+  if (s.unjudgedAtStart === undefined && s.indicatorJudge === undefined && s.indicatorFetch === undefined) return [];
+  const lines: string[] = [];
+  const j = s.indicatorJudge;
+  if (j !== undefined) {
+    const applied = Object.values(j.results).filter((r): r is Extract<JudgeResult, { status: "applied" }> => r.status === "applied");
+    lines.push(`- 지표 판단: 이슈 ${applied.reduce((n, r) => n + r.issues, 0)}개 판단, 지표를 고른 이슈 ${applied.reduce((n, r) => n + r.chosen, 0)}개`);
+    for (const f of j.files) {
+      const r = j.results[String(f.n)];
+      if (r === undefined) lines.push(`  - 파일 ${f.n}: 적용하지 않았다(이슈 ${f.issues.length}개는 다음 실행이 다시 판단한다)`);
+      else if (r.status === "failed") {
+        lines.push(`  - 파일 ${f.n} 실패(이슈 ${f.issues.length}개는 다음 실행이 다시 판단한다): ${r.reason}`);
+        for (const vi of r.violations ?? []) lines.push(`    - ${vi.where}: ${vi.why}`);
+      }
+    }
+  }
+  try {
+    const db = openExistingDb(s.dbPath);
+    try {
+      lines.push(`- 아직 지표 판단 안 한 이슈: ${unjudgedIssues(db).length}개`);
+    } finally {
+      db.close();
+    }
+  } catch {
+    // DB를 열 수 없으면 줄을 뺀다
+  }
+  if (s.indicatorFetch !== undefined) lines.push("- 지표 받기:", ...indicatorFetchLines(s.indicatorFetch));
+  else lines.push("- 지표 받기: 하지 않았다");
+  return lines;
+}
+
 function homeOf(ctx: Context): string | null {
   return homeValue(ctx.env.HOME ?? os.homedir());
 }
@@ -1427,7 +1632,8 @@ function describeSite(r: SiteResult | null): string[] {
   if (r.status === "failed") return [`실패(배포하지 않는다, 다음 실행이 다시 빌드한다): ${r.reason}`, ...(r.findings ?? []).map((f) => `  - ${f}`)];
   const refs = r.entities === undefined ? "" : `, 인물·기관·국가 ${r.entities}개, 용어 ${r.terms ?? 0}개`;
   const schedules = r.schedules === undefined ? "" : `, 일정 ${r.schedules}개(다가오는 일정 ${r.upcoming ?? 0}개)`;
-  const lines = [`브리프 날짜 ${r.dates}개, 이슈 ${r.issues}개, 결과물 ${formatMb(r.bytes)}, 파일 ${r.files}개${refs}${schedules}`];
+  const indicators = r.indicators === undefined ? "" : `, 공개 지표 ${r.indicators}개`;
+  const lines = [`브리프 날짜 ${r.dates}개, 이슈 ${r.issues}개, 결과물 ${formatMb(r.bytes)}, 파일 ${r.files}개${refs}${schedules}${indicators}`];
   if (r.bytes > WARN_BYTES || r.files > WARN_FILES) {
     lines.push(`  - 경고: Vercel 무료 한도(100MB, 파일 15,000개)에 가깝다(문턱 ${formatMb(WARN_BYTES)}, ${WARN_FILES.toLocaleString("en-US")}개). docs/operations.md의 한도 대응을 본다`);
   }
@@ -1492,11 +1698,13 @@ function cmdSite(argv: string[], ctx: Context): number {
     dataDir = path.resolve(ctx.cwd, dirArg!);
     dbPath = path.join(dataDir, DB_FILE);
   }
-  const result = buildSite({ repoDir: requireRepo(ctx.cwd).toplevel, dataDir, dbPath, home: homeOf(ctx), builder: ctx.buildSite ?? nodeSiteBuilder, today: kstDate(ctx.now()) });
+  const secrets = secretsOf(ctx);
+  const result = buildSite({ repoDir: requireRepo(ctx.cwd).toplevel, dataDir, dbPath, home: homeOf(ctx), secrets, builder: ctx.buildSite ?? nodeSiteBuilder, today: kstDate(ctx.now()) });
   if (runFile !== undefined) updateRun(runFile, (s) => (s.site = result));
   const lines = describeSite(result);
   lines[0] = `사이트 빌드: ${lines[0]}`;
   lines.push(`- 결과물: ${result.outDir}`);
+  if (secrets.length === 0) lines.push("- 키 값 검사: 출처 API 키가 환경 변수와 .env.local 어디에도 없어 건너뛰었다");
   ctx.out(lines.join("\n"));
   return result.status === "built" ? EXIT.ok : EXIT.failed;
 }
@@ -1506,7 +1714,7 @@ async function cmdDeploy(argv: string[], ctx: Context): Promise<number> {
   const v = opts(argv, { run: { type: "string" }, dir: { type: "string" }, db: { type: "string" }, preview: { type: "boolean" } });
   if (v.preview === true) {
     if (typeof v.run === "string" || typeof v.db === "string") throw new UsageError("--preview는 --dir과만 쓴다");
-    const p = deployPreview({ repoDir: requireRepo(ctx.cwd).toplevel, outDir: path.resolve(ctx.cwd, need(v, "dir")), home: homeOf(ctx), vercel: ctx.runVercel ?? cliVercel });
+    const p = deployPreview({ repoDir: requireRepo(ctx.cwd).toplevel, outDir: path.resolve(ctx.cwd, need(v, "dir")), home: homeOf(ctx), secrets: secretsOf(ctx), vercel: ctx.runVercel ?? cliVercel });
     if (p.status === "failed") {
       ctx.out([`미리보기 배포: 실패: ${p.reason}`, ...(p.findings ?? []).map((f) => `  - ${f}`)].join("\n"));
       return EXIT.failed;
@@ -1514,7 +1722,7 @@ async function cmdDeploy(argv: string[], ctx: Context): Promise<number> {
     ctx.out(`미리보기 배포함: ${p.url}\n- 운영 주소(${"https://tidwyn.vercel.app"})는 바뀌지 않았다.\n- Vercel 배포 보호로 로그인해야 열린다(보호가 꺼져 있으면 누구나 연다. docs/operations.md).`);
     return EXIT.ok;
   }
-  const deps = { repoDir: requireRepo(ctx.cwd).toplevel, home: homeOf(ctx), vercel: ctx.runVercel ?? cliVercel, httpGet: ctx.httpGet ?? fetchGet, retry: ctx.checkRetry ?? DEFAULT_CHECK_RETRY };
+  const deps = { repoDir: requireRepo(ctx.cwd).toplevel, home: homeOf(ctx), secrets: secretsOf(ctx), vercel: ctx.runVercel ?? cliVercel, httpGet: ctx.httpGet ?? fetchGet, retry: ctx.checkRetry ?? DEFAULT_CHECK_RETRY };
   let result: DeployResult;
   if (typeof v.run === "string") {
     if (typeof v.dir === "string" || typeof v.db === "string") throw new UsageError("--run과 --dir/--db는 함께 쓸 수 없다");
@@ -1544,7 +1752,7 @@ function cmdPush(argv: string[], ctx: Context): number {
   let result: PushResult;
   if (s.mode !== "real") result = { status: "skipped", reason: "시험 모드·데이터 폴더 지정 실행은 push하지 않는다" };
   else if (s.backupRepo === null) result = { status: "skipped", reason: s.noCommitReason ?? "백업 저장소가 없다" };
-  else result = pushDataBranch({ repo: s.backupRepo, home: homeOf(ctx), remote: ctx.remote ?? gitRemote });
+  else result = pushDataBranch({ repo: s.backupRepo, home: homeOf(ctx), secrets: secretsOf(ctx), remote: ctx.remote ?? gitRemote });
   updateRun(runFile, (st) => (st.push = result));
   const lines = describePush(result);
   lines[0] = `data 브랜치 push: ${lines[0]}`;
@@ -1568,8 +1776,10 @@ function cmdPrecheck(argv: string[], ctx: Context): number {
       if (gitTry(repo, ["rev-parse", "--verify", "--quiet", `${r}^{commit}`]) === null) throw new UsageError(`없는 참조다: ${r}`);
     }
   } else refs = localBranches(repo);
-  const r = precheck({ repo, commits: commitsOfRefs(repo, refs), trackedFiles: true, home: homeOf(ctx) });
-  const head = `공개 전 점검: 커밋 ${r.commits}개(${refs.map((x) => x.replace(/^refs\/heads\//, "")).join(", ") || "브랜치 없음"}), 커밋 속 파일 ${r.blobs}개, 지금 파일 ${r.files}개를 봤다.`;
+  const secrets = secretsOf(ctx);
+  const r = precheck({ repo, commits: commitsOfRefs(repo, refs), trackedFiles: true, home: homeOf(ctx), secrets });
+  const keyNote = secrets.length > 0 ? "출처 API 키 값도 찾았다." : "출처 API 키가 환경 변수와 .env.local 어디에도 없어 키 값 검사는 건너뛰었다.";
+  const head = `공개 전 점검: 커밋 ${r.commits}개(${refs.map((x) => x.replace(/^refs\/heads\//, "")).join(", ") || "브랜치 없음"}), 커밋 속 파일 ${r.blobs}개, 지금 파일 ${r.files}개를 봤다. ${keyNote}`;
   if (r.findings.length === 0) {
     ctx.out(`${head}\n통과.`);
     return EXIT.ok;
@@ -1609,6 +1819,9 @@ const COMMANDS: Record<string, (argv: string[], ctx: Context) => number> = {
   "schedule-apply": cmdScheduleApply,
   "schedule-unmerge": cmdScheduleUnmerge,
   "schedule-delete": cmdScheduleDelete,
+  "indicator-list": cmdIndicatorList,
+  "indicator-check": cmdIndicatorCheck,
+  "indicator-apply": cmdIndicatorApply,
   site: cmdSite,
   push: cmdPush,
   precheck: cmdPrecheck,
@@ -1655,6 +1868,7 @@ const ASYNC_COMMANDS: Record<string, (argv: string[], ctx: Context) => Promise<n
   feeds: cmdFeeds,
   images: cmdImages,
   deploy: cmdDeploy,
+  "indicator-fetch": cmdIndicatorFetch,
 };
 
 /** 모든 명령 이름(스킬 문서의 명령 이름 검사, 3단계 4.5-1) */

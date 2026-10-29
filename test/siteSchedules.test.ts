@@ -6,7 +6,8 @@ import { SCHEDULE_REF_CHUNK_SIZE, scheduleRefChunkOf, siteFiles } from "../src/s
 import type { ScheduleIndex, ScheduleItem, ScheduleLine, ScheduleMonth, ScheduleOutcomeView, ScheduleRefChunk, WeekSchedules } from "../src/siteTypes.ts";
 import { resolveStatic } from "../site/hosting.ts";
 import { generateFixtures } from "../site/dev/fixtures.ts";
-import { IssueSchedules, OutcomeBadges, ScheduleChips, ScheduleRow, WeekBox } from "../site/src/components/scheduleView.ts";
+import { IssueSchedules, OutcomeBadges, ScheduleChips, ScheduleRow } from "../site/src/components/scheduleView.ts";
+import { BriefBox } from "../site/src/components/briefBox.ts";
 import type { LinkLikeProps } from "../site/src/components/termView.ts";
 import { dataUrl } from "../site/src/lib/paths.ts";
 import { focusTargetId, parseRoute, schedulePath, schedulesPath, selfScrolls } from "../site/src/lib/routes.ts";
@@ -236,9 +237,12 @@ describe("4.7-4 '이번 주 일정' 상자", () => {
   const line = (id: number, due: string, outcome: ScheduleOutcomeView = pending): ScheduleLine => ({ id, name: `가짜 주간 일정 ${id}`, due, outcome });
   const week: WeekSchedules = { total: 7, items: [line(1, "2026-10-28"), line(2, "2026-10-29", { status: "cancelled" }), line(3, "2026-10-30", { status: "result", news: [{ date: "2026-10-30", key: "한국-1", title: "가짜 결과" }] }), line(4, "2026-11-01", { status: "missing" }), line(5, "2026-11-02")] };
 
-  test("펼침: 토글 버튼(aria-expanded), '일정 전체'(목록으로), 줄마다 날짜·이름·작은 결과 문구(링크 아님), 줄 전체가 일정 주소", () => {
-    const html = renderToStaticMarkup(h(WeekBox, { week, collapsed: false, onToggle: () => {}, today: TODAY, Link }));
-    assert.match(html, /<button type="button" class="week-toggle" aria-expanded="true" aria-controls="week-list">이번 주 일정<span aria-hidden="true"> ▴<\/span><\/button>/);
+  // 6단계 4.7-1: '이번 주 일정' 상자가 '이번 주 일정 | 지표' 상자(BriefBox)로 바뀌었다. 지표가 없는 날짜는 일정 탭 하나와 접기 버튼이다
+  const box = (collapsed: boolean) => h(BriefBox, { day: { date: TODAY, week }, tab: null, collapsed, onTab: () => {}, onToggle: () => {}, today: TODAY, Link });
+  test("펼침: 접기 버튼(aria-expanded), '일정 전체'(목록으로), 줄마다 날짜·이름·작은 결과 문구(링크 아님), 줄 전체가 일정 주소", () => {
+    const html = renderToStaticMarkup(box(false));
+    assert.match(html, /<button type="button" class="box-toggle box-fold" aria-expanded="true" aria-controls="brief-box-panel" aria-label="상자 접기"><span aria-hidden="true">▴<\/span><\/button>/);
+    assert.match(html, /role="tab"[^>]*aria-selected="true"[^>]*>이번 주 일정 7<\/button>/);
     assert.match(html, /<a href="\/schedules\?view=list">일정 전체/);
     assert.equal(html.match(/class="wrow"/g)?.length, 5);
     assert.match(html, /<a href="\/schedules\/1" class="wrow"><b>10-28 수<\/b><span>가짜 주간 일정 1<\/span><\/a>/);
@@ -249,8 +253,8 @@ describe("4.7-4 '이번 주 일정' 상자", () => {
   });
 
   test("접음: 배경 없는 한 줄 '이번 주 일정 N ▾'(N은 그 주 전체 수), 목록과 '일정 전체'는 없다", () => {
-    const html = renderToStaticMarkup(h(WeekBox, { week, collapsed: true, onToggle: () => {}, today: TODAY, Link }));
-    assert.equal(html, '<section class="week closed" aria-label="이번 주 일정"><div class="week-h"><button type="button" class="week-toggle" aria-expanded="false">이번 주 일정 7<span aria-hidden="true"> ▾</span></button></div></section>');
+    const html = renderToStaticMarkup(box(true));
+    assert.equal(html, '<section class="week closed" aria-label="이번 주 일정"><div class="week-h"><button type="button" class="box-toggle week-toggle" aria-expanded="false">이번 주 일정 7<span aria-hidden="true"> ▾</span></button></div></section>');
     assert.equal(weekRowDate("2026-11-02"), "11-02 월");
   });
 });

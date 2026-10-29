@@ -1427,3 +1427,286 @@ button.short-text {
   margin: 10px 0 0;
   font-size: 13px;
 }
+
+/* 6단계: 지표(확정 시안 design/site.html). 오르면 빨강, 내리면 파랑(국내 관례, X8) */
+.chg.up {
+  color: var(--up);
+}
+
+.chg.down {
+  color: var(--down);
+}
+
+.chg.flat,
+.chg-p {
+  color: var(--muted);
+}
+
+/* 브리프 위 '이번 주 일정 | 지표' 상자(X7): 위 줄의 탭과 접기 버튼 */
+.box-tabs {
+  display: flex;
+  gap: 14px;
+  min-width: 0;
+}
+
+.box-tabs button {
+  font-weight: 700;
+  color: var(--muted);
+  min-height: 32px;
+  padding: 0;
+  border-bottom: 2px solid transparent;
+}
+
+.box-tabs button.on {
+  color: var(--fg);
+  border-bottom-color: var(--fg);
+}
+
+.box-fold {
+  margin-left: auto;
+  min-width: 32px;
+  min-height: 32px;
+  font-size: 15px;
+  color: var(--muted);
+}
+
+.week.closed .box-toggle {
+  color: var(--fg);
+}
+
+.fold-chip {
+  font-weight: 700;
+}
+
+.box-foot {
+  margin: 2px 0 2px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.box-foot a {
+  color: var(--accent);
+  display: inline-block;
+  padding: 6px 0;
+}
+
+/* 넘기는 칩은 상자 안에서만 가로로 넘긴다(문서에는 가로 스크롤이 없다) */
+/* position: 칩 안 보조 기술용 글자(.sr-only, 절대 위치)가 이 넘김 상자 밖으로 문서를 넓히지 않게 한다 */
+.ichips {
+  position: relative;
+  list-style: none;
+  margin: 2px -12px 0;
+  padding: 0 12px;
+  display: flex;
+  overflow-x: auto;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+}
+
+.ichips::-webkit-scrollbar {
+  display: none;
+}
+
+.ichips li {
+  flex: none;
+  margin-right: 14px;
+}
+
+.ichip {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  white-space: nowrap;
+  font-size: 12.5px;
+  padding: 6px 0;
+  min-height: 32px;
+}
+
+.ichip b {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.ichip .chg {
+  font-size: 11.5px;
+}
+
+.ichip small {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+/* 지표 페이지와 지표 하나의 페이지 */
+.ind {
+  padding: 16px 18px;
+}
+
+.ind-meta {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.6;
+  margin: 0 0 6px;
+}
+
+.ind-meta .ind-v {
+  font-size: 15px;
+  color: var(--fg);
+}
+
+.icards {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+@media (min-width: 600px) {
+  .icards {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+
+.icard {
+  display: block;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px 10px 6px;
+  min-width: 0;
+}
+
+.icard .n {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.icard .v {
+  display: block;
+  font-size: 17px;
+  font-weight: 700;
+  margin-top: 1px;
+  font-variant-numeric: tabular-nums;
+}
+
+.icard .c {
+  display: block;
+  font-size: 11.5px;
+  min-height: 16px;
+}
+
+.spark {
+  display: block;
+  width: 100%;
+  height: 34px;
+  margin-top: 4px;
+}
+
+.ind-seg {
+  margin: 10px 0 6px;
+}
+
+.ind-note {
+  margin: 0;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.ind-foot {
+  margin-top: 18px;
+}
+
+.isrc {
+  font-size: 11.5px;
+  color: var(--muted);
+  line-height: 1.6;
+  margin: 6px 0 0;
+}
+
+ul.isrc {
+  list-style: none;
+  padding: 0;
+}
+
+/* 그래프: 위 줄에 누른 날짜와 값, 끌기는 가로만 그래프가 받고 세로는 화면 스크롤 */
+.chart {
+  margin: 4px 0;
+  min-width: 0;
+}
+
+.chart-read {
+  margin: 0 0 2px;
+  min-height: 18px;
+  font-size: 12px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.chart-read.on {
+  color: var(--fg);
+  font-weight: 600;
+}
+
+.chart-plot {
+  touch-action: pan-y;
+  cursor: crosshair;
+  border-radius: 4px;
+}
+
+.chart-plot svg {
+  display: block;
+}
+
+.chart .ax {
+  font-size: 10px;
+  fill: var(--muted);
+  paint-order: stroke;
+  stroke: var(--bg);
+  stroke-width: 3px;
+  stroke-linejoin: round;
+}
+
+/* 이슈 페이지의 '관련 지표' */
+.igraph {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px 12px 8px;
+  margin-top: 8px;
+}
+
+.igh {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.igh a {
+  padding: 4px 0;
+}
+
+.igh small {
+  font-weight: 400;
+  color: var(--muted);
+  font-size: 12px;
+  text-align: right;
+}
+
+.legend {
+  margin: 2px 0 0;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.legend i {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  margin-right: 4px;
+  vertical-align: 1px;
+}

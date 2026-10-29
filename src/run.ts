@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import type { FeedFailure } from "./feeds.ts";
+import type { IndicatorFetchResult } from "./indicatorFetch.ts";
 import type { Violation } from "./validate.ts";
 
 // 실행 기록 파일. start가 만들고, 날짜마다의 결과와 백업 결과를 모아 summary가 읽는다. 데이터 폴더 안에 둔다.
@@ -75,9 +76,20 @@ export type MergeStepResult =
 /** 지난 날짜 이미지 채우기 결과(3단계 4.4-2) */
 export type ImagesResult = { status: "done"; filled: number; failures: FeedFailure[] } | { status: "failed"; reason: string };
 
+/** 지표 판단 파일 하나의 결과(6단계 4.3) */
+export type JudgeResult =
+  | { status: "applied"; issues: number; chosen: number }
+  | { status: "failed"; reason: string; violations?: Violation[] };
+
+/** 지표 판단 단계(6단계 4.3): 나눈 파일과 파일마다의 결과 */
+export interface IndicatorJudgeState {
+  files: { n: number; issues: number[] }[];
+  results: Record<string, JudgeResult>;
+}
+
 /** 사이트 빌드 결과(3단계 4.1, 4.5) */
 export type SiteResult =
-  | { status: "built"; outDir: string; dates: number; issues: number; entities?: number; terms?: number; schedules?: number; upcoming?: number; files: number; bytes: number }
+  | { status: "built"; outDir: string; dates: number; issues: number; entities?: number; terms?: number; schedules?: number; upcoming?: number; indicators?: number; files: number; bytes: number }
   | { status: "failed"; outDir: string; reason: string; findings?: string[] };
 
 /** 배포 뒤 점검(3단계 4.6-3) */
@@ -118,6 +130,11 @@ export interface RunState {
   /** start 때 일정 뽑기 안 한 저장된 날짜(5단계 4.2-1). 앞 단계 실행 기록에는 없다 */
   scheduleDates?: string[];
   schedules?: Record<string, ScheduleResult>;
+  /** 지표 판단(6단계 4.3)과 지표 받기(4.2). 앞 단계 실행 기록에는 없다 */
+  indicatorJudge?: IndicatorJudgeState;
+  indicatorFetch?: IndicatorFetchResult;
+  /** start 때 지표 판단 안 한 이슈 수(6단계 4.5-1) */
+  unjudgedAtStart?: number;
   /** 지난 날짜 이미지 채우기(3단계). 1·1.5·2단계 실행 기록에는 없다 */
   images?: ImagesResult;
   /** 사이트 빌드·배포·push(3단계). start가 null로 두고 각 명령이 채운다. 앞 단계 실행 기록에는 없다 */

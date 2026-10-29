@@ -6,7 +6,7 @@ import path from "node:path";
 import { buildSite } from "../../site/build.ts";
 import { writeFixtures } from "../../site/dev/fixtures.ts";
 import type { E2eInfo } from "./info.ts";
-import { E2E_DATA_DIR, E2E_INFO_FILE, E2E_OUT_DIR, E2E_ROOT, E2E_SCHEDULE_DATA_DIR, E2E_SCHEDULE_INFO_FILE } from "./paths.ts";
+import { E2E_DATA_DIR, E2E_INDICATOR_DATA_DIR, E2E_INDICATOR_INFO_FILE, E2E_INFO_FILE, E2E_OUT_DIR, E2E_ROOT, E2E_SCHEDULE_DATA_DIR, E2E_SCHEDULE_INFO_FILE } from "./paths.ts";
 import type { DayList, EntityChunk, EntityListPage, EntityNewsChunk, IssueChunk, MonthDetail, MonthList, SiteIssueList, StoryDetail, TermGroupFile, TermIndex } from "../../src/siteTypes.ts";
 
 /** 고정 날짜(같은 데이터로 매번 같은 결과가 나오게) */
@@ -94,6 +94,12 @@ async function main(): Promise<void> {
   const sfx = writeFixtures(E2E_SCHEDULE_DATA_DIR, { end: END, days: 45, entities: 30, terms: 24, schedules: 120 });
   if (!sfx.info.schedules?.merged || sfx.info.schedules.deleted === null) throw new Error("흡수된 일정·지운 일정이 지어낸 데이터에 없다");
   fs.writeFileSync(E2E_SCHEDULE_INFO_FILE, JSON.stringify({ dates: sfx.dates, ...sfx.info.schedules }, null, 2) + "\n");
+
+  // 6단계: 일정과 지표(12개 정의, 5년, 공개 끈 지표, 값 없는 지표)가 있는 데이터. 화면 파일은 같으므로 사이트 데이터만 만든다
+  const ifx = writeFixtures(E2E_INDICATOR_DATA_DIR, { end: END, days: 45, entities: 30, terms: 24, schedules: 120, indicators: 5 });
+  const ii = ifx.info.indicators;
+  if (!ii?.off || !ii.empty || ii.issueOne === null || ii.issueThree === null || ii.noRelated === null || ii.krHoliday === null) throw new Error("지표 상태(공개 끔, 값 없음, 그래프 1·3개 이슈, 관련 이슈 없음, 휴장일)가 지어낸 데이터에 없다");
+  fs.writeFileSync(E2E_INDICATOR_INFO_FILE, JSON.stringify({ dates: ifx.dates, merged: ifx.info.merged, ...ii }, null, 2) + "\n");
   console.log(`E2E 준비 완료: ${E2E_OUT_DIR}`);
 }
 

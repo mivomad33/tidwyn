@@ -3,6 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { openExistingDb } from "./db.ts";
 import { gitTry } from "./git.ts";
+import { publicIndicators } from "./indicatorSite.ts";
 import { allIssues } from "./issues.ts";
 import { allEntities, allTerms, isLive } from "./refs.ts";
 import { allSchedules, dueOnOrAfter, isLiveSchedule } from "./schedules.ts";
@@ -115,6 +116,8 @@ export interface BuildInput {
   dataDir: string;
   dbPath: string;
   home: string | null;
+  /** 결과물·커밋에서 찾을 출처 API 키 값(6단계 4.8-2) */
+  secrets?: readonly string[];
   builder: SiteBuilder;
   /** 실행한 날(KST). 요약의 다가오는 일정 수를 센다(5단계 4.5-2). 사이트 데이터에는 쓰지 않는다 */
   today?: string;
@@ -131,6 +134,7 @@ export function buildSite(input: BuildInput): SiteResult {
   let terms: number;
   let schedules: number;
   let upcoming: number;
+  const indicators = publicIndicators().length;
   try {
     const db = openExistingDb(input.dbPath);
     try {
@@ -164,11 +168,11 @@ export function buildSite(input: BuildInput): SiteResult {
   }
   if (!built.ok) return { status: "failed", outDir, reason: built.message };
   if (!fs.existsSync(outDir)) return { status: "failed", outDir, reason: `빌더가 결과물 폴더를 만들지 않았다: ${outDir}` };
-  const check = checkOutput(outDir, input.home);
+  const check = checkOutput(outDir, input.home, input.secrets);
   if (check.findings.length > 0) {
     return { status: "failed", outDir, reason: `결과물 검사에 걸렸다(${check.findings.length}건)`, findings: describeFindings(check.findings) };
   }
-  return { status: "built", outDir, dates, issues, entities, terms, schedules, upcoming, files: check.files, bytes: check.bytes };
+  return { status: "built", outDir, dates, issues, entities, terms, schedules, upcoming, indicators, files: check.files, bytes: check.bytes };
 }
 
 // ---- 배포 ----
@@ -178,6 +182,8 @@ export interface DeployInput {
   outDir: string;
   dbPath: string;
   home: string | null;
+  /** 결과물·커밋에서 찾을 출처 API 키 값(6단계 4.8-2) */
+  secrets?: readonly string[];
   vercel: VercelRunner;
   httpGet: HttpGet;
   /** 배포 뒤 점검의 재시도(운영 주소가 새 배포로 바뀌는 데 몇 초 걸린다). 없으면 6번, 5초 간격 */
@@ -246,7 +252,7 @@ async function checkOnce(httpGet: HttpGet, expected: string | null): Promise<Pos
 export async function deployOutput(input: DeployInput): Promise<DeployResult> {
   if (!fs.existsSync(input.outDir) || !fs.statSync(input.outDir).isDirectory()) return { status: "failed", reason: `결과물 폴더가 없다: ${input.outDir}` };
   if (!fs.existsSync(input.dbPath)) return { status: "failed", reason: `DB가 없다: ${input.dbPath}` };
-  const check = checkOutput(input.outDir, input.home);
+  const check = checkOutput(input.outDir, input.home, input.secrets);
   if (check.findings.length > 0) {
     return { status: "failed", reason: `결과물 검사에 걸려 올리지 않았다(${check.findings.length}건)`, findings: describeFindings(check.findings) };
   }
@@ -263,6 +269,8 @@ export interface PreviewInput {
   repoDir: string;
   outDir: string;
   home: string | null;
+  /** 결과물·커밋에서 찾을 출처 API 키 값(6단계 4.8-2) */
+  secrets?: readonly string[];
   vercel: VercelRunner;
 }
 
@@ -274,7 +282,7 @@ export type PreviewResult = { status: "deployed"; url: string } | { status: "fai
  */
 export function deployPreview(input: PreviewInput): PreviewResult {
   if (!fs.existsSync(input.outDir) || !fs.statSync(input.outDir).isDirectory()) return { status: "failed", reason: `결과물 폴더가 없다: ${input.outDir}` };
-  const check = checkOutput(input.outDir, input.home);
+  const check = checkOutput(input.outDir, input.home, input.secrets);
   if (check.findings.length > 0) {
     return { status: "failed", reason: `결과물 검사에 걸려 올리지 않았다(${check.findings.length}건)`, findings: describeFindings(check.findings) };
   }
@@ -292,6 +300,8 @@ export function deployPreview(input: PreviewInput): PreviewResult {
 export interface PushInput {
   repo: string;
   home: string | null;
+  /** 결과물·커밋에서 찾을 출처 API 키 값(6단계 4.8-2) */
+  secrets?: readonly string[];
   remote: RemoteGit;
 }
 
@@ -315,7 +325,7 @@ export function pushDataBranch(input: PushInput): PushResult {
     return { status: "failed", reason: `push할 커밋을 계산하지 못했다: ${(e as Error).message}` };
   }
   if (commits.length === 0) return { status: "upToDate" };
-  const pc = precheck({ repo, commits, trackedFiles: false, home: input.home });
+  const pc = precheck({ repo, commits, trackedFiles: false, home: input.home, secrets: input.secrets });
   if (pc.findings.length > 0) {
     return { status: "failed", reason: `공개 전 점검에 걸려 push하지 않았다(커밋 ${commits.length}개, ${pc.findings.length}건)`, findings: describeFindings(pc.findings) };
   }

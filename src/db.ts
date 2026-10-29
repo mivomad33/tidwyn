@@ -240,6 +240,33 @@ export const MIGRATIONS: Migration[] = [
       `);
     },
   },
+  {
+    // 6단계 4.1: 지표 값(지표·날짜마다 하나), 이슈-지표 연결, 이슈별 지표 판단 완료, 합치기마다의 지표 기록(되돌리기용).
+    // 기존 이슈는 모두 지표 판단 안 함이 된다(indicator_judged에 없음). 날짜는 일별 `YYYY-MM-DD`, 월별 `YYYY-MM`.
+    version: 6,
+    up: (db) => {
+      db.exec(`
+        CREATE TABLE indicator_values (
+          indicator TEXT NOT NULL,
+          date TEXT NOT NULL,
+          value REAL NOT NULL,
+          PRIMARY KEY (indicator, date)
+        );
+        CREATE TABLE issue_indicators (
+          issue_id INTEGER NOT NULL REFERENCES issues(id),
+          indicator TEXT NOT NULL,
+          PRIMARY KEY (issue_id, indicator)
+        );
+        CREATE TABLE indicator_judged (
+          issue_id INTEGER PRIMARY KEY REFERENCES issues(id)
+        );
+        CREATE TABLE indicator_merges (
+          merge_id INTEGER PRIMARY KEY REFERENCES merges(id),
+          record TEXT NOT NULL
+        );
+      `);
+    },
+  },
 ];
 
 export function schemaVersion(db: DatabaseSync): number {

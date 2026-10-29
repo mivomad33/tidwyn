@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>6단계 브리프 위 정리 시안</title>
+<style>
+  body { margin: 0; background: #e9e9ec; font-family: Pretendard, -apple-system, system-ui, sans-serif; color: #222; }
+  h1 { font-size: 20px; margin: 24px 24px 4px; }
+  p.note { margin: 0 24px 16px; color: #555; font-size: 14px; max-width: 980px; line-height: 1.5; }
+  .option { margin: 0 24px 48px; }
+  .option h2 { font-size: 17px; margin: 0 0 4px; }
+  .option p { margin: 0 0 12px; font-size: 13px; color: #555; max-width: 980px; line-height: 1.5; }
+  .phones { display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-start; }
+  .phone { width: 375px; height: 560px; border-radius: 28px; overflow: hidden; position: relative; box-shadow: 0 6px 24px rgba(0,0,0,.15); background: var(--bg); color: var(--fg); }
+  .screen { position: absolute; inset: 0; overflow: hidden; display: flex; flex-direction: column; }
+  .caption { text-align: center; font-size: 12px; color: #666; margin-top: 6px; }
+  .L { --bg: #fff; --fg: #1d1d1f; --muted: #6b6b70; --line: #ececee; --chip: #f5f5f7; --accent: #c2410c; --accentbg: #fff1e8; --up: #c62828; --down: #1d4ed8; --econ: #c2410c; --intl: #b91c1c; }
+  .bar { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px 10px; border-bottom: 1px solid var(--line); }
+  .brand { font-weight: 800; font-size: 19px; letter-spacing: -.3px; }
+  .datebtn { font-size: 13px; color: var(--muted); }
+  .icons { display: flex; gap: 14px; color: var(--muted); font-size: 16px; }
+  .pad { padding: 14px 18px; }
+  .headline { font-size: 17px; font-weight: 700; line-height: 1.45; margin: 2px 0 12px; }
+  .tabs { display: flex; gap: 16px; font-size: 14px; color: var(--muted); border-bottom: 1px solid var(--line); margin: 0 -18px; padding: 0 18px; }
+  .tabs span { padding: 8px 0; }
+  .tabs span.on { color: var(--fg); font-weight: 700; border-bottom: 2px solid var(--fg); }
+  .chips { display: flex; gap: 6px; padding: 10px 0; overflow: hidden; }
+  .chips span { font-size: 12px; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); white-space: nowrap; }
+  .chips span.on { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+  .news { padding: 10px 0; border-bottom: 1px solid var(--line); }
+  .news .cat { font-size: 11.5px; font-weight: 600; color: var(--econ); margin-bottom: 2px; }
+  .news .t { font-size: 15.5px; font-weight: 600; line-height: 1.4; }
+  .up { color: var(--up); } .down { color: var(--down); }
+  /* 5단계 '이번 주 일정' 상자(지금 사이트) */
+  .week { background: var(--chip); border-radius: 10px; padding: 10px 12px; margin-bottom: 10px; }
+  .week .h { display: flex; justify-content: space-between; font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+  .week .h small { font-weight: 400; color: var(--muted); }
+  .week .r { font-size: 13px; padding: 3px 0; display: flex; gap: 8px; }
+  .week .r span { color: var(--muted); flex: none; width: 58px; }
+  .folded { font-size: 13px; font-weight: 700; padding: 4px 0 10px; color: var(--fg); }
+  .folded small { color: var(--muted); font-weight: 400; }
+  .ticker { display: flex; gap: 6px; overflow: hidden; margin: 0 -18px 10px; padding: 0 18px; }
+  .ticker a { flex: none; display: flex; gap: 6px; align-items: baseline; font-size: 12.5px; padding: 6px 10px; border-radius: 8px; background: var(--chip); white-space: nowrap; }
+  .ticker a b { font-weight: 700; }
+  .ticker a small { font-size: 11.5px; }
+  .ticker.bare a { background: none; padding: 2px 0; margin-right: 10px; }
+  .seg2 { display: flex; gap: 14px; font-size: 13px; font-weight: 700; color: var(--muted); margin-bottom: 6px; align-items: center; }
+  .seg2 .on { color: var(--fg); }
+  .seg2 .fold { margin-left: auto; font-weight: 400; }
+  .row2 { display: flex; gap: 10px; align-items: baseline; font-size: 13px; padding: 4px 0 10px; font-weight: 700; }
+  .row2 small { color: var(--muted); font-weight: 400; }
+</style>
+</head>
+<body>
+<h1>브리프 위 정리: 이번 주 일정 + 지표 띠</h1>
+<p class="note">지표 띠는 시안 A의 넘기는 칩입니다. 숫자와 일정은 지어낸 것입니다. 지금 사이트에서는 '이번 주 일정' 상자를 제목을 눌러 접습니다(5단계 C10). 접은 상태는 브라우저에 기억됩니다.</p>
+
+<div class="option">
+  <h2>1. 하나로 묶어 함께 접기 (추천)</h2>
+  <p>'이번 주 일정'과 지표를 한 상자에 두고, 상자 위의 '일정 | 지표' 탭으로 바꿉니다. 제목 줄의 ▴를 누르면 상자 전체가 한 줄로 접힙니다. 접힌 줄은 "이번 주 일정 3 · 원/달러 1,392.5 ▲0.2% ▾"입니다. 펼쳐도 상자 하나만큼만 자리를 차지합니다. 마지막으로 고른 탭과 접은 상태는 브라우저에 기억됩니다.</p>
+  <div class="phones">
+    <div><div class="phone L"><div class="screen">
+      <div class="bar"><span class="brand">Tidwyn</span><span class="datebtn">‹ 10월 28일 화 ›</span><span class="icons">⌕ ☰</span></div>
+      <div class="pad">
+        <div class="headline">연준이 금리를 동결하고 국제 유가가 이틀째 올랐다.</div>
+        <div class="week">
+          <div class="seg2"><span class="on">이번 주 일정 3</span><span>지표</span><span class="fold">▴</span></div>
+          <div class="r"><span>10-29 수</span>가짜 중앙은행 기준금리 결정</div>
+          <div class="r"><span>10-30 목</span>가상 전자 3분기 실적 발표</div>
+          <div class="r"><span>11-02 일</span>가상국 대통령 선거</div>
+        </div>
+        <div class="tabs"><span class="on">전체</span><span>한국</span><span>세계</span><span>IT·AI</span></div>
+        <div class="chips"><span class="on">전체</span><span>정치</span><span>경제</span><span>국제</span></div>
+        <div class="news"><div class="cat">경제</div><div class="t">가짜 중앙은행, 기준금리 동결하며 연내 인하 시사</div></div>
+      </div>
+    </div></div><div class="caption">펼침, 일정 탭</div></div>
+    <div><div class="phone L"><div class="screen">
+      <div class="bar"><span class="brand">Tidwyn</span><span class="datebtn">‹ 10월 28일 화 ›</span><span class="icons">⌕ ☰</span></div>
+      <div class="pad">
+        <div class="headline">연준이 금리를 동결하고 국제 유가가 이틀째 올랐다.</div>
+        <div class="week">
+          <div class="seg2"><span>이번 주 일정 3</span><span class="on">지표</span><span class="fold">▴</span></div>
+          <div class="ticker bare" style="flex-wrap:wrap; margin:0; padding:0">
+            <a><span>원/달러</span><b>1,392.5</b><small class="up">▲0.2%</small></a>
+            <a><span>코스피</span><b>2,614.2</b><small class="down">▼0.8%</small></a>
+            <a><span>미국채 10년</span><b>4.21%</b><small class="up">▲0.03</small></a>
+            <a><span>WTI</span><b>73.40</b><small class="up">▲1.9%</small></a>
+          </div>
+          <div style="font-size:12px;color:var(--muted);margin-top:4px">10월 28일 값 · 지표 전체 ›</div>
+        </div>
+        <div class="tabs"><span class="on">전체</span><span>한국</span><span>세계</span><span>IT·AI</span></div>
+        <div class="chips"><span class="on">전체</span><span>정치</span><span>경제</span><span>국제</span></div>
+        <div class="news"><div class="cat">경제</div><div class="t">가짜 중앙은행, 기준금리 동결하며 연내 인하 시사</div></div>
+      </div>
+    </div></div><div class="caption">펼침, 지표 탭</div></div>
+    <div><div class="phone L"><div class="screen">
+      <div class="bar"><span class="brand">Tidwyn</span><span class="datebtn">‹ 10월 28일 화 ›</span><span class="icons">⌕ ☰</span></div>
+      <div class="pad">
+        <div class="headline">연준이 금리를 동결하고 국제 유가가 이틀째 올랐다.</div>
+        <div class="row2">이번 주 일정 3 <small>·</small> 원/달러 1,392.5 <small class="up">▲0.2%</small> <small>▾</small></div>
+        <div class="tabs"><span class="on">전체</span><span>한국</span><span>세계</span><span>IT·AI</span></div>
+        <div class="chips"><span class="on">전체</span><span>정치</span><span>경제</span><span>국제</span></div>
+        <div class="news"><div class="cat">경제</div><div class="t">가짜 중앙은행, 기준금리 동결하며 연내 인하 시사</div></div>
+        <div class="news"><div class="cat" style="color:var(--intl)">국제</div><div class="t">가상의 해협 긴장에 국제 유가 이틀째 상승</div></div>
+      </div>
+    </div></div><div class="caption">접음 (한 줄)</div></div>
+  </div>
+</div>
+
+<div class="option">
+  <h2>2. 따로 두고 각각 접기</h2>
+  <p>지표 띠를 한 문장 바로 아래 한 줄로 두고, 그 아래 '이번 주 일정' 상자를 지금처럼 둡니다. 지표 띠도 맨 끝의 ▴로 접히고, 접으면 "지표 ▾"만 남습니다. 둘 다 펼치면 가장 길고, 둘 다 접으면 두 줄입니다.</p>
+  <div class="phones">
+    <div><div class="phone L"><div class="screen">
+      <div class="bar"><span class="brand">Tidwyn</span><span class="datebtn">‹ 10월 28일 화 ›</span><span class="icons">⌕ ☰</span></div>
+      <div class="pad">
+        <div class="headline">연준이 금리를 동결하고 국제 유가가 이틀째 올랐다.</div>
+        <div class="ticker">
+          <a><span>원/달러</span><b>1,392.5</b><small class="up">▲3.1</small></a>
+          <a><span>코스피</span><b>2,614.2</b><small class="down">▼0.8%</small></a>
+          <a><span>미국채 10년</span><b>4.21%</b><small class="up">▲0.03</small></a>
+        </div>
+        <div class="week">
+          <div class="h">이번 주 일정 ▴<small>일정 전체 ›</small></div>
+          <div class="r"><span>10-29 수</span>가짜 중앙은행 기준금리 결정</div>
+          <div class="r"><span>10-30 목</span>가상 전자 3분기 실적 발표</div>
+          <div class="r"><span>11-02 일</span>가상국 대통령 선거</div>
+        </div>
+        <div class="tabs"><span class="on">전체</span><span>한국</span><span>세계</span><span>IT·AI</span></div>
+        <div class="news"><div class="cat">경제</div><div class="t">가짜 중앙은행, 기준금리 동결하며 연내 인하 시사</div></div>
+      </div>
+    </div></div><div class="caption">둘 다 펼침</div></div>
+    <div><div class="phone L"><div class="screen">
+      <div class="bar"><span class="brand">Tidwyn</span><span class="datebtn">‹ 10월 28일 화 ›</span><span class="icons">⌕ ☰</span></div>
+      <div class="pad">
+        <div class="headline">연준이 금리를 동결하고 국제 유가가 이틀째 올랐다.</div>
+        <div class="folded">지표 <small>▾</small></div>
+        <div class="folded" style="padding-top:0">이번 주 일정 3 <small>▾</small></div>
+        <div class="tabs"><span class="on">전체</span><span>한국</span><span>세계</span><span>IT·AI</span></div>
+        <div class="chips"><span class="on">전체</span><span>정치</span><span>경제</span><span>국제</span></div>
+        <div class="news"><div class="cat">경제</div><div class="t">가짜 중앙은행, 기준금리 동결하며 연내 인하 시사</div></div>
+        <div class="news"><div class="cat" style="color:var(--intl)">국제</div><div class="t">가상의 해협 긴장에 국제 유가 이틀째 상승</div></div>
+      </div>
+    </div></div><div class="caption">둘 다 접음</div></div>
+  </div>
+</div>
+
+<div class="option">
+  <h2>3. 브리프에는 두지 않고 메뉴에서만</h2>
+  <p>브리프 위는 지금 그대로('이번 주 일정' 상자만) 둡니다. 지표는 머리 메뉴의 '지표'와 이슈 페이지에서만 봅니다(계획의 원래 범위). 브리프가 가장 깔끔하지만 매일 숫자를 보려면 따로 들어가야 합니다.</p>
+</div>
+</body>
+</html>

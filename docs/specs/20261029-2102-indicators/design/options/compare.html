@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>6단계 시안 비교</title>
+<style>
+  body { margin: 0; background: #e9e9ec; font-family: Pretendard, -apple-system, system-ui, sans-serif; color: #222; }
+  h1 { font-size: 20px; margin: 24px 24px 4px; }
+  p.note { margin: 0 24px 16px; color: #555; font-size: 14px; max-width: 980px; line-height: 1.5; }
+  .option { margin: 0 24px 56px; }
+  .option h2 { font-size: 17px; margin: 0 0 4px; }
+  .option p { margin: 0 0 12px; font-size: 13px; color: #555; max-width: 980px; line-height: 1.5; }
+  .phones { display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-start; }
+  .phone { width: 375px; height: 760px; border-radius: 28px; overflow: hidden; position: relative; box-shadow: 0 6px 24px rgba(0,0,0,.15); background: var(--bg); color: var(--fg); }
+  .wide { width: 960px; height: 600px; border-radius: 10px; overflow: hidden; position: relative; box-shadow: 0 6px 24px rgba(0,0,0,.15); background: var(--bg); color: var(--fg); }
+  .wide .col { width: 640px; margin: 0 auto; }
+  .screen { position: absolute; inset: 0; overflow: hidden; display: flex; flex-direction: column; }
+  .caption { text-align: center; font-size: 12px; color: #666; margin-top: 6px; }
+  .L { --bg: #fff; --fg: #1d1d1f; --muted: #6b6b70; --line: #ececee; --chip: #f5f5f7; --accent: #c2410c; --accentbg: #fff1e8; --up: #c62828; --down: #1d4ed8; --econ: #c2410c; --intl: #b91c1c; --plot: #1d1d1f; --grid: #ececee; }
+  .D { --bg: #161618; --fg: #ececee; --muted: #9a9aa0; --line: #2a2a2e; --chip: #222226; --accent: #fb923c; --accentbg: #3a2414; --up: #f87171; --down: #7aa7ff; --econ: #fb923c; --intl: #f87171; --plot: #ececee; --grid: #2a2a2e; }
+  .bar { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px 10px; border-bottom: 1px solid var(--line); }
+  .brand { font-weight: 800; font-size: 19px; letter-spacing: -.3px; }
+  .datebtn { font-size: 13px; color: var(--muted); }
+  .icons { display: flex; gap: 14px; color: var(--muted); font-size: 16px; }
+  .body { flex: 1; overflow: hidden; }
+  .pad { padding: 14px 18px; }
+  .ptitle { font-size: 22px; font-weight: 800; letter-spacing: -.3px; margin-bottom: 4px; }
+  .meta { font-size: 12px; color: var(--muted); margin-bottom: 10px; line-height: 1.5; }
+  .headline { font-size: 17px; font-weight: 700; line-height: 1.45; margin: 2px 0 12px; }
+  .tabs { display: flex; gap: 16px; font-size: 14px; color: var(--muted); border-bottom: 1px solid var(--line); margin: 0 -18px; padding: 0 18px; }
+  .tabs span { padding: 8px 0; }
+  .tabs span.on { color: var(--fg); font-weight: 700; border-bottom: 2px solid var(--fg); }
+  .chips { display: flex; gap: 6px; padding: 10px 0; overflow: hidden; }
+  .chips span { font-size: 12px; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); white-space: nowrap; }
+  .chips span.on { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+  .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+  .seg span { text-align: center; font-size: 12.5px; padding: 5px 11px; color: var(--muted); }
+  .seg span.on { background: var(--chip); color: var(--fg); font-weight: 700; }
+  .news { padding: 10px 0; border-bottom: 1px solid var(--line); }
+  .news .cat { font-size: 11.5px; font-weight: 600; color: var(--econ); margin-bottom: 2px; }
+  .news .t { font-size: 15.5px; font-weight: 600; line-height: 1.4; }
+  .up { color: var(--up); }
+  .down { color: var(--down); }
+  .flat { color: var(--muted); }
+  .src { font-size: 11px; color: var(--muted); margin-top: 8px; line-height: 1.5; }
+  .sec { font-size: 13px; font-weight: 700; color: var(--muted); margin: 14px 0 6px; }
+  svg { display: block; }
+
+  /* A: 가로로 넘기는 칩 띠 + 카드 */
+  .ticker { display: flex; gap: 6px; overflow: hidden; margin: 0 -18px 10px; padding: 0 18px; }
+  .ticker a { flex: none; display: flex; gap: 6px; align-items: baseline; font-size: 12.5px; padding: 6px 10px; border-radius: 8px; background: var(--chip); white-space: nowrap; }
+  .ticker a b { font-weight: 700; }
+  .ticker a small { font-size: 11.5px; }
+  .ticker .more { color: var(--muted); }
+  .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .wide .cards { grid-template-columns: 1fr 1fr 1fr; }
+  .card { border: 1px solid var(--line); border-radius: 10px; padding: 10px 10px 6px; }
+  .card .n { font-size: 12px; color: var(--muted); }
+  .card .v { font-size: 17px; font-weight: 700; margin-top: 1px; }
+  .card .c { font-size: 11.5px; }
+
+  /* B: 한 줄 고정 띠 + 큰 그래프 */
+  .line4 { display: flex; justify-content: space-between; padding: 8px 0 10px; margin-bottom: 4px; border-bottom: 1px solid var(--line); font-size: 12px; }
+  .line4 div { text-align: left; }
+  .line4 div span { display: block; color: var(--muted); font-size: 11px; }
+  .line4 div b { font-size: 13.5px; }
+  .line4 div small { font-size: 11px; margin-left: 2px; }
+  .big { margin: 6px 0 4px; }
+  .bigv { font-size: 26px; font-weight: 800; letter-spacing: -.5px; }
+  .tbl { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .tbl td { padding: 8px 0; border-bottom: 1px solid var(--line); }
+  .tbl td.r { text-align: right; }
+  .tbl tr.sel td { font-weight: 700; }
+
+  /* C: 2×2 띠 + 표 */
+  .grid4 { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border: 1px solid var(--line); border-radius: 10px; margin-bottom: 10px; }
+  .grid4 div { padding: 7px 10px; font-size: 12px; display: flex; justify-content: space-between; align-items: baseline; }
+  .grid4 div:nth-child(odd) { border-right: 1px solid var(--line); }
+  .grid4 div:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+  .grid4 span { color: var(--muted); }
+  .grid4 b { font-size: 13px; }
+  .rows .row { display: grid; grid-template-columns: 1fr 70px 78px; align-items: center; gap: 8px; padding: 9px 0; border-bottom: 1px solid var(--line); }
+  .rows .row .n { font-size: 14px; font-weight: 600; }
+  .rows .row .n small { display: block; font-weight: 400; color: var(--muted); font-size: 11px; }
+  .rows .row .v { text-align: right; font-size: 14px; font-weight: 700; }
+  .rows .row .v small { display: block; font-weight: 400; font-size: 11px; }
+  .rows .open { padding: 6px 0 10px; border-bottom: 1px solid var(--line); }
+
+  .issue-graph { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; margin-top: 8px; }
+  .issue-graph .h { display: flex; justify-content: space-between; font-size: 13px; font-weight: 700; }
+  .issue-graph .h small { font-weight: 400; color: var(--muted); }
+  .legend { font-size: 11px; color: var(--muted); display: flex; gap: 10px; margin-top: 4px; }
+  .legend i { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); margin-right: 3px; vertical-align: 1px; }
+</style>
+</head>
+<body>
+<h1>6단계 시안 비교: 지표 띠, 지표 페이지, 이슈 그래프</h1>
+<p class="note">숫자는 모두 지어낸 값입니다. 화면 틀·색·글꼴은 3단계 확정 시안 A를 따릅니다. 오르면 빨강, 내리면 파랑(국내 관례)입니다. 세 시안은 브리프 위 띠, 지표 페이지, 이슈 페이지 그래프의 모양이 다릅니다. 섞어 골라도 됩니다(예: 띠는 A, 지표 페이지는 C).</p>
+
+<div class="option">
+  <h2>A. 넘기는 칩 띠 + 카드 목록</h2>
+  <p>브리프 위 띠는 가로로 넘기는 칩입니다(처음 보이는 것은 환율·코스피·미국채 10년·WTI, 넘기면 나머지). 지표 페이지는 한국 / 미국·국제로 묶은 카드(값, 전날 대비, 1년 작은 그래프)이고, 카드를 누르면 지표 하나의 페이지(큰 그래프, 기간 1개월·1년·5년, 관련 이슈, 출처)로 갑니다.</p>
+  <div class="phones">
+    <div><div class="phone L"><div class="screen">
+      <div class="bar"><span class="brand">Tidwyn</span><span class="datebtn">‹ 10월 28일 화 ›</span><span class="icons">⌕ ☰</span></div>
+      <div class="body pad">
+        <div class="headline">연준이 금리를 동결하고 국제 유가가 이틀째 올랐다.</div>
+        <div class="ticker">
+          <a><span>원/달러</span><b>1,392.5</b><small class="up">▲3.1</small></a>
+          <a><span>코스피</span><b>2,614.2</b><small class="down">▼0.8%</small></a>
+          <a><span>미국채 10년</span><b>4.21%</b><small class="up">▲0.03</small></a>
+          <a><span>WTI</span><b>73.40</b><small class="up">▲1.9%</small></a>
+        </div>
+        <div class="tabs"><span class="on">전체</span><span>한국</span><span>세계</span><span>IT·AI</span></div>
+        <div class="chips"><span class="on">전체</span><span>정치</span><span>경제</span><span>국제</span><span>사회</span></div>
+        <div class="news"><div class="cat">경제</div><div class="t">가짜 중앙은행, 기준금리 동결하며 연내 인하 시사</div></div>
+        <div class="news"><div class="cat" style="color:var(--intl)">국제</div><div class="t">가상의 해협 긴장에 국제 유가 이틀째 상승</div></div>
+      </div>
+    </div></div><div class="caption">브리프 (375px)</div></div>
+
+    <div><div class="phone L"><div class="screen">
+      <div class="bar"><span class="brand">Tidwyn</span><span class="datebtn"></span><span class="icons">⌕ ☰</span></div>
+      <div class="body pad">
+        <div class="ptitle">지표</div>
+        <div class="meta">10월 28일까지의 값 · 공식 출처(한국은행 ECOS, FRED)</div>
+        <div class="sec">한국</div>
+        <div class="cards">
+          <div class="card"><div class="n">원/달러</div><div class="v">1,392.5</div><div class="c up">▲3.1 (0.2%)</div><svg data-spark="1" width="150" height="34"></svg></div>
+          <div class="card"><div class="n">코스피</div><div class="v">2,614.2</div><div class="c down">▼21.0 (0.8%)</div><svg data-spark="2" width="150" height="34"></svg></div>
+          <div class="card"><div class="n">기준금리</div><div class="v">2.50%</div><div class="c flat">변동 없음</div><svg data-spark="step" width="150" height="34"></svg></div>
+          <div class="card"><div class="n">국고채 3년</div><div class="v">2.61%</div><div class="c up">▲0.02</div><svg data-spark="4" width="150" height="34"></svg></div>
+        </div>
+        <div class="sec">미국·국제</div>
+        <div class="cards">
+          <div class="card"><div class="n">미국 기준금리</div><div class="v">4.25%</div><div class="c flat">변동 없음</div><svg data-spark="step2" width="150" height="34"></svg></div>
+          <div class="card"><div class="n">WTI</div><div class="v">$73.40</div><div class="c up">▲1.37 (1.9%)</div><svg data-spark="6" width="150" height="34"></svg></div>
+        </div>
+      </div>
+    </div></div><div class="caption">지표 페이지 (375px)</div></div>
+
+    <div><div class="phone L"><div class="screen">
+      <div class="bar"><span class="datebtn" style="color:var(--fg)">‹ 이슈</span><span class="icons">⌕ ☰</span></div>
+      <div class="body pad">
+        <div class="ptitle" style="font-size:20px">가상 해협 긴장과 유가</div>
+        <div class="meta">국제 · 10월 14일부터 · 뉴스 4건</div>
+        <div class="sec" style="margin-top:6px">관련 지표</div>
+        <div class="issue-graph">
+          <div class="h"><span>WTI</span><small>$73.40 · 9월 14일부터</small></div>
+          <svg data-issue="6" width="315" height="110"></svg>
+          <div class="legend"><span><i></i>이 이슈 뉴스가 있는 날</span></div>
+        </div>
+        <div class="issue-graph">
+          <div class="h"><span>브렌트유</span><small>$77.10 · 9월 14일부터</small></div>
+          <svg data-issue="7" width="315" height="110"></svg>
+        </div>
+        <div class="src">자료: U.S. EIA via FRED</div>
+      </div>
+    </div></div><div class="caption">이슈 페이지의 그래프 (375px)</div></div>
+
+    <div><div class="wide L"><div class="screen">
+      <div class="bar"><span class="brand">Tidwyn</span><span class="datebtn"></span><span class="icons">⌕ ☰</span></div>
+      <div class="body"><div class="col pad">
+        <div class="ptitle">원/달러 환율</div>
+        <div class="meta">1,392.5원 <span class="up">▲3.1 (0.2%)</span> · 10월 28일 · 자료: 한국은행 ECOS</div>
+        <div class="seg"><span>1개월</span><span class="on">1년</span><span>5년</span></div>
+        <svg data-big="1" width="604" height="220" style="margin-top:10px"></svg>
+        <div class="sec">관련 이슈</div>
+        <div class="news"><div class="t" style="font-size:14.5px">원화 약세와 수출 기업</div></div>
+        <div class="news"><div class="t" style="font-size:14.5px">가짜 중앙은행 통화정책</div></div>
+      </div></div>
+    </div></div><div class="caption">지표 하나의 페이지 (1440px 폭을 줄여 보임)</div></div>
+  </div>
+</div>
+
+<div class="option">
+  <h2>B. 고정된 4칸 띠 + 큰 그래프 하나</h2>
+  <p>브리프 위 띠는 넘기지 않는 4칸(환율·코스피·미국채 10년·WTI)이고 누르면 지표 페이지입니다. 지표 페이지는 위에 지표 고르기 칩과 큰 그래프 하나, 아래에 모든 지표의 값 표입니다. 표의 줄을 누르면 위 그래프가 그 지표로 바뀝니다. 지표마다 따로 페이지를 두지 않습니다(주소는 <code>/indicators?i=…</code>처럼 고른 지표를 담습니다).</p>
+  <div class="phones">
+    <div><div class="phone L"><div class="screen">
+      <div class="bar"><span class="brand">Tidwyn</span><span class="datebtn">‹ 10월 28일 화 ›</span><span class="icons">⌕ ☰</span></div>
+      <div class="body pad">
+        <div class="headline">연준이 금리를 동결하고 국제 유가가 이틀째 올랐다.</div>
+        <div class="line4">
+          <div><span>원/달러</span><b>1,392.5</b><small class="up">▲0.2%</small></div>
+          <div><span>코스피</span><b>2,614</b><small class="down">▼0.8%</small></div>
+          <div><span>美 10년</span><b>4.21%</b><small class="up">▲0.03</small></div>
+          <div><span>WTI</span><b>73.40</b><small class="up">▲1.9%</small></div>
+        </div>
+        <div class="tabs"><span class="on">전체</span><span>한국</span><span>세계</span><span>IT·AI</span></div>
+        <div class="chips"><span class="on">전체</span><span>정치</span><span>경제</span><span>국제</span><span>사회</span></div>
+        <div class="news"><div class="cat">경제</div><div class="t">가짜 중앙은행, 기준금리 동결하며 연내 인하 시사</div></div>
+        <div class="news"><div class="cat" style="color:var(--intl)">국제</div><div class="t">가상의 해협 긴장에 국제 유가 이틀째 상승</div></div>
+      </div>
+    </div></div><div class="caption">브리프 (375px)</div></div>
+
+    <div><div class="phone L"><div class="screen">
+      <div class="bar"><span class="brand">Tidwyn</span><span class="datebtn"></span><span class="icons">⌕ ☰</span></div>
+      <div class="body pad">
+        <div class="ptitle">지표</div>
+        <div class="chips"><span class="on">원/달러</span><span>코스피</span><span>기준금리</span><span>국고채 3년</span><span>미국 기준금리</span></div>
+        <div class="big"><span class="bigv">1,392.5</span> <span class="up" style="font-size:13px">▲3.1 (0.2%)</span><div class="meta" style="margin:0">10월 28일 · 자료: 한국은행 ECOS</div></div>
+        <div class="seg"><span>1개월</span><span class="on">1년</span><span>5년</span></div>
+        <svg data-big="1" width="339" height="170" style="margin-top:8px"></svg>
+        <table class="tbl" style="margin-top:8px">
+          <tr class="sel"><td>원/달러</td><td class="r">1,392.5</td><td class="r up">▲0.2%</td></tr>
+          <tr><td>코스피</td><td class="r">2,614.2</td><td class="r down">▼0.8%</td></tr>
+          <tr><td>기준금리</td><td class="r">2.50%</td><td class="r flat">-</td></tr>
+          <tr><td>국고채 3년</td><td class="r">2.61%</td><td class="r up">▲0.02</td></tr>
+          <tr><td>미국 기준금리</td><td class="r">4.25%</td><td class="r flat">-</td></tr>
+        </table>
+      </div>
+    </div></div><div class="caption">지표 페이지 (375px)</div></div>
+
+    <div><div class="phone L"><div class="screen">
+      <div class="bar"><span class="datebtn" style="color:var(--fg)">‹ 이슈</span><span class="icons">⌕ ☰</span></div>
+      <div class="body pad">
+        <div class="ptitle" style="font-size:20px">가상 해협 긴장과 유가</div>
+        <div class="meta">국제 · 10월 14일부터 · 뉴스 4건</div>
+        <div class="sec" style="margin-top:6px">관련 지표</div>
+        <div class="chips" style="padding-top:0"><span class="on">WTI</span><span>브렌트유</span></div>
+        <svg data-issue="6" width="339" height="140"></svg>
+        <div class="legend"><span><i></i>이 이슈 뉴스가 있는 날</span><span>9월 14일 $68.2 → 10월 28일 $73.4 (<span class="up">+7.6%</span>)</span></div>
+        <div class="src">자료: U.S. EIA via FRED · 지표 페이지에서 더 보기 ›</div>
+      </div>
+    </div></div><div class="caption">이슈 페이지의 그래프 (칩으로 바꿈)</div></div>
+  </div>
+</div>
+
+<div class="option">
+  <h2>C. 2×2 띠 + 표(누르면 펼치는 그래프)</h2>
+  <p>브리프 위 띠는 2×2 작은 표입니다. 지표 페이지는 증권 앱처럼 줄마다 이름, 1개월 작은 그래프, 값과 전날 대비이고, 줄을 누르면 그 자리에서 큰 그래프가 펼쳐집니다. 이슈 페이지는 지표마다 작은 그래프 한 줄씩입니다.</p>
+  <div class="phones">
+    <div><div class="phone L"><div class="screen">
+      <div class="bar"><span class="brand">Tidwyn</span><span class="datebtn">‹ 10월 28일 화 ›</span><span class="icons">⌕ ☰</span></div>
+      <div class="body pad">
+        <div class="headline">연준이 금리를 동결하고 국제 유가가 이틀째 올랐다.</div>
+        <div class="grid4">
+          <div><span>원/달러</span><b>1,392.5 <small class="up">▲0.2%</small></b></div>
+          <div><span>코스피</span><b>2,614 <small class="down">▼0.8%</small></b></div>
+          <div><span>美 10년</span><b>4.21% <small class="up">▲0.03</small></b></div>
+          <div><span>WTI</span><b>73.40 <small class="up">▲1.9%</small></b></div>
+        </div>
+        <div class="tabs"><span class="on">전체</span><span>한국</span><span>세계</span><span>IT·AI</span></div>
+        <div class="chips"><span class="on">전체</span><span>정치</span><span>경제</span><span>국제</span><span>사회</span></div>
+        <div class="news"><div class="cat">경제</div><div class="t">가짜 중앙은행, 기준금리 동결하며 연내 인하 시사</div></div>
+      </div>
+    </div></div><div class="caption">브리프 (375px)</div></div>
+
+    <div><div class="phone D"><div class="screen">
+      <div class="bar"><span class="brand">Tidwyn</span><span class="datebtn"></span><span class="icons">⌕ ☰</span></div>
+      <div class="body pad">
+        <div class="ptitle">지표</div>
+        <div class="meta">10월 28일까지 · 공식 출처(한국은행 ECOS, FRED)</div>
+        <div class="rows">
+          <div class="row"><div class="n">원/달러<small>원</small></div><svg data-spark="1" width="70" height="26"></svg><div class="v">1,392.5<small class="up">▲0.2%</small></div></div>
+          <div class="open"><div class="seg"><span>1개월</span><span class="on">1년</span><span>5년</span></div><svg data-big="1" width="339" height="140" style="margin-top:6px"></svg><div class="src">자료: 한국은행 ECOS · 관련 이슈 2개 ›</div></div>
+          <div class="row"><div class="n">코스피</div><svg data-spark="2" width="70" height="26"></svg><div class="v">2,614.2<small class="down">▼0.8%</small></div></div>
+          <div class="row"><div class="n">기준금리</div><svg data-spark="step" width="70" height="26"></svg><div class="v">2.50%<small class="flat">-</small></div></div>
+          <div class="row"><div class="n">국고채 3년</div><svg data-spark="4" width="70" height="26"></svg><div class="v">2.61%<small class="up">▲0.02</small></div></div>
+          <div class="row"><div class="n">WTI<small>달러/배럴</small></div><svg data-spark="6" width="70" height="26"></svg><div class="v">73.40<small class="up">▲1.9%</small></div></div>
+        </div>
+      </div>
+    </div></div><div class="caption">지표 페이지 (375px, 다크)</div></div>
+
+    <div><div class="phone L"><div class="screen">
+      <div class="bar"><span class="datebtn" style="color:var(--fg)">‹ 이슈</span><span class="icons">⌕ ☰</span></div>
+      <div class="body pad">
+        <div class="ptitle" style="font-size:20px">가상 해협 긴장과 유가</div>
+        <div class="meta">국제 · 10월 14일부터 · 뉴스 4건</div>
+        <div class="sec" style="margin-top:6px">관련 지표 <span style="font-weight:400">· 9월 14일부터</span></div>
+        <div class="rows">
+          <div class="row" style="grid-template-columns: 80px 1fr 70px"><div class="n">WTI</div><svg data-issue="6" width="150" height="44"></svg><div class="v">73.40<small class="up">+7.6%</small></div></div>
+          <div class="row" style="grid-template-columns: 80px 1fr 70px"><div class="n">브렌트유</div><svg data-issue="7" width="150" height="44"></svg><div class="v">77.10<small class="up">+6.9%</small></div></div>
+        </div>
+        <div class="legend"><span><i></i>이 이슈 뉴스가 있는 날</span><span>% 는 그래프 시작 대비</span></div>
+      </div>
+    </div></div><div class="caption">이슈 페이지의 그래프 (375px)</div></div>
+  </div>
+</div>
+
+<script>
+  // 지어낸 값으로 선 그래프를 그린다(시안 전용)
+  function series(seed, n) { let v = 100, out = []; let s = seed * 9301; for (let i = 0; i < n; i++) { s = (s * 9301 + 49297) % 233280; v += (s / 233280 - 0.47) * 2.2; out.push(v); } return out; }
+  function stepSeries(n, at) { return Array.from({ length: n }, (_, i) => (i < at ? 3 : 2.75)); }
+  function path(vals, w, h, pad) { const mn = Math.min(...vals), mx = Math.max(...vals) || 1; const r = mx - mn || 1; return vals.map((v, i) => `${i ? "L" : "M"}${(pad + (i * (w - 2 * pad)) / (vals.length - 1)).toFixed(1)},${(pad + (h - 2 * pad) * (1 - (v - mn) / r)).toFixed(1)}`).join(" "); }
+  function draw(svg, vals, opts) {
+    const w = +svg.getAttribute("width"), h = +svg.getAttribute("height"); const pad = opts.pad ?? 3;
+    let out = "";
+    if (opts.grid) for (let k = 0; k < 4; k++) { const y = pad + ((h - 2 * pad) * k) / 3; out += `<line x1="0" x2="${w}" y1="${y}" y2="${y}" stroke="var(--grid)"/>`; }
+    out += `<path d="${path(vals, w, h, pad)}" fill="none" stroke="${opts.color || "var(--plot)"}" stroke-width="${opts.sw || 1.5}" stroke-linejoin="round"/>`;
+    if (opts.dots) { const mn = Math.min(...vals), mx = Math.max(...vals), r = mx - mn || 1; opts.dots.forEach((i) => { const x = pad + (i * (w - 2 * pad)) / (vals.length - 1), y = pad + (h - 2 * pad) * (1 - (vals[i] - mn) / r); out += `<circle cx="${x}" cy="${y}" r="3.5" fill="var(--accent)"/>`; }); }
+    if (opts.axis) out += `<text x="0" y="${h - 1}" font-size="10" fill="var(--muted)">${opts.axis[0]}</text><text x="${w}" y="${h - 1}" font-size="10" fill="var(--muted)" text-anchor="end">${opts.axis[1]}</text>`;
+    svg.innerHTML = out;
+  }
+  document.querySelectorAll("svg[data-spark]").forEach((s) => { const k = s.dataset.spark; const v = k === "step" ? stepSeries(60, 30) : k === "step2" ? stepSeries(60, 45).map((x) => x + 1.5) : series(+k, 60); draw(s, v, { sw: 1.3 }); });
+  document.querySelectorAll("svg[data-big]").forEach((s) => draw(s, series(+s.dataset.big, 250), { grid: true, pad: 12, axis: ["2025-10", "2026-10"] }));
+  document.querySelectorAll("svg[data-issue]").forEach((s) => draw(s, series(+s.dataset.issue, 45).map((x, i) => x + i * 0.15), { grid: +s.getAttribute("height") > 60, pad: 8, dots: [30, 34, 41, 44], axis: +s.getAttribute("height") > 60 ? ["9월 14일", "10월 28일"] : null }));
+</script>
+</body>
+</html>

@@ -325,10 +325,12 @@ test.describe("브리프 위 '이번 주 일정'", () => {
     await expect(viewBtn(page, "목록")).toHaveAttribute("aria-pressed", "true");
   });
 
-  test("제목을 눌러 접고 펴고(Enter·Space 포함), 접은 상태가 새로 고침·다른 날짜·읽은 기록 지우기 뒤에도 이어진다", async ({ page }) => {
+  // 6단계 4.7-1: '이번 주 일정' 상자가 '이번 주 일정 | 지표' 상자로 바뀌어, 제목 대신 오른쪽 접기 버튼(▴)으로 접고 접은 줄을 눌러 편다(지표가 없는 데이터)
+  test("접기 버튼으로 접고 접은 줄로 펴고(Enter·Space 포함), 접은 상태가 새로 고침·다른 날짜·읽은 기록 지우기 뒤에도 이어진다", async ({ page }) => {
     await page.goto(`/${LATEST}`);
-    const toggle = page.getByRole("button", { name: /^이번 주 일정/ });
+    const toggle = page.locator(".week .box-toggle");
     await expect(toggle).toHaveAttribute("aria-expanded", "true");
+    await expect(page.getByRole("tab", { name: `이번 주 일정 ${latestWeek.total}` })).toHaveAttribute("aria-selected", "true");
     await toggle.click();
     await expect(toggle).toHaveAttribute("aria-expanded", "false");
     await expect(toggle).toHaveText(`이번 주 일정 ${latestWeek.total} ▾`);
@@ -347,7 +349,8 @@ test.describe("브리프 위 '이번 주 일정'", () => {
     await toggle.focus();
     await page.keyboard.press("Enter");
     await expect(toggle).toHaveAttribute("aria-expanded", "true");
-    await expect(toggle).toHaveText("이번 주 일정 ▴");
+    await expect(toggle).toHaveAccessibleName("상자 접기");
+    await expect(toggle).toBeFocused();
     await page.keyboard.press("Space");
     await expect(toggle).toHaveAttribute("aria-expanded", "false");
     await page.keyboard.press("Space");
@@ -363,7 +366,7 @@ test.describe("브리프 위 '이번 주 일정'", () => {
       content: `Object.defineProperty(window, "localStorage", { configurable: true, get() { throw new DOMException("막힌 저장소", "SecurityError"); } });`,
     });
     await page.goto(`/${LATEST}`);
-    const toggle = page.getByRole("button", { name: /^이번 주 일정/ });
+    const toggle = page.locator(".week .box-toggle");
     await expect(toggle).toHaveAttribute("aria-expanded", "true");
     await toggle.click();
     await expect(toggle).toHaveAttribute("aria-expanded", "false");

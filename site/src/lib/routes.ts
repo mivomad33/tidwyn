@@ -15,6 +15,9 @@ export type Route =
   | { name: "terms"; id: number | null }
   /** 5단계 일정 화면. id가 있으면 목록 보기의 그 일정으로 가서 강조한다. list면 기억한 보기와 관계없이 목록으로 연다('이번 주 일정'의 '일정 전체') */
   | { name: "schedules"; id: number | null; list: boolean }
+  /** 6단계 지표 페이지와 지표 하나의 페이지. 목록에 없는 식별자는 화면이 없는 페이지로 보인다 */
+  | { name: "indicators" }
+  | { name: "indicator"; id: string }
   | { name: "about" }
   | { name: "notFound" };
 
@@ -48,6 +51,9 @@ export function parseRoute(pathname: string, search = ""): Route {
   if (p === "/search") return { name: "search", q: new URLSearchParams(search).get("q") ?? "" };
   if (p === "/entities") return { name: "entities", filter: parseEntityFilter(new URLSearchParams(search).get("kind")) };
   if (p === "/terms") return { name: "terms", id: null };
+  if (p === "/indicators") return { name: "indicators" };
+  const indicator = /^\/indicators\/([a-z0-9]{1,32})$/.exec(p);
+  if (indicator) return { name: "indicator", id: indicator[1]! };
   if (p === "/schedules") return { name: "schedules", id: null, list: new URLSearchParams(search).get("view") === "list" };
   const issue = /^\/issues\/(0|[1-9]\d{0,15})$/.exec(p);
   if (issue) return { name: "issue", id: Number(issue[1]) };
@@ -144,4 +150,12 @@ export function schedulesPath(opts: { list?: boolean } = {}): string {
 
 export function schedulePath(id: number): string {
   return `/schedules/${id}`;
+}
+
+export function indicatorsPath(): string {
+  return "/indicators";
+}
+
+export function indicatorPath(id: string): string {
+  return `/indicators/${id}`;
 }
