@@ -14,6 +14,9 @@ export const dataUrl = {
   entityNews: (chunk: number) => `${DATA_BASE}entity-news-${chunk}.json`,
   termIndex: () => `${DATA_BASE}term-index.json`,
   termGroup: (group: number) => `${DATA_BASE}term-group-${group}.json`,
+  scheduleIndex: () => `${DATA_BASE}schedule-index.json`,
+  scheduleMonth: (month: string) => `${DATA_BASE}schedule-month-${month}.json`,
+  scheduleRef: (chunk: number) => `${DATA_BASE}schedule-ref-${chunk}.json`,
 };
 
 /** 이슈 식별자 묶음 크기(siteTypes의 ISSUE_CHUNK_SIZE와 같다) */

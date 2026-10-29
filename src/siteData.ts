@@ -51,6 +51,7 @@ import {
   type SiteIssueList,
   type StoryDetail,
 } from "./siteTypes.ts";
+import { buildScheduleData, type ScheduleSiteData } from "./scheduleSite.ts";
 import { loadBrief, storedDates } from "./store.ts";
 
 // 사이트 데이터(3단계 4.1-1)와 검색 레코드(4.1-3)를 DB에서 만든다. 같은 DB면 같은 결과다(시각 같은 값을 넣지 않는다, 4.1-2).
@@ -122,7 +123,7 @@ function storyRefs(db: DatabaseSync, entities: Entity[], terms: Term[]): StoryRe
   return out;
 }
 
-function buildDay(db: DatabaseSync, day: DayData, prev: DayData | null, details: Record<string, StoryDetail>, refs: StoryRefs): DayList {
+function buildDay(db: DatabaseSync, day: DayData, prev: DayData | null, details: Record<string, StoryDetail>, refs: StoryRefs, schedules: ScheduleSiteData): DayList {
   const prevIssues = prev === null ? new Set<number>() : primaryIssuesOf(db, prev);
   const listStory = (key: string, base: Omit<ListStory, "issue" | "newIssue" | "continues">): ListStory => {
     const info = day.issues.get(key);
@@ -153,6 +154,8 @@ function buildDay(db: DatabaseSync, day: DayData, prev: DayData | null, details:
       if (ents) detail.entities = ents;
       const terms = refs.terms.get(`${day.date}/${key}`);
       if (terms) detail.terms = terms;
+      const chips = schedules.chips.get(`${day.date}/${key}`);
+      if (chips) detail.schedules = chips;
       details[key] = detail;
     }
     sec.shortNews.forEach((n, i) => {
@@ -163,7 +166,10 @@ function buildDay(db: DatabaseSync, day: DayData, prev: DayData | null, details:
     if (sec.unverified !== undefined) out.unverified = sec.unverified;
     return out;
   });
-  return { date: day.date, headline: day.stored.brief.headline, keywords: day.stored.brief.keywords, sections };
+  const out: DayList = { date: day.date, headline: day.stored.brief.headline, keywords: day.stored.brief.keywords, sections };
+  const week = schedules.weeks.get(day.date);
+  if (week) out.week = week;
+  return out;
 }
 
 function listItem(i: Issue): IssueListItem {
@@ -201,7 +207,7 @@ function issueEntities(devs: { date: string; key: string }[], refs: StoryRefs): 
   return issueEntityChips([...counts.values()]);
 }
 
-function buildIssueDetail(db: DatabaseSync, i: Issue, names: Map<number, string>, refs: StoryRefs): IssueDetail {
+function buildIssueDetail(db: DatabaseSync, i: Issue, names: Map<number, string>, refs: StoryRefs, schedules: ScheduleSiteData): IssueDetail {
   const devs = developments(db, i.id);
   const timeline = devs
     .slice()
@@ -212,6 +218,8 @@ function buildIssueDetail(db: DatabaseSync, i: Issue, names: Map<number, string>
   const detail: IssueDetail = { ...listItem(i), aliases: i.aliases, summary: i.summary, timeline, related };
   const ents = issueEntities(devs, refs);
   if (ents.length > 0) detail.entities = ents;
+  const sched = schedules.byIssue.get(i.id);
+  if (sched) detail.schedules = sched;
   return detail;
 }
 
@@ -238,6 +246,7 @@ export function buildSiteData(db: DatabaseSync): Map<string, string> {
   const entities = allEntities(db);
   const terms = allTerms(db);
   const refs = storyRefs(db, entities, terms);
+  const schedules = buildScheduleData(db, days.map((d) => d.date));
   const lists = new Map<string, MonthList>();
   const details = new Map<string, MonthDetail>();
   days.forEach((day, idx) => {
@@ -247,7 +256,7 @@ export function buildSiteData(db: DatabaseSync): Map<string, string> {
     let detail = details.get(month);
     if (!detail) details.set(month, (detail = { month, days: {} }));
     const dayDetails: Record<string, StoryDetail> = {};
-    list.days.push(buildDay(db, day, idx > 0 ? days[idx - 1]! : null, dayDetails, refs));
+    list.days.push(buildDay(db, day, idx > 0 ? days[idx - 1]! : null, dayDetails, refs, schedules));
     detail.days[day.date] = dayDetails;
   });
   const counts = new Map<string, number>();
@@ -269,11 +278,12 @@ export function buildSiteData(db: DatabaseSync): Map<string, string> {
   const names = new Map(allIssues(db).map((i) => [i.id, i.name]));
   for (const [chunk, issues] of issueChunks(live)) {
     const data: IssueChunk = { issues: {} };
-    for (const i of issues) data.issues[String(i.id)] = buildIssueDetail(db, i, names, refs);
+    for (const i of issues) data.issues[String(i.id)] = buildIssueDetail(db, i, names, refs, schedules);
     out.set(file(siteFiles.issueChunk(chunk)), JSON.stringify(data));
   }
   for (const [name, content] of buildEntityFiles(db, entities)) out.set(file(name), content);
   for (const [name, content] of termSiteFiles(db, terms)) out.set(file(name), content);
+  for (const [name, content] of schedules.files) out.set(file(name), content);
   return out;
 }
 

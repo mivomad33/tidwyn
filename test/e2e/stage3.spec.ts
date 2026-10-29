@@ -173,7 +173,7 @@ test.describe("검색·메뉴·사이트 소개", () => {
     await btn.click();
     await expect(btn).toHaveAttribute("aria-expanded", "true");
     const menu = page.getByRole("navigation", { name: "사이트 메뉴" });
-    await expect(menu.getByRole("link")).toHaveText(["최근 브리프", "날짜 목록", "이슈 목록", "인물·기관·국가", "용어 사전", "검색", "사이트 소개"]);
+    await expect(menu.getByRole("link")).toHaveText(["최근 브리프", "날짜 목록", "이슈 목록", "일정", "인물·기관·국가", "용어 사전", "검색", "사이트 소개"]);
     // Esc로 닫으면 메뉴 단추로 초점이 돌아온다
     await page.keyboard.press("Escape");
     await expect(menu).toHaveCount(0);

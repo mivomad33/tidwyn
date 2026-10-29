@@ -32,6 +32,22 @@ export type ExtractResult =
   | { status: "nothing" }
   | { status: "failed"; reason: string; violations?: Violation[] };
 
+/** 날짜별 일정 뽑기 결과(5단계 4.2) */
+export type ScheduleResult =
+  | { status: "applied"; newSchedules: number; attached: number; results: number; postponed: number; cancelled: number; confirmed: number }
+  | { status: "nothing" }
+  | { status: "failed"; reason: string; violations?: Violation[] };
+
+/** 합친 일정 하나(5단계 4.3) */
+export interface ScheduleMergeDone {
+  id: number;
+  survivor: number;
+  survivorName: string;
+  absorbed: number;
+  absorbedName: string;
+  reason: string;
+}
+
 /** 합친 대상·용어 하나(4단계 4.3) */
 export interface RefMergeDone {
   id: number;
@@ -43,12 +59,17 @@ export interface RefMergeDone {
   reason: string;
 }
 
-/** 합치기 단계 결과(2단계 4.3). 후보 수에는 4단계 대상·용어 쌍도 든다. refs는 4단계 대상·용어 합치기 */
+/** 합치기 단계 결과(2단계 4.3). 후보 수에는 4단계 대상·용어 쌍과 5단계 일정 쌍도 든다. refs는 4단계 대상·용어, schedules는 5단계 일정 합치기 */
 export type MergeStepResult =
   | { status: "notDue"; nextOn: string | null }
   | { status: "pending"; candidates: number }
   | { status: "none"; candidates: number }
-  | { status: "merged"; merges: { id: number; survivor: number; survivorName: string; absorbed: number; absorbedName: string; reason: string }[]; refs?: RefMergeDone[] }
+  | {
+      status: "merged";
+      merges: { id: number; survivor: number; survivorName: string; absorbed: number; absorbedName: string; reason: string }[];
+      refs?: RefMergeDone[];
+      schedules?: ScheduleMergeDone[];
+    }
   | { status: "failed"; reason: string; violations?: Violation[] };
 
 /** 지난 날짜 이미지 채우기 결과(3단계 4.4-2) */
@@ -56,7 +77,7 @@ export type ImagesResult = { status: "done"; filled: number; failures: FeedFailu
 
 /** 사이트 빌드 결과(3단계 4.1, 4.5) */
 export type SiteResult =
-  | { status: "built"; outDir: string; dates: number; issues: number; entities?: number; terms?: number; files: number; bytes: number }
+  | { status: "built"; outDir: string; dates: number; issues: number; entities?: number; terms?: number; schedules?: number; upcoming?: number; files: number; bytes: number }
   | { status: "failed"; outDir: string; reason: string; findings?: string[] };
 
 /** 배포 뒤 점검(3단계 4.6-3) */
@@ -94,6 +115,9 @@ export interface RunState {
   /** start 때 뽑기 안 한 저장된 날짜(4단계 4.2-1). 앞 단계 실행 기록에는 없다 */
   extractDates?: string[];
   extracts?: Record<string, ExtractResult>;
+  /** start 때 일정 뽑기 안 한 저장된 날짜(5단계 4.2-1). 앞 단계 실행 기록에는 없다 */
+  scheduleDates?: string[];
+  schedules?: Record<string, ScheduleResult>;
   /** 지난 날짜 이미지 채우기(3단계). 1·1.5·2단계 실행 기록에는 없다 */
   images?: ImagesResult;
   /** 사이트 빌드·배포·push(3단계). start가 null로 두고 각 명령이 채운다. 앞 단계 실행 기록에는 없다 */
@@ -113,6 +137,11 @@ export function linkWorkFile(dataDir: string, date: string, kind: "issues.md" | 
 
 /** 날짜의 뽑기 작업 파일: 그날 뉴스와 후보 대상·용어(md), Claude가 쓰는 뽑기 파일(json). 4단계 4.2 */
 export function refWorkFile(dataDir: string, date: string, kind: "refs.md" | "refs.json"): string {
+  return path.join(dataDir, WORK_DIR, `${date}.${kind}`);
+}
+
+/** 날짜의 일정 뽑기 작업 파일: 그날 뉴스와 기존 일정·결과 후보(md), Claude가 쓰는 일정 파일(json). 5단계 4.2 */
+export function scheduleWorkFile(dataDir: string, date: string, kind: "schedules.md" | "schedules.json"): string {
   return path.join(dataDir, WORK_DIR, `${date}.${kind}`);
 }
 

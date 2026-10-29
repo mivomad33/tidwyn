@@ -69,7 +69,7 @@ describe("4.1-5 날짜 단위 저장", () => {
 
 describe("4.3-3 마이그레이션", () => {
   const v2: Migration = {
-    version: 5,
+    version: 1000,
     up: (db) => db.exec("ALTER TABLE briefs ADD COLUMN note TEXT NOT NULL DEFAULT ''"),
   };
   test("이전 버전 DB에 테스트용 마이그레이션을 적용하면 데이터가 남고 버전이 오른다", () => {
@@ -77,11 +77,11 @@ describe("4.3-3 마이그레이션", () => {
     const db1 = openDb(file);
     const brief = canonical(sampleBrief());
     saveBrief(db1, { brief, collectedAt: "2026-10-28T09:00:00+09:00", late: false });
-    assert.equal(schemaVersion(db1), 4);
+    assert.equal(schemaVersion(db1), 5);
     db1.close();
 
     const db2 = openDb(file, [...MIGRATIONS, v2]);
-    assert.equal(schemaVersion(db2), 5);
+    assert.equal(schemaVersion(db2), 1000);
     assert.deepEqual(loadBrief(db2, "2026-10-27")?.brief, brief);
     assert.equal((db2.prepare("SELECT note FROM briefs").get() as { note: string }).note, "");
     assert.deepEqual(migrate(db2, [...MIGRATIONS, v2]), [], "이미 최신이면 아무것도 바꾸지 않는다");
@@ -91,9 +91,9 @@ describe("4.3-3 마이그레이션", () => {
     const file = path.join(tempDir(), "t.db");
     const db = openDb(file);
     assert.equal(schemaVersion(db), Math.max(...MIGRATIONS.map((m) => m.version)));
-    const bad: Migration = { version: 5, up: (d) => d.exec("ALTER TABLE briefs ADD COLUMN x TEXT; SELECT * FROM no_such_table;") };
+    const bad: Migration = { version: 1000, up: (d) => d.exec("ALTER TABLE briefs ADD COLUMN x TEXT; SELECT * FROM no_such_table;") };
     assert.throws(() => migrate(db, [...MIGRATIONS, bad]));
-    assert.equal(schemaVersion(db), 4);
+    assert.equal(schemaVersion(db), 5);
     assert.throws(() => db.prepare("SELECT x FROM briefs").get());
     db.close();
     assert.ok(fs.existsSync(file));
@@ -138,7 +138,7 @@ describe("1.5단계 4.3-1 발행일 추정 표시 저장", () => {
     old.close();
 
     const db = openDb(file);
-    assert.equal(schemaVersion(db), 4);
+    assert.equal(schemaVersion(db), 5);
     assert.deepEqual(loadBrief(db, "2026-10-27")?.brief, brief);
     assert.equal((db.prepare("SELECT count(*) AS n FROM sources WHERE published_at_estimated <> 0").get() as { n: number }).n, 0);
     db.close();

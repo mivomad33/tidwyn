@@ -1,5 +1,5 @@
 import type { Category, Source } from "./brief.ts";
-import type { Confidence, SectionName } from "./categories.ts";
+import type { Confidence, Major, SectionName } from "./categories.ts";
 
 // 사이트 데이터 형식(3단계 4.1). DB에서 만들고(siteData.ts) 사이트 화면(site/)이 읽는다.
 // 파일은 결과물의 `site-data/` 아래에 둔다. 이름은 백업 파일 이름(`YYYY-MM.json`, `issues.json`, `meta.json`)과 겹치지 않는다.
@@ -21,6 +21,10 @@ export const siteFiles = {
   entityNews: (chunk: number) => `entity-news-${chunk}.json`,
   termIndex: "term-index.json",
   termGroup: (group: number) => `term-group-${group}.json`,
+  /** 5단계: 일정 색인(달 목록), 달별 일정, 식별자 묶음(식별자 → 달, 흡수된 것 → 남는 것) */
+  scheduleIndex: "schedule-index.json",
+  scheduleMonth: (month: string) => `schedule-month-${month}.json`,
+  scheduleRef: (chunk: number) => `schedule-ref-${chunk}.json`,
 } as const;
 
 export function issueChunkOf(id: number): number {
@@ -195,6 +199,101 @@ export interface IssueRef {
   name: string;
 }
 
+// ---- 5단계: 일정 ----
+
+/** 일정 식별자 묶음 크기(식별자 → 달을 찾는 파일, 파일 수 한도 4.6-2) */
+export const SCHEDULE_REF_CHUNK_SIZE = 1000;
+/** 브리프 위 '이번 주 일정'에 보이는 최대 수(4.7-4) */
+export const WEEK_SCHEDULE_LIMIT = 5;
+/** '이번 주 일정'의 범위: 브리프 날짜 다음 날부터 이 날수 안(C8) */
+export const WEEK_DAYS = 7;
+/** 이슈 페이지에 보이는 다가오는·지난 일정 최대 수(4.7-5) */
+export const ISSUE_SCHEDULE_LIMIT = 5;
+
+export function scheduleRefChunkOf(id: number): number {
+  return Math.floor(id / SCHEDULE_REF_CHUNK_SIZE);
+}
+
+/** 결과 뉴스 한 건 */
+export interface ScheduleNews {
+  date: string;
+  key: string;
+  title: string;
+}
+
+/**
+ * 결과 상태(4.1, 4.6-1): 결과 연결(결과 뉴스들), 연기(새 일정, 가리키던 일정을 지웠으면 to가 null = 연기(새 날짜 모름)),
+ * 취소, 결과 기다림(표시 없음), 결과 못 찾음. 결과 기다림·결과 못 찾음은 빌드할 때의 기준일(DB의 가장 최근 저장 날짜)로 계산한다.
+ */
+export type ScheduleOutcomeView =
+  | { status: "result"; news: ScheduleNews[] }
+  | { status: "postponed"; to: { id: number; due: string } | null }
+  | { status: "cancelled" }
+  | { status: "pending" }
+  | { status: "missing" };
+
+/** 펼친 카드의 일정 칩. due는 일 단위 `YYYY-MM-DD`나 달 단위 `YYYY-MM` */
+export interface ScheduleChip {
+  id: number;
+  name: string;
+  due: string;
+}
+
+/** 결과가 붙은 일정 한 줄('이번 주 일정', 이슈 페이지) */
+export interface ScheduleLine extends ScheduleChip {
+  outcome: ScheduleOutcomeView;
+}
+
+/** 일정 화면의 일정 한 줄 */
+export interface ScheduleItem extends ScheduleLine {
+  major: Major;
+  /** 대표 이슈: 처음 근거 뉴스의 주 이슈(흡수된 이슈는 남는 이슈). 없으면 null */
+  issue: IssueRef | null;
+  /** 관련 이슈: 근거 뉴스와 결과 뉴스의 주 이슈(흡수된 이슈는 남는 이슈), 식별자 순 */
+  issues: IssueRef[];
+  /** 알려진 날: 처음 근거 뉴스의 날짜 */
+  knownOn: string;
+  /** 처음 근거 뉴스. 없으면 null */
+  first: { date: string; key: string } | null;
+}
+
+/** `schedule-index.json`: 일정 화면이 처음 받는 색인. 일정이 없어도 있다 */
+export interface ScheduleIndex {
+  /** 흡수·지운 것을 뺀 일정 수 */
+  total: number;
+  /** 일정이 있는 달(오래된 달부터). 달마다 일정 수와 대분류별 수 */
+  months: { month: string; count: number; majors: Partial<Record<Major, number>> }[];
+  /** 일정이 있는 대분류(plan D5 순서) */
+  majors: Major[];
+}
+
+/** `schedule-month-YYYY-MM.json`: 예정일이 그 달인 일정(일 단위와 달 단위). 예정일 순(달 단위는 그 달 일 단위 뒤), 같으면 식별자 순 */
+export interface ScheduleMonth {
+  month: string;
+  items: ScheduleItem[];
+}
+
+/** `schedule-ref-<묶음>.json`: 일정 주소(4.7-6)에서 그 일정이 든 달을 찾는다. 흡수된 식별자는 merged에만 있다(남는 것, 사슬 끝) */
+export interface ScheduleRefChunk {
+  months: Record<string, string>;
+  merged: Record<string, number>;
+}
+
+/** 브리프 날짜의 '이번 주 일정'(C8): 그 날짜 다음 날부터 7일 안의 일 단위 일정 중 알려진 날이 그 날짜 이하인 것 */
+export interface WeekSchedules {
+  /** 그 주 일정 전체 수 */
+  total: number;
+  /** 예정일 순 처음 WEEK_SCHEDULE_LIMIT개 */
+  items: ScheduleLine[];
+}
+
+/** 일정 정렬: 예정일 순(달 단위 `YYYY-MM`은 그 달 일 단위 뒤), 같으면 식별자 순 */
+export function compareSchedules(a: ScheduleChip, b: ScheduleChip): number {
+  const ka = a.due.length === 7 ? `${a.due}-99` : a.due;
+  const kb = b.due.length === 7 ? `${b.due}-99` : b.due;
+  return ka < kb ? -1 : ka > kb ? 1 : a.id - b.id;
+}
+
 /** `dates.json`: 저장된 날짜(최근 순)와 달 목록 */
 export interface SiteDates {
   version: number;
@@ -247,6 +346,8 @@ export interface DayList {
   headline: string;
   keywords: string[];
   sections: ListSection[];
+  /** 5단계: '이번 주 일정'. 없으면 항목을 뺀다 */
+  week?: WeekSchedules;
 }
 
 /** `list-YYYY-MM.json` */
@@ -276,6 +377,8 @@ export interface StoryDetail {
   /** 4단계: 이 뉴스의 대상(식별자 순)과 용어(식별자 순). 없으면 항목을 뺀다 */
   entities?: EntityRef[];
   terms?: TermRef[];
+  /** 5단계: 이 뉴스를 근거로 한 일정(예정일 순). 없으면 항목을 뺀다 */
+  schedules?: ScheduleChip[];
 }
 
 /** `detail-YYYY-MM.json` */
@@ -311,6 +414,8 @@ export interface IssueDetail extends IssueListItem {
   related: IssueRef[];
   /** 4단계: 등장 대상(횟수 순, 같으면 식별자 순, 최대 10개). 없으면 항목을 뺀다 */
   entities?: IssueEntity[];
+  /** 5단계: 관련 일정 전체(예정일 순). 다가오는·지난 구분과 개수 제한은 화면이 보는 사람의 오늘로 한다. 없으면 항목을 뺀다 */
+  schedules?: ScheduleLine[];
 }
 
 /** `issue-<묶음>.json` */

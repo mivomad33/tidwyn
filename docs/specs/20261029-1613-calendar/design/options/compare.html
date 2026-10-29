@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>5단계 시안 비교</title>
+<style>
+  body { margin: 0; background: #e9e9ec; font-family: Pretendard, -apple-system, system-ui, sans-serif; color: #222; }
+  h1 { font-size: 20px; margin: 24px 24px 4px; }
+  p.note { margin: 0 24px 16px; color: #555; font-size: 14px; max-width: 900px; line-height: 1.5; }
+  .option { margin: 0 24px 48px; }
+  .option h2 { font-size: 17px; margin: 0 0 4px; }
+  .option p { margin: 0 0 12px; font-size: 13px; color: #555; max-width: 900px; line-height: 1.5; }
+  .phones { display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-start; }
+  .phone { width: 375px; height: 760px; border-radius: 28px; overflow: hidden; position: relative; box-shadow: 0 6px 24px rgba(0,0,0,.15); background: var(--bg); color: var(--fg); }
+  .wide { width: 960px; height: 560px; border-radius: 10px; overflow: hidden; position: relative; box-shadow: 0 6px 24px rgba(0,0,0,.15); background: var(--bg); color: var(--fg); }
+  .wide .col { width: 680px; margin: 0 auto; }
+  .screen { position: absolute; inset: 0; overflow: hidden; display: flex; flex-direction: column; }
+  .caption { text-align: center; font-size: 12px; color: #666; margin-top: 6px; }
+  /* 3단계 확정 시안 A의 색 */
+  .L { --bg: #fff; --fg: #1d1d1f; --muted: #6b6b70; --line: #ececee; --chip: #f5f5f7; --accent: #c2410c; --accentbg: #fff1e8; }
+  .D { --bg: #161618; --fg: #ececee; --muted: #9a9aa0; --line: #2a2a2e; --chip: #222226; --accent: #fb923c; --accentbg: #3a2414; }
+  .bar { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px 10px; border-bottom: 1px solid var(--line); }
+  .datebtn { font-size: 13px; color: var(--muted); }
+  .icons { display: flex; gap: 14px; color: var(--muted); font-size: 16px; }
+  .body { flex: 1; overflow: hidden; }
+  .pad { padding: 16px 18px; }
+  .ptitle { font-size: 22px; font-weight: 800; letter-spacing: -.3px; margin-bottom: 4px; }
+  .meta { font-size: 12px; color: var(--muted); margin-bottom: 10px; line-height: 1.5; }
+  .chips { display: flex; gap: 6px; padding: 4px 0 10px; overflow: hidden; }
+  .chips span { font-size: 12px; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); white-space: nowrap; }
+  .chips span.on { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+  .seg { display: flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; margin-bottom: 10px; }
+  .seg span { flex: 1; text-align: center; font-size: 13px; padding: 7px 0; color: var(--muted); }
+  .seg span.on { background: var(--chip); color: var(--fg); font-weight: 700; }
+  .dh { font-size: 13px; font-weight: 700; margin: 14px 0 2px; display: flex; justify-content: space-between; }
+  .dh small { font-weight: 400; color: var(--muted); font-size: 12px; }
+  .dh.today { color: var(--accent); }
+  .ev { padding: 9px 0; border-bottom: 1px solid var(--line); }
+  .ev .cat { font-size: 11.5px; font-weight: 600; margin-bottom: 2px; }
+  .ev .t { font-size: 15px; font-weight: 600; line-height: 1.4; }
+  .ev small { display: block; font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .res { display: inline-block; margin-top: 4px; font-size: 12px; padding: 2px 7px; border-radius: 4px; background: var(--chip); }
+  .res.ok { background: var(--accentbg); color: var(--accent); font-weight: 600; }
+  .monthnav { display: flex; justify-content: space-between; align-items: center; font-size: 15px; font-weight: 700; margin: 4px 0 8px; }
+  .monthnav span { color: var(--muted); font-weight: 400; font-size: 18px; padding: 0 6px; }
+  .grid { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-size: 13px; }
+  .grid .w { font-size: 11px; color: var(--muted); padding-bottom: 4px; }
+  .grid .d { height: 38px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 4px; border-radius: 8px; }
+  .grid .d.o { color: var(--muted); opacity: .45; }
+  .grid .d.sel { background: var(--fg); color: var(--bg); }
+  .grid .d.tod { color: var(--accent); font-weight: 700; }
+  .grid .d i { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); margin-top: 3px; }
+  .grid .d.sel i { background: var(--bg); }
+  .strip { display: flex; gap: 4px; margin: 4px 0 8px; }
+  .strip div { flex: 1; text-align: center; padding: 6px 0; border-radius: 8px; border: 1px solid var(--line); font-size: 12px; }
+  .strip div b { display: block; font-size: 16px; }
+  .strip div small { display: block; font-size: 10.5px; color: var(--accent); height: 13px; }
+  .strip div.sel { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+  .strip div.sel small { color: var(--bg); }
+  .mon { margin-top: 14px; padding: 10px 12px; border-radius: 8px; background: var(--chip); }
+  .mon .h { font-size: 12.5px; font-weight: 700; color: var(--muted); margin-bottom: 4px; }
+  .mon .ev { border-bottom: none; padding: 5px 0; }
+  .tabs { display: flex; justify-content: space-around; border-top: 1px solid var(--line); padding: 8px 0 14px; font-size: 15px; color: var(--muted); }
+  .tabs .on { color: var(--fg); font-weight: 700; border-bottom: 2px solid var(--accent); }
+</style>
+</head>
+<body>
+<h1>5단계 시안 비교: 일정 달력 화면 (폰 375px + 넓은 화면)</h1>
+<p class="note">3단계 확정 시안 A의 색·글꼴·간격을 그대로 쓴다. 내용은 지어낸 예시이고, 오늘은 10월 29일(목)이다. 세 안 모두 같은 데이터를 보인다: 일정마다 대분류(색 글자), 일정 이름, 관련 이슈. 지난 일정에는 결과(결과 뉴스 링크 / 연기 / 취소 / 결과 못 찾음)가 붙는다. 날짜를 '11월 중'처럼 달 단위로만 아는 일정은 그 달의 '이달 중' 묶음에 모인다. 대분류 칩으로 거른다. 브리프 위 '이번 주 일정', 이슈 페이지, 펼친 카드의 모양은 고른 안에 맞춰 확정 파일에서 그린다.</p>
+<div id="root"></div>
+<script>
+const up = [
+  { d: "10월 30일 (금)", today: false, evs: [
+    { cat: "경제", color: "#c2410c", t: "가짜 중앙은행 기준금리 결정", iss: "가짜 중앙은행 금리" },
+    { cat: "IT·AI", color: "#0e7490", t: "가짜전자 3분기 실적 발표", iss: "가짜전자 실적" } ] },
+  { d: "11월 3일 (화)", evs: [
+    { cat: "국제", color: "#7c3aed", t: "예시국 대통령 선거", iss: "예시국 대선" } ] },
+  { d: "11월 5일 (목)", evs: [
+    { cat: "정치", color: "#1d4ed8", t: "가짜 예산안 국회 처리 시한", iss: "가짜 예산안 협상" },
+    { cat: "사회", color: "#047857", t: "가짜시 버스 파업 조정 회의", iss: "가짜시 버스 파업" } ] },
+  { d: "11월 12일 (목)", evs: [
+    { cat: "정치", color: "#1d4ed8", t: "가짜 전 장관 항소심 선고", iss: "가짜 전 장관 재판" } ] },
+];
+const month = [
+  { cat: "IT·AI", color: "#0e7490", t: "가짜AI 새 모델 공개", iss: "가짜AI 모델 경쟁" },
+  { cat: "경제", color: "#c2410c", t: "가짜국 4분기 경제전망 발표", iss: "가짜시 경기 흐름" },
+];
+const past = [
+  { d: "10월 28일 (수)", evs: [
+    { cat: "국제", color: "#7c3aed", t: "가짜국·예시국 정상회담", iss: "가짜국 무역 분쟁", res: "ok", r: "결과: 무역 분쟁 휴전 6개월 연장 합의 ›" } ] },
+  { d: "10월 27일 (화)", evs: [
+    { cat: "경제", color: "#c2410c", t: "가짜국 3분기 성장률 발표", iss: "가짜시 경기 흐름", res: "ok", r: "결과: 3분기 1.0% 깜짝 성장 ›" },
+    { cat: "사회", color: "#047857", t: "가짜시 의대 정원 공청회", iss: "의대 정원 논란", res: "", r: "연기 → 11월 10일" } ] },
+  { d: "10월 22일 (목)", evs: [
+    { cat: "정치", color: "#1d4ed8", t: "가짜당 전당대회", iss: "가짜당 지도부", res: "", r: "취소" },
+    { cat: "IT·AI", color: "#0e7490", t: "예시 플랫폼 개인정보 과징금 결정", iss: "예시 플랫폼 제재", res: "", r: "결과 못 찾음" } ] },
+];
+const ev = e => `<div class="ev"><div class="cat" style="color:${e.color}">${e.cat}</div><div class="t">${e.t}</div><small>이슈: ${e.iss}</small>${e.r ? `<span class="res ${e.res}">${e.r}</span>` : ""}</div>`;
+const bar = back => `<div class="bar"><span class="datebtn">‹ ${back}</span><span class="icons">⌕ ☰</span></div>`;
+const chips = `<div class="chips"><span class="on">전체</span><span>정치</span><span>경제</span><span>국제</span><span>IT·AI</span><span>사회</span></div>`;
+
+// A: 목록형
+function A(mode, wide) {
+  const head = `<div class="ptitle">일정</div><div class="meta">뉴스에서 모은 예정 일정 · 날짜는 현지 기준</div>
+    <div class="seg"><span class="${mode==='up'?'on':''}">다가오는 일정</span><span class="${mode==='past'?'on':''}">지난 일정</span></div>${chips}`;
+  let list = "";
+  if (mode === "up") {
+    list = up.slice(0, 2).map(g => `<div class="dh">${g.d}</div>${g.evs.map(ev).join("")}`).join("")
+      + `<div class="mon"><div class="h">11월 중 (날짜 미정)</div>${month.map(ev).join("")}</div>`
+      + up.slice(2).map(g => `<div class="dh">${g.d}</div>${g.evs.map(ev).join("")}`).join("");
+  } else {
+    list = past.map(g => `<div class="dh">${g.d}</div>${g.evs.map(ev).join("")}`).join("");
+  }
+  return `${bar("메뉴")}<div class="body"><div class="${wide?'col ':''}pad">${head}${list}</div></div>`;
+}
+// B: 월 달력 격자 + 고른 날 목록
+function B(wide) {
+  const w = "일월화수목금토".split("").map(x => `<div class="w">${x}</div>`).join("");
+  const dots = { 3: 1, 5: 1, 12: 1, 30: 1, 27: 1, 28: 1, 22: 1, 18: 1 };
+  let cells = "";
+  const lead = [25,26,27,28,29,30,31];
+  // 11월 2026: 1일은 일요일
+  for (let d = 1; d <= 30; d++) {
+    const cls = ["d"]; if (d === 5) cls.push("sel");
+    cells += `<div class="${cls.join(" ")}">${d}${dots[d] ? "<i></i>" : ""}</div>`;
+  }
+  for (let d = 1; d <= 5; d++) cells += `<div class="d o">${d}</div>`;
+  const g = up[2];
+  return `${bar("메뉴")}<div class="body"><div class="${wide?'col ':''}pad"><div class="ptitle">일정</div>${chips}
+    <div class="monthnav"><span>‹</span>2026년 11월<span>›</span></div>
+    <div class="grid">${w}${cells}</div>
+    <div class="dh">${g.d}</div>${g.evs.map(ev).join("")}
+    <div class="mon"><div class="h">11월 중 (날짜 미정)</div>${month.map(ev).join("")}</div>
+  </div></div>`;
+}
+// C: 주 띠 + 목록
+function C(wide) {
+  const days = [["목",29,""],["금",30,"2"],["토",31,""],["일",1,""],["월",2,""],["화",3,"1"],["수",4,""]];
+  const strip = days.map(([w,d,n],i) => `<div class="${i===0?'sel':''}">${w}<b>${d}</b><small>${n?"●".repeat(+n):""}</small></div>`).join("");
+  return `${bar("메뉴")}<div class="body"><div class="${wide?'col ':''}pad"><div class="ptitle">일정</div>${chips}
+    <div class="monthnav"><span>‹</span>10월 29일 – 11월 4일<span>›</span></div>
+    <div class="strip">${strip}</div>
+    <div class="dh today">오늘 · 10월 29일 (목)<small>일정 없음</small></div>
+    ${up.slice(0,2).map(g => `<div class="dh">${g.d}</div>${g.evs.map(ev).join("")}`).join("")}
+    <div class="dh">다음 주 ›</div>
+  </div></div>`;
+}
+const phone = (cls, html, cap) => `<div><div class="phone ${cls}"><div class="screen">${html}</div></div><div class="caption">${cap}</div></div>`;
+const wide = (html, cap) => `<div><div class="wide L"><div class="screen">${html}</div></div><div class="caption">${cap}</div></div>`;
+const sec = (h, p, inner) => `<section class="option"><h2>${h}</h2><p>${p}</p><div class="phones">${inner}</div></section>`;
+document.getElementById("root").innerHTML =
+  sec("A. 날짜별 목록 (일정 목록)", "'다가오는 일정'과 '지난 일정' 두 탭. 날짜 순으로 묶어 흘려 보고, 달 단위 일정은 그 달 안의 '날짜 미정' 상자로 끼운다. 지난 일정은 최근 순이고 결과가 붙는다. 폰에서 읽기 가장 쉽고 다른 화면(이슈 타임라인)과 모양이 같다. 대신 한 달을 한눈에 보는 감은 없다.",
+    phone("L", A("up"), "다가오는 일정") + phone("L", A("past"), "지난 일정") + phone("D", A("up"), "다크") + wide(A("up", true), "넓은 화면(가운데 한 단)"))
++ sec("B. 월 달력 격자 + 고른 날 목록", "익숙한 달력 모양. 일정이 있는 날에 점, 날짜를 누르면 아래에 그날 일정. 한 달 분포가 한눈에 보이지만, 폰에서 날짜 칸이 작고(약 48px) 일정 이름은 눌러야 보인다. 지난 달로 넘기면 지난 일정과 결과가 같은 방식으로 나온다.",
+    phone("L", B(), "11월 5일을 고른 상태") + phone("D", B(), "다크") + wide(B(true), "넓은 화면"))
++ sec("C. 주 띠 + 목록", "위에 7일 띠(일정 수 점), 아래에 그 주 일정 목록. 이번 주에 집중하고 ‹ › 로 주를 넘긴다. A와 B의 중간이지만, 먼 일정은 여러 번 넘겨야 보인다.",
+    phone("L", C(), "이번 주") + phone("D", C(), "다크") + wide(C(true), "넓은 화면"));
+</script>
+</body>
+</html>

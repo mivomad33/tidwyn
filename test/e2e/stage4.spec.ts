@@ -380,6 +380,72 @@ test.describe("새 주소 직접 열기와 새로 고침", () => {
   });
 });
 
+/** 원래 사이트 데이터 파일(from)을 받아 고쳐서 그 파일(name) 요청에 준다 */
+async function patchData<T>(page: Page, name: string, edit: (data: T) => unknown, from = name): Promise<void> {
+  await page.route(dataFile(name), async (route) => {
+    const res = await route.fetch({ url: route.request().url().replace(name, from) });
+    await route.fulfill({ status: 200, json: edit((await res.json()) as T) });
+  });
+}
+
+/** 각 줄의 링크 주소(href 속성) */
+function hrefs(links: Locator): Promise<string[]> {
+  return links.evaluateAll((els) => els.map((e) => (e as unknown as { getAttribute(n: string): string }).getAttribute("href")));
+}
+
+/** 키보드로 "더 보기"를 누르면, 새로 보인 첫 줄의 링크로 포커스가 간다(버튼이 사라지거나 대기 표시로 바뀌어도 포커스를 잃지 않는다) */
+async function expectMoreFocusesNewRow(page: Page, links: Locator, button: Locator): Promise<void> {
+  await expect(button).toBeVisible();
+  const before = await hrefs(links);
+  await button.focus();
+  await page.keyboard.press("Enter");
+  await expect.poll(async () => (await hrefs(links)).length).toBeGreaterThan(before.length);
+  const first = (await hrefs(links)).find((h) => !before.includes(h))!;
+  await expect(links.and(page.locator(`[href="${first}"]`)).first()).toBeFocused();
+}
+
+/** 지어낸 줄을 늘린다(식별자에 큰 수를 더해 겹치지 않게 한다) */
+function cloneIds<T extends { id: number }>(items: T[], times: number): T[] {
+  return Array.from({ length: times }, (_, n) => items.map((x) => ({ ...x, id: x.id + n * 100000 }))).flat();
+}
+
+test.describe("'더 보기' 뒤 키보드 포커스(3단계 4.3-6)", () => {
+  // 지어낸 데이터는 한 번에 다 보일 만큼 작아서, 데이터 요청을 바꿔 "더 보기"가 생기게 한다
+  test("인물·기관·국가 목록: 다음 쪽을 받은 뒤 그 쪽의 첫 대상으로 간다", async ({ page }) => {
+    await patchData<{ pages: number }>(page, "entity-list-all-0.json", (d) => ({ ...d, pages: 2 }));
+    await patchData<{ items: { id: number }[] }>(page, "entity-list-all-1.json", (d) => ({ ...d, items: cloneIds(d.items, 2).slice(d.items.length) }), "entity-list-all-0.json");
+    await page.goto("/entities");
+    await expectMoreFocusesNewRow(page, page.locator("ul.list > li.item > a"), page.getByRole("button", { name: "더 보기", exact: true }));
+  });
+
+  test("검색: 더 찾은 결과의 첫 줄로 간다", async ({ page }) => {
+    // "다시"는 지어낸 데이터에서 검색 레코드가 한 번에 되찾는 수(10)보다 많다
+    await page.goto(`/search?q=${encodeURIComponent("다시")}`);
+    await expectMoreFocusesNewRow(page, page.locator("ul.list > li.item > a"), page.getByRole("button", { name: "더 보기", exact: true }));
+  });
+
+  test("인물·기관·국가 페이지: 나머지 뉴스를 받은 뒤 그 첫 뉴스로 간다", async ({ page }) => {
+    await page.goto(`/entities/${info.entities.most.id}`);
+    await expectMoreFocusesNewRow(page, page.locator("ul.rows > li > a"), page.getByRole("button", { name: "더 보기", exact: true }));
+  });
+
+  test("인물·기관·국가 페이지: 이슈 더 보기 뒤 새로 보인 첫 이슈로 간다", async ({ page }) => {
+    const id = String(info.entities.most.id);
+    await patchData<{ entities: Record<string, { issues: { id: number }[] }> }>(page, "entity-0.json", (d) => {
+      const e = d.entities[id]!;
+      return { ...d, entities: { ...d.entities, [id]: { ...e, issues: cloneIds(e.issues, Math.ceil(25 / e.issues.length)) } } };
+    });
+    await page.goto(`/entities/${id}`);
+    await expectMoreFocusesNewRow(page, page.locator(".rel > a"), page.getByRole("button", { name: "이슈 더 보기" }));
+  });
+
+  test("이슈 목록: 새로 보인 첫 이슈로 간다", async ({ page }) => {
+    await patchData<{ issues: { id: number }[] }>(page, "issue-list.json", (d) => ({ ...d, issues: cloneIds(d.issues, Math.ceil(110 / d.issues.length)) }));
+    await page.goto("/issues");
+    await expectMoreFocusesNewRow(page, page.locator("ul.list > li.item > a"), page.getByRole("button", { name: "더 보기", exact: true }));
+  });
+});
+
 test.describe("375px 폭", () => {
   test.use({ viewport: { width: 375, height: 812 } });
 

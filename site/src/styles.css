@@ -1059,3 +1059,371 @@ button.short-text {
 .short-meta .sec {
   margin-right: 0;
 }
+
+/* 5단계: 일정 화면(확정 시안 design/site.html). 일정 줄은 뉴스가 아니라 읽음 표시가 없다 */
+.sch-head {
+  padding: 16px 18px 4px;
+}
+
+.ptitle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.ptitle h1 {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+  line-height: 1.3;
+  margin: 0;
+}
+
+.view {
+  display: flex;
+  flex: none;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+  font-size: 12.5px;
+}
+
+.view button {
+  padding: 6px 12px;
+  min-height: 32px;
+  color: var(--muted);
+}
+
+.view button.on {
+  background: var(--fg);
+  color: var(--bg);
+}
+
+.sch-head .meta {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.5;
+  margin: 4px 0 10px;
+}
+
+.seg {
+  display: flex;
+  margin: 0 18px 4px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.seg button {
+  flex: 1;
+  font-size: 13px;
+  padding: 8px 0;
+  color: var(--muted);
+}
+
+.seg button.on {
+  background: var(--chip);
+  color: var(--fg);
+  font-weight: 700;
+}
+
+.sch-body {
+  padding: 0 18px 16px;
+}
+
+.dh {
+  font-size: 13px;
+  font-weight: 700;
+  margin: 16px 0 2px;
+}
+
+.evs,
+.evlist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.ev {
+  padding: 9px 0;
+  border-bottom: 1px solid var(--line);
+  scroll-margin-top: 80px;
+  border-radius: 6px;
+  transition: background-color 0.6s, box-shadow 0.6s;
+}
+
+/* 일정 주소로 들어온 일정을 잠깐 강조한다(줄 자리를 바꾸지 않게 바깥 그림자로 넓힌다) */
+.ev.hl {
+  background: var(--accentbg);
+  box-shadow: 0 0 0 6px var(--accentbg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ev {
+    transition: none;
+  }
+}
+
+.ev .cat {
+  margin-bottom: 2px;
+}
+
+.ev .t {
+  display: block;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.ev small {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.ev small a {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.res-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.res {
+  display: inline-block;
+  font-size: 12px;
+  line-height: 1.45;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: var(--chip);
+  color: var(--fg);
+}
+
+.res.ok {
+  background: var(--accentbg);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* 달 단위 일정의 "N월 중 (날짜 미정)" 상자 */
+.mon {
+  margin-top: 14px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: var(--chip);
+}
+
+.mon-h {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--muted);
+  margin: 0 0 2px;
+}
+
+.mon .ev {
+  border-bottom: none;
+  padding: 6px 0;
+}
+
+.mon .res {
+  background: var(--bg);
+}
+
+.mon .res.ok {
+  background: var(--accentbg);
+}
+
+/* 달력 */
+.monthnav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 10px 0 6px;
+}
+
+.monthnav h2 {
+  font-size: 15px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.monthnav button {
+  min-width: 44px;
+  min-height: 44px;
+  font-size: 20px;
+  color: var(--muted);
+  border-radius: 8px;
+}
+
+.monthnav button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.cal {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  text-align: center;
+  font-size: 13px;
+  row-gap: 2px;
+}
+
+.cal .w {
+  font-size: 11px;
+  color: var(--muted);
+  padding-bottom: 4px;
+}
+
+.cal .d {
+  height: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 5px;
+  border-radius: 8px;
+  font-variant-numeric: tabular-nums;
+}
+
+.cal .d.o {
+  opacity: 0.35;
+}
+
+.cal .d.tod {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.cal .d.sel {
+  background: var(--fg);
+  color: var(--bg);
+}
+
+.cal .d i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+  margin-top: 3px;
+}
+
+.cal .d i.p {
+  background: var(--muted);
+}
+
+.cal .d.sel i {
+  background: var(--bg);
+}
+
+.day-empty {
+  padding: 6px 0;
+}
+
+/* 브리프 위 '이번 주 일정'(C10). 접으면 배경 없는 한 줄 */
+.week {
+  margin: 10px 18px 4px;
+  padding: 8px 12px 6px;
+  border-radius: 10px;
+  background: var(--chip);
+}
+
+.week.closed {
+  background: none;
+  padding: 4px 0 0;
+  margin: 4px 18px 2px;
+}
+
+.week-h {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.week-toggle {
+  font-weight: 700;
+  min-height: 32px;
+  text-align: left;
+}
+
+.week-h a {
+  font-weight: 400;
+  color: var(--accent);
+  padding: 6px 0;
+}
+
+.week ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.wrow {
+  display: flex;
+  gap: 10px;
+  padding: 5px 0;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.wrow b {
+  flex: none;
+  width: 56px;
+  font-size: 12.5px;
+  color: var(--muted);
+  font-weight: 600;
+  padding-top: 1px;
+  font-variant-numeric: tabular-nums;
+}
+
+.wrow span {
+  min-width: 0;
+}
+
+.wrow small {
+  display: block;
+  font-size: 11.5px;
+  color: var(--accent);
+}
+
+/* 펼친 카드의 일정 칩: 예정일을 강조색으로 앞에 */
+.rel a.evc small {
+  margin: 0 4px 0 0;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* 이슈 페이지의 일정 */
+.evlist li {
+  border-bottom: 1px solid var(--line);
+}
+
+.ev-link {
+  display: block;
+  padding: 10px 0;
+}
+
+.ev-link small {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.ev-link .t {
+  display: block;
+  font-size: 14.5px;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.ev-more {
+  margin: 10px 0 0;
+  font-size: 13px;
+}

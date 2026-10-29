@@ -104,6 +104,7 @@ describe("3단계 4.1-1 사이트 데이터", () => {
       "site-data/issue-list.json",
       "site-data/list-2026-10.json",
       "site-data/list-2026-11.json",
+      "site-data/schedule-index.json",
       "site-data/term-index.json",
     ]);
     assert.deepEqual(parse<SiteDates>(files, "dates.json"), {

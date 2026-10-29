@@ -192,6 +192,54 @@ export const MIGRATIONS: Migration[] = [
       `);
     },
   },
+  {
+    // 5단계 4.1: 일정, 뉴스-일정 연결(근거·결과·알림), 날짜별 일정 뽑기 완료, 일정 합치기 기록, "합치지 않음" 쌍.
+    // 기존 날짜는 모두 일정 뽑기 안 함이 된다(schedule_dates에 없음). AUTOINCREMENT라 식별자를 다시 쓰지 않는다.
+    // 예정일(due)은 일 단위 `YYYY-MM-DD`나 달 단위 `YYYY-MM`. 결과(outcome)는 없음(NULL), 결과 연결, 연기, 취소.
+    // 지운 일정은 행을 지우지 않고 이름·예정일을 남긴 채 deleted로 둔다(같은 이름·예정일을 다시 뽑지 않게, C13).
+    version: 5,
+    up: (db) => {
+      db.exec(`
+        CREATE TABLE schedules (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          name TEXT NOT NULL,
+          due TEXT NOT NULL,
+          major TEXT NOT NULL,
+          outcome TEXT CHECK (outcome IN ('result', 'postponed', 'cancelled')),
+          postponed_to INTEGER REFERENCES schedules(id),
+          merged_into INTEGER REFERENCES schedules(id),
+          deleted INTEGER NOT NULL DEFAULT 0,
+          deleted_on TEXT
+        );
+        CREATE INDEX schedules_due ON schedules(due);
+        CREATE TABLE story_schedules (
+          story_id INTEGER NOT NULL REFERENCES stories(id) ON DELETE CASCADE,
+          schedule_id INTEGER NOT NULL REFERENCES schedules(id),
+          role TEXT NOT NULL CHECK (role IN ('basis', 'result', 'notice')),
+          PRIMARY KEY (story_id, schedule_id, role)
+        );
+        CREATE INDEX story_schedules_schedule ON story_schedules(schedule_id);
+        CREATE TABLE schedule_dates (
+          target_date TEXT PRIMARY KEY REFERENCES briefs(target_date) ON DELETE CASCADE
+        );
+        CREATE TABLE schedule_merges (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          merged_on TEXT NOT NULL,
+          survivor INTEGER NOT NULL,
+          absorbed INTEGER NOT NULL,
+          reason TEXT NOT NULL,
+          record TEXT NOT NULL,
+          undone_on TEXT
+        );
+        CREATE TABLE schedule_no_merge (
+          a INTEGER NOT NULL,
+          b INTEGER NOT NULL,
+          PRIMARY KEY (a, b),
+          CHECK (a < b)
+        );
+      `);
+    },
+  },
 ];
 
 export function schemaVersion(db: DatabaseSync): number {

@@ -30,6 +30,15 @@ export type {
   SiteIssueList,
   SiteSource,
   StoryDetail,
+  ScheduleChip,
+  ScheduleIndex,
+  ScheduleItem,
+  ScheduleLine,
+  ScheduleMonth,
+  ScheduleNews,
+  ScheduleOutcomeView,
+  ScheduleRefChunk,
+  WeekSchedules,
 } from "../../../src/siteTypes.ts";
 export type { Major, SectionName } from "../../../src/categories.ts";
 

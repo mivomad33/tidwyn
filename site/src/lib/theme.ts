@@ -108,6 +108,9 @@ export function textPairs(p: Palette): { name: string; fg: string; bg: string }[
     { name: "강조된 낱말", fg: p.fg, bg: p.accentbg },
   ];
   for (const m of MAJORS) pairs.push({ name: `분류 ${m}`, fg: p.categories[m], bg: p.bg });
+  // 5단계: 일정 주소로 강조된 일정 줄(강조 바탕), 달 단위 "날짜 미정" 상자(상자 바탕), 달력의 고른 날
+  pairs.push({ name: "흐린 글자/강조된 일정", fg: p.muted, bg: p.accentbg }, { name: "고른 날짜", fg: p.bg, bg: p.fg });
+  for (const m of MAJORS) pairs.push({ name: `분류 ${m}/강조된 일정`, fg: p.categories[m], bg: p.accentbg }, { name: `분류 ${m}/상자`, fg: p.categories[m], bg: p.chip });
   return pairs;
 }
 

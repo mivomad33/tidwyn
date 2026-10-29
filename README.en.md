@@ -14,6 +14,7 @@ A personal news archive. Every day, AI gathers Korean, world, and IT/AI news, re
 - **Ongoing stories:** Stories are linked into issues, with earlier developments, an issue summary, a timeline, and related issues.
 - **People, organizations, and countries:** Each one that appears in the news has a page with a one-line description and the stories and issues it appears in.
 - **Glossary:** Difficult terms are collected with plain explanations. Tapping an underlined word in an expanded card opens its explanation right there.
+- **Schedule calendar:** Upcoming official events mentioned in the news are collected in a list and a calendar, and linked to the news of their outcome once the date passes. The brief shows "This week's schedule" at the top.
 - **Read marks:** Stories you have read show in regular weight with a check in every list, and the brief can show unread stories only. The record stays in your own browser.
 - **Browsing:** Category filters, a date list, an issue list, and on-site search, all usable on a phone.
 

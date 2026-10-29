@@ -5,6 +5,7 @@ import { openExistingDb } from "./db.ts";
 import { gitTry } from "./git.ts";
 import { allIssues } from "./issues.ts";
 import { allEntities, allTerms, isLive } from "./refs.ts";
+import { allSchedules, dueOnOrAfter, isLiveSchedule } from "./schedules.ts";
 import { commitsAhead, describeFindings, precheck } from "./precheck.ts";
 import type { DeployResult, PostDeployCheck, PushResult, SiteResult } from "./run.ts";
 import { checkOutput } from "./siteCheck.ts";
@@ -115,6 +116,8 @@ export interface BuildInput {
   dbPath: string;
   home: string | null;
   builder: SiteBuilder;
+  /** 실행한 날(KST). 요약의 다가오는 일정 수를 센다(5단계 4.5-2). 사이트 데이터에는 쓰지 않는다 */
+  today?: string;
 }
 
 /** DB → 사이트 데이터·검색 레코드(site-input/) → 빌더(site/) → 결과물 검사 */
@@ -126,6 +129,8 @@ export function buildSite(input: BuildInput): SiteResult {
   let issues: number;
   let entities: number;
   let terms: number;
+  let schedules: number;
+  let upcoming: number;
   try {
     const db = openExistingDb(input.dbPath);
     try {
@@ -135,6 +140,9 @@ export function buildSite(input: BuildInput): SiteResult {
       issues = allIssues(db).filter((i) => i.mergedInto === null).length;
       entities = allEntities(db).filter((e) => isLive(e) && e.count > 0).length;
       terms = allTerms(db).filter((t) => isLive(t) && t.count > 0).length;
+      const live = allSchedules(db).filter(isLiveSchedule);
+      schedules = live.length;
+      upcoming = input.today === undefined ? 0 : live.filter((s) => dueOnOrAfter(s.due, input.today!)).length;
       fs.rmSync(inputDir, { recursive: true, force: true });
       for (const [rel, content] of files) {
         const file = path.join(inputDir, rel);
@@ -160,7 +168,7 @@ export function buildSite(input: BuildInput): SiteResult {
   if (check.findings.length > 0) {
     return { status: "failed", outDir, reason: `결과물 검사에 걸렸다(${check.findings.length}건)`, findings: describeFindings(check.findings) };
   }
-  return { status: "built", outDir, dates, issues, entities, terms, files: check.files, bytes: check.bytes };
+  return { status: "built", outDir, dates, issues, entities, terms, schedules, upcoming, files: check.files, bytes: check.bytes };
 }
 
 // ---- 배포 ----

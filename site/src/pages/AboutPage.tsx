@@ -1,4 +1,4 @@
-// 사이트 소개(4.3-4, P9, P10). 4.5단계: 읽은 기록 설명과 지우기(4.6)
+// 사이트 소개(4.3-4, P9, P10). 4.5단계: 읽은 기록 설명과 지우기(4.6). 5단계: 일정 안내와 브라우저 기억 설명(4.7-3·4.7-7)
 import { useState } from "react";
 import { BackLink, Layout, useTitle } from "../components/common.tsx";
 import { readStore } from "../readMarks.ts";
@@ -22,6 +22,7 @@ export function AboutPage() {
           </a>
           로 알려 주세요.
         </p>
+        <p className="p">일정도 AI가 뉴스에서 뽑은 것이라 틀리거나 바뀌었을 수 있다. 날짜는 그 일이 열리는 곳의 현지 날짜다.</p>
         <h2 className="h">저작권</h2>
         <p className="p">원문 기사의 저작권은 각 매체에 있다. 이 사이트는 원문 링크와 원문 이미지 주소만 연결하고 기사를 옮겨 싣지 않는다.</p>
         <p className="p">브리프와 이슈 글의 저작권은 만든 사람(mivomad33)에게 있고, 다시 쓰거나 퍼 가는 것을 허락하지 않는다. 사이트의 코드는 MIT 라이선스다.</p>
@@ -54,6 +55,7 @@ function ReadMarksSection() {
       <h2 className="h">읽은 기록</h2>
       <p className="p">읽은 뉴스 표시는 이 브라우저에만 저장된다. 어디로도 보내지 않고, 다른 기기나 브라우저와 맞춰지지 않는다.</p>
       <p className="p">뉴스 날짜로 1년이 지난 기록은 저절로 지워진다. 지운 기록은 되돌릴 수 없다.</p>
+      <p className="p">마지막으로 고른 브리프 섹션 탭, 일정 화면의 보기(목록·달력), '이번 주 일정'을 접었는지도 이 브라우저에만 기억한다. 읽은 기록 지우기는 이것들을 지우지 않는다.</p>
       <div className="actions">
         <button type="button" className="retry" onClick={clear}>
           읽은 기록 지우기

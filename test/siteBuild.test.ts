@@ -11,7 +11,7 @@ import { FIRST_SCREEN_BUDGET, measureOutput } from "../site/size.ts";
 import { matchDayStories, matchIssues, parseHit, queryTerms } from "../site/src/lib/search.ts";
 import { cleanupTemp, tempDir } from "./helpers.ts";
 import type { EntityChunk, EntityListPage, EntityNewsChunk, IssueDetail, TermGroupFile, TermIndex } from "../src/siteTypes.ts";
-import { measureScreens } from "../site/size.ts";
+import { measureScheduleScreen, measureScreens } from "../site/size.ts";
 import { matchEntities, matchTerms } from "../site/src/lib/search.ts";
 import { resolveStatic } from "../site/hosting.ts";
 import { resolveEntity } from "../site/src/lib/entities.ts";
@@ -297,5 +297,27 @@ describe("4단계 4.6-4 DB에서 만든 검색 색인", () => {
     assert.ok(terms.some((t) => t.name === "양적완화"));
     const gone = parsed(DELETED_TEXTS[0]!).flatMap((h) => (h?.kind === "entities" ? matchEntities(readJson<EntityChunk>(data(`entity-${h.chunk}.json`)), queryTerms(DELETED_TEXTS[0]!)) : []));
     assert.deepEqual(gone, []);
+  });
+});
+
+describe("5단계 4.6-2 일정을 더한 5년치", () => {
+  test("결과물 10,000개 이하, 브리프 첫 화면('이번 주 일정' 포함)과 일정 화면이 처음 받는 데이터가 각각 gzip 300KB 이하다", async () => {
+    // 4단계 측정 조건(1,826일, 하루 42건, 이슈·대상 15,000개, 용어 5,000개)에 일정 15,000개(하루 약 8개, 달 단위 2할, 근거 평균 2건, 결과 6할 남짓)
+    const work = tempDir("tidwyn-site5y-");
+    const dataDir = path.join(work, "data");
+    const out = path.join(work, "out");
+    const fx = writeFixtures(dataDir, { end: "2026-10-31", days: 1826, top: 6, short: 8, issues: 15000, contiguous: true, entities: 15000, terms: 5000, schedules: 15000 });
+    assert.equal(fx.info.schedules!.total, 14998, "흡수된 것과 지운 것 하나씩을 뺀 수");
+    const res = await buildSite({ dataDir, outDir: out });
+    assert.ok(res.files.length <= 10_000, `결과물 ${res.files.length}개`);
+    const size = measureOutput(out);
+    const latest = readJson<MonthList>(path.join(out, "site-data", "list-2026-10.json")).days.at(-1)!;
+    assert.ok(latest.week && latest.week.total > 0, "가장 최근 날짜에 '이번 주 일정'이 있다");
+    assert.ok(size.firstScreen.gzip <= FIRST_SCREEN_BUDGET, `브리프 첫 화면 gzip ${size.firstScreen.gzip}B`);
+    for (const today of ["2026-10-31", "2026-11-01"]) {
+      const sc = measureScheduleScreen(out, today);
+      assert.ok(sc.files.length >= 2, sc.files.map((f) => f.path).join(", "));
+      assert.ok(sc.gzip <= FIRST_SCREEN_BUDGET, `${sc.name} gzip ${sc.gzip}B`);
+    }
   });
 });

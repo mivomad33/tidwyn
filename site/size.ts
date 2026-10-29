@@ -1,13 +1,16 @@
-// 결과물 크기 재기: node site/size.ts <결과물 폴더>
+// 결과물 크기 재기: node site/size.ts <결과물 폴더> [일정 화면을 여는 날 YYYY-MM-DD]
 // 파일 수와 전체 크기(4.1-3), 첫 화면 전송 크기(4.3-7: 가장 최근 날짜의 펼치지 않은 목록에 필요한
 // HTML·JS·CSS·사이트 데이터의 gzip 크기 합, 글꼴·이미지 제외)를 잰다.
 // 4단계(4.6-2): 새 화면이 처음 받는 사이트 데이터의 gzip 크기도 잰다(각각 FIRST_SCREEN_BUDGET 이하):
 // 대상 목록의 거르기마다 0쪽, 뉴스가 가장 많은 대상의 페이지(그 상세 묶음), 용어 사전 첫 화면(색인과 처음 받는 묶음).
+// 5단계(4.6-2): 일정 화면이 처음 받는 사이트 데이터(색인, 목록의 다가오는 일정 첫 묶음, 달력의 이번 달)도 잰다.
+// 브리프 첫 화면의 '이번 주 일정'은 달 목록 파일(list-*.json)에 들어 있어 첫 화면 크기에 이미 들어간다.
 import fs from "node:fs";
 import path from "node:path";
 import { gzipSync } from "node:zlib";
-import { ENTITY_FILTERS, entityChunkOf, type EntityChunk, type TermIndex } from "../src/siteTypes.ts";
+import { ENTITY_FILTERS, entityChunkOf, siteFiles, type EntityChunk, type ScheduleIndex, type TermIndex } from "../src/siteTypes.ts";
 import { listFilesRecursive } from "./build.ts";
+import { firstLoadMonths } from "./src/lib/schedules.ts";
 import { initialTermGroups } from "./src/lib/terms.ts";
 
 export const FIRST_SCREEN_BUDGET = 300 * 1024;
@@ -68,6 +71,12 @@ export function measureScreens(outDir: string): ScreenData[] {
   return out;
 }
 
+/** 5단계: 일정 화면을 today(KST 날짜)에 처음 열 때 받는 사이트 데이터(화면 틀·JS는 첫 화면과 같아 빼고 잰다) */
+export function measureScheduleScreen(outDir: string, today: string): ScreenData {
+  const index = JSON.parse(fs.readFileSync(path.join(outDir, "site-data", siteFiles.scheduleIndex), "utf8")) as ScheduleIndex;
+  return screen(outDir, `일정 화면(${today})`, [`site-data/${siteFiles.scheduleIndex}`, ...firstLoadMonths(index, today).map((m) => `site-data/${siteFiles.scheduleMonth(m)}`)]);
+}
+
 if (import.meta.main) {
   const dir = process.argv[2];
   if (!dir) {
@@ -83,5 +92,13 @@ if (import.meta.main) {
       console.log(`${sc.name}: gzip ${(sc.gzip / 1024).toFixed(1)}KB (한도 ${FIRST_SCREEN_BUDGET / 1024}KB)${sc.gzip > FIRST_SCREEN_BUDGET ? " 넘음" : ""}`);
       for (const f of sc.files) console.log(`  ${f.path}: gzip ${(f.gzip / 1024).toFixed(1)}KB`);
     }
+  }
+  if (fs.existsSync(path.join(dir, "site-data", siteFiles.scheduleIndex))) {
+    // 일정 화면은 가장 최근 날짜의 다음 날(그 날짜 브리프를 처음 보는 날)에 연다고 보고 잰다
+    const dates = JSON.parse(fs.readFileSync(path.join(dir, "site-data/dates.json"), "utf8")) as { latestDate: string | null };
+    const today = process.argv[3] ?? (dates.latestDate ? new Date(Date.parse(`${dates.latestDate}T00:00:00Z`) + 86400000).toISOString().slice(0, 10) : new Date().toISOString().slice(0, 10));
+    const sc = measureScheduleScreen(dir, today);
+    console.log(`${sc.name}: gzip ${(sc.gzip / 1024).toFixed(1)}KB (한도 ${FIRST_SCREEN_BUDGET / 1024}KB)${sc.gzip > FIRST_SCREEN_BUDGET ? " 넘음" : ""}`);
+    for (const f of sc.files) console.log(`  ${f.path}: gzip ${(f.gzip / 1024).toFixed(1)}KB`);
   }
 }

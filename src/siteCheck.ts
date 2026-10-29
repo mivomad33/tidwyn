@@ -6,12 +6,15 @@ import { contentFindings, nameKinds, type Finding } from "./precheck.ts";
 
 /** 글자 모양 검사를 하는 텍스트 파일 확장자. 나머지(Pagefind 색인 조각, wasm, 글꼴, 이미지)는 건너뛴다 */
 const TEXT_EXTENSIONS = new Set([".html", ".htm", ".js", ".mjs", ".cjs", ".css", ".json", ".txt", ".xml", ".svg", ".map", ".webmanifest"]);
-/** 백업 파일 이름(backup.ts의 월별 JSON, issues.json, refs.json, meta.json). 사이트 데이터 이름은 이것과 겹치지 않는다 */
-const BACKUP_NAME_RE = /^(?:\d{4}-\d{2}\.json|issues\.json|refs\.json|meta\.json)$/;
-/** 실행 기록(`runs/<YYYYMMDD-HHMMSS>.json`), 작업 파일·후보 목록(`work/<날짜>.json`, `.candidates.*`, `.issues.md`, `.links.json`, `.refs.md`, `.refs.json`, `merges.*`) */
+/** 백업 파일 이름(backup.ts의 월별 JSON, issues.json, refs.json, schedules.json, meta.json). 사이트 데이터 이름은 이것과 겹치지 않는다 */
+const BACKUP_NAME_RE = /^(?:\d{4}-\d{2}\.json|issues\.json|refs\.json|schedules\.json|meta\.json)$/;
+/**
+ * 실행 기록(`runs/<YYYYMMDD-HHMMSS>.json`), 작업 파일·후보 목록(`work/<날짜>.json`, `.candidates.*`, `.issues.md`, `.links.json`,
+ * `.refs.md`, `.refs.json`, `.schedules.md`, `.schedules.json`, `merges.*`)
+ */
 const RUN_FILE_RES = [
   /^\d{8}-\d{6}\.json$/,
-  /^\d{4}-\d{2}-\d{2}\.(?:json|candidates\.json|candidates\.md|issues\.md|links\.json|refs\.md|refs\.json)$/,
+  /^\d{4}-\d{2}-\d{2}\.(?:json|candidates\.json|candidates\.md|issues\.md|links\.json|refs\.md|refs\.json|schedules\.md|schedules\.json)$/,
   /^merges\.(?:json|candidates\.md)$/,
 ];
 /** 데이터 폴더의 작업 폴더 이름. 결과물 안에 이런 폴더가 있으면 데이터 폴더가 섞인 것이다 */

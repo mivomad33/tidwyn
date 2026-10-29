@@ -10,12 +10,24 @@ import { collectCandidates, describeFeedReport, feedSpecs, fetchText as realFetc
 import { attachImages, dropImages, fillImages, readCandidateImages } from "./images.ts";
 import { issueIndexPath, renderAll, writeBriefMarkdown } from "./issueMarkdown.ts";
 import { linkableDates, unlinkedCount, unlinkedStories } from "./issues.ts";
-import { kstDate, kstIso, kstStamp } from "./kst.ts";
+import { isValidDate, kstDate, kstIso, kstStamp } from "./kst.ts";
 import { applyLinkPlan, checkLinkFile, renderLinkWork, renderSearch } from "./links.ts";
 import { markdownPath, writeMarkdown } from "./markdown.ts";
 import { applyRefPlan, checkRefFile, renderRefSearch, renderRefWork } from "./extract.ts";
 import { applyMerges, checkMergeFile, describeMerges, markMergeChecked, mergeCandidates, mergeDue, renderMergeCandidates, unmerge } from "./merge.ts";
 import { applyRefMerges, checkRefMerges, deleteRef, describeRefMerges, refMergeCandidates, renderRefMergeCandidates, unmergeRef, type RefMergeEntry } from "./refMerge.ts";
+import { applySchedulePlan, checkScheduleFile, dueText, renderScheduleSearch, renderScheduleWork } from "./scheduleExtract.ts";
+import {
+  applyScheduleMerges,
+  checkScheduleMerges,
+  deleteSchedule,
+  describeScheduleMerges,
+  renderScheduleMergeCandidates,
+  scheduleMergeCandidates,
+  unmergeSchedule,
+  type ScheduleMergeEntry,
+} from "./scheduleMerge.ts";
+import { getSchedule, isScheduled, schedulableDates } from "./schedules.ts";
 import { deletedNameWarning, ensureNameKey, extractableDates, isExtracted, readNameKey, refState, type RefItem } from "./refs.ts";
 import { priorityRatio } from "./outlets.ts";
 import { requireRepo } from "./paths.ts";
@@ -44,6 +56,7 @@ import {
   candidatesFile,
   linkWorkFile,
   refWorkFile,
+  scheduleWorkFile,
   mergeWorkFile,
   readRun,
   updateRun,
@@ -58,6 +71,8 @@ import {
   type PushResult,
   type RefMergeDone,
   type RunState,
+  type ScheduleMergeDone,
+  type ScheduleResult,
   type SiteResult,
 } from "./run.ts";
 import { DB_FILE, ENV_DATA_DIR, checkRunCondition, describeSettings, parseArgs, resolveSettings, type Settings } from "./settings.ts";
@@ -136,7 +151,7 @@ const USAGE = `명령:
   merge-list --run <파일>                 합치기 주기 확인과 후보 목록(work/merges.candidates.md)
   merge-check --run <파일>                합치기 파일(work/merges.json) 검사
   merge-apply --run <파일>                검사 → 합치기 → 점검일 갱신 → 마크다운
-  merges [--run <파일>]                   합치기 기록 목록(이슈, 대상·용어)
+  merges [--run <파일>]                   합치기 기록 목록(이슈, 대상·용어, 일정)
   unmerge --id <번호>                     합치기 하나 되돌리기(사용자가 직접 실행, /brief는 실행하지 않음)
 인물·기관·국가와 용어(4단계):
   refs --run <파일> --date <날짜>         그날 뉴스와 후보 대상·용어 목록(work/<날짜>.refs.md)
@@ -144,7 +159,14 @@ const USAGE = `명령:
   ref-check --run <파일> --date <날짜>    뽑기 파일(work/<날짜>.refs.json) 검사
   ref-apply --run <파일> --date <날짜>    검사 → 적용 → 뽑기 완료(실패하면 실행 기록에 남긴다)
   ref-unmerge --id <번호>                 대상·용어 합치기 하나 되돌리기(사용자가 직접 실행, /brief는 실행하지 않음)
-  ref-delete --entity <번호> | --term <번호>   대상이나 용어 하나 지우기(사용자가 직접 실행, /brief는 실행하지 않음)`;
+  ref-delete --entity <번호> | --term <번호>   대상이나 용어 하나 지우기(사용자가 직접 실행, /brief는 실행하지 않음)
+일정(5단계):
+  schedules --run <파일> --date <날짜>    그날 뉴스와 기존 일정·결과 후보 목록(work/<날짜>.schedules.md)
+  schedule-search [--run <파일>] --q <낱말> [--from <날짜>] [--to <날짜>]   이름의 낱말과 예정일 범위로 일정 찾기(지운 일정과 같으면 알린다)
+  schedule-check --run <파일> --date <날짜>   일정 파일(work/<날짜>.schedules.json) 검사
+  schedule-apply --run <파일> --date <날짜>   검사 → 적용 → 일정 뽑기 완료(실패하면 실행 기록에 남긴다)
+  schedule-unmerge --id <번호>            일정 합치기 하나 되돌리기(사용자가 직접 실행, /brief는 실행하지 않음)
+  schedule-delete --id <번호>             일정 하나 지우기(사용자가 직접 실행, /brief는 실행하지 않음)`;
 
 function opts(argv: string[], options: Record<string, { type: "string" | "boolean" }>) {
   return parseNodeArgs({ args: argv, options, allowPositionals: false, strict: true }).values as Record<string, string | boolean | undefined>;
@@ -199,6 +221,7 @@ function cmdStart(argv: string[], ctx: Context): number {
   let targets: string[];
   let linkDates: string[];
   let extractDates: string[];
+  let scheduleDates: string[];
   let warning: string | null;
   let mergeLine: string;
   try {
@@ -207,6 +230,7 @@ function cmdStart(argv: string[], ctx: Context): number {
     targets = plan.dates;
     linkDates = linkableDates(db);
     extractDates = extractableDates(db);
+    scheduleDates = schedulableDates(db);
     warning = deletedNameWarning(db, readNameKey(s.dataDir));
     const due = mergeDue(db, kstDate(now));
     mergeLine = due.due ? `이번 실행 끝에 한다(마지막 점검 ${due.checkedOn})` : due.nextOn === null ? "아직 연결한 이슈가 없다" : `다음 점검 ${due.nextOn}`;
@@ -228,6 +252,8 @@ function cmdStart(argv: string[], ctx: Context): number {
     links: {},
     extractDates,
     extracts: {},
+    scheduleDates,
+    schedules: {},
     site: null,
     deploy: null,
     push: null,
@@ -241,6 +267,7 @@ function cmdStart(argv: string[], ctx: Context): number {
       ...targets.map((d) => `  - ${d} 작업 파일: ${workFile(s.dataDir, d)}`),
       `- 이슈를 연결할 저장된 날짜(소급·재시도): ${linkDates.length > 0 ? linkDates.join(", ") : "없음"}`,
       `- 뽑기할 저장된 날짜(채우기·재시도): ${extractDates.length > 0 ? extractDates.join(", ") : "없음"}`,
+      `- 일정 뽑기할 저장된 날짜(채우기·재시도): ${scheduleDates.length > 0 ? scheduleDates.join(", ") : "없음"}`,
       ...(warning === null ? [] : [`- 경고: ${warning}`]),
       `- 합치기: ${mergeLine}`,
     ].join("\n"),
@@ -459,6 +486,7 @@ function cmdSummary(argv: string[], ctx: Context): number {
   }
   lines.push(...issueSummaryLines(s));
   lines.push(...extractSummaryLines(s));
+  lines.push(...scheduleSummaryLines(s));
   lines.push(...imageSummaryLines(s, saved));
   lines.push(`- 백업: ${describeBackup(s.backup)}`);
   lines.push(...siteSummaryLines(s));
@@ -712,7 +740,8 @@ function cmdMergeList(argv: string[], ctx: Context): number {
     }
     const pairs = mergeCandidates(db);
     const refPairs = refMergeCandidates(db);
-    const total = pairs.length + refPairs.length;
+    const schedulePairs = scheduleMergeCandidates(db);
+    const total = pairs.length + refPairs.length + schedulePairs.length;
     if (total === 0) {
       markMergeChecked(db, today);
       record({ status: "none", candidates: 0 });
@@ -721,11 +750,12 @@ function cmdMergeList(argv: string[], ctx: Context): number {
     }
     const file = mergeWorkFile(state.dataDir, "candidates.md");
     fs.mkdirSync(path.dirname(file), { recursive: true });
-    fs.writeFileSync(file, `${renderMergeCandidates(db, pairs).trimEnd()}\n\n${renderRefMergeCandidates(db, refPairs).join("\n").trimEnd()}\n`);
+    const parts = [renderMergeCandidates(db, pairs).trimEnd(), renderRefMergeCandidates(db, refPairs).join("\n").trimEnd(), renderScheduleMergeCandidates(db, schedulePairs).join("\n").trimEnd()];
+    fs.writeFileSync(file, `${parts.join("\n\n")}\n`);
     record({ status: "pending", candidates: total });
     const entityPairs = refPairs.filter((p) => p.item === "entity").length;
     ctx.out(
-      `합치기: 할 일 있음(마지막 점검 ${due.checkedOn}). 후보 이슈 ${pairs.length}쌍, 대상 ${entityPairs}쌍, 용어 ${refPairs.length - entityPairs}쌍: ${file}\n합치기 파일을 쓸 곳: ${mergeWorkFile(state.dataDir, "json")}`,
+      `합치기: 할 일 있음(마지막 점검 ${due.checkedOn}). 후보 이슈 ${pairs.length}쌍, 대상 ${entityPairs}쌍, 용어 ${refPairs.length - entityPairs}쌍, 일정 ${schedulePairs.length}쌍: ${file}\n합치기 파일을 쓸 곳: ${mergeWorkFile(state.dataDir, "json")}`,
     );
     return EXIT.ok;
   } finally {
@@ -744,12 +774,19 @@ function cmdMergeCheck(argv: string[], ctx: Context): number {
   const db = openExistingDb(state.dbPath);
   try {
     let refs: RefMergeEntry[] = [];
-    const r = checkMergeFile(db, file.data, { keys: REF_MERGE_KEYS, check: (c, root) => (refs = checkRefMerges(c, db, root)) });
+    let schedules: ScheduleMergeEntry[] = [];
+    const r = checkMergeFile(db, file.data, {
+      keys: MORE_MERGE_KEYS,
+      check: (c, root) => {
+        refs = checkRefMerges(c, db, root);
+        schedules = checkScheduleMerges(c, db, root);
+      },
+    });
     if (!r.ok) {
       ctx.out(`합치기 검사 실패, 위반 ${r.violations.length}개:\n${formatViolations(r.violations)}`);
       return EXIT.failed;
     }
-    ctx.out(`합치기 검사 통과: 이슈 ${r.merges.length}쌍, 대상·용어 ${refs.length}쌍.`);
+    ctx.out(`합치기 검사 통과: 이슈 ${r.merges.length}쌍, 대상·용어 ${refs.length}쌍, 일정 ${schedules.length}쌍.`);
     return EXIT.ok;
   } finally {
     db.close();
@@ -771,15 +808,28 @@ function cmdMergeApply(argv: string[], ctx: Context): number {
   const db = openExistingDb(state.dbPath);
   try {
     let refEntries: RefMergeEntry[] = [];
-    const checked = checkMergeFile(db, file.data, { keys: REF_MERGE_KEYS, check: (c, root) => (refEntries = checkRefMerges(c, db, root)) });
+    let scheduleEntries: ScheduleMergeEntry[] = [];
+    const checked = checkMergeFile(db, file.data, {
+      keys: MORE_MERGE_KEYS,
+      check: (c, root) => {
+        refEntries = checkRefMerges(c, db, root);
+        scheduleEntries = checkScheduleMerges(c, db, root);
+      },
+    });
     if (!checked.ok) return fail("합치기 파일이 검사를 통과하지 못했다", checked.violations);
     const names = new Map<number, string>();
     for (const m of checked.merges) for (const id of [m.survivor, m.absorbed]) names.set(id, getIssueName(db, id));
     const refName = (item: RefItem, id: number) => refState(db, item, id)?.name ?? "";
     const refNames = refEntries.map((m) => ({ survivor: refName(m.item, m.survivor), absorbed: refName(m.item, m.absorbed) }));
+    const scheduleName = (id: number) => getSchedule(db, id)?.name ?? "";
+    const scheduleNames = scheduleEntries.map((m) => ({ survivor: scheduleName(m.survivor), absorbed: scheduleName(m.absorbed) }));
     const today = kstDate(ctx.now());
     let refIds: number[] = [];
-    const ids = applyMerges(db, checked.merges, today, () => (refIds = applyRefMerges(db, refEntries, today)));
+    let scheduleIds: number[] = [];
+    const ids = applyMerges(db, checked.merges, today, () => {
+      refIds = applyRefMerges(db, refEntries, today);
+      scheduleIds = applyScheduleMerges(db, scheduleEntries, today);
+    });
     const refs: RefMergeDone[] = refEntries.map((m, i) => ({
       id: refIds[i]!,
       item: m.item,
@@ -789,7 +839,15 @@ function cmdMergeApply(argv: string[], ctx: Context): number {
       absorbedName: refNames[i]!.absorbed,
       reason: m.reason,
     }));
-    if (ids.length === 0 && refs.length === 0) {
+    const schedules: ScheduleMergeDone[] = scheduleEntries.map((m, i) => ({
+      id: scheduleIds[i]!,
+      survivor: m.survivor,
+      survivorName: scheduleNames[i]!.survivor,
+      absorbed: m.absorbed,
+      absorbedName: scheduleNames[i]!.absorbed,
+      reason: m.reason,
+    }));
+    if (ids.length === 0 && refs.length === 0 && schedules.length === 0) {
       const prev = readRun(runFile).merge;
       record({ status: "none", candidates: prev?.status === "pending" || prev?.status === "none" ? prev.candidates : 0 });
       ctx.out(`합친 것 없음. 점검일을 ${kstDate(ctx.now())}로 바꿨다.`);
@@ -803,18 +861,22 @@ function cmdMergeApply(argv: string[], ctx: Context): number {
       absorbedName: names.get(m.absorbed) ?? "",
       reason: m.reason,
     }));
-    record(refs.length > 0 ? { status: "merged", merges, refs } : { status: "merged", merges });
+    record({ status: "merged", merges, ...(refs.length > 0 ? { refs } : {}), ...(schedules.length > 0 ? { schedules } : {}) });
     const lines = merges.map((m) => `- 합치기 ${m.id}: 이슈 ${m.absorbed}(${m.absorbedName}) → 이슈 ${m.survivor}(${m.survivorName}). 되돌리기: node src/cli.ts unmerge --id ${m.id}`);
-    lines.push(...refs.map(refMergeLine));
-    ctx.out([`합침: 이슈 ${merges.length}쌍, 대상·용어 ${refs.length}쌍. 점검일을 ${today}로 바꿨다.`, ...lines, rerender(db, state.dataDir)].join("\n"));
+    lines.push(...refs.map(refMergeLine), ...schedules.map(scheduleMergeLine));
+    ctx.out([`합침: 이슈 ${merges.length}쌍, 대상·용어 ${refs.length}쌍, 일정 ${schedules.length}쌍. 점검일을 ${today}로 바꿨다.`, ...lines, rerender(db, state.dataDir)].join("\n"));
     return EXIT.ok;
   } finally {
     db.close();
   }
 }
 
-/** 합치기 파일에서 4단계 대상·용어 합치기를 적는 항목 */
-const REF_MERGE_KEYS = ["entityMerges", "termMerges"];
+/** 합치기 파일에서 4단계 대상·용어 합치기와 5단계 일정 합치기를 적는 항목 */
+const MORE_MERGE_KEYS = ["entityMerges", "termMerges", "scheduleMerges"];
+
+function scheduleMergeLine(m: ScheduleMergeDone): string {
+  return `- 일정 합치기 ${m.id}: 일정 ${m.absorbed}(${m.absorbedName}) → 일정 ${m.survivor}(${m.survivorName}). 이유: ${m.reason}. 되돌리기: node src/cli.ts schedule-unmerge --id ${m.id}`;
+}
 
 function refMergeLine(m: RefMergeDone): string {
   const label = m.item === "entity" ? "대상" : "용어";
@@ -829,8 +891,8 @@ function cmdMerges(argv: string[], ctx: Context): number {
   const v = opts(argv, { run: { type: "string" } });
   const db = openExistingDb(dataTarget(v.run, ctx).dbPath);
   try {
-    const refs = describeRefMerges(db);
-    ctx.out(refs.length > 0 ? `${describeMerges(db)}\n${refs.join("\n")}` : describeMerges(db));
+    const more = [...describeRefMerges(db), ...describeScheduleMerges(db)];
+    ctx.out(more.length > 0 ? `${describeMerges(db)}\n${more.join("\n")}` : describeMerges(db));
     return EXIT.ok;
   } finally {
     db.close();
@@ -910,11 +972,13 @@ function issueSummaryLines(s: RunState): string[] {
   else if (m.status === "pending") lines.push(`- 합치기: 후보 ${m.candidates}쌍을 만들었지만 적용하지 않았다(점검일을 바꾸지 않았다, 다음 실행이 다시 한다)`);
   else if (m.status === "none") lines.push(`- 합치기: 점검했고 합친 것이 없다(후보 ${m.candidates}쌍)`);
   else if (m.status === "merged") {
-    lines.push(m.refs === undefined ? `- 합치기: ${m.merges.length}쌍을 합쳤다` : `- 합치기: 이슈 ${m.merges.length}쌍, 대상·용어 ${m.refs.length}쌍을 합쳤다`);
+    if (m.refs === undefined && m.schedules === undefined) lines.push(`- 합치기: ${m.merges.length}쌍을 합쳤다`);
+    else lines.push(`- 합치기: 이슈 ${m.merges.length}쌍, 대상·용어 ${m.refs?.length ?? 0}쌍${m.schedules === undefined ? "" : `, 일정 ${m.schedules.length}쌍`}을 합쳤다`);
     for (const x of m.merges) {
       lines.push(`  - 이슈 ${x.absorbed}(${x.absorbedName}) → 이슈 ${x.survivor}(${x.survivorName}). 이유: ${x.reason}. 되돌리기: node src/cli.ts unmerge --id ${x.id}`);
     }
     for (const x of m.refs ?? []) lines.push(`  ${refMergeLine(x)}`);
+    for (const x of m.schedules ?? []) lines.push(`  ${scheduleMergeLine(x)}`);
   } else {
     lines.push(`- 합치기 실패(점검일을 바꾸지 않았다, 다음 실행이 다시 한다): ${m.reason}`);
     if (m.violations) for (const vi of m.violations) lines.push(`  - ${vi.where}: ${vi.why}`);
@@ -1147,6 +1211,211 @@ function extractSummaryLines(s: RunState): string[] {
   return lines;
 }
 
+// ---- 일정(5단계) ----
+
+function cmdSchedules(argv: string[], ctx: Context): number {
+  const v = opts(argv, { run: { type: "string" }, date: { type: "string" } });
+  const state = readRun(need(v, "run"));
+  const date = need(v, "date");
+  const db = openExistingDb(state.dbPath);
+  try {
+    requireStored(db, date);
+    if (isScheduled(db, date)) {
+      ctx.out(`할 일 없음(${date}): 이미 일정 뽑기를 마친 날짜다.`);
+      return EXIT.ok;
+    }
+    const work = renderScheduleWork(db, date);
+    const file = scheduleWorkFile(state.dataDir, date, "schedules.md");
+    fs.mkdirSync(path.dirname(file), { recursive: true });
+    fs.writeFileSync(file, work.text);
+    ctx.out(`뉴스 ${work.stories}건, 기존 일정 후보 ${work.existing}개, 결과 후보 ${work.results}개: ${file}\n일정 파일을 쓸 곳: ${scheduleWorkFile(state.dataDir, date, "schedules.json")}`);
+    return EXIT.ok;
+  } finally {
+    db.close();
+  }
+}
+
+function dateOpt(values: Record<string, string | boolean | undefined>, key: string): string | null {
+  const v = values[key];
+  if (v === undefined) return null;
+  if (typeof v !== "string" || !isValidDate(v)) throw new UsageError(`--${key}는 YYYY-MM-DD 날짜여야 한다: ${String(v)}`);
+  return v;
+}
+
+function cmdScheduleSearch(argv: string[], ctx: Context): number {
+  const v = opts(argv, { run: { type: "string" }, q: { type: "string" }, from: { type: "string" }, to: { type: "string" } });
+  const q = typeof v.q === "string" ? v.q : "";
+  const from = dateOpt(v, "from");
+  const to = dateOpt(v, "to");
+  if (q.trim() === "" && from === null && to === null) throw new UsageError("--q나 --from·--to가 필요하다");
+  const db = openExistingDb(dataTarget(v.run, ctx).dbPath);
+  try {
+    ctx.out(renderScheduleSearch(db, q, from, to));
+    return EXIT.ok;
+  } finally {
+    db.close();
+  }
+}
+
+function cmdScheduleCheck(argv: string[], ctx: Context): number {
+  const v = opts(argv, { run: { type: "string" }, date: { type: "string" } });
+  const state = readRun(need(v, "run"));
+  const date = need(v, "date");
+  const file = readJson(scheduleWorkFile(state.dataDir, date, "schedules.json"), "일정 파일");
+  if (!file.ok) {
+    ctx.out(`일정 검사 실패(${date}):\n- 일정 파일: ${file.reason}`);
+    return EXIT.failed;
+  }
+  const db = openExistingDb(state.dbPath);
+  try {
+    requireStored(db, date);
+    const r = checkScheduleFile(db, file.data, date);
+    if (!r.ok) {
+      ctx.out(`일정 검사 실패(${date}), 위반 ${r.violations.length}개:\n${formatViolations(r.violations)}`);
+      return EXIT.failed;
+    }
+    const p = r.plan;
+    ctx.out(`일정 검사 통과(${date}): 뉴스 ${p.stories.length}건, 새 일정 ${p.newSchedules.length}개, 결과 ${p.outcomes.length}개, 날짜 확정 ${p.confirms.length}개.`);
+    return EXIT.ok;
+  } finally {
+    db.close();
+  }
+}
+
+function cmdScheduleApply(argv: string[], ctx: Context): number {
+  const v = opts(argv, { run: { type: "string" }, date: { type: "string" } });
+  const runFile = need(v, "run");
+  const state = readRun(runFile);
+  const date = need(v, "date");
+  const record = (r: ScheduleResult) => updateRun(runFile, (s) => ((s.schedules ??= {})[date] = r));
+  const db = openExistingDb(state.dbPath);
+  try {
+    requireStored(db, date);
+    if (isScheduled(db, date)) {
+      record({ status: "nothing" });
+      ctx.out(`할 일 없음(${date}): 이미 일정 뽑기를 마친 날짜다. 바꾼 것이 없다.`);
+      return EXIT.ok;
+    }
+    const file = readJson(scheduleWorkFile(state.dataDir, date, "schedules.json"), "일정 파일");
+    if (!file.ok) {
+      record({ status: "failed", reason: file.reason });
+      ctx.out(`일정을 적용하지 않음(${date}): ${file.reason}`);
+      return EXIT.failed;
+    }
+    const checked = checkScheduleFile(db, file.data, date);
+    if (!checked.ok) {
+      record({ status: "failed", reason: "일정 파일이 검사를 통과하지 못했다", violations: checked.violations });
+      ctx.out(`일정을 적용하지 않음(${date}), 위반 ${checked.violations.length}개(뉴스, 이슈 연결, 인물·용어 뽑기는 그대로 두고 다음 실행이 다시 뽑는다):\n${formatViolations(checked.violations)}`);
+      return EXIT.failed;
+    }
+    const a = applySchedulePlan(db, checked.plan);
+    record(a);
+    ctx.out(
+      a.status === "applied"
+        ? `일정 적용함(${date}): 새 일정 ${a.newSchedules}개, 근거를 더한 기존 일정 ${a.attached}개, 결과 연결 ${a.results}개, 연기 ${a.postponed}개, 취소 ${a.cancelled}개, 날짜 확정 ${a.confirmed}개.`
+        : `할 일 없음(${date}).`,
+    );
+    return EXIT.ok;
+  } finally {
+    db.close();
+  }
+}
+
+function idArg(argv: string[], label: string): number {
+  const v = opts(argv, { id: { type: "string" } });
+  const raw = need(v, "id");
+  const id = Number(raw);
+  if (!Number.isInteger(id) || id <= 0) throw new UsageError(`--id는 ${label}여야 한다: ${raw}`);
+  return id;
+}
+
+/** 일정 합치기 되돌리기(4.3-3). 사용자가 직접 실행한다 */
+function cmdScheduleUnmerge(argv: string[], ctx: Context): number {
+  const id = idArg(argv, "일정 합치기 기록 번호");
+  const prep = userCommandDb(ctx);
+  if ("exit" in prep) return prep.exit;
+  const db = openExistingDb(prep.s.dbPath);
+  try {
+    const r = unmergeSchedule(db, id, kstDate(ctx.now()));
+    if (!r.ok) {
+      ctx.out(`되돌리지 않음: ${r.reason}`);
+      return EXIT.failed;
+    }
+    ctx.out(
+      [
+        `되돌림: 일정 합치기 ${id} (일정 ${r.merge.absorbed}을(를) 일정 ${r.merge.survivor}에서 되살렸다). 두 일정은 다음 합치기 후보에서 빠진다.`,
+        `- 실행 전 사본: ${prep.snapshot}`,
+        "- 백업과 사이트 배포는 다음 /brief 실행이 한다.",
+      ].join("\n"),
+    );
+    return EXIT.ok;
+  } finally {
+    db.close();
+  }
+}
+
+/** 일정 지우기(4.3-4, C13). 사용자가 직접 실행한다 */
+function cmdScheduleDelete(argv: string[], ctx: Context): number {
+  const id = idArg(argv, "일정 식별자(양의 정수)");
+  const prep = userCommandDb(ctx);
+  if ("exit" in prep) return prep.exit;
+  const db = openExistingDb(prep.s.dbPath);
+  try {
+    const r = deleteSchedule(db, id, kstDate(ctx.now()));
+    if (!r.ok) {
+      ctx.out(`지우지 않음: ${r.reason}`);
+      return EXIT.failed;
+    }
+    ctx.out(
+      [
+        `지움: 일정 ${id} (${r.name}, ${dueText(r.due)})${r.ids.length > 1 ? `, 흡수되어 있던 일정 ${r.ids.slice(1).join(", ")} 포함` : ""}.`,
+        `- 끊은 연결: ${r.links}개`,
+        ...(r.pointing.length > 0 ? [`- 이 일정을 연기 대상으로 가리키던 일정 ${r.pointing.join(", ")}은(는) "연기(새 날짜 모름)"로 보인다`] : []),
+        "- 같은 이름·예정일의 새 일정은 다음 뽑기부터 거부한다.",
+        `- 실행 전 사본: ${prep.snapshot}`,
+        "- 다음 /brief 실행이 백업하고 사이트에 배포한다. 그때부터 사이트에서 빠지고 그 일정 주소는 없는 페이지가 된다.",
+        "- 남는 곳: 이미 push된 data 브랜치의 지난 백업 이력, 뉴스 본문(제목·요약·본문)(바꾸지 않는다).",
+        "- 바로 내리려면 docs/operations.md의 손으로 하는 배포(main에서 site 빌드 뒤 deploy --dir --db)를 쓴다.",
+        "- 지우기는 되돌리지 않는다. 되돌리려면 실행 전 사본으로 복원한다(docs/operations.md).",
+      ].join("\n"),
+    );
+    return EXIT.ok;
+  } finally {
+    db.close();
+  }
+}
+
+/** 실행 요약의 일정 줄(5단계 4.5-2). 앞 단계 실행 기록(scheduleDates 없음)에는 붙이지 않는다 */
+function scheduleSummaryLines(s: RunState): string[] {
+  if (s.scheduleDates === undefined) return [];
+  const lines: string[] = [];
+  const results = s.schedules ?? {};
+  const saved = s.targetDates.filter((d) => s.results[d]?.status === "saved");
+  const dates = [...new Set([...s.scheduleDates, ...saved, ...Object.keys(results)])].sort();
+  if (dates.length > 0) lines.push("- 일정 뽑기:");
+  for (const d of dates) {
+    const r = results[d];
+    if (r === undefined) lines.push(`  - ${d}: 일정 뽑기 결과가 기록되지 않았다(다음 실행이 다시 뽑는다)`);
+    else if (r.status === "applied") {
+      lines.push(`  - ${d}: 새 일정 ${r.newSchedules}개, 근거를 더한 기존 일정 ${r.attached}개, 결과 연결 ${r.results}개, 연기 ${r.postponed}개, 취소 ${r.cancelled}개${r.confirmed > 0 ? `, 날짜 확정 ${r.confirmed}개` : ""}`);
+    } else if (r.status === "nothing") lines.push(`  - ${d}: 할 일 없음(이미 뽑음)`);
+    else {
+      lines.push(`  - ${d}: 일정 뽑기 실패(뉴스, 이슈 연결, 인물·용어 뽑기는 그대로, 다음 실행이 다시 뽑는다): ${r.reason}`);
+      if (r.violations) for (const vi of r.violations) lines.push(`    - ${vi.where}: ${vi.why}`);
+    }
+  }
+  if (fs.existsSync(s.dbPath)) {
+    const db = openExistingDb(s.dbPath);
+    try {
+      const n = schedulableDates(db).length;
+      lines.push(n > 0 ? `- 아직 일정 뽑기 안 한 날짜: ${n}개(다음 실행이 뽑는다)` : "- 아직 일정 뽑기 안 한 날짜: 없음");
+    } finally {
+      db.close();
+    }
+  }
+  return lines;
+}
+
 // ---- 사이트·배포·push(3단계) ----
 
 function homeOf(ctx: Context): string | null {
@@ -1157,7 +1426,8 @@ function describeSite(r: SiteResult | null): string[] {
   if (r === null) return ["실행하지 않았다"];
   if (r.status === "failed") return [`실패(배포하지 않는다, 다음 실행이 다시 빌드한다): ${r.reason}`, ...(r.findings ?? []).map((f) => `  - ${f}`)];
   const refs = r.entities === undefined ? "" : `, 인물·기관·국가 ${r.entities}개, 용어 ${r.terms ?? 0}개`;
-  const lines = [`브리프 날짜 ${r.dates}개, 이슈 ${r.issues}개, 결과물 ${formatMb(r.bytes)}, 파일 ${r.files}개${refs}`];
+  const schedules = r.schedules === undefined ? "" : `, 일정 ${r.schedules}개(다가오는 일정 ${r.upcoming ?? 0}개)`;
+  const lines = [`브리프 날짜 ${r.dates}개, 이슈 ${r.issues}개, 결과물 ${formatMb(r.bytes)}, 파일 ${r.files}개${refs}${schedules}`];
   if (r.bytes > WARN_BYTES || r.files > WARN_FILES) {
     lines.push(`  - 경고: Vercel 무료 한도(100MB, 파일 15,000개)에 가깝다(문턱 ${formatMb(WARN_BYTES)}, ${WARN_FILES.toLocaleString("en-US")}개). docs/operations.md의 한도 대응을 본다`);
   }
@@ -1222,7 +1492,7 @@ function cmdSite(argv: string[], ctx: Context): number {
     dataDir = path.resolve(ctx.cwd, dirArg!);
     dbPath = path.join(dataDir, DB_FILE);
   }
-  const result = buildSite({ repoDir: requireRepo(ctx.cwd).toplevel, dataDir, dbPath, home: homeOf(ctx), builder: ctx.buildSite ?? nodeSiteBuilder });
+  const result = buildSite({ repoDir: requireRepo(ctx.cwd).toplevel, dataDir, dbPath, home: homeOf(ctx), builder: ctx.buildSite ?? nodeSiteBuilder, today: kstDate(ctx.now()) });
   if (runFile !== undefined) updateRun(runFile, (s) => (s.site = result));
   const lines = describeSite(result);
   lines[0] = `사이트 빌드: ${lines[0]}`;
@@ -1333,6 +1603,12 @@ const COMMANDS: Record<string, (argv: string[], ctx: Context) => number> = {
   "ref-apply": cmdRefApply,
   "ref-unmerge": cmdRefUnmerge,
   "ref-delete": cmdRefDelete,
+  schedules: cmdSchedules,
+  "schedule-search": cmdScheduleSearch,
+  "schedule-check": cmdScheduleCheck,
+  "schedule-apply": cmdScheduleApply,
+  "schedule-unmerge": cmdScheduleUnmerge,
+  "schedule-delete": cmdScheduleDelete,
   site: cmdSite,
   push: cmdPush,
   precheck: cmdPrecheck,

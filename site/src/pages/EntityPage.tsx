@@ -1,7 +1,7 @@
 // 인물·기관·국가 페이지(4.7-4). 그 식별자의 상세 묶음을 받고, 흡수된 식별자면 남는 대상의 묶음을 받아 남는 대상 주소로 바꾼다.
 // 지웠거나 없는 식별자(묶음에 없거나 묶음 파일이 없음)는 없는 페이지다. 등장 뉴스의 나머지는 "더 보기"를 눌렀을 때 받는다.
 import { useEffect, useState } from "react";
-import { BackLink, ErrorState, Layout, Loading, NewsTitle, ReadCheck, useTitle } from "../components/common.tsx";
+import { BackLink, ErrorState, Layout, Loading, NewsTitle, ReadCheck, useFocusNewRow, useTitle } from "../components/common.tsx";
 import { retry, useResource, type Resource } from "../data.ts";
 import { ENTITY_FIRST_ISSUES, ENTITY_MORE_STEP, resolveEntity } from "../lib/entities.ts";
 import { monthDay, shortDate } from "../lib/format.ts";
@@ -67,6 +67,8 @@ export function EntityPage({ id }: { id: number }) {
 function EntityView({ entity, merged }: { entity: EntityDetail; merged: MergedState["mergedFrom"] | null }) {
   const year = entity.latestDate.slice(0, 4);
   const [issueLimit, setIssueLimit] = useState(ENTITY_FIRST_ISSUES);
+  const moreIssues = useFocusNewRow<HTMLDivElement>("a");
+  const moreNews = useFocusNewRow<HTMLDivElement>(".rows > li");
   // "더 보기"를 누른 뒤에만 나머지 뉴스 묶음을 받는다
   const [extra, setExtra] = useState(0);
   const newsUrl = extra > 0 && entity.moreNews > 0 ? dataUrl.entityNews(entityChunkOf(entity.id)) : null;
@@ -96,7 +98,7 @@ function EntityView({ entity, merged }: { entity: EntityDetail; merged: MergedSt
       {entity.issues.length > 0 && (
         <>
           <h2 className="h">등장한 이슈</h2>
-          <div className="rel">
+          <div className="rel" ref={moreIssues.ref}>
             {entity.issues.slice(0, issueLimit).map((i) => (
               <Link key={i.id} to={issuePath(i.id)}>
                 {i.name}
@@ -109,7 +111,10 @@ function EntityView({ entity, merged }: { entity: EntityDetail; merged: MergedSt
           </div>
           {entity.issues.length > issueLimit && (
             <div className="more tight">
-              <button type="button" className="retry" onClick={() => setIssueLimit((n) => n + ENTITY_MORE_STEP)}>
+              <button type="button" className="retry" onClick={() => {
+                  moreIssues.mark();
+                  setIssueLimit((n) => n + ENTITY_MORE_STEP);
+                }}>
                 이슈 더 보기
               </button>
             </div>
@@ -117,8 +122,23 @@ function EntityView({ entity, merged }: { entity: EntityDetail; merged: MergedSt
         </>
       )}
       <h2 className="h">등장한 뉴스</h2>
-      <NewsRows news={entity.news} year={year} />
-      {entity.moreNews > 0 && <MoreNews id={entity.id} res={newsRes} extra={extra} total={entity.moreNews} year={year} onMore={() => setExtra((n) => n + ENTITY_MORE_STEP)} onRetry={() => retry([newsUrl])} />}
+      <div ref={moreNews.ref}>
+        <NewsRows news={entity.news} year={year} />
+        {entity.moreNews > 0 && (
+          <MoreNews
+            id={entity.id}
+            res={newsRes}
+            extra={extra}
+            total={entity.moreNews}
+            year={year}
+            onMore={() => {
+              moreNews.mark();
+              setExtra((n) => n + ENTITY_MORE_STEP);
+            }}
+            onRetry={() => retry([newsUrl])}
+          />
+        )}
+      </div>
     </article>
   );
 }

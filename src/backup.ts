@@ -17,6 +17,9 @@ import {
   type IssueStatus,
 } from "./issues.ts";
 import type { Category } from "./brief.ts";
+import type { Major } from "./categories.ts";
+import { listScheduleMerges, type ScheduleMergeRow } from "./scheduleMerge.ts";
+import { allSchedules, hasScheduleData, markScheduled, scheduledDates, storiesOfSchedule, type ScheduleOutcome, type ScheduleRole } from "./schedules.ts";
 import { listMerges, type MergeRecord } from "./merge.ts";
 import { listRefMerges, type RefMergeRecord } from "./refMerge.ts";
 import { allEntities, allTerms, extractedDates, hasRefData, markExtracted, storiesOfRef, type EntityKind, type RefItem } from "./refs.ts";
@@ -26,15 +29,21 @@ import { getFirstCollectionDate, loadBrief, recordFirstCollectionDate, saveBrief
 // 형식 2(2단계): 이슈 데이터를 issues.json에 따로 둔다. 이슈 데이터가 없으면 이 파일과 meta의 이슈 키를 쓰지 않는다.
 // 형식 3(4단계 4.4-1): 대상·용어 데이터를 refs.json에 따로 두고, 달 파일에 뽑기 완료 날짜(extracted)를 둔다.
 // 대상·용어 데이터가 없으면 refs.json을 쓰지 않고, 뽑기 완료 날짜가 없는 달은 extracted를 쓰지 않는다.
+// 형식 4(5단계 4.4-1): 일정 데이터를 schedules.json에 따로 두고, 달 파일에 일정 뽑기 완료 날짜(scheduled)를 둔다.
+// 일정 데이터가 없으면 schedules.json을 쓰지 않고, 일정 뽑기 완료 날짜가 없는 달은 scheduled를 쓰지 않는다.
 
-export const BACKUP_FORMAT_VERSION = 3;
-/** 복원할 수 있는 형식 버전. 형식 1 백업은 이슈 없이, 형식 1·2 백업은 대상·용어 없이 모든 날짜가 뽑기 안 함으로 복원된다 */
-const READABLE_VERSIONS = [1, 2, 3];
+export const BACKUP_FORMAT_VERSION = 4;
+/**
+ * 복원할 수 있는 형식 버전. 형식 1 백업은 이슈 없이, 형식 1·2 백업은 대상·용어 없이 모든 날짜가 뽑기 안 함으로,
+ * 형식 1·2·3 백업은 일정 없이 모든 날짜가 일정 뽑기 안 함으로 복원된다
+ */
+const READABLE_VERSIONS = [1, 2, 3, 4];
 export const BACKUP_DIR = "backup";
 export const DATA_REF = "refs/heads/data";
 const META_FILE = "meta.json";
 const ISSUES_FILE = "issues.json";
 const REFS_FILE = "refs.json";
+const SCHEDULES_FILE = "schedules.json";
 const MONTH_RE = /^\d{4}-\d{2}\.json$/;
 
 interface MetaFile {
@@ -73,7 +82,7 @@ interface RefsFile {
 }
 
 function isBackupFile(name: string): boolean {
-  return name === META_FILE || name === ISSUES_FILE || name === REFS_FILE || MONTH_RE.test(name);
+  return name === META_FILE || name === ISSUES_FILE || name === REFS_FILE || name === SCHEDULES_FILE || MONTH_RE.test(name);
 }
 
 function buildRefsFile(db: DatabaseSync): RefsFile {
@@ -129,6 +138,49 @@ function restoreRefs(db: DatabaseSync, f: RefsFile): void {
   for (const d of f.deletedNames) db.prepare("INSERT INTO deleted_names (scope, hash, key_fp, deleted_on) VALUES (?, ?, ?, ?)").run(d.scope, d.hash, d.keyFp, d.deletedOn);
 }
 
+/** 지운 일정도 이름·예정일을 남긴다(같은 이름·예정일을 다시 뽑지 않는 기록, C13. 일정은 개인정보가 아니다) */
+interface SchedulesFile {
+  formatVersion: number;
+  schedules: { id: number; name: string; due: string; major: Major; outcome: ScheduleOutcome | null; postponedTo: number | null; mergedInto: number | null; deleted: boolean; deletedOn: string | null }[];
+  /** story는 전역 뉴스 키(`날짜/키`) */
+  links: { story: string; schedule: number; role: ScheduleRole }[];
+  merges: ScheduleMergeRow[];
+  noMerge: [number, number][];
+}
+
+function buildSchedulesFile(db: DatabaseSync): SchedulesFile {
+  const schedules = allSchedules(db);
+  const links: SchedulesFile["links"] = [];
+  for (const s of schedules) for (const st of storiesOfSchedule(db, s.id)) links.push({ story: fullKey(st), schedule: s.id, role: st.role });
+  links.sort((a, b) => a.story.localeCompare(b.story) || a.schedule - b.schedule || a.role.localeCompare(b.role));
+  const noMerge = (db.prepare("SELECT a, b FROM schedule_no_merge ORDER BY a, b").all() as { a: number; b: number }[]).map((r): [number, number] => [r.a, r.b]);
+  return {
+    formatVersion: BACKUP_FORMAT_VERSION,
+    schedules: schedules.map((s) => ({ id: s.id, name: s.name, due: s.due, major: s.major, outcome: s.outcome, postponedTo: s.postponedTo, mergedInto: s.mergedInto, deleted: s.deleted, deletedOn: s.deletedOn })),
+    links,
+    merges: listScheduleMerges(db),
+    noMerge,
+  };
+}
+
+function restoreSchedules(db: DatabaseSync, f: SchedulesFile): void {
+  const ins = db.prepare("INSERT INTO schedules (id, name, due, major, outcome, deleted, deleted_on) VALUES (?, ?, ?, ?, ?, ?, ?)");
+  for (const s of f.schedules) ins.run(s.id, s.name, s.due, s.major, s.outcome, s.deleted ? 1 : 0, s.deletedOn);
+  for (const s of f.schedules) {
+    if (s.postponedTo !== null || s.mergedInto !== null) db.prepare("UPDATE schedules SET postponed_to = ?, merged_into = ? WHERE id = ?").run(s.postponedTo, s.mergedInto, s.id);
+  }
+  for (const l of f.links) {
+    const story = storyByFullKey(db, l.story);
+    if (story === null) throw new Error(`${SCHEDULES_FILE}의 연결이 가리키는 뉴스 ${l.story}가 없다`);
+    db.prepare("INSERT INTO story_schedules (story_id, schedule_id, role) VALUES (?, ?, ?)").run(story.id, l.schedule, l.role);
+  }
+  for (const m of f.merges) {
+    db.prepare("INSERT INTO schedule_merges (id, merged_on, survivor, absorbed, reason, record, undone_on) VALUES (?, ?, ?, ?, ?, ?, ?)").run(
+      m.id, m.mergedOn, m.survivor, m.absorbed, m.reason, JSON.stringify(m.record), m.undoneOn);
+  }
+  for (const [a, b] of f.noMerge) db.prepare("INSERT INTO schedule_no_merge (a, b) VALUES (?, ?)").run(a, b);
+}
+
 function buildIssuesFile(db: DatabaseSync): IssuesFile {
   const issues = allIssues(db);
   const links: IssuesFile["links"] = [];
@@ -168,6 +220,8 @@ interface MonthFile {
   briefs: StoredBrief[];
   /** 그 달에서 뽑기 완료인 날짜(4단계). 없으면 항목을 뺀다 */
   extracted?: string[];
+  /** 그 달에서 일정 뽑기 완료인 날짜(5단계). 없으면 항목을 뺀다 */
+  scheduled?: string[];
 }
 
 function toJson(value: unknown): string {
@@ -185,7 +239,9 @@ export function buildBackup(db: DatabaseSync): Map<string, string> {
   files.set(META_FILE, toJson(meta));
   if (hasIssueData(db)) files.set(ISSUES_FILE, toJson(buildIssuesFile(db)));
   if (hasRefData(db)) files.set(REFS_FILE, toJson(buildRefsFile(db)));
+  if (hasScheduleData(db)) files.set(SCHEDULES_FILE, toJson(buildSchedulesFile(db)));
   const extracted = extractedDates(db);
+  const scheduled = scheduledDates(db);
   const byMonth = new Map<string, StoredBrief[]>();
   for (const date of storedDates(db)) {
     const stored = loadBrief(db, date);
@@ -199,6 +255,8 @@ export function buildBackup(db: DatabaseSync): Map<string, string> {
     const file: MonthFile = { formatVersion: BACKUP_FORMAT_VERSION, month, briefs };
     const done = extracted.filter((d) => d.slice(0, 7) === month);
     if (done.length > 0) file.extracted = done;
+    const sched = scheduled.filter((d) => d.slice(0, 7) === month);
+    if (sched.length > 0) file.scheduled = sched;
     files.set(`${month}.json`, toJson(file));
   }
   return files;
@@ -304,6 +362,9 @@ export function restoreBackup(files: Map<string, string>, outPath: string, force
   const refsText = files.get(REFS_FILE);
   const refs = refsText === undefined ? null : (JSON.parse(refsText) as RefsFile);
   if (refs !== null) checkVersion(REFS_FILE, refs);
+  const schedulesText = files.get(SCHEDULES_FILE);
+  const schedules = schedulesText === undefined ? null : (JSON.parse(schedulesText) as SchedulesFile);
+  if (schedules !== null) checkVersion(SCHEDULES_FILE, schedules);
   const tmp = `${outPath}.restoring`;
   fs.rmSync(tmp, { force: true });
   const db = openDb(tmp);
@@ -318,12 +379,14 @@ export function restoreBackup(files: Map<string, string>, outPath: string, force
     }
     if (meta.firstLinkedOn !== undefined) setMeta(db, FIRST_LINKED_KEY, meta.firstLinkedOn);
     if (meta.mergeCheckedOn !== undefined) setMeta(db, MERGE_CHECKED_KEY, meta.mergeCheckedOn);
-    if (issues !== null || refs !== null || months.some((m) => m.extracted !== undefined)) {
+    if (issues !== null || refs !== null || schedules !== null || months.some((m) => m.extracted !== undefined || m.scheduled !== undefined)) {
       db.exec("BEGIN");
       try {
         if (issues !== null) restoreIssues(db, issues);
         if (refs !== null) restoreRefs(db, refs);
+        if (schedules !== null) restoreSchedules(db, schedules);
         for (const m of months) for (const d of m.extracted ?? []) markExtracted(db, d);
+        for (const m of months) for (const d of m.scheduled ?? []) markScheduled(db, d);
         db.exec("COMMIT");
       } catch (e) {
         db.exec("ROLLBACK");

@@ -81,3 +81,18 @@ export function useResource<T>(url: string | null): Resource<T> {
   if (e.status === "error") return e;
   return { status: "ok", data: e.data as T };
 }
+
+/** 여러 파일을 함께 받는다(일정 목록이 보일 달 파일들). 결과는 주소 순서와 같다 */
+export function useResources<T>(urls: string[]): Resource<T>[] {
+  useSyncExternalStore(subscribe, () => version);
+  const key = urls.join("\n");
+  useEffect(() => {
+    for (const url of key ? key.split("\n") : []) if (!entries.has(url)) loadJson(url).catch(() => {});
+  }, [key]);
+  return urls.map((url): Resource<T> => {
+    const e = entries.get(url);
+    if (!e || e.status === "loading") return { status: "loading" };
+    if (e.status === "error") return e;
+    return { status: "ok", data: e.data as T };
+  });
+}

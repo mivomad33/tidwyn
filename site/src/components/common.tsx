@@ -1,5 +1,5 @@
 // 여러 화면이 함께 쓰는 컴포넌트(시안 A의 머리 줄, 칩, 분류 줄, 대기·오류 상태, 4.5단계 읽음 표시)
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode, type RefObject } from "react";
 import { MAJORS } from "../../../src/categories.ts";
 import { pageTitle } from "../lib/format.ts";
 import { categoryVar } from "../lib/theme.ts";
@@ -11,6 +11,52 @@ export function useTitle(label: string | undefined): void {
   useEffect(() => {
     document.title = pageTitle(label);
   }, [label]);
+}
+
+/**
+ * "더 보기"를 누른 뒤 새로 보인 첫 줄로 포커스를 옮긴다(키보드 사용, 3단계 4.3-6). 버튼이 사라지거나 대기 표시로 바뀌면 포커스를 잃기 때문이다.
+ * 누를 때 mark()를 부르면, 컨테이너(ref) 안에서 rowSelector로 찾은 줄 중 그때 없던 첫 줄이 나타날 때 그 줄로 옮긴다
+ * (줄에 tabindex가 있으면 줄 자체, 아니면 줄이거나 줄 안의 첫 링크·버튼). 줄은 id가 있으면 id로, 없으면 요소로 가린다.
+ * 새 줄 없이 누른 버튼이 사라졌다가 컨테이너 안에 버튼(다시 그린 '더 보기'나 오류의 '다시 시도')이 나타나면 그 버튼으로 옮긴다
+ * (거른 결과가 새로 받은 쪽에 하나도 없을 때). 받는 동안 scope(탭·거르기 등)가 바뀌면 옮기지 않는다.
+ */
+export function useFocusNewRow<T extends HTMLElement>(rowSelector: string, scope?: unknown): { ref: RefObject<T | null>; mark: () => void } {
+  const ref = useRef<T>(null);
+  const scopeRef = useRef(scope);
+  scopeRef.current = scope;
+  const watch = useRef<MutationObserver | null>(null);
+  const stop = useCallback(() => {
+    watch.current?.disconnect();
+    watch.current = null;
+  }, []);
+  useEffect(() => stop, [stop]);
+  const mark = useCallback(() => {
+    stop();
+    const box = ref.current;
+    if (!box) return;
+    const rowKey = (el: HTMLElement) => el.id || el;
+    const shown = new Set([...box.querySelectorAll<HTMLElement>(rowSelector)].map(rowKey));
+    const from = scopeRef.current;
+    const pressed = document.activeElement;
+    const observer = new MutationObserver(() => {
+      if (scopeRef.current !== from) return stop();
+      const row = [...box.querySelectorAll<HTMLElement>(rowSelector)].find((el) => !shown.has(rowKey(el)));
+      if (!row) {
+        const again = pressed instanceof HTMLButtonElement && !pressed.isConnected ? box.querySelector<HTMLButtonElement>("button.retry") : null;
+        if (again) {
+          stop();
+          again.focus();
+        }
+        return;
+      }
+      stop();
+      const target = row.hasAttribute("tabindex") || row.matches("a[href], button") ? row : row.querySelector<HTMLElement>("a[href], button");
+      (target ?? row).focus();
+    });
+    observer.observe(box, { childList: true, subtree: true });
+    watch.current = observer;
+  }, [rowSelector, stop]);
+  return { ref, mark };
 }
 
 function SearchIcon() {
@@ -34,6 +80,7 @@ const MENU: [string, string][] = [
   ["/", "최근 브리프"],
   ["/dates", "날짜 목록"],
   ["/issues", "이슈 목록"],
+  ["/schedules", "일정"],
   ["/entities", "인물·기관·국가"],
   ["/terms", "용어 사전"],
   ["/search", "검색"],
@@ -134,6 +181,7 @@ export function Footer() {
       <nav aria-label="바닥 메뉴">
         <Link to="/about">사이트 소개</Link>
         <Link to="/issues">이슈 목록</Link>
+        <Link to="/schedules">일정</Link>
         <Link to="/entities">인물·기관·국가</Link>
         <Link to="/terms">용어 사전</Link>
         <Link to="/dates">날짜 목록</Link>

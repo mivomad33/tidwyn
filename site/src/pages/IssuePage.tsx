@@ -1,6 +1,8 @@
-// 이슈 페이지(4.3-2). 흡수된 이슈 주소는 남는 이슈 주소로 바꾸고 합쳐졌다는 줄을 보인다.
-import { useEffect } from "react";
+// 이슈 페이지(4.3-2). 흡수된 이슈 주소는 남는 이슈 주소로 바꾸고 합쳐졌다는 줄을 보인다. 5단계: 타임라인 아래 '일정'(4.7-5)
+import { useEffect, useMemo } from "react";
+import { kstDate } from "../../../src/kst.ts";
 import { BackLink, CategoryLine, ErrorState, Layout, Loading, NewsTitle, ReadCheck, useTitle } from "../components/common.tsx";
+import { IssueSchedules } from "../components/scheduleView.ts";
 import { IssueEntityChips } from "../components/termView.ts";
 import { retry, useResource } from "../data.ts";
 import { issueEntityChips } from "../lib/entities.ts";
@@ -34,6 +36,7 @@ export function IssuePage({ id }: { id: number }) {
   }, [target?.id, target?.mergedFrom]);
 
   useTitle(issue?.name ?? "이슈");
+  const today = useMemo(() => kstDate(new Date()), []);
   const back = <BackLink to="/issues" label="이슈" />;
   const urls = [listUrl, chunkUrl];
 
@@ -93,6 +96,7 @@ export function IssuePage({ id }: { id: number }) {
         ) : (
           <p className="p muted">아직 전개가 없다.</p>
         )}
+        <IssueSchedules lines={issue.schedules} today={today} Link={Link} />
         {issueEntityChips(issue.entities).length > 0 && (
           <>
             <h2 className="h">등장 인물·기관·국가</h2>

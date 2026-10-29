@@ -1,6 +1,6 @@
 // 인물·기관·국가 목록(4.7-3): 최근 등장일 순, 종류로 거른다. 거르기마다 0쪽만 먼저 받고 나머지 쪽은 "더 보기"로 받는다(4.6-2).
 import { useState } from "react";
-import { BackLink, Empty, ErrorState, Layout, Loading, useTitle } from "../components/common.tsx";
+import { BackLink, Empty, ErrorState, Layout, Loading, useFocusNewRow, useTitle } from "../components/common.tsx";
 import { retry, useResource } from "../data.ts";
 import { ENTITY_FILTER_LABEL } from "../lib/entities.ts";
 import { shortDate } from "../lib/format.ts";
@@ -31,6 +31,7 @@ export function EntitiesPage({ filter }: { filter: EntityFilter }) {
 
 function EntityPages({ filter }: { filter: EntityFilter }) {
   const [shown, setShown] = useState(1);
+  const more = useFocusNewRow<HTMLDivElement>("li.item");
   const firstUrl = dataUrl.entityList(filter, 0);
   const first = useResource<EntityListPage>(firstUrl);
   if (first.status === "error") return <ErrorState onRetry={() => retry([firstUrl])} />;
@@ -41,9 +42,21 @@ function EntityPages({ filter }: { filter: EntityFilter }) {
   return (
     <>
       <p className="count">{total.toLocaleString("ko-KR")}개</p>
-      {pageNos.map((page) => (
-        <EntityPageRows key={page} filter={filter} page={page} last={page === pageNos.length - 1} hasNext={page + 1 < pages} onMore={() => setShown(page + 2)} />
-      ))}
+      <div ref={more.ref}>
+        {pageNos.map((page) => (
+          <EntityPageRows
+            key={page}
+            filter={filter}
+            page={page}
+            last={page === pageNos.length - 1}
+            hasNext={page + 1 < pages}
+            onMore={() => {
+              more.mark();
+              setShown(page + 2);
+            }}
+          />
+        ))}
+      </div>
     </>
   );
 }

@@ -1,6 +1,6 @@
 // 이슈 목록(4.3-1): 흡수되지 않은 이슈를 최근 업데이트일 순으로, 대분류·상태로 거른다
 import { useMemo, useState } from "react";
-import { ALL_MAJORS, BackLink, CategoryLine, ChipFilter, Empty, ErrorState, Layout, Loading, useTitle } from "../components/common.tsx";
+import { ALL_MAJORS, BackLink, CategoryLine, ChipFilter, Empty, ErrorState, Layout, Loading, useFocusNewRow, useTitle } from "../components/common.tsx";
 import { retry, useResource } from "../data.ts";
 import { ISSUE_PAGE_SIZE, filterIssues, type StatusFilter } from "../lib/issues.ts";
 import { dataUrl } from "../lib/paths.ts";
@@ -17,6 +17,7 @@ export function IssuesPage() {
   const [major, setMajor] = useState<Major | null>(null);
   const [status, setStatus] = useState<StatusFilter>(null);
   const [limit, setLimit] = useState(ISSUE_PAGE_SIZE);
+  const more = useFocusNewRow<HTMLUListElement>("li.item");
   const items = useMemo(() => (res.status === "ok" ? filterIssues(res.data.issues, major, status) : []), [res, major, status]);
 
   return (
@@ -46,7 +47,7 @@ export function IssuesPage() {
       {items.length > 0 && (
         <>
           <p className="count">{items.length.toLocaleString("ko-KR")}개</p>
-          <ul className="list">
+          <ul className="list" ref={more.ref}>
             {items.slice(0, limit).map((i) => (
               <li key={i.id} className="item">
                 <Link to={issuePath(i.id)} className="item-btn">
@@ -62,7 +63,10 @@ export function IssuesPage() {
           </ul>
           {items.length > limit && (
             <div className="more">
-              <button type="button" className="retry" onClick={() => setLimit((n) => n + ISSUE_PAGE_SIZE)}>
+              <button type="button" className="retry" onClick={() => {
+                  more.mark();
+                  setLimit((n) => n + ISSUE_PAGE_SIZE);
+                }}>
                 더 보기
               </button>
             </div>
