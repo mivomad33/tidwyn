@@ -1,0 +1,305 @@
+{
+  "formatVersion": 5,
+  "schedules": [
+    {
+      "id": 1,
+      "name": "방미통위 구글·애플 인앱결제 과징금 심의",
+      "due": "2026-10-28",
+      "major": "IT·AI",
+      "outcome": "result",
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 2,
+      "name": "삼성전자 3분기 확정 실적 발표",
+      "due": "2026-10-29",
+      "major": "경제",
+      "outcome": "result",
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 3,
+      "name": "한미 국방장관 워싱턴 회담",
+      "due": "2026-12",
+      "major": "국제",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 4,
+      "name": "중앙생활보장위원회 생계급여 기준 확정",
+      "due": "2026-11",
+      "major": "사회",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 5,
+      "name": "스페인 총선",
+      "due": "2026-11-29",
+      "major": "국제",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 6,
+      "name": "미국 중간선거",
+      "due": "2026-11-03",
+      "major": "국제",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 7,
+      "name": "미 연준 12월 FOMC 금리 결정",
+      "due": "2026-12",
+      "major": "경제",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 8,
+      "name": "애플 터치스크린 OLED 맥북 프로 출고",
+      "due": "2026-11-06",
+      "major": "IT·AI",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 9,
+      "name": "한미일 외교장관 회동",
+      "due": "2026-10-30",
+      "major": "국제",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 10,
+      "name": "중국 APEC 정상회의",
+      "due": "2026-11",
+      "major": "국제",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 11,
+      "name": "두코바니 원전 새 시공사 공개입찰 공고",
+      "due": "2027-04",
+      "major": "경제",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 12,
+      "name": "두코바니 원전 새 시공사 선정",
+      "due": "2027-07",
+      "major": "경제",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 13,
+      "name": "근로자퇴직급여 보장법 개정안 제출",
+      "due": "2026-11",
+      "major": "경제",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 14,
+      "name": "이스라엘 총선 공식 결과 관보 게재",
+      "due": "2026-11-04",
+      "major": "국제",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 15,
+      "name": "라가르드 ECB 총재 퇴임",
+      "due": "2027-02-07",
+      "major": "경제",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 16,
+      "name": "ECB 12월 통화정책 회의",
+      "due": "2026-12",
+      "major": "경제",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    }
+  ],
+  "links": [
+    {
+      "story": "2026-10-27/IT·AI-s2",
+      "schedule": 1,
+      "role": "basis"
+    },
+    {
+      "story": "2026-10-28/IT·AI-1",
+      "schedule": 1,
+      "role": "result"
+    },
+    {
+      "story": "2026-10-28/IT·AI-3",
+      "schedule": 8,
+      "role": "basis"
+    },
+    {
+      "story": "2026-10-28/세계-1",
+      "schedule": 5,
+      "role": "basis"
+    },
+    {
+      "story": "2026-10-28/세계-2",
+      "schedule": 6,
+      "role": "basis"
+    },
+    {
+      "story": "2026-10-28/세계-2",
+      "schedule": 7,
+      "role": "basis"
+    },
+    {
+      "story": "2026-10-28/세계-4",
+      "schedule": 6,
+      "role": "basis"
+    },
+    {
+      "story": "2026-10-28/세계-s3",
+      "schedule": 6,
+      "role": "basis"
+    },
+    {
+      "story": "2026-10-28/한국-1",
+      "schedule": 2,
+      "role": "basis"
+    },
+    {
+      "story": "2026-10-28/한국-6",
+      "schedule": 3,
+      "role": "basis"
+    },
+    {
+      "story": "2026-10-28/한국-s5",
+      "schedule": 4,
+      "role": "basis"
+    },
+    {
+      "story": "2026-10-29/세계-1",
+      "schedule": 14,
+      "role": "basis"
+    },
+    {
+      "story": "2026-10-29/세계-2",
+      "schedule": 15,
+      "role": "basis"
+    },
+    {
+      "story": "2026-10-29/세계-2",
+      "schedule": 16,
+      "role": "basis"
+    },
+    {
+      "story": "2026-10-29/세계-4",
+      "schedule": 6,
+      "role": "basis"
+    },
+    {
+      "story": "2026-10-29/세계-5",
+      "schedule": 6,
+      "role": "basis"
+    },
+    {
+      "story": "2026-10-29/세계-5",
+      "schedule": 7,
+      "role": "basis"
+    },
+    {
+      "story": "2026-10-29/세계-6",
+      "schedule": 5,
+      "role": "basis"
+    },
+    {
+      "story": "2026-10-29/한국-1",
+      "schedule": 2,
+      "role": "result"
+    },
+    {
+      "story": "2026-10-29/한국-2",
+      "schedule": 9,
+      "role": "basis"
+    },
+    {
+      "story": "2026-10-29/한국-5",
+      "schedule": 10,
+      "role": "basis"
+    },
+    {
+      "story": "2026-10-29/한국-6",
+      "schedule": 11,
+      "role": "basis"
+    },
+    {
+      "story": "2026-10-29/한국-6",
+      "schedule": 12,
+      "role": "basis"
+    },
+    {
+      "story": "2026-10-29/한국-8",
+      "schedule": 13,
+      "role": "basis"
+    }
+  ],
+  "merges": [],
+  "noMerge": []
+}
