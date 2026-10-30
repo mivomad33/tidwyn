@@ -7,15 +7,21 @@ export { expect };
 /** 지어낸 데이터에서 뽑은 기대값. 준비 스크립트가 서버를 띄우기 전에 쓴다 */
 export const info: E2eInfo = readInfo();
 
+/** 지어낸 데이터의 끝 날짜(가장 최근 브리프 날짜). 영상의 받은 날이 이 날 기준이다 */
+export const FIXTURE_END = info.dates[0]!;
+
 /**
  * 모든 테스트: 127.0.0.1 밖으로 나가는 요청(가짜 이미지 주소 등)은 막고,
  * 화면에서 잡히지 않은 오류(pageerror)가 생기면 실패한다.
+ * 7단계: 화면이 받은 지 30일 지난 영상을 숨기므로(V14) 브라우저 시계를 지어낸 데이터의 끝 날짜(KST 낮)에 고정한다.
+ * 날짜가 지나도 영상이 보이는 테스트가 깨지지 않게 한다. 시계가 필요한 테스트는 자기 시각으로 다시 고정한다.
  */
 export const test = base.extend<{ pageErrors: string[] }>({
   pageErrors: [
     async ({ page }, use) => {
       const errors: string[] = [];
       page.on("pageerror", (err) => errors.push(err.message));
+      await page.clock.setFixedTime(new Date(`${FIXTURE_END}T12:00:00+09:00`));
       await page.context().route("**/*", (route) => {
         const host = new URL(route.request().url()).hostname;
         return host === "127.0.0.1" ? route.fallback() : route.abort("blockedbyclient");

@@ -19,7 +19,8 @@ function readJson<T>(rel: string): T {
 async function main(): Promise<void> {
   fs.rmSync(E2E_ROOT, { recursive: true, force: true });
   fs.mkdirSync(E2E_DATA_DIR, { recursive: true });
-  const fx = writeFixtures(E2E_DATA_DIR, { end: END, days: 7, entities: 30, terms: 24 });
+  // 7단계: 추천 영상도 둔다(받은 날은 END 기준. 브라우저 시계는 base.ts가 END에 고정한다)
+  const fx = writeFixtures(E2E_DATA_DIR, { end: END, days: 7, entities: 30, terms: 24, videos: true });
   await buildSite({ dataDir: E2E_DATA_DIR, outDir: E2E_OUT_DIR });
 
   const { twice } = fx.info.terms;
@@ -51,6 +52,8 @@ async function main(): Promise<void> {
   const issueChunk = readJson<IssueChunk>("issue-0.json");
   const issueWithEntities = issueList.issues.map((i) => issueChunk.issues[String(i.id)]!).find((i) => (i.entities?.length ?? 0) > 0)!;
 
+  const v = fx.info.videos;
+  if (!v?.broken || !v.noVideoDate || !v.oneBundleDate || !v.zeroBundleDate || !v.absorbed || v.many === null || v.one === null) throw new Error("영상 상태(썸네일 실패, 영상 없는 날짜, 한 묶음·0개 묶음 날짜, 흡수된 이슈의 영상, 6개 이상·1개인 이슈)가 지어낸 데이터에 없다");
   const merged = fx.info.merged!;
   const survivor = issueChunk.issues[String(merged.into)]!;
   const entityMerged = fx.info.entities.merged!;
@@ -87,6 +90,7 @@ async function main(): Promise<void> {
       merged: { id: merged.id, into: merged.into, intoName: survivor.name },
       first: issueList.issues[0]!,
     },
+    videos: fx.info.videos!,
   };
   fs.writeFileSync(E2E_INFO_FILE, JSON.stringify(info, null, 2) + "\n");
 

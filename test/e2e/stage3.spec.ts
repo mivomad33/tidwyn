@@ -202,8 +202,8 @@ test.describe("검색·메뉴·사이트 소개", () => {
     await expect(page).toHaveTitle("사이트 소개 · Tidwyn");
     for (const h of ["Tidwyn은", "저작권", "방문 통계", "원본 저장소"]) await expect(page.getByRole("heading", { level: 2, name: h })).toBeVisible();
     const external = page.locator("article a[href^='https://']");
-    // 6단계: FRED API 이용 약관 링크가 더해졌다(4.7-6)
-    await expect(external).toHaveCount(3);
+    // 6단계: FRED API 이용 약관 링크가 더해졌다(4.7-6). 7단계: '추천 영상' 절의 YouTube 이용약관 링크가 더해졌다(4.7-5)
+    await expect(external).toHaveCount(4);
     for (const a of await external.all()) {
       await expect(a).toHaveAttribute("target", "_blank");
       await expect(a).toHaveAttribute("rel", /noopener/);

@@ -11,6 +11,7 @@ import { commitsAhead, describeFindings, precheck } from "./precheck.ts";
 import type { DeployResult, PostDeployCheck, PushResult, SiteResult } from "./run.ts";
 import { checkOutput } from "./siteCheck.ts";
 import { buildSearchRecords, buildSiteData } from "./siteData.ts";
+import { allVideos } from "./videoStore.ts";
 import { storedDates } from "./store.ts";
 
 // 사이트 빌드(3단계 4.1), 배포와 배포 뒤 점검(4.6), data 브랜치 push(4.5-1).
@@ -134,6 +135,8 @@ export function buildSite(input: BuildInput): SiteResult {
   let terms: number;
   let schedules: number;
   let upcoming: number;
+  let videos: number;
+  let videoDates: number;
   const indicators = publicIndicators().length;
   try {
     const db = openExistingDb(input.dbPath);
@@ -147,6 +150,9 @@ export function buildSite(input: BuildInput): SiteResult {
       const live = allSchedules(db).filter(isLiveSchedule);
       schedules = live.length;
       upcoming = input.today === undefined ? 0 : live.filter((s) => dueOnOrAfter(s.due, input.today!)).length;
+      const vids = allVideos(db);
+      videos = vids.length;
+      videoDates = new Set(vids.map((v) => v.briefDate)).size;
       fs.rmSync(inputDir, { recursive: true, force: true });
       for (const [rel, content] of files) {
         const file = path.join(inputDir, rel);
@@ -172,7 +178,7 @@ export function buildSite(input: BuildInput): SiteResult {
   if (check.findings.length > 0) {
     return { status: "failed", outDir, reason: `결과물 검사에 걸렸다(${check.findings.length}건)`, findings: describeFindings(check.findings) };
   }
-  return { status: "built", outDir, dates, issues, entities, terms, schedules, upcoming, indicators, files: check.files, bytes: check.bytes };
+  return { status: "built", outDir, dates, issues, entities, terms, schedules, upcoming, indicators, videoDates, videos, files: check.files, bytes: check.bytes };
 }
 
 // ---- 배포 ----

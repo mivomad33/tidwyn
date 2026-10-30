@@ -23,7 +23,8 @@ export const fetchHttp: HttpJson = async (url) => {
 
 export interface FetchOptions {
   http: HttpJson;
-  keys: Keys;
+  /** 지표 출처 키(ECOS, FRED). 다른 키가 함께 있어도 된다(오류 글에서 모두 가린다) */
+  keys: Pick<Keys, "ECOS_API_KEY" | "FRED_API_KEY"> & Partial<Keys>;
   /** 오늘(KST 날짜). 받는 범위의 끝 */
   today: string;
   /** 다시 시도 사이 간격(밀리초) */

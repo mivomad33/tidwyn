@@ -11,10 +11,8 @@ export type ScheduleView = "list" | "calendar";
 
 export const SCHEDULE_TAB_LABEL: Record<ScheduleTab, string> = { upcoming: "다가오는 일정", past: "지난 일정" };
 
-/** 일정 화면에서 마지막으로 고른 보기(목록·달력)를 기억하는 로컬 스토리지 키(읽은 기록 지우기 대상이 아니다, 4.7-3) */
-export const SCHEDULE_VIEW_KEY = "tidwyn.scheduleView";
-/** '이번 주 일정'을 접었는지 기억하는 로컬 스토리지 키(읽은 기록 지우기 대상이 아니다, 4.7-4) */
-export const WEEK_BOX_KEY = "tidwyn.weekBox";
+/** 일정 화면의 보기(4.7-3)와 '이번 주 일정' 접기(4.7-4)를 기억하는 로컬 스토리지 키(읽은 기록 지우기 대상이 아니다, 정의는 browserKeys.ts) */
+export { SCHEDULE_VIEW_KEY, WEEK_BOX_KEY } from "./browserKeys.ts";
 
 /** 기억한 보기. 없거나 모르는 값이면 목록 */
 export function parseScheduleView(raw: string | null): ScheduleView {

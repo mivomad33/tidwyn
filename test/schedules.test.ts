@@ -186,7 +186,7 @@ describe("5단계 4.1 데이터와 저장", () => {
     db.close();
   });
 
-  test("버전 4 DB(브리프, 이슈, 대상, 용어, 합치기·지운 이름 기록)를 새 코드로 열면 버전 6이 되고, 기존 데이터를 그대로 읽으며 모든 날짜가 일정 뽑기 대상이다", () => {
+  test("버전 4 DB(브리프, 이슈, 대상, 용어, 합치기·지운 이름 기록)를 새 코드로 열면 버전 7이 되고, 기존 데이터를 그대로 읽으며 모든 날짜가 일정 뽑기 대상이다", () => {
     const file = path.join(tempDir(), "t.db");
     const v4 = MIGRATIONS.filter((m) => m.version <= 4);
     const old = openDb(file, v4);
@@ -207,7 +207,7 @@ describe("5단계 4.1 데이터와 저장", () => {
     old.close();
 
     const db = openDb(file);
-    assert.equal(schemaVersion(db), 6);
+    assert.equal(schemaVersion(db), 7);
     const after = dumpDb(db);
     for (const [table, rows] of Object.entries(before)) assert.deepEqual(after[table], rows, table);
     assert.deepEqual(schedulableDates(db), DATES);

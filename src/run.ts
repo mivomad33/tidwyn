@@ -2,6 +2,9 @@ import fs from "node:fs";
 import path from "node:path";
 import type { FeedFailure } from "./feeds.ts";
 import type { IndicatorFetchResult } from "./indicatorFetch.ts";
+import type { VideoBundle } from "./siteTypes.ts";
+import type { VideoPurgeResult } from "./videoPurge.ts";
+import type { ChartReport, ExcludeReason, Usage } from "./youtube.ts";
 import type { Violation } from "./validate.ts";
 
 // 실행 기록 파일. start가 만들고, 날짜마다의 결과와 백업 결과를 모아 summary가 읽는다. 데이터 폴더 안에 둔다.
@@ -87,9 +90,44 @@ export interface IndicatorJudgeState {
   results: Record<string, JudgeResult>;
 }
 
+/**
+ * 영상 받기 결과(7단계 4.2). 영상 ID·제목은 넣지 않고 수만 남긴다(4.8-3). 차트는 지역과 카테고리 ID 숫자로만 쓴다.
+ * alreadyDone은 대상 날짜가 이미 고르기 끝남이라 부르지 않은 것, noBrief는 브리프가 없어 건너뛴 것이다
+ */
+export interface VideoFetchState {
+  status: "ok" | "partial" | "failed" | "alreadyDone" | "noBrief";
+  target: string | null;
+  keyProblem?: boolean;
+  quota?: boolean;
+  failures?: string[];
+  missed?: string[];
+  charts?: ChartReport[];
+  searchResults?: Record<string, number>;
+  usage?: Usage;
+  /** 거르기 전(중복을 뺀) 수, 이유별로 뺀 수, 후보 수, 관련 이슈 후보 수 */
+  before?: number;
+  excluded?: Record<ExcludeReason, number>;
+  candidates?: number;
+  issueCandidates?: number;
+}
+
+/** 영상 고르기 결과(7단계 4.3). attempts는 검사를 통과하지 못한 적용 횟수(처음 + 고쳐서 다시 검사 최대 2번) */
+export interface VideoPickState {
+  status: "applied" | "failed" | "alreadyDone";
+  target: string | null;
+  attempts: number;
+  picked?: Record<VideoBundle, number>;
+  /** 관련 이슈를 붙인 영상 수 */
+  withIssues?: number;
+  /** 적용 뒤 지운 영상 작업 파일 수 */
+  cleaned?: number;
+  reason?: string;
+  violations?: Violation[];
+}
+
 /** 사이트 빌드 결과(3단계 4.1, 4.5) */
 export type SiteResult =
-  | { status: "built"; outDir: string; dates: number; issues: number; entities?: number; terms?: number; schedules?: number; upcoming?: number; indicators?: number; files: number; bytes: number }
+  | { status: "built"; outDir: string; dates: number; issues: number; entities?: number; terms?: number; schedules?: number; upcoming?: number; indicators?: number; videoDates?: number; videos?: number; files: number; bytes: number }
   | { status: "failed"; outDir: string; reason: string; findings?: string[] };
 
 /** 배포 뒤 점검(3단계 4.6-3) */
@@ -135,6 +173,11 @@ export interface RunState {
   indicatorFetch?: IndicatorFetchResult;
   /** start 때 지표 판단 안 한 이슈 수(6단계 4.5-1) */
   unjudgedAtStart?: number;
+  /** 7단계: start가 예정한 영상 대상 날짜, 30일 지우기, 영상 받기와 고르기. 앞 단계 실행 기록에는 없다 */
+  videoPlanned?: { date: string | null; done: boolean };
+  videoPurge?: VideoPurgeResult;
+  videoFetch?: VideoFetchState;
+  videoPick?: VideoPickState;
   /** 지난 날짜 이미지 채우기(3단계). 1·1.5·2단계 실행 기록에는 없다 */
   images?: ImagesResult;
   /** 사이트 빌드·배포·push(3단계). start가 null로 두고 각 명령이 채운다. 앞 단계 실행 기록에는 없다 */

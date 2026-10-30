@@ -1,11 +1,12 @@
-// 사이트 소개(4.3-4, P9, P10). 4.5단계: 읽은 기록 설명과 지우기(4.6). 5단계: 일정 안내와 브라우저 기억 설명(4.7-3·4.7-7). 6단계: 지표 안내, FRED 고지·약관 링크·약관 동의 줄(4.7-6), 상자 탭 기억 설명(4.7-1)
+// 사이트 소개(4.3-4, P9, P10). 4.5단계: 읽은 기록 설명과 지우기(4.6). 5단계: 일정 안내와 브라우저 기억 설명(4.7-3·4.7-7). 6단계: 지표 안내, FRED 고지·약관 링크·약관 동의 줄(4.7-6), 상자 탭 기억 설명(4.7-1). 7단계: '추천 영상' 절(4.7-5)
 import { useState } from "react";
 import { BackLink, Layout, useTitle } from "../components/common.tsx";
 import { FredNotice } from "../components/indicatorView.ts";
+import { AboutVideos } from "../components/videoView.ts";
 import { FRED_AGREEMENT } from "../lib/indicators.ts";
+import { REPO_ISSUES_URL, REPO_URL } from "../lib/policy.ts";
 import { readStore } from "../readMarks.ts";
-
-export const REPO_URL = "https://github.com/mivomad33/tidwyn";
+import { Link } from "../router.tsx";
 
 export function AboutPage() {
   useTitle("사이트 소개");
@@ -18,7 +19,7 @@ export function AboutPage() {
         <p className="p">AI가 쓴 글이라 틀리거나 빠진 내용이 있을 수 있다. 중요한 내용은 각 뉴스의 출처(원문)에서 확인해 주세요.</p>
         <p className="p">
           인물·기관·국가의 한 줄 설명과 용어 설명도 AI가 쓴 글이라 틀릴 수 있다. 잘못된 내용은{" "}
-          <a href={`${REPO_URL}/issues`} className="text-link" target="_blank" rel="noopener noreferrer">
+          <a href={REPO_ISSUES_URL} className="text-link" target="_blank" rel="noopener noreferrer">
             원본 저장소의 GitHub 이슈
             <span className="sr-only"> (새 탭)</span>
           </a>
@@ -30,6 +31,7 @@ export function AboutPage() {
         <p className="p">한국 지표는 한국은행 ECOS(작성기관 포함), 미국·국제 지표는 FRED(St. Louis Fed, 원 기관 표시)의 자료이고 이용 조건은 각 출처를 따른다.</p>
         <FredNotice />
         <p className="p">{FRED_AGREEMENT}</p>
+        <AboutVideos Link={Link} />
         <h2 className="h">저작권</h2>
         <p className="p">원문 기사의 저작권은 각 매체에 있다. 이 사이트는 원문 링크와 원문 이미지 주소만 연결하고 기사를 옮겨 싣지 않는다.</p>
         <p className="p">브리프와 이슈 글의 저작권은 만든 사람(mivomad33)에게 있고, 다시 쓰거나 퍼 가는 것을 허락하지 않는다. 사이트의 코드는 MIT 라이선스다.</p>

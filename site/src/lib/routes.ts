@@ -19,6 +19,8 @@ export type Route =
   | { name: "indicators" }
   | { name: "indicator"; id: string }
   | { name: "about" }
+  /** 7단계 개인정보 처리방침(V6) */
+  | { name: "privacy" }
   | { name: "notFound" };
 
 const DATE_RE = /^(\d{4})-(\d{2})-(\d{2})$/;
@@ -48,6 +50,7 @@ export function parseRoute(pathname: string, search = ""): Route {
   if (p === "/dates") return { name: "dates" };
   if (p === "/issues") return { name: "issues" };
   if (p === "/about") return { name: "about" };
+  if (p === PRIVACY_PATH) return { name: "privacy" };
   if (p === "/search") return { name: "search", q: new URLSearchParams(search).get("q") ?? "" };
   if (p === "/entities") return { name: "entities", filter: parseEntityFilter(new URLSearchParams(search).get("kind")) };
   if (p === "/terms") return { name: "terms", id: null };
@@ -117,6 +120,21 @@ export function hashKey(hash: string): string | null {
 
 export function briefPath(date: string, key?: string): string {
   return key ? `/${date}#${encodeURIComponent(key)}` : `/${date}`;
+}
+
+/** 7단계: 브리프를 영상 탭으로 여는 `#` 값(뉴스 키는 "<섹션>-<번호>" 모양이라 겹치지 않는다) */
+export const VIDEO_HASH = "videos";
+
+/** 그 날짜 브리프의 영상 탭(이슈 페이지의 "M월 D일 추천") */
+export function briefVideosPath(date: string): string {
+  return `/${date}#${VIDEO_HASH}`;
+}
+
+/** 7단계 개인정보 처리방침 */
+export const PRIVACY_PATH = "/privacy";
+
+export function privacyPath(): string {
+  return PRIVACY_PATH;
 }
 
 export function issuePath(id: number): string {

@@ -544,7 +544,8 @@ async function shownIds(page: Page): Promise<string[]> {
 test.describe("브리프 '전체' 탭", () => {
   test("처음에는 한국 탭이고, 탭은 전체·한국·세계·IT·AI 순이며 섹션 탭에는 섹션 칩이 없다", async ({ page }) => {
     await page.goto("/");
-    await expect(sectionTabs(page).getByRole("button")).toHaveText(["전체", ...latestDay.sections.map((s) => s.name)]);
+    // 7단계: 그 날짜에 영상이 있으면 끝에 '영상 N' 탭이 붙는다(4.7-1)
+    await expect(sectionTabs(page).getByRole("button")).toHaveText(["전체", ...latestDay.sections.map((s) => s.name), ...(latestDay.videos?.length ? [`영상 ${latestDay.videos.length}`] : [])]);
     await expect(sectionTabs(page).getByRole("button", { name: "한국" })).toHaveAttribute("aria-pressed", "true");
     await expect(page.locator("main .sec")).toHaveCount(0);
   });

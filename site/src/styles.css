@@ -1710,3 +1710,174 @@ ul.isrc {
   margin-right: 4px;
   vertical-align: 1px;
 }
+
+/* 7단계 추천 영상(확정 시안 design/site.html): 썸네일 왼쪽(길이 표시), 제목, 묶음 표시·채널·길이, 그 아래 '추천 이유' 상자.
+   썸네일과 제목은 한 링크다. 링크가 줄 격자의 두 칸을 함께 쓰도록 subgrid로 놓고, 정보 줄(이슈 페이지에서는 "M월 D일 추천" 링크가 든다)은
+   링크 밖에 두되 제목 아래 칸에 놓는다(링크 안에 링크를 두지 않는다). 넓은 화면에서는 썸네일이 커지고 추천 이유가 오른쪽 칸에 붙는다. */
+.vbox {
+  padding: 0 18px;
+}
+
+.vlist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.vrow {
+  display: grid;
+  grid-template-columns: 128px minmax(0, 1fr);
+  grid-template-rows: auto 1fr auto;
+  column-gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.vlink {
+  grid-column: 1 / -1;
+  grid-row: 1 / 3;
+  display: grid;
+  grid-template-columns: subgrid;
+  grid-template-rows: subgrid;
+}
+
+.vthumb {
+  grid-column: 1;
+  grid-row: 1 / -1;
+  position: relative;
+  display: block;
+  width: 128px;
+  height: 72px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--thumb);
+}
+
+.vthumb img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.vdur {
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  font-size: 10.5px;
+  line-height: 1.4;
+  padding: 0 4px;
+  border-radius: 3px;
+  background: var(--dur-bg);
+  color: var(--dur-fg);
+  font-variant-numeric: tabular-nums;
+}
+
+.vt {
+  grid-column: 2;
+  grid-row: 1;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.vm {
+  grid-column: 2;
+  grid-row: 2;
+  align-self: start;
+  margin-top: 3px;
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.vm .tag {
+  display: inline-block;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--accent);
+  background: var(--accentbg);
+  padding: 1px 6px;
+  border-radius: 4px;
+  margin-right: 4px;
+}
+
+.vm .vrec {
+  white-space: nowrap;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.why {
+  grid-column: 1 / -1;
+  grid-row: 3;
+  margin: 8px 0 0;
+  font-size: 13px;
+  line-height: 1.5;
+  background: var(--chip);
+  border-radius: 8px;
+  padding: 7px 10px;
+}
+
+.why b {
+  font-size: 11px;
+  color: var(--accent);
+  margin-right: 6px;
+}
+
+.vsrc {
+  margin: 8px 0 0;
+  padding-bottom: 6px;
+  font-size: 11.5px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.vsrc a {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+@media (min-width: 600px) {
+  .vrow {
+    grid-template-columns: 200px minmax(0, 1fr);
+    grid-template-rows: auto auto 1fr;
+    column-gap: 14px;
+  }
+
+  .vlink {
+    grid-row: 1 / 4;
+  }
+
+  .vthumb {
+    width: 200px;
+    height: 112px;
+  }
+
+  .vt {
+    font-size: 16px;
+  }
+
+  .why {
+    grid-column: 2;
+    align-self: start;
+  }
+}
+
+/* 7단계 바닥글의 동의 문구와 처리방침의 브라우저 기록 목록 */
+.footer p.consent {
+  line-height: 1.6;
+}
+
+.plain .keys {
+  margin: 8px 0 0;
+  padding-left: 18px;
+}
+
+.plain .keys li + li {
+  margin-top: 4px;
+}
+
+.plain .keys code {
+  font-size: 12.5px;
+}

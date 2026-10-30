@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState, type ReactNode, type RefObjec
 import { MAJORS } from "../../../src/categories.ts";
 import { pageTitle } from "../lib/format.ts";
 import { categoryVar } from "../lib/theme.ts";
+import { FooterView } from "./policyView.ts";
 import type { Major } from "../lib/types.ts";
 import { readStore, useIsRead } from "../readMarks.ts";
 import { Link, useLocation } from "../router.tsx";
@@ -175,21 +176,9 @@ export function Layout({ left, center, children }: { left?: ReactNode; center?: 
   );
 }
 
+/** 바닥글(7단계: 동의 문구와 개인정보 처리방침 링크, components/policyView.ts) */
 export function Footer() {
-  return (
-    <footer className="footer">
-      <p>Tidwyn · AI가 매일 모아 바꿔 쓴 뉴스 요약</p>
-      <nav aria-label="바닥 메뉴">
-        <Link to="/about">사이트 소개</Link>
-        <Link to="/issues">이슈 목록</Link>
-        <Link to="/schedules">일정</Link>
-        <Link to="/indicators">지표</Link>
-        <Link to="/entities">인물·기관·국가</Link>
-        <Link to="/terms">용어 사전</Link>
-        <Link to="/dates">날짜 목록</Link>
-      </nav>
-    </footer>
-  );
+  return <FooterView Link={Link} />;
 }
 
 export function Loading({ label = "불러오는 중…" }: { label?: string }) {
@@ -232,8 +221,11 @@ export function CategoryLine({ major, minor, extra, isNewMinor, section }: { maj
   );
 }
 
-/** 칩 고르기(카테고리·상태 필터). value가 null이면 "전체". after는 칩 줄 끝에 구분선 뒤로 붙는다(4.5단계 '안 읽은 것만') */
-export function ChipFilter<T extends string>({ label, options, value, onChange, after }: { label: string; options: readonly T[]; value: T | null; onChange: (v: T | null) => void; after?: ReactNode }) {
+/**
+ * 칩 고르기(카테고리·상태 필터). value가 null이면 "전체". after는 칩 줄 끝에 구분선 뒤로 붙는다(4.5단계 '안 읽은 것만').
+ * labelOf가 있으면 칩 글자를 그것으로 보인다(7단계 영상 묶음 칩의 "한국 3")
+ */
+export function ChipFilter<T extends string>({ label, options, value, onChange, after, labelOf }: { label: string; options: readonly T[]; value: T | null; onChange: (v: T | null) => void; after?: ReactNode; labelOf?: (v: T) => string }) {
   return (
     <div className="chips" role="group" aria-label={label}>
       <button type="button" className={value === null ? "on" : ""} aria-pressed={value === null} onClick={() => onChange(null)}>
@@ -241,7 +233,7 @@ export function ChipFilter<T extends string>({ label, options, value, onChange, 
       </button>
       {options.map((o) => (
         <button key={o} type="button" className={value === o ? "on" : ""} aria-pressed={value === o} onClick={() => onChange(o)}>
-          {o}
+          {labelOf ? labelOf(o) : o}
         </button>
       ))}
       {after && (

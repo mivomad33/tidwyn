@@ -33,6 +33,8 @@ export type FindingKind =
   | "실행 기록·작업 파일"
   | "지운 이름 키 파일"
   | "키 값이 들어 있음"
+  | "Google API 키 모양"
+  | "백업 파일에 영상 기록"
   | "읽지 못한 파일";
 
 export interface Finding {
@@ -63,7 +65,27 @@ const SECRET_PATTERNS: { kind: FindingKind; re: RegExp }[] = [
   // Vercel 토큰(2026-02-09 Vercel 변경 기록 "New token formats and secret scanning"): vcp_(개인), vci_(연동), vca_(앱 접근), vcr_(앱 갱신), vck_(API 키)
   { kind: "Vercel 토큰 모양", re: /\b(?:vcp|vci|vca|vcr|vck)_[A-Za-z0-9]{20,}/ },
   { kind: "개인 키 머리", re: /-{5}BEGIN (?:[A-Z0-9]+ )*PRIVATE KEY-{5}/ },
+  // Google API 키(YouTube 키 포함, 7단계 4.8-2): AIza로 시작하는 39자
+  { kind: "Google API 키 모양", re: /(?<![0-9A-Za-z_-])AIza[0-9A-Za-z_-]{35}(?![0-9A-Za-z_-])/ },
 ];
+
+/** 백업 파일 이름(backup.ts의 월별 JSON, issues.json, refs.json, schedules.json, indicators.json, meta.json). 결과물 검사도 쓴다 */
+export const BACKUP_NAME_RE = /^(?:\d{4}-\d{2}\.json|issues\.json|refs\.json|schedules\.json|indicators\.json|meta\.json)$/;
+/** 영상 기록의 표시(영상 기록·사이트 영상 항목 이름). 백업에는 영상 데이터를 넣지 않는다(7단계 4.4-2) */
+const VIDEO_RECORD_RE = /"(?:videoId|video_id|videos)"\s*:/;
+
+/** 백업 파일 자리(data 브랜치 최상위나 backup/ 폴더)의 백업 이름 파일인지 */
+export function isBackupPath(file: string): boolean {
+  const parts = file.replaceAll("\\", "/").split("/");
+  const base = parts.at(-1)!;
+  return BACKUP_NAME_RE.test(base) && (parts.length === 1 || parts.at(-2) === "backup");
+}
+
+/** 백업 파일에 영상 기록이 들어 있는지(7단계 4.4-2) */
+export function videoBackupFindings(where: string, file: string, content: Buffer): Finding[] {
+  if (!isBackupPath(file) || isBinary(content)) return [];
+  return VIDEO_RECORD_RE.test(content.toString("utf8")) ? [{ where, kind: "백업 파일에 영상 기록" }] : [];
+}
 const EMAIL_RE = /[A-Za-z0-9._%+-]+@([A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,})/g;
 
 function emailAllowed(email: string, domain: string): boolean {
@@ -298,15 +320,18 @@ export function precheck(input: PrecheckInput): PrecheckResult {
     const content = blobs.get(sha);
     const where = `커밋 ${w.commit} ${w.path}`;
     if (content === undefined) push({ where, kind: "읽지 못한 파일" });
-    else for (const f of contentFindings(where, w.path, content, home, true, secrets)) push(f);
+    else for (const f of [...contentFindings(where, w.path, content, home, true, secrets), ...videoBackupFindings(where, w.path, content)]) push(f);
   }
   for (const t of tracked) {
     const where = `지금 파일 ${t.path}`;
     const indexContent = blobs.get(t.sha);
-    if (indexContent !== undefined) for (const f of fileFindings(where, t.path, indexContent, home, true, secrets)) push(f);
+    if (indexContent !== undefined) for (const f of [...fileFindings(where, t.path, indexContent, home, true, secrets), ...videoBackupFindings(where, t.path, indexContent)]) push(f);
     const file = path.join(repo, t.path);
     const stat = fs.lstatSync(file, { throwIfNoEntry: false }); // 작업 트리에서 지운 파일이면 없다
-    if (stat?.isFile()) for (const f of fileFindings(where, t.path, fs.readFileSync(file), home, true, secrets)) push(f);
+    if (stat?.isFile()) {
+      const content = fs.readFileSync(file);
+      for (const f of [...fileFindings(where, t.path, content, home, true, secrets), ...videoBackupFindings(where, t.path, content)]) push(f);
+    }
   }
   return { findings, commits: input.commits.length, blobs: blobWhere.size, files: tracked.length };
 }

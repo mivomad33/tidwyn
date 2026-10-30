@@ -77,7 +77,7 @@ describe("4.3-3 마이그레이션", () => {
     const db1 = openDb(file);
     const brief = canonical(sampleBrief());
     saveBrief(db1, { brief, collectedAt: "2026-10-28T09:00:00+09:00", late: false });
-    assert.equal(schemaVersion(db1), 6);
+    assert.equal(schemaVersion(db1), 7);
     db1.close();
 
     const db2 = openDb(file, [...MIGRATIONS, v2]);
@@ -93,7 +93,7 @@ describe("4.3-3 마이그레이션", () => {
     assert.equal(schemaVersion(db), Math.max(...MIGRATIONS.map((m) => m.version)));
     const bad: Migration = { version: 1000, up: (d) => d.exec("ALTER TABLE briefs ADD COLUMN x TEXT; SELECT * FROM no_such_table;") };
     assert.throws(() => migrate(db, [...MIGRATIONS, bad]));
-    assert.equal(schemaVersion(db), 6);
+    assert.equal(schemaVersion(db), 7);
     assert.throws(() => db.prepare("SELECT x FROM briefs").get());
     db.close();
     assert.ok(fs.existsSync(file));
@@ -138,7 +138,7 @@ describe("1.5단계 4.3-1 발행일 추정 표시 저장", () => {
     old.close();
 
     const db = openDb(file);
-    assert.equal(schemaVersion(db), 6);
+    assert.equal(schemaVersion(db), 7);
     assert.deepEqual(loadBrief(db, "2026-10-27")?.brief, brief);
     assert.equal((db.prepare("SELECT count(*) AS n FROM sources WHERE published_at_estimated <> 0").get() as { n: number }).n, 0);
     db.close();

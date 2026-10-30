@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>7단계 비교 시안: 추천 영상</title>
+<style>
+  body { margin: 0; background: #e9e9ec; font-family: Pretendard, -apple-system, system-ui, sans-serif; color: #222; }
+  h1 { font-size: 20px; margin: 24px 24px 4px; }
+  p.note { margin: 0 24px 16px; color: #555; font-size: 14px; max-width: 980px; line-height: 1.5; }
+  .option { margin: 0 24px 56px; }
+  .option h2 { font-size: 17px; margin: 0 0 4px; }
+  .option p { margin: 0 0 12px; font-size: 13px; color: #555; max-width: 980px; line-height: 1.5; }
+  .phones { display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-start; }
+  .phone { width: 375px; height: 760px; border-radius: 28px; overflow: hidden; position: relative; box-shadow: 0 6px 24px rgba(0,0,0,.15); background: var(--bg); color: var(--fg); }
+  .wide { width: 960px; height: 600px; border-radius: 10px; overflow: hidden; position: relative; box-shadow: 0 6px 24px rgba(0,0,0,.15); background: var(--bg); color: var(--fg); }
+  .wide .col { width: 640px; margin: 0 auto; }
+  .screen { position: absolute; inset: 0; overflow: hidden; display: flex; flex-direction: column; }
+  .caption { text-align: center; font-size: 12px; color: #666; margin-top: 6px; }
+  .L { --bg: #fff; --fg: #1d1d1f; --muted: #6b6b70; --line: #ececee; --chip: #f5f5f7; --accent: #c2410c; --accentbg: #fff1e8; --econ: #c2410c; --thumb: #d9d9de; --thumbfg: #fff; }
+  .D { --bg: #161618; --fg: #ececee; --muted: #9a9aa0; --line: #2a2a2e; --chip: #222226; --accent: #fb923c; --accentbg: #3a2414; --econ: #fb923c; --thumb: #34343a; --thumbfg: #ececee; }
+  .bar { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px 10px; border-bottom: 1px solid var(--line); }
+  .brand { font-weight: 800; font-size: 19px; letter-spacing: -.3px; }
+  .datebtn { font-size: 13px; color: var(--muted); }
+  .icons { display: flex; gap: 14px; color: var(--muted); font-size: 16px; }
+  .body { flex: 1; overflow: hidden; }
+  .pad { padding: 14px 18px; }
+  .ptitle { font-size: 22px; font-weight: 800; letter-spacing: -.3px; margin-bottom: 4px; }
+  .meta { font-size: 12px; color: var(--muted); margin-bottom: 10px; line-height: 1.5; }
+  .headline { font-size: 17px; font-weight: 700; line-height: 1.45; margin: 2px 0 12px; }
+  .tabs { display: flex; gap: 16px; font-size: 14px; color: var(--muted); border-bottom: 1px solid var(--line); margin: 0 -18px; padding: 0 18px; }
+  .tabs span { padding: 8px 0; white-space: nowrap; }
+  .tabs span.on { color: var(--fg); font-weight: 700; border-bottom: 2px solid var(--fg); }
+  .chips { display: flex; gap: 6px; padding: 10px 0; overflow: hidden; }
+  .chips span { font-size: 12px; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); white-space: nowrap; }
+  .chips span.on { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+  .news { padding: 10px 0; border-bottom: 1px solid var(--line); }
+  .news .cat { font-size: 11.5px; font-weight: 600; color: var(--econ); margin-bottom: 2px; }
+  .news .t { font-size: 15.5px; font-weight: 600; line-height: 1.4; }
+  .sec { font-size: 13px; font-weight: 700; color: var(--muted); margin: 16px 0 6px; display: flex; justify-content: space-between; align-items: baseline; }
+  .sec a { font-weight: 400; font-size: 12px; }
+  .src { font-size: 11px; color: var(--muted); margin-top: 8px; line-height: 1.5; }
+  .src u { text-decoration: underline; }
+
+  /* 영상 줄: 썸네일 왼쪽 + 글 */
+  .vrow { display: grid; grid-template-columns: 128px 1fr; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+  .thumb { width: 128px; height: 72px; border-radius: 6px; background: var(--thumb); position: relative; }
+  .thumb::after { content: "▶"; position: absolute; inset: 0; display: grid; place-items: center; color: var(--thumbfg); font-size: 18px; opacity: .9; }
+  .thumb small { position: absolute; right: 4px; bottom: 4px; font-size: 10px; background: rgba(0,0,0,.75); color: #fff; padding: 1px 4px; border-radius: 3px; z-index: 1; }
+  .vt { font-size: 14px; font-weight: 600; line-height: 1.35; }
+  .vm { font-size: 11.5px; color: var(--muted); margin-top: 3px; }
+  .why { grid-column: 1 / -1; font-size: 13px; line-height: 1.5; background: var(--chip); border-radius: 8px; padding: 7px 10px; }
+  .why b { font-size: 11px; color: var(--accent); margin-right: 4px; }
+  .tag { display: inline-block; font-size: 10.5px; font-weight: 700; color: var(--accent); background: var(--accentbg); padding: 1px 6px; border-radius: 4px; margin-right: 4px; }
+
+  /* 가로 카드 */
+  .strip { display: flex; gap: 10px; overflow: hidden; margin: 0 -18px; padding: 0 18px 4px; }
+  .vcard { flex: none; width: 220px; }
+  .vcard .thumb { width: 220px; height: 124px; }
+  .vcard .vt { margin-top: 6px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .vcard .why2 { font-size: 12px; color: var(--muted); margin-top: 4px; line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; margin-bottom: 4px; }
+  .seg span { font-size: 12.5px; padding: 5px 11px; color: var(--muted); }
+  .seg span.on { background: var(--chip); color: var(--fg); font-weight: 700; }
+  .linkline { font-size: 13px; padding: 9px 12px; border: 1px solid var(--line); border-radius: 10px; display: flex; justify-content: space-between; margin: 4px 0 8px; }
+  .linkline b { font-weight: 700; }
+</style>
+</head>
+<body>
+<h1>7단계 비교 시안: 추천 영상</h1>
+<p class="note">세 안 모두 영상 줄의 내용은 같습니다. YouTube에서 받은 썸네일·제목·채널·길이를 바꾸지 않고 보이고(정책), 그 아래에 Tidwyn이 쓴 추천 이유를 따로 표시합니다. 영상을 누르면 YouTube의 영상 페이지가 새 탭으로 열립니다(사이트 안에서 재생하지 않음). 화면 아래에는 "영상 정보: YouTube · YouTube 이용약관"이 있습니다. 이슈 페이지의 '관련 영상'은 세 안 모두 같습니다(마지막 화면). 영상은 받은 날부터 30일 동안만 보입니다. 썸네일 자리의 회색 상자는 실제로는 YouTube 썸네일 이미지입니다.</p>
+
+<!-- A -->
+<section class="option">
+  <h2>A. 브리프의 섹션 탭에 '영상' 탭을 더한다</h2>
+  <p>전체 · 한국 · 세계 · IT·AI · <b>영상</b>. 영상 탭 안에서 '한국 · 미국 · AI' 칩으로 거릅니다. 뉴스와 섞이지 않고, 탭을 고르지 않으면 영상이 보이지 않습니다. 전체 탭에는 영상을 넣지 않습니다.</p>
+  <div class="phones">
+    <div>
+      <div class="phone L"><div class="screen">
+        <div class="bar"><span class="brand">Tidwyn</span><span class="datebtn">10월 29일 ▾</span><span class="icons">⌕ ☰</span></div>
+        <div class="body pad">
+          <div class="headline">예시 헤드라인: 정책 발언 파장, 해외 시위 확산</div>
+          <div class="tabs"><span>전체</span><span>한국</span><span>세계</span><span>IT·AI</span><span class="on">영상 9</span></div>
+          <div class="chips"><span class="on">전체</span><span>한국 3</span><span>미국 2</span><span>AI 4</span></div>
+          <div class="vrow"><div class="thumb"><small>44:12</small></div><div><div class="vt">[예시] 도시 재난 대응, 기록으로 다시 보기</div><div class="vm"><span class="tag">한국</span>예시 탐사 채널 · 44분</div></div>
+            <div class="why"><b>추천 이유</b>공개 기록으로 재난 당일 대응의 공백을 시간 순서로 짚는다.</div></div>
+          <div class="vrow"><div class="thumb"><small>42:03</small></div><div><div class="vt">예시 나라의 시위는 왜 커졌나</div><div class="vm"><span class="tag">한국</span>예시 국제 채널 · 42분</div></div>
+            <div class="why"><b>추천 이유</b>세금 개편에서 시작된 시위가 커진 배경을 현지 취재로 설명한다.</div></div>
+          <div class="vrow"><div class="thumb"><small>18:40</small></div><div><div class="vt">Why chip export controls are failing</div><div class="vm"><span class="tag">미국</span>Example Channel · 18분</div></div>
+            <div class="why"><b>추천 이유</b>수출 통제가 공급망 우회로 약해지는 과정을 자료로 보여 준다.</div></div>
+          <div class="src">영상 정보: YouTube · <u>YouTube 이용약관</u> · 추천 이유는 Tidwyn이 썼습니다.</div>
+        </div>
+      </div></div>
+      <div class="caption">375px 라이트 · 영상 탭</div>
+    </div>
+    <div>
+      <div class="phone D"><div class="screen">
+        <div class="bar"><span class="brand">Tidwyn</span><span class="datebtn">10월 29일 ▾</span><span class="icons">⌕ ☰</span></div>
+        <div class="body pad">
+          <div class="headline">예시 헤드라인: 정책 발언 파장, 해외 시위 확산</div>
+          <div class="tabs"><span>전체</span><span>한국</span><span>세계</span><span>IT·AI</span><span class="on">영상 9</span></div>
+          <div class="chips"><span>전체</span><span>한국 3</span><span>미국 2</span><span class="on">AI 4</span></div>
+          <div class="vrow"><div class="thumb"><small>31:20</small></div><div><div class="vt">AI 에이전트가 실제 회사 업무를 맡으면 생기는 일</div><div class="vm"><span class="tag">AI · 한국어</span>예시 채널 · 31분</div></div>
+            <div class="why"><b>추천 이유</b>도입한 기업 세 곳의 사례로 비용과 실패 원인을 구체적으로 비교한다.</div></div>
+          <div class="vrow"><div class="thumb"><small>24:05</small></div><div><div class="vt">How LLM inference costs fell 10x in a year</div><div class="vm"><span class="tag">AI · 영어</span>Example Lab · 24분</div></div>
+            <div class="why"><b>추천 이유</b>하드웨어와 모델 경량화 중 무엇이 비용을 낮췄는지 수치로 나눈다.</div></div>
+          <div class="src">영상 정보: YouTube · <u>YouTube 이용약관</u> · 추천 이유는 Tidwyn이 썼습니다.</div>
+        </div>
+      </div></div>
+      <div class="caption">375px 다크 · AI 칩</div>
+    </div>
+  </div>
+</section>
+
+<!-- B -->
+<section class="option">
+  <h2>B. 브리프 맨 아래에 '추천 영상' 절을 둔다</h2>
+  <p>어느 섹션 탭에서도 뉴스 목록이 끝나면 '추천 영상'이 나옵니다. 한국 · 미국 · AI 줄마다 가로로 넘기는 카드이고, 카드에는 추천 이유를 세 줄까지 보입니다(누르면 YouTube). 뉴스를 다 읽은 뒤 자연스럽게 보지만, 아래까지 내려가야 보입니다.</p>
+  <div class="phones">
+    <div>
+      <div class="phone L"><div class="screen">
+        <div class="bar"><span class="brand">Tidwyn</span><span class="datebtn">10월 29일 ▾</span><span class="icons">⌕ ☰</span></div>
+        <div class="body pad">
+          <div class="news"><div class="cat">국제 · 유럽·러시아</div><div class="t">예시 나라 시위 일주일째</div></div>
+          <div class="news"><div class="cat">경제 · 거시·정책</div><div class="t">예시: 내년 성장률 전망 낮춰</div></div>
+          <div class="sec">추천 영상 <a>영상 9개</a></div>
+          <div class="seg"><span class="on">한국 3</span><span>미국 2</span><span>AI 4</span></div>
+          <div class="strip">
+            <div class="vcard"><div class="thumb"><small>44:12</small></div><div class="vt">[예시] 도시 재난 대응, 기록으로 다시 보기</div><div class="vm">예시 탐사 채널 · 44분</div><div class="why2"><b style="color:var(--accent);font-size:11px">추천 이유</b> 공개 기록으로 재난 당일 대응의 공백을 시간 순서로 짚는다.</div></div>
+            <div class="vcard"><div class="thumb"><small>42:03</small></div><div class="vt">예시 나라의 시위는 왜 커졌나</div><div class="vm">예시 국제 채널 · 42분</div><div class="why2"><b style="color:var(--accent);font-size:11px">추천 이유</b> 시위가 커진 배경을 현지 취재로 설명한다.</div></div>
+          </div>
+          <div class="src">영상 정보: YouTube · <u>YouTube 이용약관</u> · 추천 이유는 Tidwyn이 썼습니다.</div>
+        </div>
+      </div></div>
+      <div class="caption">375px 라이트 · 뉴스 목록 끝</div>
+    </div>
+  </div>
+</section>
+
+<!-- C -->
+<section class="option">
+  <h2>C. 따로 '영상' 페이지를 두고, 브리프 위에 한 줄로 알린다</h2>
+  <p>머리 메뉴에 '영상'을 더하고, 날짜별로 한국 · 미국 · AI 영상을 A의 줄 모양으로 보입니다. 브리프의 '이번 주 일정 | 지표' 상자 아래에 "오늘의 추천 영상 9개 ›" 한 줄을 둡니다. 브리프가 가장 깔끔하지만 한 번 더 들어가야 합니다.</p>
+  <div class="phones">
+    <div>
+      <div class="phone L"><div class="screen">
+        <div class="bar"><span class="brand">Tidwyn</span><span class="datebtn">10월 29일 ▾</span><span class="icons">⌕ ☰</span></div>
+        <div class="body pad">
+          <div class="headline">예시 헤드라인: 정책 발언 파장, 해외 시위 확산</div>
+          <div class="linkline"><span>오늘의 추천 영상 <b>9개</b> · 한국 3 · 미국 2 · AI 4</span><span>›</span></div>
+          <div class="tabs"><span class="on">전체</span><span>한국</span><span>세계</span><span>IT·AI</span></div>
+          <div class="news"><div class="cat">국제 · 유럽·러시아</div><div class="t">예시 나라 시위 일주일째</div></div>
+          <div class="news"><div class="cat">경제 · 거시·정책</div><div class="t">예시: 내년 성장률 전망 낮춰</div></div>
+        </div>
+      </div></div>
+      <div class="caption">375px · 브리프 위 한 줄</div>
+    </div>
+    <div>
+      <div class="phone L"><div class="screen">
+        <div class="bar"><span class="brand">Tidwyn</span><span class="datebtn">10월 29일 ▾</span><span class="icons">⌕ ☰</span></div>
+        <div class="body pad">
+          <div class="ptitle">추천 영상</div>
+          <div class="meta">10월 29일 · 정보와 통찰을 주는 롱폼 영상 · 최근 30일만 보입니다</div>
+          <div class="chips"><span class="on">전체</span><span>한국 3</span><span>미국 2</span><span>AI 4</span></div>
+          <div class="vrow"><div class="thumb"><small>44:12</small></div><div><div class="vt">[예시] 도시 재난 대응, 기록으로 다시 보기</div><div class="vm"><span class="tag">한국</span>예시 탐사 채널 · 44분</div></div>
+            <div class="why"><b>추천 이유</b>공개 기록으로 재난 당일 대응의 공백을 시간 순서로 짚는다.</div></div>
+          <div class="vrow"><div class="thumb"><small>18:40</small></div><div><div class="vt">Why chip export controls are failing</div><div class="vm"><span class="tag">미국</span>Example Channel · 18분</div></div>
+            <div class="why"><b>추천 이유</b>수출 통제가 공급망 우회로 약해지는 과정을 자료로 보여 준다.</div></div>
+          <div class="src">영상 정보: YouTube · <u>YouTube 이용약관</u> · 추천 이유는 Tidwyn이 썼습니다.</div>
+        </div>
+      </div></div>
+      <div class="caption">375px · 영상 페이지</div>
+    </div>
+  </div>
+</section>
+
+<!-- 공통: 이슈 페이지와 넓은 화면 -->
+<section class="option">
+  <h2>공통: 이슈 페이지의 '관련 영상'과 넓은 화면</h2>
+  <p>이슈 페이지에서 타임라인과 '관련 지표' 아래에 '관련 영상'을 둡니다. Claude가 영상마다 관련 이슈를 0~2개 고르고, 최근 30일 안의 영상만 보입니다. 넓은 화면은 지금 사이트처럼 가운데 한 단입니다.</p>
+  <div class="phones">
+    <div>
+      <div class="phone L"><div class="screen">
+        <div class="bar"><span class="brand">Tidwyn</span><span class="datebtn">이슈</span><span class="icons">⌕ ☰</span></div>
+        <div class="body pad">
+          <div class="ptitle">예시 나라의 세금 개편 반대 시위</div>
+          <div class="meta">국제 · 유럽·러시아 · 뉴스 6건 · 10월 22일부터</div>
+          <div class="sec">타임라인</div>
+          <div class="news"><div class="t" style="font-size:14px">10월 29일 · 시위 일주일째</div></div>
+          <div class="news"><div class="t" style="font-size:14px">10월 27일 · 학생 단체 전국 동맹휴업</div></div>
+          <div class="sec">관련 영상</div>
+          <div class="vrow"><div class="thumb"><small>42:03</small></div><div><div class="vt">예시 나라의 시위는 왜 커졌나</div><div class="vm">예시 국제 채널 · 42분 · 10월 29일 추천</div></div>
+            <div class="why"><b>추천 이유</b>세금 개편에서 시작된 시위가 커진 배경을 현지 취재로 설명한다.</div></div>
+          <div class="src">영상 정보: YouTube · <u>YouTube 이용약관</u></div>
+        </div>
+      </div></div>
+      <div class="caption">375px · 이슈 페이지</div>
+    </div>
+    <div>
+      <div class="wide L"><div class="screen">
+        <div class="bar"><span class="brand">Tidwyn</span><span class="datebtn">10월 29일 ▾</span><span class="icons">⌕ 브리프 · 이슈 · 일정 · 지표 · 영상 ☰</span></div>
+        <div class="body"><div class="col pad">
+          <div class="tabs"><span>전체</span><span>한국</span><span>세계</span><span>IT·AI</span><span class="on">영상 9</span></div>
+          <div class="chips"><span class="on">전체</span><span>한국 3</span><span>미국 2</span><span>AI 4</span></div>
+          <div class="vrow" style="grid-template-columns:200px 1fr"><div class="thumb" style="width:200px;height:112px"><small>44:12</small></div><div><div class="vt" style="font-size:16px">[예시] 도시 재난 대응, 기록으로 다시 보기</div><div class="vm"><span class="tag">한국</span>예시 탐사 채널 · 44분</div><div class="why" style="margin-top:8px">추천 이유 · 공개 기록으로 재난 당일 대응의 공백을 시간 순서로 짚는다.</div></div></div>
+          <div class="vrow" style="grid-template-columns:200px 1fr"><div class="thumb" style="width:200px;height:112px"><small>18:40</small></div><div><div class="vt" style="font-size:16px">Why chip export controls are failing</div><div class="vm"><span class="tag">미국</span>Example Channel · 18분</div><div class="why" style="margin-top:8px">추천 이유 · 수출 통제가 공급망 우회로 약해지는 과정을 자료로 보여 준다.</div></div></div>
+        </div></div>
+      </div></div>
+      <div class="caption">960px · A안의 영상 탭(넓은 화면에서는 썸네일이 커지고 추천 이유가 오른쪽에 붙음)</div>
+    </div>
+  </div>
+</section>
+</body>
+</html>

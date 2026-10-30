@@ -353,6 +353,8 @@ export interface DayList {
   week?: WeekSchedules;
   /** 6단계: 브리프 위 상자의 지표 칩(그 브리프 날짜 이하의 가장 최근 값). 없으면 항목을 뺀다 */
   indicators?: IndicatorChip[];
+  /** 7단계: 그 브리프 날짜에 붙은 추천 영상(묶음 순 kr → us → ai-ko → ai-en, 묶음 안은 고른 순서). 없으면 항목을 뺀다 */
+  videos?: SiteVideo[];
 }
 
 /** `list-YYYY-MM.json` */
@@ -423,6 +425,8 @@ export interface IssueDetail extends IssueListItem {
   schedules?: ScheduleLine[];
   /** 6단계: 고른 공개 지표와 그래프 기간(이슈 시작일 30일 전부터 그 지표의 마지막 값 날짜까지). 없으면 항목을 뺀다 */
   indicators?: IssueIndicator[];
+  /** 7단계: 이 이슈(와 흡수된 이슈)에 붙은 추천 영상, 붙은 브리프 날짜 최근 순(같은 영상은 한 번). 개수 제한과 30일 숨김은 화면이 한다. 없으면 항목을 뺀다 */
+  videos?: IssueVideo[];
 }
 
 /** `issue-<묶음>.json` */
@@ -556,3 +560,31 @@ export interface IssueIndicator {
   to: string;
 }
 
+
+/** 7단계: 추천 영상의 묶음(받은 곳으로 정한다). 화면 순서도 이 순서다 */
+export const VIDEO_BUNDLES = ["kr", "us", "ai-ko", "ai-en"] as const;
+/** 영상 정보를 받은 날부터 이 날 수가 지나면 지우고(DB·파일, V1) 화면에서 숨긴다(V14). 받은 날을 0일로 세어 29일째까지 남는다 */
+export const VIDEO_KEEP_DAYS = 30;
+export type VideoBundle = (typeof VIDEO_BUNDLES)[number];
+
+/** 7단계: 사이트에 싣는 영상 하나. 제목·채널·길이·썸네일은 YouTube가 준 그대로다(V8). 설명·통계는 싣지 않는다 */
+export interface SiteVideo {
+  /** YouTube 영상 ID. 주소는 https://www.youtube.com/watch?v=<id> */
+  id: string;
+  bundle: VideoBundle;
+  title: string;
+  channel: string;
+  /** 길이(초) */
+  seconds: number;
+  /** YouTube가 준 썸네일 주소 */
+  thumb: string;
+  /** Tidwyn(Claude)이 쓴 추천 이유 */
+  reason: string;
+  /** 받은 날(KST, YYYY-MM-DD). 화면이 이 날부터 30일이 지나면 숨긴다(V14) */
+  fetchedOn: string;
+}
+
+/** 7단계: 이슈 페이지의 관련 영상. date는 영상이 붙은 브리프 날짜다 */
+export interface IssueVideo extends SiteVideo {
+  date: string;
+}

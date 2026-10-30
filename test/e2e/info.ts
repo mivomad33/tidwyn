@@ -3,6 +3,7 @@ import fs from "node:fs";
 import { E2E_INFO_FILE } from "./paths.ts";
 import type { SectionName } from "../../src/categories.ts";
 import type { EntityListItem, EntityRef, IssueEntity, IssueListItem, TermRef } from "../../src/siteTypes.ts";
+import type { VideoFixtureInfo } from "../../site/dev/videoFixtures.ts";
 
 export interface E2eInfo {
   /** 저장된 날짜(최근 순) */
@@ -30,6 +31,8 @@ export interface E2eInfo {
     merged: { id: number; into: number; intoName: string };
     first: IssueListItem;
   };
+  /** 7단계: 지어낸 추천 영상의 상태(영상 없는 날짜, 한 묶음 날짜, 썸네일 실패 등) */
+  videos: VideoFixtureInfo;
 }
 
 export function readInfo(): E2eInfo {

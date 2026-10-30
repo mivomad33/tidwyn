@@ -11,6 +11,7 @@ import { IndicatorsPage } from "./pages/IndicatorsPage.tsx";
 import { IssuePage } from "./pages/IssuePage.tsx";
 import { IssuesPage } from "./pages/IssuesPage.tsx";
 import { NotFoundPage } from "./pages/NotFoundPage.tsx";
+import { PrivacyPage } from "./pages/PrivacyPage.tsx";
 import { SchedulesPage } from "./pages/SchedulesPage.tsx";
 import { SearchPage } from "./pages/SearchPage.tsx";
 import { lastNavigation, useLocation } from "./router.tsx";
@@ -61,6 +62,8 @@ export function App() {
       return <SearchPage q={route.q} />;
     case "about":
       return <AboutPage />;
+    case "privacy":
+      return <PrivacyPage />;
     case "notFound":
       return <NotFoundPage />;
   }

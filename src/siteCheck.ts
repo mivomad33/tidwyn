@@ -1,22 +1,22 @@
 import fs from "node:fs";
 import path from "node:path";
-import { contentFindings, nameKinds, type Finding } from "./precheck.ts";
+import { BACKUP_NAME_RE, contentFindings, nameKinds, type Finding } from "./precheck.ts";
 
 // 결과물 검사(3단계 4.1-4). 빌드 뒤와 배포 전에 돌린다. 걸린 값은 출력하지 않는다(경로와 종류만).
 
 /** 글자 모양 검사를 하는 텍스트 파일 확장자. 나머지(Pagefind 색인 조각, wasm, 글꼴, 이미지)는 건너뛴다 */
 const TEXT_EXTENSIONS = new Set([".html", ".htm", ".js", ".mjs", ".cjs", ".css", ".json", ".txt", ".xml", ".svg", ".map", ".webmanifest"]);
-/** 백업 파일 이름(backup.ts의 월별 JSON, issues.json, refs.json, schedules.json, indicators.json, meta.json). 사이트 데이터 이름은 이것과 겹치지 않는다 */
-const BACKUP_NAME_RE = /^(?:\d{4}-\d{2}\.json|issues\.json|refs\.json|schedules\.json|indicators\.json|meta\.json)$/;
 /**
  * 실행 기록(`runs/<YYYYMMDD-HHMMSS>.json`), 작업 파일·후보 목록(`work/<날짜>.json`, `.candidates.*`, `.issues.md`, `.links.json`,
- * `.refs.md`, `.refs.json`, `.schedules.md`, `.schedules.json`, `merges.*`, 6단계 지표 판단 `indicators.candidates-<번호>.md`, `indicators.judge-<번호>.json`)
+ * `.refs.md`, `.refs.json`, `.schedules.md`, `.schedules.json`, `merges.*`, 6단계 지표 판단 `indicators.candidates-<번호>.md`, `indicators.judge-<번호>.json`,
+ * 7단계 영상 후보 목록·상세·고르기 파일 `videos.candidates.json`, `videos.candidates.md`, `videos.details.md`, `videos.pick.json`)
  */
 const RUN_FILE_RES = [
   /^\d{8}-\d{6}\.json$/,
   /^\d{4}-\d{2}-\d{2}\.(?:json|candidates\.json|candidates\.md|issues\.md|links\.json|refs\.md|refs\.json|schedules\.md|schedules\.json)$/,
   /^merges\.(?:json|candidates\.md)$/,
   /^indicators\.(?:candidates-\d+\.md|judge-\d+\.json)$/,
+  /^videos\.(?:candidates\.json|candidates\.md|details\.md|pick\.json)$/,
 ];
 /** 데이터 폴더의 작업 폴더 이름. 결과물 안에 이런 폴더가 있으면 데이터 폴더가 섞인 것이다 */
 const DATA_DIRS = new Set(["runs", "work", "snapshots", "backup", "site-input"]);

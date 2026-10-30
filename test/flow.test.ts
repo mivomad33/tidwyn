@@ -120,8 +120,8 @@ describe("4.3-4 start의 실행 전 사본", () => {
     assert.equal(fs.existsSync(snaps), false, "첫 실행(DB 없음)은 사본을 만들지 않는다");
     const dbBytes = fs.readFileSync(path.join(dataDir, "tidwyn.db"));
     fs.mkdirSync(snaps);
-    fs.writeFileSync(path.join(snaps, "tidwyn-20261013-090000.db"), "old");
-    fs.writeFileSync(path.join(snaps, "tidwyn-20261015-090000.db"), "recent");
+    fs.writeFileSync(path.join(snaps, "tidwyn-20261013-090000.db"), dbBytes);
+    fs.writeFileSync(path.join(snaps, "tidwyn-20261015-090000.db"), dbBytes);
     start(repo, [], { TIDWYN_DATA_DIR: dataDir });
     assert.deepEqual(fs.readdirSync(snaps).sort(), ["tidwyn-20261015-090000.db", "tidwyn-20261028-090000.db"]);
     assert.deepEqual(fs.readFileSync(path.join(snaps, "tidwyn-20261028-090000.db")), dbBytes, "사본은 쓰기 전 DB와 같다");

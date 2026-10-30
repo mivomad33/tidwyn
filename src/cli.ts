@@ -35,7 +35,12 @@ import { indicatorDef } from "./indicators.ts";
 import { fetchAllIndicators, fetchHttp, type HttpJson, type IndicatorFetchResult } from "./indicatorFetch.ts";
 import { applyJudgeFile, checkJudgeFile, judgeBatches, judgeWorkFile, readJudgeFile, renderJudgeCandidates } from "./indicatorJudge.ts";
 import { unjudgedIssues } from "./indicatorStore.ts";
-import { readKeys, secretValues } from "./keys.ts";
+import { readKeys, secretValues, maskSecrets } from "./keys.ts";
+import { buildCandidateFile, checkPickFile, readCandidateFile, readJsonFile, removeVideoWorkFiles, restoreCandidateLists, videoWorkFile, writeCandidateFiles } from "./videoPick.ts";
+import { purgeDataDir, purgeTestDirs, type VideoPurgeResult } from "./videoPurge.ts";
+import { applyVideoPick, isPicked, issueCandidates, purgeExpiredRows, recentVideoIds, videoTargetDate } from "./videoStore.ts";
+import { EXCLUDE_LABELS, YoutubeClient, fetchVideos, fetchYoutube, type ExcludeReason, type Usage, type YoutubeHttp } from "./youtube.ts";
+import { VIDEO_BUNDLES, type VideoBundle } from "./siteTypes.ts";
 import { commitsOfRefs, describeFindings, homeValue, localBranches, precheck } from "./precheck.ts";
 import {
   DEFAULT_CHECK_RETRY,
@@ -80,6 +85,8 @@ import {
   type ScheduleMergeDone,
   type ScheduleResult,
   type SiteResult,
+  type VideoFetchState,
+  type VideoPickState,
 } from "./run.ts";
 import { DB_FILE, ENV_DATA_DIR, checkRunCondition, describeSettings, parseArgs, resolveSettings, type Settings } from "./settings.ts";
 import { pruneSnapshots, takeSnapshot } from "./snapshot.ts";
@@ -120,6 +127,12 @@ export interface Context {
   indicatorHttp?: HttpJson;
   /** 지표 출처 요청 사이·다시 시도 간격(밀리초). 없으면 0.3초·2초 */
   indicatorGapMs?: number;
+  /** YouTube 요청(7단계 4.2). 없으면 fetch */
+  youtubeHttp?: YoutubeHttp;
+  /** YouTube 한 실행 상한(검색 횟수, 그 밖의 단위). 없으면 90번, 2,000단위. 테스트가 낮춰 넣는다 */
+  youtubeLimits?: Usage;
+  /** YouTube 다시 시도 간격(밀리초). 없으면 2초 */
+  youtubeRetryGapMs?: number;
 }
 
 /** 의존성 잠금 파일대로, 잠금 파일을 바꾸지 않고 대화형 확인 없이 설치한다 */
@@ -181,7 +194,11 @@ const USAGE = `명령:
   indicator-list --run <파일>             지표 판단 안 한 이슈를 파일로 나눠 후보 목록(work/indicators.candidates-<번호>.md)
   indicator-check --run <파일> --file <번호>   판단 파일(work/indicators.judge-<번호>.json) 검사
   indicator-apply --run <파일> --file <번호>   검사 → 파일 단위로 적용(실패하면 실행 기록에 남긴다)
-  indicator-fetch --run <파일>            12개 지표를 ECOS·FRED에서 받아 저장(지표 하나가 실패해도 계속한다)`;
+  indicator-fetch --run <파일>            12개 지표를 ECOS·FRED에서 받아 저장(지표 하나가 실패해도 계속한다)
+영상(7단계):
+  video-fetch --run <파일>                가장 늦은 브리프 날짜의 영상 받기(차트·검색·상세·거르기) → 후보 목록(work/videos.candidates.md). 이미 고르기 끝남이면 YouTube를 부르지 않는다
+  video-check --run <파일>                고르기 파일(work/videos.pick.json) 검사
+  video-apply --run <파일>                검사 → 한 번에 적용 → 고르기 끝남 → 영상 작업 파일 지우기(실패하면 실행 기록에 남기고 파일을 남긴다)`;
 
 function opts(argv: string[], options: Record<string, { type: "string" | "boolean" }>) {
   return parseNodeArgs({ args: argv, options, allowPositionals: false, strict: true }).values as Record<string, string | boolean | undefined>;
@@ -232,6 +249,9 @@ function cmdStart(argv: string[], ctx: Context): number {
   fs.mkdirSync(s.dataDir, { recursive: true });
   const snapshot = takeSnapshot(s.dataDir, s.dbPath, now);
   const pruned = pruneSnapshots(s.dataDir, now);
+  // 7단계 4.1-2: 30일 지우기(실행 전 사본은 마이그레이션 없이, 새로 만든 사본 포함)
+  const today = kstDate(now);
+  const purgeFiles = purgeDataDir(s.dataDir, today);
   const db = openDb(s.dbPath);
   let targets: string[];
   let linkDates: string[];
@@ -240,7 +260,10 @@ function cmdStart(argv: string[], ctx: Context): number {
   let warning: string | null;
   let mergeLine: string;
   let unjudged: number;
+  let purgedRows: number;
+  let videoPlanned: { date: string | null; done: boolean };
   try {
+    purgedRows = purgeExpiredRows(db, today);
     const plan = planTargets(db, now, s.startDate);
     if (plan.firstDateToRecord !== null) recordFirstCollectionDate(db, plan.firstDateToRecord);
     targets = plan.dates;
@@ -250,10 +273,14 @@ function cmdStart(argv: string[], ctx: Context): number {
     warning = deletedNameWarning(db, readNameKey(s.dataDir));
     const due = mergeDue(db, kstDate(now));
     unjudged = unjudgedIssues(db).length;
+    const planned = plan.dates.at(-1) ?? videoTargetDate(db);
+    videoPlanned = { date: planned, done: planned !== null && isPicked(db, planned) };
     mergeLine = due.due ? `이번 실행 끝에 한다(마지막 점검 ${due.checkedOn})` : due.nextOn === null ? "아직 연결한 이슈가 없다" : `다음 점검 ${due.nextOn}`;
   } finally {
     db.close();
   }
+  const testDirs = purgeTestDirs(s.repo.toplevel, today, s.dataDir);
+  const purge: VideoPurgeResult = { rows: purgedRows, ...purgeFiles, testDirs };
   const runFile = path.join(s.dataDir, RUNS_DIR, `${kstStamp(now)}.json`);
   const state: RunState = {
     startedAt: kstIso(now),
@@ -275,6 +302,8 @@ function cmdStart(argv: string[], ctx: Context): number {
     deploy: null,
     push: null,
     unjudgedAtStart: unjudged,
+    videoPlanned,
+    videoPurge: purge,
   };
   writeRun(runFile, state);
   ctx.out(
@@ -290,6 +319,8 @@ function cmdStart(argv: string[], ctx: Context): number {
       `- 합치기: ${mergeLine}`,
       `- 지표 판단 안 한 이슈: ${unjudged}개`,
       keyLine(ctx),
+      videoPlanned.date === null ? "- 영상: 브리프가 없어 받을 날짜가 없다" : `- 영상: ${videoPlanned.date} ${videoPlanned.done ? "이미 끝남" : "받기 할 것"}`,
+      ...purgeLines(purge),
     ].join("\n"),
   );
   return EXIT.ok;
@@ -508,6 +539,7 @@ function cmdSummary(argv: string[], ctx: Context): number {
   lines.push(...extractSummaryLines(s));
   lines.push(...scheduleSummaryLines(s));
   lines.push(...indicatorSummaryLines(s));
+  lines.push(...videoSummaryLines(s));
   lines.push(...imageSummaryLines(s, saved));
   lines.push(`- 백업: ${describeBackup(s.backup)}`);
   lines.push(...siteSummaryLines(s));
@@ -1463,7 +1495,8 @@ function secretsOf(ctx: Context): string[] {
 
 function keyLine(ctx: Context): string {
   const k = readKeys(ctx.env, keyDirOf(ctx));
-  return `- 키: ECOS ${k.ECOS_API_KEY === null ? "없음" : "있음"}, FRED ${k.FRED_API_KEY === null ? "없음" : "있음"}`;
+  const has = (v: string | null) => (v === null ? "없음" : "있음");
+  return `- 키: ECOS ${has(k.ECOS_API_KEY)}, FRED ${has(k.FRED_API_KEY)}, YouTube ${has(k.YOUTUBE_API_KEY)}`;
 }
 
 /** 판단할 이슈를 파일로 나눠 후보 목록을 쓴다(4.3-2). 나눈 결과를 실행 기록에 남긴다 */
@@ -1623,6 +1656,235 @@ function indicatorSummaryLines(s: RunState): string[] {
   return lines;
 }
 
+// ---- 영상(7단계) ----
+
+/** 30일 지우기 줄(4.5-1). 지운 수만 쓴다 */
+function purgeLines(p: VideoPurgeResult): string[] {
+  const extra: string[] = [];
+  if (p.snapshotRows > 0) extra.push(`실행 전 사본의 기록 ${p.snapshotRows}개`);
+  if (p.removedSnapshots.length > 0) extra.push(`열 수 없어 지운 실행 전 사본 ${p.removedSnapshots.length}개(${p.removedSnapshots.join(", ")})`);
+  if (p.workFiles > 0) extra.push(`지난 실행의 영상 작업 파일 ${p.workFiles}개`);
+  if (p.siteDirs > 0) extra.push(`사이트 입력·결과물 폴더 ${p.siteDirs}개`);
+  const testRows = p.testDirs.reduce((n, t) => n + t.rows + t.snapshotRows, 0);
+  const testOther = p.testDirs.reduce((n, t) => n + t.workFiles + t.siteDirs, 0);
+  if (testRows + testOther > 0) extra.push(`시험 폴더의 기록 ${testRows}개·작업 파일과 사이트 폴더 ${testOther}개`);
+  const lines = [`- 30일 지난 영상 지움: ${p.rows}개${extra.length > 0 ? ` (그 밖에 ${extra.join(", ")})` : ""}`];
+  const unreadable = p.testDirs.flatMap((t) => t.unreadable.map((u) => `${t.dir}/${u}`));
+  if (unreadable.length > 0) lines.push(`  - 경고: 시험 폴더의 열 수 없는 DB를 지우지 않고 두었다(사용자가 살펴본다): ${unreadable.join(", ")}`);
+  return lines;
+}
+
+/** 영상 받기(4.2). 대상 날짜가 이미 고르기 끝남이면 YouTube를 부르지 않는다. 받기 실패는 종료 코드 1(뒤 단계는 계속한다) */
+async function cmdVideoFetch(argv: string[], ctx: Context): Promise<number> {
+  const v = opts(argv, { run: { type: "string" } });
+  const runFile = need(v, "run");
+  const state = readRun(runFile);
+  const refused = indicatorCondition(state, ctx);
+  if (refused !== null) return refused;
+  const record = (r: VideoFetchState) => updateRun(runFile, (s) => (s.videoFetch = r));
+  const now = ctx.now();
+  const today = kstDate(now);
+  const secrets = secretsOf(ctx);
+  const db = openExistingDb(state.dbPath);
+  try {
+    const target = videoTargetDate(db);
+    if (target === null) {
+      record({ status: "noBrief", target });
+      ctx.out("영상: 브리프가 없어 받지 않는다.");
+      return EXIT.ok;
+    }
+    const prev = state.videoFetch;
+    const fetchedInRun = prev?.target === target && (prev.status === "ok" || prev.status === "partial");
+    if (isPicked(db, target)) {
+      // 이 실행에서 받은 기록은 남긴다(요약의 받기 줄이 사라지지 않게)
+      if (!fetchedInRun) record({ status: "alreadyDone", target });
+      ctx.out(`영상: ${target} 이미 고르기 끝남. YouTube를 부르지 않는다(고르기를 건너뛴다).`);
+      return EXIT.ok;
+    }
+    // 이 실행에서 이미 받아 후보가 남아 있으면 다시 부르지 않는다(하루 검색 할당량을 두 번 쓰지 않게). 목록은 남은 후보로 다시 쓴다
+    const cand = fetchedInRun ? readCandidateFile(state.dataDir) : null;
+    if (cand?.ok && cand.file.targetDate === target) {
+      const md = restoreCandidateLists(state.dataDir, cand.file);
+      ctx.out(`영상: 이 실행에서 이미 받았다. YouTube를 다시 부르지 않는다. 후보 목록 ${md}`);
+      return EXIT.ok;
+    }
+    const key = readKeys(ctx.env, keyDirOf(ctx)).YOUTUBE_API_KEY;
+    if (key === null) {
+      removeVideoWorkFiles(state.dataDir);
+      record({ status: "failed", target, keyProblem: true, failures: ["키 확인 필요: YOUTUBE_API_KEY가 없다"] });
+      ctx.out(`영상 받기 실패(${target}): 키 확인 필요: YOUTUBE_API_KEY가 없다. 고르기를 건너뛴다. 다음 실행이 다시 받는다.`);
+      return EXIT.failed;
+    }
+    const client = new YoutubeClient({ http: ctx.youtubeHttp ?? fetchYoutube, key, ...(ctx.youtubeLimits ? { limits: ctx.youtubeLimits } : {}), retryGapMs: ctx.youtubeRetryGapMs ?? 2000 });
+    const report = await fetchVideos({ client, now, recent: recentVideoIds(db, today) });
+    const base: VideoFetchState = {
+      status: report.status,
+      target,
+      keyProblem: report.keyProblem,
+      quota: report.quota,
+      failures: report.failures.map((f) => maskSecrets(f, secrets)),
+      missed: report.missed,
+      charts: report.charts,
+      searchResults: report.searchResults,
+      usage: { ...report.usage },
+      before: report.before,
+      excluded: report.excluded,
+    };
+    if (report.status === "failed") {
+      removeVideoWorkFiles(state.dataDir);
+      record(base);
+      ctx.out(maskSecrets(["영상 받기 실패. 고르기를 건너뛴다. 다음 실행이 다시 받는다.", ...videoFetchLines(base)].join("\n"), secrets));
+      return EXIT.failed;
+    }
+    const file = buildCandidateFile(target, today, report.videos, issueCandidates(db, target));
+    const paths = writeCandidateFiles(state.dataDir, file);
+    const done: VideoFetchState = { ...base, candidates: file.candidates.length, issueCandidates: file.issues.length };
+    record(done);
+    ctx.out(maskSecrets([`영상 받기: 후보 목록 ${paths.md}`, `- 고르기 파일을 쓸 곳: ${paths.pick}`, ...videoFetchLines(done)].join("\n"), secrets));
+    return EXIT.ok;
+  } finally {
+    db.close();
+  }
+}
+
+/** 받기 결과 줄(받기 출력과 요약이 함께 쓴다). 수와 지역·카테고리 ID, 분야 이름만 쓴다 */
+function videoFetchLines(r: VideoFetchState): string[] {
+  const lines: string[] = [`- 영상 대상 날짜: ${r.target ?? "없음"}`];
+  if (r.status === "alreadyDone") return [...lines, "- 영상 받기: 이미 고르기 끝남이라 YouTube를 부르지 않았다"];
+  if (r.status === "noBrief") return [...lines, "- 영상 받기: 브리프가 없어 하지 않았다"];
+  const head = { ok: "받음", partial: "일부만 받음(받은 것으로 후보 목록을 썼다)", failed: "실패(고르기 끝남이 되지 않아 다음 실행이 다시 받는다)" }[r.status];
+  lines.push(`- 영상 받기: ${head}`);
+  if (r.keyProblem) lines.push("  - 키 확인 필요(docs/operations.md의 영상 절)");
+  if (r.quota) lines.push("  - 할당량 초과, 태평양 시간 자정에 풀림");
+  for (const c of r.charts ?? []) lines.push(`  - ${c.region} 차트: 받은 차트 ${c.fetched}개, 건너뛴 카테고리 ${c.skipped.length}개${c.skipped.length > 0 ? `(${c.skipped.join(", ")})` : ""}`);
+  if (r.usage) lines.push(`  - 쓴 양: 검색 ${r.usage.searches}번, 그 밖의 호출 ${r.usage.units}단위`);
+  const sr = Object.entries(r.searchResults ?? {});
+  if (sr.length > 0) lines.push(`  - 검색 결과 수: ${sr.map(([k, n]) => `${k} ${n}`).join(", ")}`);
+  if (r.excluded && r.before !== undefined) {
+    const ex = (Object.keys(EXCLUDE_LABELS) as ExcludeReason[]).map((k) => `${EXCLUDE_LABELS[k]} ${r.excluded![k]}`).join(", ");
+    lines.push(`  - 후보: 거르기 전 ${r.before}개 → 거른 뒤 ${r.candidates ?? 0}개(뺀 것: ${ex})`);
+  }
+  if (r.issueCandidates !== undefined) lines.push(`  - 관련 이슈 후보: ${r.issueCandidates}개`);
+  for (const m of r.missed ?? []) lines.push(`  - 상한에 닿아 받지 못함: ${m}`);
+  for (const f of r.failures ?? []) lines.push(`  - 실패: ${f}`);
+  return lines;
+}
+
+/** 고르기 검사·적용의 공통 준비: 후보 목록과 고르기 파일을 읽는다 */
+function readPick(state: RunState): { ok: true; file: ReturnType<typeof buildCandidateFile>; data: unknown } | { ok: false; reason: string } {
+  const cand = readCandidateFile(state.dataDir);
+  if (!cand.ok) return { ok: false, reason: `${cand.reason}(먼저 video-fetch)` };
+  const pick = readJsonFile(videoWorkFile(state.dataDir, "pick"), "고르기 파일");
+  if (!pick.ok) return pick;
+  return { ok: true, file: cand.file, data: pick.data };
+}
+
+/** 고르기 파일을 고쳐 다시 검사하는 최대 횟수(4.3-4). 처음 + 2번 */
+const PICK_MAX_ATTEMPTS = 3;
+
+function cmdVideoCheck(argv: string[], ctx: Context): number {
+  const v = opts(argv, { run: { type: "string" } });
+  const state = readRun(need(v, "run"));
+  const refused = indicatorCondition(state, ctx);
+  if (refused !== null) return refused;
+  const r = readPick(state);
+  if (!r.ok) {
+    ctx.out(`영상 고르기 검사 실패:\n- ${r.reason}`);
+    return EXIT.failed;
+  }
+  const db = openExistingDb(state.dbPath);
+  try {
+    const c = checkPickFile(db, r.data, r.file);
+    if (!c.ok) {
+      ctx.out(`영상 고르기 검사 실패, 위반 ${c.violations.length}개:\n${formatViolations(c.violations)}`);
+      return EXIT.failed;
+    }
+    ctx.out(`영상 고르기 검사 통과: ${pickCounts(c.videos)}.`);
+    return EXIT.ok;
+  } finally {
+    db.close();
+  }
+}
+
+function countByBundle(videos: { bundle: VideoBundle }[]): Record<VideoBundle, number> {
+  const out = { kr: 0, us: 0, "ai-ko": 0, "ai-en": 0 } as Record<VideoBundle, number>;
+  for (const x of videos) out[x.bundle]++;
+  return out;
+}
+
+const BUNDLE_NAMES: Record<VideoBundle, string> = { kr: "한국", us: "미국", "ai-ko": "AI 한국어", "ai-en": "AI 영어" };
+
+function describeBundles(c: Record<VideoBundle, number>): string {
+  return VIDEO_BUNDLES.map((b) => `${BUNDLE_NAMES[b]} ${c[b]}개`).join(", ");
+}
+
+function pickCounts(videos: { bundle: VideoBundle; issues: number[] }[]): string {
+  return `${describeBundles(countByBundle(videos))}, 관련 이슈를 붙인 영상 ${videos.filter((x) => x.issues.length > 0).length}개`;
+}
+
+/** 검사 → 한 번에 적용 → 고르기 끝남 → 작업 파일 지우기(4.3-3~5). 실패하면 아무것도 적용하지 않고 파일을 남긴다 */
+function cmdVideoApply(argv: string[], ctx: Context): number {
+  const v = opts(argv, { run: { type: "string" } });
+  const runFile = need(v, "run");
+  const state = readRun(runFile);
+  const refused = indicatorCondition(state, ctx);
+  if (refused !== null) return refused;
+  const prev = state.videoPick;
+  const attempts = prev?.status === "failed" ? prev.attempts : 0;
+  const db = openExistingDb(state.dbPath);
+  try {
+    const target = videoTargetDate(db);
+    if (target !== null && isPicked(db, target)) {
+      // 이 실행에서 이미 적용했으면 그 기록(고른 수)을 남긴다
+      if (prev?.status !== "applied" || prev.target !== target) updateRun(runFile, (s) => (s.videoPick = { status: "alreadyDone", target, attempts }));
+      ctx.out(`영상: ${target} 이미 고르기 끝남. 바꾼 것이 없다.`);
+      return EXIT.ok;
+    }
+    const fail = (reason: string, violations?: Violation[], count = true): number => {
+      const n = count ? attempts + 1 : attempts;
+      const st: VideoPickState = { status: "failed", target, attempts: n, reason };
+      if (violations) st.violations = violations;
+      updateRun(runFile, (s) => (s.videoPick = st));
+      ctx.out(`영상 고르기를 적용하지 않음(${n}/${PICK_MAX_ATTEMPTS}번째 실패): ${reason}${violations ? `\n${formatViolations(violations)}` : ""}\n대상 날짜는 고르기 끝남이 되지 않아 다음 실행이 다시 받는다. 작업 파일은 남긴다.`);
+      return EXIT.failed;
+    };
+    if (attempts >= PICK_MAX_ATTEMPTS) return fail(`고쳐서 다시 검사를 ${PICK_MAX_ATTEMPTS - 1}번 했는데도 위반이 남아 더 적용하지 않는다`, undefined, false);
+    const r = readPick(state);
+    if (!r.ok) return fail(r.reason);
+    if (r.file.targetDate !== target) return fail(`후보 목록의 날짜(${r.file.targetDate})가 대상 날짜(${target ?? "없음"})와 다르다(video-fetch를 다시 한다)`);
+    const c = checkPickFile(db, r.data, r.file);
+    if (!c.ok) return fail("고르기 파일이 검사를 통과하지 못했다", c.violations);
+    applyVideoPick(db, target, r.file.fetchedOn, c.videos);
+    const cleaned = removeVideoWorkFiles(state.dataDir);
+    updateRun(runFile, (s) => (s.videoPick = { status: "applied", target, attempts, picked: countByBundle(c.videos), withIssues: c.videos.filter((x) => x.issues.length > 0).length, cleaned }));
+    ctx.out(`영상 고르기 적용함(${target}): ${pickCounts(c.videos)}. 고르기 끝남으로 두었다. 영상 작업 파일 ${cleaned}개를 지웠다.`);
+    return EXIT.ok;
+  } finally {
+    db.close();
+  }
+}
+
+/** 실행 요약의 영상 줄(4.5-2). 앞 단계 실행 기록(영상 항목 없음)에는 붙이지 않는다. 영상 제목은 쓰지 않는다(4.8-3) */
+function videoSummaryLines(s: RunState): string[] {
+  if (s.videoPlanned === undefined && s.videoPurge === undefined && s.videoFetch === undefined && s.videoPick === undefined) return [];
+  const lines: string[] = [];
+  const f = s.videoFetch;
+  if (f === undefined) lines.push("- 영상 받기: 하지 않았다(다음 실행이 다시 받는다)");
+  else lines.push(...videoFetchLines(f));
+  const p = s.videoPick;
+  if (p === undefined) {
+    if (f !== undefined && (f.status === "ok" || f.status === "partial")) lines.push("- 영상 고르기: 적용하지 않았다(작업 파일을 남겼다, 다음 실행이 다시 받는다)");
+  } else if (p.status === "applied") {
+    lines.push(`- 영상 고르기: ${describeBundles(p.picked!)}, 관련 이슈를 붙인 영상 ${p.withIssues ?? 0}개${p.attempts > 0 ? ` (고쳐서 다시 검사 ${p.attempts}번)` : ""}`);
+  } else if (p.status === "alreadyDone") lines.push("- 영상 고르기: 이미 끝남");
+  else {
+    lines.push(`- 영상 고르기 실패(${p.attempts}번, 작업 파일을 남겼다, 다음 실행이 다시 받는다): ${p.reason ?? ""}`);
+    for (const vi of p.violations ?? []) lines.push(`  - ${vi.where}: ${vi.why}`);
+  }
+  if (s.videoPurge !== undefined) lines.push(...purgeLines(s.videoPurge));
+  return lines;
+}
+
 function homeOf(ctx: Context): string | null {
   return homeValue(ctx.env.HOME ?? os.homedir());
 }
@@ -1633,7 +1895,8 @@ function describeSite(r: SiteResult | null): string[] {
   const refs = r.entities === undefined ? "" : `, 인물·기관·국가 ${r.entities}개, 용어 ${r.terms ?? 0}개`;
   const schedules = r.schedules === undefined ? "" : `, 일정 ${r.schedules}개(다가오는 일정 ${r.upcoming ?? 0}개)`;
   const indicators = r.indicators === undefined ? "" : `, 공개 지표 ${r.indicators}개`;
-  const lines = [`브리프 날짜 ${r.dates}개, 이슈 ${r.issues}개, 결과물 ${formatMb(r.bytes)}, 파일 ${r.files}개${refs}${schedules}${indicators}`];
+  const videos = r.videos === undefined ? "" : `, 영상이 있는 브리프 날짜 ${r.videoDates ?? 0}개(영상 ${r.videos}개)`;
+  const lines = [`브리프 날짜 ${r.dates}개, 이슈 ${r.issues}개, 결과물 ${formatMb(r.bytes)}, 파일 ${r.files}개${refs}${schedules}${indicators}${videos}`];
   if (r.bytes > WARN_BYTES || r.files > WARN_FILES) {
     lines.push(`  - 경고: Vercel 무료 한도(100MB, 파일 15,000개)에 가깝다(문턱 ${formatMb(WARN_BYTES)}, ${WARN_FILES.toLocaleString("en-US")}개). docs/operations.md의 한도 대응을 본다`);
   }
@@ -1822,6 +2085,8 @@ const COMMANDS: Record<string, (argv: string[], ctx: Context) => number> = {
   "indicator-list": cmdIndicatorList,
   "indicator-check": cmdIndicatorCheck,
   "indicator-apply": cmdIndicatorApply,
+  "video-check": cmdVideoCheck,
+  "video-apply": cmdVideoApply,
   site: cmdSite,
   push: cmdPush,
   precheck: cmdPrecheck,
@@ -1869,6 +2134,7 @@ const ASYNC_COMMANDS: Record<string, (argv: string[], ctx: Context) => Promise<n
   images: cmdImages,
   deploy: cmdDeploy,
   "indicator-fetch": cmdIndicatorFetch,
+  "video-fetch": cmdVideoFetch,
 };
 
 /** 모든 명령 이름(스킬 문서의 명령 이름 검사, 3단계 4.5-1) */

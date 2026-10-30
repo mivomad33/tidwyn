@@ -1,17 +1,19 @@
-// 날짜별 브리프와 펼친 뉴스 카드(4.2). 4.5단계: 읽음 버튼, 펼침·글 누름·링크로 읽음, '안 읽은 것만' 거르기. 5단계: 카드의 일정 칩. 6단계: 브리프 위 '이번 주 일정 | 지표' 상자
+// 날짜별 브리프와 펼친 뉴스 카드(4.2). 4.5단계: 읽음 버튼, 펼침·글 누름·링크로 읽음, '안 읽은 것만' 거르기. 5단계: 카드의 일정 칩. 6단계: 브리프 위 '이번 주 일정 | 지표' 상자. 7단계: 섹션 탭 끝의 '영상' 탭(4.7-1)
 import { useEffect, useMemo, useReducer, useRef, useState, type ReactNode } from "react";
 import { kstDate } from "../../../src/kst.ts";
 import { ALL_MAJORS, CategoryLine, Layout as Shell, ChipFilter, Empty, ErrorState, Footer, Loading, NewsTitle, ReadCheck, ReadToggle, SectionChip, ToggleChip, TopBar, useTitle } from "../components/common.tsx";
 import { BriefBox } from "../components/briefBox.ts";
 import { ScheduleChips } from "../components/scheduleView.ts";
+import { VideoList, VideoSource } from "../components/videoView.ts";
 import { EntityChips, TermBox, TermChips, TermText } from "../components/termView.ts";
 import { retry, useResource, type Resource } from "../data.ts";
-import { ALL_TAB, BRIEF_TAB_KEY, daySections, findDay, findStoryTarget, orderSources, parseBriefTab, sectionView, stateForHash, storyImage, type BriefTab, type BriefViewState } from "../lib/brief.ts";
+import { ALL_TAB, BRIEF_TAB_KEY, VIDEO_TAB, briefTabs, currentTab, findDay, findStoryTarget, orderSources, parseBriefTab, sectionView, stateForHash, storyImage, type BriefTab, type BriefViewState } from "../lib/brief.ts";
 import { monthDay, monthDayWeekday, shortDate } from "../lib/format.ts";
 import { dataUrl } from "../lib/paths.ts";
 import { placeTerms, storyBodyParts, termBoxPlace, toggleTerm } from "../lib/terms.ts";
 import { categoryVar } from "../lib/theme.ts";
-import { adjacentDates, briefPath, hashKey, issuePath, resolveBriefDate, type Route } from "../lib/routes.ts";
+import { adjacentDates, briefPath, hashKey, issuePath, resolveBriefDate, VIDEO_HASH, type Route } from "../lib/routes.ts";
+import { VIDEO_CHIPS, filterVideos, videoChips, videoTabLabel, type VideoChip } from "../lib/videos.ts";
 import type { DayList, ListStory, MonthDetail, MonthList, SiteDates, StoryDetail } from "../lib/types.ts";
 import { readStored, writeStored } from "../lib/storage.ts";
 import { markRead, readStore, useReadVersion } from "../readMarks.ts";
@@ -103,6 +105,9 @@ export function BriefPage({ route }: { route: Route }) {
   useReadVersion();
   const [, refresh] = useReducer((n: number) => n + 1, 0);
   const [view, setView] = useState<BriefViewState>(() => ({ section: storedTab(), major: null, expanded: null }));
+  // 7단계: 영상 탭의 묶음 칩(기억하지 않는다. 날짜가 바뀌면 '전체'로 돌아간다)과 30일 숨기기의 오늘(방문자 브라우저, KST)
+  const [videoChip, setVideoChip] = useState<{ date: string | null; chip: VideoChip | null }>({ date: null, chip: null });
+  const today = useMemo(() => kstDate(new Date()), []);
   useEffect(() => {
     if (day) setView((v) => stateForHash(day, key, v));
   }, [day, key]);
@@ -129,6 +134,11 @@ export function BriefPage({ route }: { route: Route }) {
     if (!day || !key || !date) return;
     const token = `${date}#${key}`;
     if (scrolledFor.current === token || lastNavigation().quiet) return;
+    if (key === VIDEO_HASH) {
+      scrolledFor.current = token;
+      window.scrollTo({ top: 0 });
+      return;
+    }
     const target = findStoryTarget(day, key);
     if (!target) return;
     if (target.kind === "top" && (view.expanded !== key || detailRes.status === "loading" || detailRes.status === "idle")) return;
@@ -158,10 +168,13 @@ export function BriefPage({ route }: { route: Route }) {
   if (listRes.status !== "ok") return <Shell center={center}><Loading /></Shell>;
   if (!day) return <NotFoundPage />;
 
-  const sections = daySections(day);
-  const tabs: BriefTab[] = [ALL_TAB, ...sections];
-  const current = tabs.includes(view.section) ? view.section : sections[0]!;
+  // 7단계: 그 날짜에 보이는(받은 지 30일 안의) 영상이 있으면 섹션 탭 끝에 '영상 N'. 기억한 탭이 없는 날짜면 첫 섹션 탭
+  const { tabs, videos } = briefTabs(day, today);
+  const current = currentTab(day, tabs, view.section);
   const all = current === ALL_TAB;
+  const onVideos = current === VIDEO_TAB;
+  const chips = videoChips(videos);
+  const chip = videoChip.date === date && chips.some((c) => c.chip === videoChip.chip) ? videoChip.chip : null;
   const sv = sectionView(day, current, view.major);
   const hasStories = sv.top.length + sv.short.length > 0;
   const token = `${date}|${current}|${unread.round}`;
@@ -218,6 +231,23 @@ export function BriefPage({ route }: { route: Route }) {
           )}
         </div>
         <TopBox day={day} />
+        {onVideos ? (
+          <>
+            <ChipFilter
+              label="영상 묶음"
+              options={VIDEO_CHIPS.filter((c) => chips.some((x) => x.chip === c))}
+              value={chip}
+              onChange={(c) => setVideoChip({ date, chip: c })}
+              labelOf={(c) => chips.find((x) => x.chip === c)!.label}
+            />
+            <h2 className="sr-only">추천 영상</h2>
+            <div className="vbox">
+              <VideoList videos={filterVideos(videos, chip)} mode="brief" Link={Link} />
+              <VideoSource />
+            </div>
+          </>
+        ) : (
+          <>
         <ChipFilter
           label="카테고리"
           options={ALL_MAJORS}
@@ -264,12 +294,14 @@ export function BriefPage({ route }: { route: Route }) {
           </section>
         )}
         {sv.section?.unverified && view.major === null && <p className="flow note">확인되지 않은 내용: {sv.section.unverified}</p>}
+          </>
+        )}
       </main>
       <Footer />
       <nav className="tabs" aria-label="섹션">
         {tabs.map((s) => (
           <button key={s} type="button" className={s === current ? "on" : ""} aria-pressed={s === current} onClick={() => chooseSection(s)}>
-            {s}
+            {s === VIDEO_TAB ? videoTabLabel(videos.length) : s}
           </button>
         ))}
       </nav>

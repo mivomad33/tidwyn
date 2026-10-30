@@ -1,9 +1,10 @@
 // 읽은 뉴스 기록(4.5단계 4.1). 뉴스 식별자(날짜 + 뉴스 키)만 로컬 스토리지 키 하나에 둔다. 화면(DOM) 없이 테스트한다.
 // 저장할 수 없거나 값이 깨졌으면 빈 기록으로 시작하고, 그 탭 안에서만 기억한다(4.1-4).
 import { addDays, isValidDate } from "../../../src/kst.ts";
+import { READ_MARKS_KEY } from "./browserKeys.ts";
 
-/** 로컬 스토리지 키. 이 키만 읽고 쓰고 지운다(다른 키는 건드리지 않는다) */
-export const READ_MARKS_KEY = "tidwyn.read";
+/** 로컬 스토리지 키(정의는 browserKeys.ts). 이 키만 읽고 쓰고 지운다(다른 키는 건드리지 않는다) */
+export { READ_MARKS_KEY };
 const FORMAT_VERSION = 1;
 /** 뉴스 날짜가 오늘(KST)로부터 이 날 수보다 오래된 기록은 지운다(M5). 정확히 365일 전은 남는다 */
 export const KEEP_DAYS = 365;

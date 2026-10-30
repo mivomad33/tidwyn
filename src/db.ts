@@ -267,6 +267,42 @@ export const MIGRATIONS: Migration[] = [
       `);
     },
   },
+  {
+    // 7단계 4.1: 영상 기록(YouTube 데이터, 받은 날부터 30일이 지나면 지운다), 영상-이슈 연결(이슈 식별자), 날짜별 영상 고르기 끝남.
+    // 같은 브리프 날짜에 같은 영상은 하나다. 설명과 통계는 넣지 않는다. 고르기 끝남은 날짜만 있어 30일 지우기 대상이 아니다.
+    version: 7,
+    up: (db) => {
+      db.exec(`
+        CREATE TABLE videos (
+          id INTEGER PRIMARY KEY,
+          video_id TEXT NOT NULL,
+          bundle TEXT NOT NULL CHECK (bundle IN ('kr', 'us', 'ai-ko', 'ai-en')),
+          sources TEXT NOT NULL,
+          brief_date TEXT NOT NULL,
+          fetched_on TEXT NOT NULL,
+          title TEXT NOT NULL,
+          channel TEXT NOT NULL,
+          seconds INTEGER NOT NULL,
+          thumb TEXT NOT NULL,
+          published_at TEXT NOT NULL,
+          reason TEXT NOT NULL,
+          position INTEGER NOT NULL,
+          UNIQUE (brief_date, video_id)
+        );
+        CREATE INDEX videos_fetched ON videos(fetched_on);
+        CREATE TABLE video_issues (
+          video INTEGER NOT NULL REFERENCES videos(id) ON DELETE CASCADE,
+          issue_id INTEGER NOT NULL REFERENCES issues(id),
+          position INTEGER NOT NULL,
+          PRIMARY KEY (video, issue_id)
+        );
+        CREATE INDEX video_issues_issue ON video_issues(issue_id);
+        CREATE TABLE video_picked (
+          target_date TEXT PRIMARY KEY
+        );
+      `);
+    },
+  },
 ];
 
 export function schemaVersion(db: DatabaseSync): number {

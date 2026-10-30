@@ -3,6 +3,8 @@
 //   [--entities 30] [--terms 24] [--hub]   (4단계: 인물·기관·국가와 용어. --hub는 대상 1을 모든 뉴스에 붙인다(5년치 측정용))
 //   [--schedules 0]   (5단계: 일정 수. 0이면 빈 일정 색인만 만든다)
 //   [--indicators 0] [--indicators-all]   (6단계: 지표 값의 햇수. 0이면 지표 파일을 만들지 않는다. --indicators-all은 12개 모두 공개·값 있음(크기 측정용))
+//   [--videos] [--videos-full]   (7단계: 끝 날짜까지 30일의 추천 영상. --videos-full은 날마다 16개·추천 이유 150자·관련 이슈 2개(크기 측정용))
+//   화면 확인·/browser-check에서는 영상이 30일이 지나 숨지 않게 `--end <오늘>`로 만든다
 // <폴더>/site-data/*.json과 <폴더>/search-records.json을 만든다. 같은 인자면 같은 결과다.
 import fs from "node:fs";
 import path from "node:path";
@@ -11,6 +13,7 @@ import { ENTITY_FILTERS, ENTITY_FIRST_NEWS, byCount, dayStoryCount, entityChunkO
 import { addDays, rng } from "./random.ts";
 import { fixtureIndicators, type IndicatorFixtureInfo } from "./indicatorFixtures.ts";
 import { fixtureSchedules, type FixtureStory, type ScheduleFixtureInfo } from "./scheduleFixtures.ts";
+import { fixtureVideos, type VideoFixtureInfo } from "./videoFixtures.ts";
 import { entityListPages } from "../src/lib/entities.ts";
 import { buildTermFiles } from "../src/lib/terms.ts";
 import type {
@@ -63,6 +66,10 @@ export interface FixtureOptions {
   indicators?: number;
   /** 6단계: 지표 12개 모두 공개하고 값을 둔다. 아니면 브렌트유는 공개를 끈 지표, 코스닥은 값이 하나도 없는 공개 지표다 */
   indicatorsAll?: boolean;
+  /** 7단계: 끝 날짜까지 30일의 추천 영상(받은 날은 브리프 날짜). 없으면 영상 항목을 만들지 않고 다른 파일은 그대로다 */
+  videos?: boolean;
+  /** 7단계: 영상을 날마다 16개(추천 이유 150자, 관련 이슈 2개) 붙인다(크기 측정용). videos를 켠다 */
+  videosFull?: boolean;
 }
 
 export interface Fixture {
@@ -86,6 +93,8 @@ export interface Fixture {
     schedules: ScheduleFixtureInfo | null;
     /** 6단계: 지표를 만들었을 때만 */
     indicators: IndicatorFixtureInfo | null;
+    /** 7단계: 영상을 만들었을 때만 */
+    videos: VideoFixtureInfo | null;
   };
 }
 
@@ -475,6 +484,13 @@ export function generateFixtures(opts: FixtureOptions = {}): Fixture {
     if (chips) day.indicators = chips;
   }
 
+  // 7단계: 추천 영상. 난수를 쓰지 않고, 영상이 없으면 다른 파일을 바꾸지 않는다
+  const vids = opts.videos || opts.videosFull ? fixtureVideos({ end, dates: datesAsc, issues: activeIssues.map((i) => i.id), merged: { id: mergedId, into: mergedInto }, full: opts.videosFull }) : null;
+  if (vids) for (const l of lists.values()) for (const day of l.days) {
+    const v = vids.byDate.get(day.date);
+    if (v) day.videos = v;
+  }
+
   const chunks = new Map<number, IssueChunk>();
   for (const i of activeIssues) {
     const related = activeIssues.filter((o) => o.id !== i.id && o.major === i.major).slice(0, 2).map((o) => ({ id: o.id, name: o.name }));
@@ -488,6 +504,8 @@ export function generateFixtures(opts: FixtureOptions = {}): Fixture {
     if (issueSchedules) detail.schedules = issueSchedules;
     const issueIndicators = ind?.byIssue.get(i.id);
     if (issueIndicators) detail.indicators = issueIndicators;
+    const issueVideos = vids?.byIssue.get(i.id);
+    if (issueVideos) detail.videos = issueVideos;
     const c = Math.floor(i.id / 100);
     if (!chunks.has(c)) chunks.set(c, { issues: {} });
     chunks.get(c)!.issues[String(i.id)] = detail;
@@ -606,6 +624,7 @@ export function generateFixtures(opts: FixtureOptions = {}): Fixture {
       terms: { merged: termMerged, deleted: termDeletedId, twice, noSurface: noSurfaceTerm?.id ?? null },
       schedules: sched.info,
       indicators: ind?.info ?? null,
+      videos: vids?.info ?? null,
     },
   };
 }
@@ -629,7 +648,7 @@ if (import.meta.main) {
   };
   const out = get("--out");
   if (!out) {
-    console.error("사용법: node site/dev/fixtures.ts --out <폴더> [--end YYYY-MM-DD] [--days N] [--top N] [--short N] [--issues N] [--contiguous] [--entities N] [--terms N] [--hub] [--schedules N] [--indicators N] [--indicators-all]");
+    console.error("사용법: node site/dev/fixtures.ts --out <폴더> [--end YYYY-MM-DD] [--days N] [--top N] [--short N] [--issues N] [--contiguous] [--entities N] [--terms N] [--hub] [--schedules N] [--indicators N] [--indicators-all] [--videos] [--videos-full]");
     process.exit(1);
   }
   const num = (name: string) => (get(name) ? Number(get(name)) : undefined);
@@ -646,6 +665,8 @@ if (import.meta.main) {
     schedules: num("--schedules"),
     indicators: num("--indicators"),
     indicatorsAll: args.includes("--indicators-all"),
+    videos: args.includes("--videos"),
+    videosFull: args.includes("--videos-full"),
   });
   console.log(`가짜 사이트 데이터: ${out} (날짜 ${fx.dates.length}개, 파일 ${fx.files.size}개)`);
 }

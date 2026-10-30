@@ -54,6 +54,7 @@ import {
 import { buildScheduleData, type ScheduleSiteData } from "./scheduleSite.ts";
 import { buildIndicatorSiteData, type IndicatorSiteData } from "./indicatorSite.ts";
 import { INDICATORS, type IndicatorDef } from "./indicators.ts";
+import { buildVideoSiteData, type VideoSiteData } from "./videoSite.ts";
 import { loadBrief, storedDates } from "./store.ts";
 
 // 사이트 데이터(3단계 4.1-1)와 검색 레코드(4.1-3)를 DB에서 만든다. 같은 DB면 같은 결과다(시각 같은 값을 넣지 않는다, 4.1-2).
@@ -125,7 +126,7 @@ function storyRefs(db: DatabaseSync, entities: Entity[], terms: Term[]): StoryRe
   return out;
 }
 
-function buildDay(db: DatabaseSync, day: DayData, prev: DayData | null, details: Record<string, StoryDetail>, refs: StoryRefs, schedules: ScheduleSiteData, indicators: IndicatorSiteData): DayList {
+function buildDay(db: DatabaseSync, day: DayData, prev: DayData | null, details: Record<string, StoryDetail>, refs: StoryRefs, schedules: ScheduleSiteData, indicators: IndicatorSiteData, videos: VideoSiteData): DayList {
   const prevIssues = prev === null ? new Set<number>() : primaryIssuesOf(db, prev);
   const listStory = (key: string, base: Omit<ListStory, "issue" | "newIssue" | "continues">): ListStory => {
     const info = day.issues.get(key);
@@ -173,6 +174,8 @@ function buildDay(db: DatabaseSync, day: DayData, prev: DayData | null, details:
   if (week) out.week = week;
   const chips = indicators.chips.get(day.date);
   if (chips) out.indicators = chips;
+  const dayVideos = videos.byDate.get(day.date);
+  if (dayVideos) out.videos = dayVideos;
   return out;
 }
 
@@ -211,7 +214,7 @@ function issueEntities(devs: { date: string; key: string }[], refs: StoryRefs): 
   return issueEntityChips([...counts.values()]);
 }
 
-function buildIssueDetail(db: DatabaseSync, i: Issue, names: Map<number, string>, refs: StoryRefs, schedules: ScheduleSiteData, indicators: IndicatorSiteData): IssueDetail {
+function buildIssueDetail(db: DatabaseSync, i: Issue, names: Map<number, string>, refs: StoryRefs, schedules: ScheduleSiteData, indicators: IndicatorSiteData, videos: VideoSiteData): IssueDetail {
   const devs = developments(db, i.id);
   const timeline = devs
     .slice()
@@ -226,6 +229,8 @@ function buildIssueDetail(db: DatabaseSync, i: Issue, names: Map<number, string>
   if (sched) detail.schedules = sched;
   const inds = indicators.byIssue.get(i.id);
   if (inds) detail.indicators = inds;
+  const vids = videos.byIssue.get(i.id);
+  if (vids) detail.videos = vids;
   return detail;
 }
 
@@ -255,6 +260,7 @@ export function buildSiteData(db: DatabaseSync, indicatorDefs: readonly Indicato
   const refs = storyRefs(db, entities, terms);
   const schedules = buildScheduleData(db, days.map((d) => d.date));
   const indicators = buildIndicatorSiteData(db, days.map((d) => d.date), indicatorDefs);
+  const videos = buildVideoSiteData(db);
   const lists = new Map<string, MonthList>();
   const details = new Map<string, MonthDetail>();
   days.forEach((day, idx) => {
@@ -264,7 +270,7 @@ export function buildSiteData(db: DatabaseSync, indicatorDefs: readonly Indicato
     let detail = details.get(month);
     if (!detail) details.set(month, (detail = { month, days: {} }));
     const dayDetails: Record<string, StoryDetail> = {};
-    list.days.push(buildDay(db, day, idx > 0 ? days[idx - 1]! : null, dayDetails, refs, schedules, indicators));
+    list.days.push(buildDay(db, day, idx > 0 ? days[idx - 1]! : null, dayDetails, refs, schedules, indicators, videos));
     detail.days[day.date] = dayDetails;
   });
   const counts = new Map<string, number>();
@@ -286,7 +292,7 @@ export function buildSiteData(db: DatabaseSync, indicatorDefs: readonly Indicato
   const names = new Map(allIssues(db).map((i) => [i.id, i.name]));
   for (const [chunk, issues] of issueChunks(live)) {
     const data: IssueChunk = { issues: {} };
-    for (const i of issues) data.issues[String(i.id)] = buildIssueDetail(db, i, names, refs, schedules, indicators);
+    for (const i of issues) data.issues[String(i.id)] = buildIssueDetail(db, i, names, refs, schedules, indicators, videos);
     out.set(file(siteFiles.issueChunk(chunk)), JSON.stringify(data));
   }
   for (const [name, content] of buildEntityFiles(db, entities)) out.set(file(name), content);
