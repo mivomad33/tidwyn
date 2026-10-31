@@ -4,10 +4,10 @@ import path from "node:path";
 import { after, describe, test } from "node:test";
 import { main, mainAsync, type Context } from "../src/cli.ts";
 import { REPO_NOREPLY } from "../src/precheck.ts";
-import { PRODUCTION_URL, WARN_BYTES, WARN_FILES, gitRemote, postDeployCheck, type HttpGet, type RemoteGit, type SiteBuilder, type VercelRunner } from "../src/publish.ts";
+import { PRODUCTION_URL, WARN_BYTES, WARN_FILES, gitRemote, postDeployCheck, type HttpGet, type HttpResponse, type RemoteGit, type SiteBuilder, type VercelRunner } from "../src/publish.ts";
 import { readRun, workFile, writeRun, type RunState } from "../src/run.ts";
 import { checkOutput } from "../src/siteCheck.ts";
-import { NOW, cleanupTemp, gitIn, listFiles, makeCtx, sampleBrief, tempDir, tempRepo, type TestCtx } from "./helpers.ts";
+import { NOW, cleanupTemp, gitIn, listFiles, makeCtx, sampleBrief, tempDir, tempRepo, type TestCtx, writeFakePublicFiles } from "./helpers.ts";
 
 after(cleanupTemp);
 
@@ -36,7 +36,7 @@ function fakeBuilder(builds: string[], plant?: (outDir: string) => void): SiteBu
     fs.rmSync(outDir, { recursive: true, force: true });
     fs.mkdirSync(outDir, { recursive: true });
     fs.cpSync(path.join(inputDir, "site-data"), path.join(outDir, "site-data"), { recursive: true });
-    fs.writeFileSync(path.join(outDir, "index.html"), '<!doctype html><html lang="ko"><body><div id="root"></div></body></html>\n');
+    writeFakePublicFiles(outDir);
     fs.mkdirSync(path.join(outDir, "assets"));
     fs.writeFileSync(path.join(outDir, "assets", "app.js"), "console.log('tidwyn');\n");
     fs.writeFileSync(path.join(outDir, "vercel.json"), JSON.stringify({ rewrites: [{ source: "/(.*)", destination: "/index.html" }] }));
@@ -45,14 +45,32 @@ function fakeBuilder(builds: string[], plant?: (outDir: string) => void): SiteBu
   };
 }
 
-/** 운영 주소가 latest()를 최근 날짜로 돌려주는 가짜 HTTP */
-function fakeHttp(calls: string[], latest: () => string | null): HttpGet {
+type FakeResponses = Record<string, Partial<HttpResponse> | Error>;
+
+/** 맞게 배포된 운영 주소의 가짜 응답. latest는 최근 날짜다 */
+function okSite(latest: string | null): FakeResponses {
+  const html = (title: string) => ({ contentType: "text/html; charset=utf-8", body: `<!doctype html><title>${title}</title>` });
+  return {
+    "/": html("Tidwyn · 최신 뉴스 브리프"),
+    "/site-data/dates.json": { contentType: "application/json", robotsTag: "noindex", body: JSON.stringify({ version: 1, latestDate: latest, dates: [], months: [] }) },
+    "/robots.txt": { contentType: "text/plain", body: `User-agent: *\nSitemap: ${PRODUCTION_URL}/sitemap.xml\n` },
+    "/sitemap.xml": { contentType: "application/xml", body: `<urlset><url><loc>${PRODUCTION_URL}/</loc></url></urlset>` },
+    ...(latest ? { [`/${latest}`]: html(`Tidwyn · ${Number(latest.slice(5, 7))}월 ${Number(latest.slice(8))}일 브리프`) } : {}),
+  };
+}
+
+function fakeResponse(calls: string[], responses: () => FakeResponses): HttpGet {
   return async (url) => {
     calls.push(url);
-    if (url === `${PRODUCTION_URL}/`) return { status: 200, contentType: "text/html; charset=utf-8", body: "<!doctype html>" };
-    if (url === `${PRODUCTION_URL}/site-data/dates.json`) return { status: 200, contentType: "application/json", body: JSON.stringify({ version: 1, latestDate: latest(), dates: [], months: [] }) };
-    return { status: 404, contentType: "text/plain", body: "" };
+    const r = responses()[url.slice(PRODUCTION_URL.length)];
+    if (r instanceof Error) throw r;
+    return r ? { status: 200, contentType: "", body: "", robotsTag: "", ...r } : { status: 404, contentType: "text/plain", body: "", robotsTag: "" };
   };
+}
+
+/** 운영 주소가 latest()를 최근 날짜로 돌려주는 가짜 HTTP */
+function fakeHttp(calls: string[], latest: () => string | null): HttpGet {
+  return fakeResponse(calls, () => okSite(latest()));
 }
 
 function fakes(opts: { plant?: (outDir: string) => void; buildFails?: boolean; vercelStatus?: number; latest?: () => string | null } = {}): Fakes {
@@ -143,7 +161,7 @@ describe("3단계 4.5 사이트 빌드 → 배포 → push", () => {
     assert.deepEqual(f.builds, [outDir], "결과물은 데이터 폴더의 site/에 만든다");
     assert.equal(r.deploy.code, 0, r.deploy.text);
     assert.deepEqual(f.vercelCalls, [["deploy", outDir, "--scope", "mivomad33", "--project", "tidwyn", "--prod", "--yes"]]);
-    assert.deepEqual(f.httpCalls, [`${PRODUCTION_URL}/`, `${PRODUCTION_URL}/site-data/dates.json`]);
+    assert.deepEqual(f.httpCalls, ["/", "/site-data/dates.json", "/robots.txt", "/sitemap.xml", "/2026-10-27", "/no-such-page"].map((p) => `${PRODUCTION_URL}${p}`));
     assert.equal(r.push.code, 0, r.push.text);
     assert.equal(remoteCount(bare), 1);
     assert.equal(gitIn(bare, "rev-parse", "refs/heads/data").trim(), gitIn(repo, "rev-parse", "refs/heads/data").trim());
@@ -353,47 +371,61 @@ describe("3단계 4.1-4 결과물 검사", () => {
 });
 
 describe("3단계 4.6-3 배포 뒤 점검", () => {
-  const http = (home: { status: number; type: string } | Error, dates: { status: number; body: string } | Error): HttpGet => async (url) => {
-    const r = url.endsWith("/dates.json") ? dates : home;
-    if (r instanceof Error) throw r;
-    return "type" in r ? { status: r.status, contentType: r.type, body: "" } : { status: r.status, contentType: "application/json", body: r.body };
+  const site = (latest: string | null, change: FakeResponses = {}): FakeResponses => ({ ...okSite(latest), ...change });
+  const http = (r: FakeResponses): HttpGet => fakeResponse([], () => r);
+  const failed = async (get: HttpGet) => {
+    const r = await postDeployCheck(get, "2026-10-27");
+    assert.equal(r.status, "failed");
+    return r.status === "failed" ? r.reason : "";
   };
-  const okHome = { status: 200, type: "text/html" };
-  const dates = (d: string | null) => ({ status: 200, body: JSON.stringify({ latestDate: d }) });
 
   test("최근 날짜가 DB와 같으면 통과", async () => {
-    assert.deepEqual(await postDeployCheck(http(okHome, dates("2026-10-27")), "2026-10-27"), { status: "passed", latestDate: "2026-10-27" });
+    assert.deepEqual(await postDeployCheck(http(site("2026-10-27")), "2026-10-27"), { status: "passed", latestDate: "2026-10-27" });
   });
   test("운영 주소가 아직 이전 배포를 가리키면 정해진 횟수 안에서 다시 보고, 새 날짜가 보이면 통과", async () => {
     let n = 0;
     let slept = 0;
-    const get: HttpGet = async (url) =>
-      url.endsWith("/") ? { status: 200, contentType: "text/html", body: "" } : n++ < 2 ? { status: 404, contentType: "text/plain", body: "" } : { status: 200, contentType: "application/json", body: JSON.stringify({ latestDate: "2026-10-27" }) };
+    const get: HttpGet = (url) => fakeResponse([], () => (url.endsWith("/dates.json") && n++ < 2 ? site("2026-10-27", { "/site-data/dates.json": { status: 404 } }) : site("2026-10-27")))(url);
     const r = await postDeployCheck(get, "2026-10-27", { attempts: 6, sleep: async () => void slept++ });
     assert.deepEqual(r, { status: "passed", latestDate: "2026-10-27" });
     assert.equal(slept, 2);
-    const fail = await postDeployCheck(http(okHome, dates("2026-10-26")), "2026-10-27", { attempts: 3, sleep: async () => {} });
+    const fail = await postDeployCheck(http(site("2026-10-26")), "2026-10-27", { attempts: 3, sleep: async () => {} });
     assert.equal(fail.status, "failed");
     assert.match(fail.status === "failed" ? fail.reason : "", /\(3번 확인\)$/);
   });
   test("날짜가 다르면 실패", async () => {
-    const r = await postDeployCheck(http(okHome, dates("2026-10-26")), "2026-10-27");
+    const r = await postDeployCheck(http(site("2026-10-26")), "2026-10-27");
     assert.deepEqual(r, { status: "failed", reason: "운영 사이트의 최근 날짜(2026-10-26)가 DB의 최근 저장일(2026-10-27)과 다르다" });
   });
   test("받지 못하면 실패(첫 화면 네트워크 오류, 첫 화면 404, HTML 아님, 사이트 데이터 오류)", async () => {
-    const cases: [HttpGet, RegExp][] = [
-      [http(new Error("ECONNRESET"), dates("2026-10-27")), /첫 화면을 받지 못했다: ECONNRESET/],
-      [http({ status: 404, type: "text/html" }, dates("2026-10-27")), /첫 화면이 404이다/],
-      [http({ status: 200, type: "application/json" }, dates("2026-10-27")), /첫 화면이 HTML이 아니다/],
-      [http(okHome, new Error("timeout")), /dates\.json\)를 받지 못했다: timeout/],
-      [http(okHome, { status: 200, body: "<html>" }), /dates\.json\)를 받지 못했다/],
-      [http(okHome, { status: 404, body: "" }), /dates\.json\)가 404이다/],
+    const d = "/site-data/dates.json";
+    const cases: [FakeResponses, RegExp][] = [
+      [{ "/": new Error("ECONNRESET") }, /첫 화면을 받지 못했다: ECONNRESET/],
+      [{ "/": { status: 404, contentType: "text/html" } }, /첫 화면이 404이다/],
+      [{ "/": { contentType: "application/json" } }, /첫 화면이 HTML이 아니다/],
+      [{ [d]: new Error("timeout") }, /dates\.json\)를 받지 못했다: timeout/],
+      [{ [d]: { robotsTag: "noindex", body: "<html>" } }, /dates\.json\)를 받지 못했다/],
+      [{ [d]: { status: 404 } }, /dates\.json\)가 404이다/],
     ];
-    for (const [get, re] of cases) {
-      const r = await postDeployCheck(get, "2026-10-27");
-      assert.equal(r.status, "failed");
-      assert.match(r.status === "failed" ? r.reason : "", re);
-    }
+    for (const [change, re] of cases) assert.match(await failed(http(site("2026-10-27", change))), re);
+  });
+  test("9.5단계 4.8-2 수집기용 파일, 최근 날짜 페이지, 없는 주소, 수집 제외 헤더가 틀리면 실패", async () => {
+    const page = "/2026-10-27";
+    const ok = okSite("2026-10-27");
+    const cases: [FakeResponses, RegExp][] = [
+      [{ "/robots.txt": { status: 404 } }, /robots\.txt가 404/],
+      [{ "/robots.txt": { body: "User-agent: *\n" } }, /사이트맵 줄이 없다/],
+      [{ "/robots.txt": new Error("timeout") }, /수집기용 주소를 받지 못했다: timeout/],
+      [{ "/sitemap.xml": { status: 500 } }, /sitemap\.xml이 500/],
+      [{ "/sitemap.xml": { body: "<urlset></urlset>" } }, /주소가 없다/],
+      [{ [page]: { status: 404 } }, /최근 날짜 페이지가 404/],
+      [{ [page]: { body: "<title>2026-10-27</title>" } }, /제목에 그 날짜가 없다/],
+      [{ [page]: { ...(ok[page] as object), robotsTag: "noindex" } }, /최근 날짜 페이지에 X-Robots-Tag/],
+      [{ "/": { ...(ok["/"] as object), robotsTag: "noindex" } }, /첫 화면에 X-Robots-Tag/],
+      [{ "/site-data/dates.json": { ...(ok["/site-data/dates.json"] as object), robotsTag: "" } }, /noindex가 없다/],
+      [{ "/no-such-page": { contentType: "text/html" } }, /없는 주소가 200/],
+    ];
+    for (const [change, re] of cases) assert.match(await failed(http(site("2026-10-27", change))), re);
   });
   test("배포 뒤 점검이 실패하면 배포는 기록되고 종료 코드 1, 요약에 실패가 나온다(되돌리지 않는다)", async () => {
     const repo = realRepo();

@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode, type RefObject } from "react";
 import { MAJORS } from "../../../src/categories.ts";
 import { pageTitle } from "../lib/format.ts";
+import { MENU, SKIP_LABEL } from "../lib/menu.ts";
 import { categoryVar } from "../lib/theme.ts";
 import { FooterView } from "./policyView.ts";
 import type { Major } from "../lib/types.ts";
@@ -9,9 +10,14 @@ import { readStore, useIsRead } from "../readMarks.ts";
 import { Link, useLocation } from "../router.tsx";
 
 export function useTitle(label: string | undefined): void {
+  useFullTitle(pageTitle(label));
+}
+
+/** 제목 전체를 정한다(브리프처럼 이름이 앞에 오는 제목) */
+export function useFullTitle(title: string): void {
   useEffect(() => {
-    document.title = pageTitle(label);
-  }, [label]);
+    document.title = title;
+  }, [title]);
 }
 
 /**
@@ -77,18 +83,6 @@ function MenuIcon() {
   );
 }
 
-const MENU: [string, string][] = [
-  ["/", "최근 브리프"],
-  ["/dates", "날짜 목록"],
-  ["/issues", "이슈 목록"],
-  ["/schedules", "일정"],
-  ["/indicators", "지표"],
-  ["/entities", "인물·기관·국가"],
-  ["/terms", "용어 사전"],
-  ["/search", "검색"],
-  ["/about", "사이트 소개"],
-];
-
 /** 머리 줄. left가 없으면 상표(Tidwyn)를 보인다 */
 export function TopBar({ left, center }: { left?: ReactNode; center?: ReactNode }) {
   const [open, setOpen] = useState(false);
@@ -118,7 +112,24 @@ export function TopBar({ left, center }: { left?: ReactNode; center?: ReactNode 
   }, [open]);
 
   return (
-    <header className="bar">
+    <header
+      className="bar"
+      onBlur={(e) => {
+        // Tab으로 메뉴 밖에 나가면 닫는다. 창 밖으로 나갈 때는 relatedTarget이 없어 그대로 둔다
+        if (open && e.relatedTarget && !e.currentTarget.contains(e.relatedTarget)) setOpen(false);
+      }}
+    >
+      <a
+        className="skip"
+        href="#main"
+        onClick={(e) => {
+          // 라우터의 해시 처리를 거치지 않고 포커스만 옮긴다
+          e.preventDefault();
+          document.getElementById("main")?.focus();
+        }}
+      >
+        {SKIP_LABEL}
+      </a>
       <div className="bar-row">
         <div className="bar-left">
           {left ?? (

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { BackLink, ErrorState, Layout, Loading, NewsTitle, ReadCheck, useFocusNewRow, useTitle } from "../components/common.tsx";
 import { retry, useResource, type Resource } from "../data.ts";
 import { ENTITY_FIRST_ISSUES, ENTITY_MORE_STEP, resolveEntity } from "../lib/entities.ts";
-import { monthDay, shortDate } from "../lib/format.ts";
+import { entityLabel, monthDay, shortDate } from "../lib/format.ts";
 import { dataUrl } from "../lib/paths.ts";
 import { briefPath, entitiesPath, entityPath, issuePath } from "../lib/routes.ts";
 import type { EntityChunk, EntityDetail, EntityNews, EntityNewsChunk } from "../lib/types.ts";
@@ -36,7 +36,7 @@ export function EntityPage({ id }: { id: number }) {
     if (mergedFrom && entity) navigate(entityPath(entity.id), { replace: true, state: { mergedFrom } satisfies MergedState });
   }, [mergedFrom?.id, mergedFrom?.on, entity?.id]);
 
-  useTitle(entity?.name ?? "인물·기관·국가");
+  useTitle(entity ? entityLabel(entity) : "인물·기관·국가");
   const back = <BackLink to={entitiesPath()} label="인물·기관·국가" />;
 
   // 묶음 파일이 없으면(404) 그 식별자는 없다

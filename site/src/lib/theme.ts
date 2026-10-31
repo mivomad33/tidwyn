@@ -22,6 +22,8 @@ export interface Palette {
   down: string;
   /** 6단계: 그래프 선. 이슈 그래프의 뉴스 점과 고른 값 표시는 강조색(accent)이다 */
   plot: string;
+  /** 9.5단계: 강조색 면 위의 글자(없는 페이지의 주 버튼) */
+  onAccent: string;
   /** 7단계: 썸네일 자리(이미지를 불러오지 못했을 때 보이는 빈 상자) */
   thumb: string;
   /** 7단계: 썸네일 위 길이 표시의 글자와 바탕(이미지 위에 놓여 이미지와 관계없이 읽히게 불투명하다) */
@@ -44,6 +46,7 @@ export const LIGHT: Palette = {
   up: "#c62828",
   down: "#1d4ed8",
   plot: "#1d1d1f",
+  onAccent: "#ffffff",
   thumb: "#d9d9de",
   durFg: "#ffffff",
   durBg: "#1d1d1f",
@@ -72,6 +75,7 @@ export const DARK: Palette = {
   up: "#f87171",
   down: "#7aa7ff",
   plot: "#ececee",
+  onAccent: "#161618",
   thumb: "#34343a",
   durFg: "#ffffff",
   durBg: "#000000",
@@ -91,7 +95,7 @@ export function categoryVar(major: Major): string {
 }
 
 function vars(p: Palette): string {
-  const base = `--bg:${p.bg};--fg:${p.fg};--muted:${p.muted};--line:${p.line};--chip:${p.chip};--accent:${p.accent};--accentbg:${p.accentbg};--check:${p.check};--check-ink:${p.checkInk};--ring:${p.ring};--up:${p.up};--down:${p.down};--plot:${p.plot};--thumb:${p.thumb};--dur-fg:${p.durFg};--dur-bg:${p.durBg};`;
+  const base = `--bg:${p.bg};--fg:${p.fg};--muted:${p.muted};--line:${p.line};--chip:${p.chip};--accent:${p.accent};--accentbg:${p.accentbg};--check:${p.check};--check-ink:${p.checkInk};--ring:${p.ring};--up:${p.up};--down:${p.down};--plot:${p.plot};--on-accent:${p.onAccent};--thumb:${p.thumb};--dur-fg:${p.durFg};--dur-bg:${p.durBg};`;
   return base + MAJORS.map((m, i) => `--cat-${i}:${p.categories[m]};`).join("");
 }
 
@@ -146,6 +150,12 @@ export function textPairs(p: Palette): { name: string; fg: string; bg: string }[
     // 8단계: '요약 보기' 버튼과 펼친 요약
     { name: "요약 버튼", fg: p.accent, bg: p.bg },
     { name: "영상 요약", fg: p.fg, bg: p.chip },
+    // 9.5단계: 정정 표시, 짧은 소식의 사유, 제보 링크, 메일 상자, 없는 페이지의 주 버튼
+    { name: "정정 표시", fg: p.fg, bg: p.bg },
+    { name: "짧은 소식 사유", fg: p.muted, bg: p.bg },
+    { name: "제보 링크", fg: p.muted, bg: p.bg },
+    { name: "메일 상자 주소", fg: p.accent, bg: p.chip },
+    { name: "주 버튼", fg: p.onAccent, bg: p.accent },
   );
   return pairs;
 }

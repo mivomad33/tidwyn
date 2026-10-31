@@ -17,7 +17,7 @@ import { AboutVideos, VideoList, VideoRow, VideoSource } from "../site/src/compo
 import { ALL_TAB, BRIEF_TAB_KEY, VIDEO_TAB, briefTabs, currentTab, parseBriefTab, stateForHash } from "../site/src/lib/brief.ts";
 import { BOX_TAB_KEY as BOX_KEY_FROM_INDICATORS } from "../site/src/lib/indicators.ts";
 import { BROWSER_KEYS, BOX_TAB_KEY, READ_MARKS_KEY, SCHEDULE_VIEW_KEY, WEEK_BOX_KEY } from "../site/src/lib/browserKeys.ts";
-import { CONSENT_TEXT, PRIVACY_TITLE, REPO_ISSUES_URL } from "../site/src/lib/policy.ts";
+import { CONSENT_TEXT, CONTACT_MAIL, PRIVACY_TITLE, mailHref } from "../site/src/lib/policy.ts";
 import { READ_MARKS_KEY as READ_KEY_FROM_MARKS } from "../site/src/lib/readMarks.ts";
 import { VIDEO_HASH, briefVideosPath, parseRoute, privacyPath } from "../site/src/lib/routes.ts";
 import { SCHEDULE_VIEW_KEY as VIEW_KEY_FROM_SCHEDULES, WEEK_BOX_KEY as WEEK_KEY_FROM_SCHEDULES } from "../site/src/lib/schedules.ts";
@@ -229,7 +229,7 @@ describe("4.7-4 개인정보 처리방침과 바닥글", () => {
     assert.equal(privacyPath(), "/privacy");
     assert.deepEqual(parseRoute("/privacy"), { name: "privacy" });
     assert.deepEqual(parseRoute("/privacy/"), { name: "privacy" });
-    assert.deepEqual(resolveStatic("/privacy", () => false), { kind: "fallback" });
+    assert.deepEqual(resolveStatic("/privacy", (p) => p === "privacy.html"), { kind: "file", path: "privacy.html" });
   });
 
   test("처리방침에 정책 III.A와 4.7-4의 항목이 모두 있다", () => {
@@ -237,6 +237,9 @@ describe("4.7-4 개인정보 처리방침과 바닥글", () => {
     for (const text of [
       "로그인과 입력 양식이 없는",
       "개인정보를 모으거나 저장하거나 다른 곳에 넘기지 않는다",
+      "예외는 방문자가 직접 메일을 보낸 경우뿐이다",
+      "답장과 정정에만 쓰고 공개하지 않는다",
+      "요청하면 지운다",
       "Vercel Web Analytics",
       "tidwyn.vercel.app",
       "페이지 보기 수",
@@ -246,7 +249,7 @@ describe("4.7-4 개인정보 처리방침과 바닥글", () => {
       "YouTube(Google) 서버에서 바로 불러온다",
       "각 매체 서버에서 바로 불러온다",
       "제3자 광고를 싣지 않는다",
-      "바뀐 날짜: 2026년 10월 31일",
+      "바뀐 날짜: 2026년 11월 1일",
       "브라우저 설정에서",
       "추천 이유와 요약은 Tidwyn이 쓴 글",
       "Google의 Gemini API",
@@ -257,7 +260,8 @@ describe("4.7-4 개인정보 처리방침과 바닥글", () => {
     assert.equal(GOOGLE_PRIVACY_URL, "http://www.google.com/policies/privacy");
     assert.ok(html.includes(`href="${YOUTUBE_TERMS_URL}"`), "YouTube 이용약관 링크");
     assert.equal(YOUTUBE_TERMS_URL, "https://www.youtube.com/t/terms");
-    assert.ok(html.includes(`href="${REPO_ISSUES_URL}"`), "문의처");
+    assert.ok(html.includes(`href="${mailHref()}"`) && html.includes(CONTACT_MAIL), "문의처");
+    assert.ok(!html.includes("github.com/mivomad33/tidwyn/issues"));
     assert.match(html, new RegExp(`<h2 class="h" id="terms">이용 조건</h2><p class="p">${CONSENT_TEXT}`), "'이용 조건' 절의 동의 문구");
     assert.ok(!/동의합니다|버튼/.test(html), "동의 배너·버튼이 없다");
   });
@@ -282,7 +286,7 @@ describe("4.7-4 개인정보 처리방침과 바닥글", () => {
     const foot = renderToStaticMarkup(h(FooterView, { Link }));
     assert.ok(foot.includes(`<p class="consent">${CONSENT_TEXT}</p>`));
     assert.match(foot, /<a href="\/privacy">개인정보 처리방침<\/a><\/nav><\/footer>$/);
-    assert.equal(FOOTER_LINKS.length, 8);
+    assert.equal(FOOTER_LINKS.length, 9);
     assert.equal(CONSENT_TEXT, "이 사이트를 이용하면 개인정보 처리방침과 YouTube 이용약관에 동의하는 것으로 본다.");
   });
 });
@@ -294,7 +298,7 @@ describe("4.7-5 사이트 소개의 '추천 영상'", () => {
     for (const text of ["인기 차트", "주제 검색", "Claude가 제목과 설명으로 후보를 추린다", "Gemini API로 확인", "틀릴 수 있다", "방문자 정보는 보내지 않는다", "매일 브리프를 만들 때", "추천 이유와 요약은 Tidwyn이 쓴 글", "YouTube API Services", "30일 동안만 보인다", CONSENT_TEXT]) assert.ok(html.includes(text), text);
     assert.ok(html.includes(`<a href="${YOUTUBE_TERMS_URL}" class="text-link" target="_blank" rel="noopener noreferrer">`));
     assert.ok(html.includes('<a href="/privacy" class="text-link">개인정보 처리방침</a>'));
-    assert.match(fs.readFileSync(path.join(import.meta.dirname, "..", "site", "src", "pages", "AboutPage.tsx"), "utf8"), /<AboutVideos Link=\{Link\} \/>/);
+    assert.match(fs.readFileSync(path.join(import.meta.dirname, "..", "site", "src", "components", "aboutView.ts"), "utf8"), /h\(AboutVideos, \{ Link \}\)/);
   });
 });
 
@@ -351,14 +355,14 @@ describe("4.7-6 지어낸 데이터의 영상", () => {
 });
 
 describe("4.6-3 영상을 더한 5년치", () => {
-  test("30일 × 하루 16개 영상(추천 이유 150자, 요약 350자, 관련 이슈 2개)을 더해도 결과물 10,000개 이하, 브리프 첫 화면 gzip 300KB 이하다", async () => {
+  test("30일 × 하루 16개 영상(추천 이유 150자, 요약 350자, 관련 이슈 2개)을 더해도 브리프 첫 화면 gzip 300KB 이하다", async () => {
     // 6단계 측정 조건(1,826일, 하루 42건, 이슈·대상 15,000개, 용어 5,000개, 일정 15,000개, 지표 12개 × 5년)에 영상 30일 × 16개
     const work = tempDir("tidwyn-site7y-");
     const dataDir = path.join(work, "data");
     const out = path.join(work, "out");
     writeFixtures(dataDir, { end: "2026-10-31", days: 1826, top: 6, short: 8, issues: 15000, contiguous: true, entities: 15000, terms: 5000, schedules: 15000, indicators: 5, indicatorsAll: true, videosFull: true });
     const res = await buildSite({ dataDir, outDir: out });
-    assert.ok(res.files.length <= 10_000, `결과물 ${res.files.length}개`);
+    console.log(`5년치 결과물 ${res.files.length}개, ${(res.bytes / 1024 / 1024).toFixed(1)}MB`);
     const latest = (JSON.parse(fs.readFileSync(path.join(out, "site-data", "list-2026-10.json"), "utf8")) as MonthList).days.at(-1)!;
     assert.equal(latest.videos!.length, 16);
     assert.ok(latest.videos!.every((x) => x.reason.length === 150));

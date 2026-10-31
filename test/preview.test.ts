@@ -4,7 +4,7 @@ import path from "node:path";
 import { after, describe, test } from "node:test";
 import { mainAsync, type Context } from "../src/cli.ts";
 import type { VercelRunner } from "../src/publish.ts";
-import { cleanupTemp, makeCtx, tempDir, tempRepo, type TestCtx } from "./helpers.ts";
+import { cleanupTemp, makeCtx, tempDir, tempRepo, type TestCtx, writeFakePublicFiles } from "./helpers.ts";
 
 after(cleanupTemp);
 
@@ -17,7 +17,7 @@ const PREVIEW_URL = "https://tidwyn-p1a2b3-mivomad33.vercel.app";
 function outDir(plant?: string): string {
   const dir = path.join(tempDir(), "site");
   fs.mkdirSync(path.join(dir, "site-data"), { recursive: true });
-  fs.writeFileSync(path.join(dir, "index.html"), '<!doctype html><html lang="ko"><body><div id="root"></div></body></html>\n');
+  writeFakePublicFiles(dir);
   fs.writeFileSync(path.join(dir, "site-data", "dates.json"), JSON.stringify({ version: 1, latestDate: null, dates: [], months: [] }));
   if (plant !== undefined) fs.writeFileSync(path.join(dir, "site-data", "leak.json"), JSON.stringify({ note: plant }));
   return dir;

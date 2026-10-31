@@ -283,7 +283,7 @@ describe("2단계 4.1-3 마이그레이션", () => {
     const r = validateBrief(sampleBrief("2026-10-26"), "2026-10-26");
     assert.ok(r.ok);
     const db = openDb(file);
-    assert.equal(schemaVersion(db), 8);
+    assert.equal(schemaVersion(db), 9);
     assert.deepEqual(loadBrief(db, "2026-10-26")?.brief, r.brief);
     assert.deepEqual(linkableDates(db), ["2026-10-26"]);
     assert.equal(unlinkedCount(db), KEYS.length);
@@ -307,7 +307,7 @@ describe("2단계 4.8-4 머지 뒤 첫 실행의 실행 전 사본", () => {
       return v;
     };
     assert.equal(version(path.join(dataDir, "snapshots", snaps[0]!)), 2);
-    assert.equal(version(path.join(dataDir, "tidwyn.db")), 8);
+    assert.equal(version(path.join(dataDir, "tidwyn.db")), 9);
   });
 });
 

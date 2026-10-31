@@ -19,6 +19,7 @@ A personal news archive. Every day, AI gathers Korean, world, and IT/AI news, re
 - **Recommended videos:** Every day, AI picks long videos that offer real information and insight from YouTube's popular charts and topic and AI searches, in Korea, US, and AI groups. It checks their content with the Gemini API and writes a reason and an expandable summary for each pick. They appear in the brief's "Videos" tab and on related issue pages. Video information comes from YouTube API Services, and only the last 30 days are shown ([privacy policy](https://tidwyn.vercel.app/privacy), Korean).
 - **Read marks:** Stories you have read show in regular weight with a check in every list, and the brief can show unread stories only. The record stays in your own browser.
 - **Browsing:** Category filters, a date list, an issue list, and on-site search, all usable on a phone.
+- **Corrections and feeds:** Report mistakes with the "report an error" link on the site or by email (mivomad33@gmail.com). Corrected stories keep a "corrected" mark and a note on what changed. Briefs are available by RSS (<https://tidwyn.vercel.app/rss.xml>).
 
 ## How it works
 

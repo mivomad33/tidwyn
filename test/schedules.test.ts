@@ -30,7 +30,7 @@ import { checkOutput } from "../src/siteCheck.ts";
 import type { DayList, IssueChunk, MonthDetail, MonthList, ScheduleIndex, ScheduleItem, ScheduleMonth, ScheduleRefChunk } from "../src/siteTypes.ts";
 import { recordFirstCollectionDate, saveBrief } from "../src/store.ts";
 import { Checker, validateBrief } from "../src/validate.ts";
-import { NOW, cleanupTemp, gitIn, makeCtx, sampleBrief, tempDir, tempRepo } from "./helpers.ts";
+import { NOW, cleanupTemp, gitIn, makeCtx, sampleBrief, tempDir, tempRepo, writeFakePublicFiles } from "./helpers.ts";
 
 after(cleanupTemp);
 
@@ -207,7 +207,7 @@ describe("5단계 4.1 데이터와 저장", () => {
     old.close();
 
     const db = openDb(file);
-    assert.equal(schemaVersion(db), 8);
+    assert.equal(schemaVersion(db), 9);
     const after = dumpDb(db);
     for (const [table, rows] of Object.entries(before)) assert.deepEqual(after[table], rows, table);
     assert.deepEqual(schedulableDates(db), DATES);
@@ -499,7 +499,7 @@ describe("5단계 4.2-5·4.5 일정 명령, 실패, start와 요약", () => {
     const built: string[] = [];
     ctx.buildSite = ({ outDir }) => {
       fs.mkdirSync(outDir, { recursive: true });
-      fs.writeFileSync(path.join(outDir, "index.html"), "<!doctype html>");
+      writeFakePublicFiles(outDir);
       built.push(outDir);
       return { ok: true };
     };

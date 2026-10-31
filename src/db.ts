@@ -310,6 +310,22 @@ export const MIGRATIONS: Migration[] = [
       db.exec("ALTER TABLE videos ADD COLUMN video_summary TEXT");
     },
   },
+  {
+    // 9.5단계 4.7-3: 뉴스 정정 기록. 고치기 전 글은 두지 않는다(백업 이력에 남는다). 같은 뉴스를 여러 번 정정할 수 있다
+    version: 9,
+    up: (db) => {
+      db.exec(`
+        CREATE TABLE story_corrections (
+          id INTEGER PRIMARY KEY,
+          story_id INTEGER NOT NULL REFERENCES stories(id) ON DELETE CASCADE,
+          corrected_on TEXT NOT NULL,
+          reason TEXT NOT NULL,
+          fields TEXT NOT NULL
+        );
+        CREATE INDEX story_corrections_story ON story_corrections(story_id);
+      `);
+    },
+  },
 ];
 
 export function schemaVersion(db: DatabaseSync): number {

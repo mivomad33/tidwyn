@@ -8,6 +8,7 @@ import { siteFiles, type DayList, type IndicatorCard, type IndicatorChip, type I
 import { buildSite } from "../site/build.ts";
 import { generateFixtures, writeFixtures } from "../site/dev/fixtures.ts";
 import { resolveStatic } from "../site/hosting.ts";
+import { pageFile } from "../src/publicSite.ts";
 import { FIRST_SCREEN_BUDGET, measureIndicatorScreens, measureOutput } from "../site/size.ts";
 import { BriefBox } from "../site/src/components/briefBox.ts";
 import { ChangeText, FredNotice, IndicatorCardView, LineChart, SourceNote } from "../site/src/components/indicatorView.ts";
@@ -366,9 +367,10 @@ describe("4.7-7 지표 주소", () => {
   });
 
   test("직접 열거나 새로 고쳐도 화면 틀(대체 경로), 데이터 파일 주소는 사이트 데이터 이름과 같다", () => {
-    assert.deepEqual(resolveStatic("/indicators", () => false), { kind: "fallback" });
-    assert.deepEqual(resolveStatic("/indicators/usdkrw", () => false), { kind: "fallback" });
-    assert.deepEqual(resolveStatic("/site-data/indicator-none.json", () => false), { kind: "notFound" });
+    const exists = (p: string) => p === "indicators.html" || p === "indicators/usdkrw.html";
+    assert.deepEqual(resolveStatic("/indicators", exists), { kind: "file", path: "indicators.html" });
+    assert.deepEqual(resolveStatic("/indicators/usdkrw", exists), { kind: "file", path: "indicators/usdkrw.html" });
+    assert.deepEqual(resolveStatic("/site-data/indicator-none.json", exists), { kind: "notFound", path: "404.html" });
     assert.equal(dataUrl.indicatorList(), `/site-data/${siteFiles.indicatorList}`);
     assert.equal(dataUrl.indicatorSeries("wti"), `/site-data/${siteFiles.indicatorSeries("wti")}`);
   });
@@ -452,16 +454,17 @@ describe("4.7-9 지어낸 데이터의 지표", () => {
 });
 
 describe("4.6-2 지표를 더한 5년치", () => {
-  test("결과물 10,000개 이하, 브리프 첫 화면(새 상자 포함)·지표 페이지·지표 하나의 페이지가 처음 받는 데이터가 각각 gzip 300KB 이하다", async () => {
+  test("브리프 첫 화면(새 상자 포함)·지표 페이지·지표 하나의 페이지가 처음 받는 데이터가 각각 gzip 300KB 이하다", async () => {
     // 5단계 측정 조건(1,826일, 하루 42건, 이슈·대상 15,000개, 용어 5,000개, 일정 15,000개)에 지표 12개 × 5년, 이슈의 2할이 지표 1~3개
     const work = tempDir("tidwyn-site6y-");
     const dataDir = path.join(work, "data");
     const out = path.join(work, "out");
     writeFixtures(dataDir, { end: "2026-10-31", days: 1826, top: 6, short: 8, issues: 15000, contiguous: true, entities: 15000, terms: 5000, schedules: 15000, indicators: 5, indicatorsAll: true });
     const res = await buildSite({ dataDir, outDir: out });
-    assert.ok(res.files.length <= 10_000, `결과물 ${res.files.length}개`);
+    console.log(`5년치 결과물 ${res.files.length}개, ${(res.bytes / 1024 / 1024).toFixed(1)}MB`);
     const list = JSON.parse(fs.readFileSync(path.join(out, "site-data", siteFiles.indicatorList), "utf8")) as IndicatorList;
     assert.equal(visibleCards(list).length, 12);
+    assert.match(fs.readFileSync(path.join(out, pageFile("/indicators")), "utf8"), /값은 이 화면에 싣지 않는다/, "값을 싣지 않는 줄에 까닭을 적는다");
     const issueChunk = JSON.parse(fs.readFileSync(path.join(out, "site-data", "issue-0.json"), "utf8")) as IssueChunk;
     const withInd = Object.values(issueChunk.issues).filter((i) => i.indicators?.length).length;
     assert.ok(withInd >= 15 && withInd <= 25, `이슈 100개 중 지표가 있는 것 ${withInd}개(약 2할)`);

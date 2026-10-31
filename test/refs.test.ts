@@ -192,7 +192,7 @@ describe("4단계 4.1 데이터와 저장", () => {
     old.close();
 
     const db = openDb(file);
-    assert.equal(schemaVersion(db), 8);
+    assert.equal(schemaVersion(db), 9);
     assert.deepEqual(loadBrief(db, "2026-10-26")?.brief, brief);
     assert.equal(getIssue(db, i2)?.mergedInto, i1);
     assert.deepEqual(extractableDates(db), ["2026-10-26", "2026-10-27"]);

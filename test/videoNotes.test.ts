@@ -17,7 +17,7 @@ import { recordFirstCollectionDate, saveBrief } from "../src/store.ts";
 import { validateBrief } from "../src/validate.ts";
 import { checkPickFile, removeVideoWorkFiles, videoWorkFile, writeCandidateFiles, type Candidate, type CandidateFile } from "../src/videoPick.ts";
 import { allVideos, applyVideoPick, type NewVideo } from "../src/videoStore.ts";
-import { NOW, cleanupTemp, gitIn, makeCtx, sampleBrief, tempDir, tempRepo } from "./helpers.ts";
+import { NOW, cleanupTemp, gitIn, makeCtx, sampleBrief, tempDir, tempRepo, writeFakePublicFiles } from "./helpers.ts";
 
 after(cleanupTemp);
 
@@ -158,7 +158,7 @@ function finishFlow(f: Flow, videos: unknown[]): { applied: string; summary: str
     ...makeCtx(f.repo, f.env),
     buildSite: ({ outDir }: { inputDir: string; outDir: string }) => {
       fs.mkdirSync(outDir, { recursive: true });
-      fs.writeFileSync(path.join(outDir, "index.html"), "<html></html>");
+      writeFakePublicFiles(outDir);
       return { ok: true as const };
     },
   };
@@ -513,7 +513,7 @@ describe("8단계 4.3 최종 고르기와 저장", () => {
     old.prepare("INSERT INTO videos (video_id, bundle, sources, brief_date, fetched_on, title, channel, seconds, thumb, published_at, reason, position) VALUES ('OldVid00001','kr','[]',?,?,'옛 제목','옛 채널',100,'t','p','옛 이유',1)").run(TARGET, TODAY);
     old.close();
     const db = openDb(file7);
-    assert.equal(schemaVersion(db), 8);
+    assert.equal(schemaVersion(db), 9);
     assert.deepEqual(allVideos(db).map((v) => [v.videoId, v.summary]), [["OldVid00001", null]]);
     const v: NewVideo = { videoId: "NewVid00001", bundle: "kr", sources: [], title: "t", channel: "c", seconds: 1, thumb: "t", publishedAt: "p", reason: "r", summary: SUMMARY, position: 1, issues: [] };
     applyVideoPick(db, TARGET, TODAY, [v]);
@@ -527,7 +527,7 @@ describe("8단계 4.3 최종 고르기와 저장", () => {
     addBrief(v4, TARGET);
     v4.close();
     const db4 = openDb(file4);
-    assert.equal(schemaVersion(db4), 8);
+    assert.equal(schemaVersion(db4), 9);
     assert.equal(allVideos(db4).length, 0);
     assert.equal((db4.prepare("SELECT COUNT(*) AS n FROM briefs").get() as { n: number }).n, 1);
     db4.close();
@@ -571,7 +571,7 @@ describe("8단계 4.4 30일 지우기, 백업, 유출 막기", () => {
       ...makeCtx(repo, env),
       buildSite: ({ inputDir, outDir }: { inputDir: string; outDir: string }) => {
         fs.cpSync(inputDir, outDir, { recursive: true });
-        fs.writeFileSync(path.join(outDir, "index.html"), "<html></html>");
+        writeFakePublicFiles(outDir);
         return { ok: true as const };
       },
     };

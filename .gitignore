@@ -17,3 +17,13 @@ node_modules/
 
 # 명세서 화면 확인 스크린샷(실제 데이터로 찍으면 공개 저장소에 이름·사진이 실린다). 로컬에만 둔다.
 /docs/specs/*/screenshots/
+/docs/specs/*/design/**/*.png.json
+docs/specs/*/design/explore/research/refs/
+# 디자인 탐색 후보와 레퍼런스 스크린샷(용량이 크고 다른 제품 화면이 섞인다). summary.md, decisions.md, research.md만 남긴다.
+/docs/specs/*/design/explore/**
+!/docs/specs/*/design/explore/
+!/docs/specs/*/design/explore/decisions.md
+!/docs/specs/*/design/explore/round-*/
+!/docs/specs/*/design/explore/round-*/summary.md
+!/docs/specs/*/design/explore/research/
+!/docs/specs/*/design/explore/research/research.md

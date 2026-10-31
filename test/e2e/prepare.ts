@@ -20,7 +20,7 @@ async function main(): Promise<void> {
   fs.rmSync(E2E_ROOT, { recursive: true, force: true });
   fs.mkdirSync(E2E_DATA_DIR, { recursive: true });
   // 7단계: 추천 영상도 둔다(받은 날은 END 기준. 브라우저 시계는 base.ts가 END에 고정한다)
-  const fx = writeFixtures(E2E_DATA_DIR, { end: END, days: 7, entities: 30, terms: 24, videos: true });
+  const fx = writeFixtures(E2E_DATA_DIR, { end: END, days: 7, entities: 30, terms: 24, videos: true, corrections: true });
   await buildSite({ dataDir: E2E_DATA_DIR, outDir: E2E_OUT_DIR });
 
   const { twice } = fx.info.terms;

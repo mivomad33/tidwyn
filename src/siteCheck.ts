@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { BACKUP_NAME_RE, contentFindings, nameKinds, type Finding } from "./precheck.ts";
+import { ROBOTS_DISALLOW, ROBOTS_FILE, SITEMAP_FILE, SITE_URL, pageFile } from "./publicSite.ts";
 
 // 결과물 검사(3단계 4.1-4). 빌드 뒤와 배포 전에 돌린다. 걸린 값은 출력하지 않는다(경로와 종류만).
 
@@ -55,4 +56,90 @@ export function checkOutput(outDir: string, home: string | null, secrets: readon
     findings.push(...contentFindings(rel, rel, fs.readFileSync(abs), home, textScan, secrets));
   }
   return { findings, files: files.length, bytes };
+}
+
+// ---- 공개 페이지 검사(9.5단계 4.8-1) ----
+
+/** HTML에 들어가면 안 되는 영상 데이터(R7): 영상 파일 이름, 영상 필드, 영상·썸네일 주소 */
+const VIDEO_IN_HTML_RES = [/\bvideos(?:-[\w-]+)?\.json\b/, /"(?:thumb|fetchedOn|videoSummary)"\s*:/, /youtube\.com\/watch|youtu\.be\/|ytimg\.com/];
+/** 뉴스 출처 목록. 출처가 YouTube일 수 있어 영상 검사에서 뺀다 */
+const SOURCE_LIST_RE = /<div class="src">[\s\S]*?<\/div>/g;
+
+function tagAttr(html: string, tag: RegExp, attr: string): string | null {
+  const found = html.match(tag)?.[0];
+  return found?.match(new RegExp(`\\s${attr}="([^"]*)"`))?.[1] ?? null;
+}
+
+export const titleText = (html: string) => html.match(/<title>([^<]*)<\/title>/)?.[1] ?? "";
+const descriptionText = (html: string) => tagAttr(html, /<meta [^>]*name="description"[^>]*>/, "content") ?? "";
+const canonicalUrl = (html: string) => tagAttr(html, /<link [^>]*rel="canonical"[^>]*>/, "href");
+const isNoindex = (html: string) => /<meta [^>]*name="robots"[^>]*content="[^"]*noindex/.test(html);
+
+/** 사이트맵(나뉘어 있으면 조각까지)의 주소들. 조각 파일이 없으면 지적에 넣는다 */
+function sitemapUrls(outDir: string, findings: Finding[]): string[] {
+  const read = (rel: string) => fs.readFileSync(path.join(outDir, rel), "utf8");
+  const locs = (xml: string) => [...xml.matchAll(/<loc>([^<]*)<\/loc>/g)].map((m) => m[1]!.replaceAll("&amp;", "&"));
+  if (!fs.existsSync(path.join(outDir, SITEMAP_FILE))) {
+    findings.push({ where: SITEMAP_FILE, kind: "사이트맵 없음" });
+    return [];
+  }
+  const root = read(SITEMAP_FILE);
+  if (!root.includes("<sitemapindex")) return locs(root);
+  return locs(root).flatMap((url) => {
+    const rel = url.startsWith(`${SITE_URL}/`) ? url.slice(SITE_URL.length + 1) : "";
+    if (rel !== "" && fs.existsSync(path.join(outDir, rel))) return locs(read(rel));
+    findings.push({ where: SITEMAP_FILE, kind: "사이트맵 주소에 파일이 없음" });
+    return [];
+  });
+}
+
+function checkRobots(outDir: string, findings: Finding[]): void {
+  const file = path.join(outDir, ROBOTS_FILE);
+  if (!fs.existsSync(file)) {
+    findings.push({ where: ROBOTS_FILE, kind: "robots.txt 없음" });
+    return;
+  }
+  const lines = fs.readFileSync(file, "utf8").split("\n").map((l) => l.trim());
+  const blocked = lines.filter((l) => /^disallow\s*:/i.test(l)).map((l) => l.replace(/^disallow\s*:\s*/i, ""));
+  if (blocked.some((p) => p !== "" && p !== ROBOTS_DISALLOW)) findings.push({ where: ROBOTS_FILE, kind: "robots.txt가 수집을 막음" });
+  if (!lines.some((l) => /^sitemap\s*:/i.test(l))) findings.push({ where: ROBOTS_FILE, kind: "robots.txt에 사이트맵 줄 없음" });
+}
+
+/** 색인 페이지와 수집 파일을 본다. 파일 하나만 보는 checkOutput과 달리 완성된 결과물이어야 한다 */
+export function checkPublicPages(outDir: string): Finding[] {
+  const findings: Finding[] = [];
+  checkRobots(outDir, findings);
+  const files: string[] = [];
+  walk(outDir, "", files);
+  const fileSet = new Set(files);
+  const urlsOf = new Map<string, string[]>();
+  for (const url of sitemapUrls(outDir, findings)) {
+    const pathname = url.startsWith(SITE_URL) ? url.slice(SITE_URL.length) : "";
+    const rel = pathname === "" ? "" : pageFile(pathname);
+    if (fileSet.has(rel)) urlsOf.set(rel, [...(urlsOf.get(rel) ?? []), url]);
+    else findings.push({ where: SITEMAP_FILE, kind: "사이트맵 주소에 파일이 없음" });
+  }
+  if (!urlsOf.has("index.html")) findings.push({ where: SITEMAP_FILE, kind: "사이트맵에 첫 화면 없음" });
+  for (const rel of files.filter((f) => f.endsWith(".html"))) {
+    const html = fs.readFileSync(path.join(outDir, rel), "utf8");
+    const withoutSources = html.replace(SOURCE_LIST_RE, "");
+    if (VIDEO_IN_HTML_RES.some((re) => re.test(withoutSources))) findings.push({ where: rel, kind: "HTML에 영상 데이터" });
+    const urls = urlsOf.get(rel);
+    if (urls === undefined) {
+      // 사이트맵 밖의 HTML은 수집되지 않거나(noindex) 남는 주소를 가리켜야 한다
+      if (!isNoindex(html) && canonicalUrl(html) === null) findings.push({ where: rel, kind: "사이트맵 밖 페이지에 noindex나 canonical이 없음" });
+      continue;
+    }
+    if (titleText(html).trim() === "") findings.push({ where: rel, kind: "제목 없음" });
+    if (descriptionText(html).trim() === "") findings.push({ where: rel, kind: "설명 없음" });
+    if (urls.some((url) => canonicalUrl(html) !== url)) findings.push({ where: rel, kind: "canonical이 주소와 다름" });
+    if (isNoindex(html)) findings.push({ where: rel, kind: "색인 페이지에 noindex" });
+  }
+  return findings;
+}
+
+/** 배포 전 검사: 파일 검사와 공개 페이지 검사 */
+export function checkBuiltSite(outDir: string, home: string | null, secrets: readonly string[] = []): OutputCheck {
+  const check = checkOutput(outDir, home, secrets);
+  return { ...check, findings: [...check.findings, ...checkPublicPages(outDir)] };
 }

@@ -9,7 +9,7 @@ test.describe("첫 화면과 날짜 이동", () => {
   test("첫 화면은 가장 최근 날짜의 브리프를 한국 섹션으로 보인다", async ({ page }) => {
     await page.goto("/");
     await expect(page.getByRole("link", { name: dateLinkName(latest) })).toBeVisible();
-    await expect(page).toHaveTitle(`${dateLinkName(latest).split(",")[0]} 브리프 · Tidwyn`);
+    await expect(page).toHaveTitle("Tidwyn · 최신 뉴스 브리프");
     const tabs = page.getByRole("navigation", { name: "섹션" });
     await expect(tabs.getByRole("button", { name: info.latest.firstSection })).toHaveAttribute("aria-pressed", "true");
     // 가장 최근 날짜라 다음 날짜 링크가 없다
@@ -173,7 +173,7 @@ test.describe("검색·메뉴·사이트 소개", () => {
     await btn.click();
     await expect(btn).toHaveAttribute("aria-expanded", "true");
     const menu = page.getByRole("navigation", { name: "사이트 메뉴" });
-    await expect(menu.getByRole("link")).toHaveText(["최근 브리프", "날짜 목록", "이슈 목록", "일정", "지표", "인물·기관·국가", "용어 사전", "검색", "사이트 소개"]);
+    await expect(menu.getByRole("link")).toHaveText(["최근 브리프", "날짜 목록", "이슈 목록", "일정", "지표", "인물·기관·국가", "용어 사전", "검색", "사이트 소개", "오류 정정과 연락"]);
     // Esc로 닫으면 메뉴 단추로 초점이 돌아온다
     await page.keyboard.press("Escape");
     await expect(menu).toHaveCount(0);
@@ -202,8 +202,8 @@ test.describe("검색·메뉴·사이트 소개", () => {
     await expect(page).toHaveTitle("사이트 소개 · Tidwyn");
     for (const h of ["Tidwyn은", "저작권", "방문 통계", "원본 저장소"]) await expect(page.getByRole("heading", { level: 2, name: h })).toBeVisible();
     const external = page.locator("article a[href^='https://']");
-    // 6단계: FRED API 이용 약관 링크가 더해졌다(4.7-6). 7단계: '추천 영상' 절의 YouTube 이용약관 링크가 더해졌다(4.7-5)
-    await expect(external).toHaveCount(4);
+    // 6단계: FRED API 이용 약관 링크가 더해졌다(4.7-6). 7단계: '추천 영상' 절의 YouTube 이용약관 링크가 더해졌다(4.7-5). 9.5단계: GitHub 이슈 링크가 메일로 바뀌었다
+    await expect(external).toHaveCount(3);
     for (const a of await external.all()) {
       await expect(a).toHaveAttribute("target", "_blank");
       await expect(a).toHaveAttribute("rel", /noopener/);
@@ -215,14 +215,14 @@ test.describe("없는 페이지", () => {
   for (const url of ["/no-such-page", "/2026-10-25", "/2026-02-30", "/issues/999", "/issues/abc"]) {
     test(`${url}은 없는 페이지를 보인다`, async ({ page }) => {
       await page.goto(url);
-      await expect(page.getByRole("heading", { level: 1, name: "없는 페이지" })).toBeVisible();
+      await expect(page.getByRole("heading", { level: 1, name: "이 주소에는 페이지가 없다" })).toBeVisible();
       await expect(page).toHaveTitle("없는 페이지 · Tidwyn");
     });
   }
 
   test("없는 페이지의 첫 화면 링크로 돌아간다", async ({ page }) => {
     await page.goto("/no-such-page");
-    await page.getByRole("link", { name: "첫 화면으로 가기" }).click();
+    await page.getByRole("link", { name: "최근 뉴스 브리프 보기" }).click();
     await expect(page).toHaveURL("/");
     await expect(page.getByRole("link", { name: dateLinkName(latest) })).toBeVisible();
   });
@@ -363,7 +363,7 @@ test.describe("375px 폭", () => {
       [`/issues/${info.issues.first.id}`, () => expect(page.getByRole("heading", { level: 1, name: info.issues.first.name })).toBeVisible()],
       ["/search?q=" + encodeURIComponent(info.issues.first.name), () => expect(page.getByRole("region", { name: "이슈" })).toBeVisible()],
       ["/about", () => expect(page.getByRole("heading", { level: 1, name: "사이트 소개" })).toBeVisible()],
-      ["/no-such-page", () => expect(page.getByRole("heading", { level: 1, name: "없는 페이지" })).toBeVisible()],
+      ["/no-such-page", () => expect(page.getByRole("heading", { level: 1, name: "이 주소에는 페이지가 없다" })).toBeVisible()],
     ];
     for (const [url, ready] of screens) {
       await page.goto(url);

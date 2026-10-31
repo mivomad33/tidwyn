@@ -32,7 +32,7 @@ import {
   type YoutubeHttp,
   type YoutubeResponse,
 } from "../src/youtube.ts";
-import { NOW, cleanupTemp, gitIn, makeCtx, sampleBrief, tempDir, tempRepo } from "./helpers.ts";
+import { NOW, cleanupTemp, gitIn, makeCtx, sampleBrief, tempDir, tempRepo, writeFakePublicFiles } from "./helpers.ts";
 
 after(cleanupTemp);
 
@@ -257,7 +257,7 @@ describe("7단계 4.1 데이터와 저장", () => {
       const before = dumpDb(old);
       old.close();
       const db = openDb(file);
-      assert.equal(schemaVersion(db), 8);
+      assert.equal(schemaVersion(db), 9);
       const after = dumpDb(db);
       for (const [table, rows] of Object.entries(before)) assert.deepEqual(after[table], rows, table);
       for (const t of ["videos", "video_issues", "video_picked"]) assert.deepEqual(after[t], [], t);
@@ -778,7 +778,7 @@ const copyBuilder = ({ inputDir, outDir }: { inputDir: string; outDir: string })
   fs.rmSync(outDir, { recursive: true, force: true });
   fs.mkdirSync(outDir, { recursive: true });
   fs.cpSync(path.join(inputDir, "site-data"), path.join(outDir, "site-data"), { recursive: true });
-  fs.writeFileSync(path.join(outDir, "index.html"), "<!doctype html><title>t</title>");
+  writeFakePublicFiles(outDir);
   return { ok: true as const };
 };
 
@@ -1123,7 +1123,7 @@ describe("7단계 4.1-2 30일 지우기", () => {
     assert.deepEqual(fs.readFileSync(v6), v6Bytes, "버전 6 사본은 바이트 그대로");
     assert.equal(versionOf(v4), 4);
     assert.equal(versionOf(v6), 6);
-    assert.equal(versionOf(withVideos), 8, "영상 기록이 있는 사본은 user_version 그대로");
+    assert.equal(versionOf(withVideos), 9, "영상 기록이 있는 사본은 user_version 그대로");
     for (const snap of [withVideos, newSnap]) {
       const db = openDb(snap, []);
       assert.deepEqual(allVideos(db).map((v) => v.videoId), [IDS.d29], snap);
@@ -1170,7 +1170,7 @@ describe("7단계 4.1-2 30일 지우기", () => {
       assert.ok(filesContaining(path.join(dir, "tidwyn.db"), `${prefix}${IDS.d29}`).length === 1, "29일 전 것은 남는다");
       assert.ok(!fs.existsSync(path.join(dir, "site-input")) && !fs.existsSync(path.join(dir, "site")), "30일 지난 영상이 든 site-input·site는 통째로 지운다");
       assert.ok(fs.existsSync(path.join(dir, "briefs", "note.md")), "그 밖의 데이터는 남는다");
-      assert.equal(versionOf(path.join(dir, "tidwyn.db")), 8);
+      assert.equal(versionOf(path.join(dir, "tidwyn.db")), 9);
     }
     assert.deepEqual(snapshotBytes(other), otherBefore, "다른 이름의 폴더는 바이트 그대로");
     assert.deepEqual([v1Dir, v4Dir, brokenDir, recentWork].map(snapshotBytes), keepBefore, "옛 버전 DB·깨진 DB·30일 안의 작업 파일은 그대로");

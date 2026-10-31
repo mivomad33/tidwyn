@@ -70,6 +70,21 @@ export interface FixtureOptions {
   videos?: boolean;
   /** 7단계: 영상을 날마다 16개(추천 이유 150자, 요약 350자, 관련 이슈 2개) 붙인다(크기 측정용). videos를 켠다 */
   videosFull?: boolean;
+  /** 9.5단계: 끝 날짜의 첫 섹션에 정정 표시를 둔다(첫 주요 뉴스 2번, 둘째 주요 뉴스와 첫 짧은 소식 1번). 없으면 다른 파일은 그대로다 */
+  corrections?: boolean;
+}
+
+/** 지어낸 정정 기록: 뉴스 키 끝 → 최신순 기록 */
+function fixtureCorrections(end: string): Record<string, ListStory["corrections"]> {
+  const on = (days: number) => new Date(Date.parse(end) + days * 86400000).toISOString().slice(0, 10);
+  return {
+    "-1": [
+      { on: on(2), reason: "성장률을 1.2%에서 1.3%로 바로잡았다." },
+      { on: on(1), reason: "기관 이름을 가짜청에서 가짜처로 바로잡았다. 같은 기관의 옛 이름이 기사에 함께 나와 있어 혼동했고, 기관 누리집의 조직도로 다시 확인해 지금 이름으로 고쳤다." },
+    ],
+    "-2": [{ on: on(1), reason: "발표 날짜를 하루 앞으로 바로잡았다." }],
+    "-s1": [{ on: on(1), reason: "수출액 단위를 억 달러로 바로잡았다." }],
+  };
 }
 
 export interface Fixture {
@@ -425,6 +440,12 @@ export function generateFixtures(opts: FixtureOptions = {}): Fixture {
       };
       for (let r = 1; r <= nTop; r++) stories.push(makeStory("top", r));
       for (let p = 1; p <= nShort; p++) stories.push(makeStory("short", p));
+      if (opts.corrections && date === end && section === SECTIONS[0]) {
+        for (const [tail, fixes] of Object.entries(fixtureCorrections(end))) {
+          const story = stories.find((x) => x.key === `${section}${tail}`);
+          if (story) story.corrections = fixes;
+        }
+      }
       const sec: ListSection = { name: section, flow: `${section}: ${sentence()}`, stories };
       if (section === "세계" && di % 2 === 0) sec.unverified = "가짜국 국경 지역 피해 규모는 아직 확인되지 않았다.";
       sections.push(sec);
@@ -648,7 +669,7 @@ if (import.meta.main) {
   };
   const out = get("--out");
   if (!out) {
-    console.error("사용법: node site/dev/fixtures.ts --out <폴더> [--end YYYY-MM-DD] [--days N] [--top N] [--short N] [--issues N] [--contiguous] [--entities N] [--terms N] [--hub] [--schedules N] [--indicators N] [--indicators-all] [--videos] [--videos-full]");
+    console.error("사용법: node site/dev/fixtures.ts --out <폴더> [--end YYYY-MM-DD] [--days N] [--top N] [--short N] [--issues N] [--contiguous] [--entities N] [--terms N] [--hub] [--schedules N] [--indicators N] [--indicators-all] [--videos] [--videos-full] [--corrections]");
     process.exit(1);
   }
   const num = (name: string) => (get(name) ? Number(get(name)) : undefined);
@@ -667,6 +688,7 @@ if (import.meta.main) {
     indicatorsAll: args.includes("--indicators-all"),
     videos: args.includes("--videos"),
     videosFull: args.includes("--videos-full"),
+    corrections: args.includes("--corrections"),
   });
   console.log(`가짜 사이트 데이터: ${out} (날짜 ${fx.dates.length}개, 파일 ${fx.files.size}개)`);
 }

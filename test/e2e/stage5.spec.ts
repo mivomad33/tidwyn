@@ -287,7 +287,7 @@ test.describe("일정 주소", () => {
     await expect(row(page, sinfo.merged.into)).toHaveClass(/\bhl\b/);
     for (const id of [sinfo.deleted, 99999]) {
       await page.goto(`/schedules/${id}`);
-      await expect(page.getByRole("heading", { level: 1, name: "없는 페이지" })).toBeVisible();
+      await expect(page.getByRole("heading", { level: 1, name: "이 주소에는 페이지가 없다" })).toBeVisible();
     }
   });
 
@@ -295,7 +295,7 @@ test.describe("일정 주소", () => {
     for (const p of ["/schedules", "/schedules/1", "/schedules?view=list"]) {
       const res = await request.get(p);
       expect(res.status(), p).toBe(200);
-      expect(await res.text()).toContain('<div id="root"></div>');
+      expect(await res.text()).toContain('<div id="root">');
     }
   });
 });

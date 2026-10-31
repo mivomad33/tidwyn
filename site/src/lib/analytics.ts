@@ -1,6 +1,7 @@
 // 방문 통계(P10, 4.6-4): 운영 주소에서만 켜고, 검색어(`q`)는 보내지 않는다.
+import { SITE_URL } from "./policy.ts";
 
-export const PRODUCTION_HOST = "tidwyn.vercel.app";
+export const PRODUCTION_HOST = new URL(SITE_URL).hostname;
 
 /** 빌드 모드가 아니라 실행 중인 접속 주소로 정한다 */
 export function analyticsEnabled(hostname: string): boolean {

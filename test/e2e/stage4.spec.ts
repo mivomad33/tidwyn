@@ -229,7 +229,7 @@ test.describe("인물·기관·국가 페이지", () => {
   ] as const) {
     test(`${label}(/entities/${id})는 없는 페이지다`, async ({ page }) => {
       await page.goto(`/entities/${id}`);
-      await expect(page.getByRole("heading", { level: 1, name: "없는 페이지" })).toBeVisible();
+      await expect(page.getByRole("heading", { level: 1, name: "이 주소에는 페이지가 없다" })).toBeVisible();
     });
   }
 
@@ -286,7 +286,7 @@ test.describe("용어 사전", () => {
   ] as const) {
     test(`${label}(/terms/${id})는 없는 페이지다`, async ({ page }) => {
       await page.goto(`/terms/${id}`);
-      await expect(page.getByRole("heading", { level: 1, name: "없는 페이지" })).toBeVisible();
+      await expect(page.getByRole("heading", { level: 1, name: "이 주소에는 페이지가 없다" })).toBeVisible();
     });
   }
 

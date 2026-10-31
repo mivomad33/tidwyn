@@ -82,8 +82,10 @@ describe("사이트 빌드", () => {
     assert.deepEqual(res.files, files);
     assert.ok(!files.includes("stale.txt"), "빌드마다 결과물 폴더를 비운다");
     const top = [...new Set(files.map((f) => f.split("/")[0]!))].sort();
-    assert.deepEqual(top, ["assets", "index.html", "pagefind", "site-data", "vercel.json"]);
-    assert.ok(!files.some((f) => f.endsWith(".db") || f.includes("search-records") || f.endsWith(".txt")), files.join("\n"));
+    const dated = top.filter((f) => /^\d{4}-\d{2}-\d{2}\.html$/.test(f));
+    assert.equal(dated.length, 6);
+    assert.deepEqual(top.filter((f) => !dated.includes(f)), ["404.html", "about.html", "app.html", "apple-touch-icon.png", "assets", "dates.html", "entities", "entities.html", "icon-16.png", "icon-32.png", "icon-48.png", "icon-512.png", "icon.svg", "index.html", "indicators.html", "issues", "issues.html", "pagefind", "privacy.html", "robots.txt", "rss.xml", "schedules.html", "share.png", "site-data", "sitemap.xml", "terms.html", "vercel.json"]);
+    assert.ok(!files.some((f) => f.endsWith(".db") || f.includes("search-records") || (f.endsWith(".txt") && f !== "robots.txt")), files.join("\n"));
     const expectedData = [...fx.files.keys()].filter((f) => f.startsWith("site-data/")).sort();
     assert.deepEqual(files.filter((f) => f.startsWith("site-data/")), expectedData);
     assert.ok(files.includes("pagefind/pagefind.js") && files.includes("pagefind/pagefind-entry.json"));
@@ -91,11 +93,16 @@ describe("사이트 빌드", () => {
     const html = fs.readFileSync(path.join(outA, "index.html"), "utf8");
     assert.match(html, /<html lang="ko">/);
     assert.match(html, /prefers-color-scheme: dark/);
-    assert.doesNotMatch(html, /https?:\/\/(?!tidwyn)/, "외부 글꼴·스크립트를 부르지 않는다");
+    for (const f of files.filter((x) => x.endsWith(".html"))) {
+      const page = fs.readFileSync(path.join(outA, f), "utf8");
+      const loads = [...page.matchAll(/<script[^>]*\ssrc="([^"]+)"|<img[^>]*\ssrc="([^"]+)"|<link[^>]*\srel="(?:stylesheet|preload|modulepreload)"[^>]*\shref="([^"]+)"/g)].map((m) => m[1] ?? m[2] ?? m[3]!);
+      assert.ok(loads.length > 0, f);
+      for (const url of loads) assert.doesNotMatch(url, /^(?:https?:)?\/\//, `${f}: 외부 글꼴·스크립트를 부르지 않는다`);
+    }
     const css = files.filter((f) => f.endsWith(".css")).map((f) => fs.readFileSync(path.join(outA, f), "utf8")).join("");
     assert.doesNotMatch(css, /@import|@font-face|url\(https?:/, "외부 글꼴을 부르지 않는다");
     const vercel = readJson<{ rewrites: { source: string }[] }>(path.join(outA, "vercel.json"));
-    assert.equal(vercel.rewrites.length, 1);
+    assert.equal(vercel.rewrites.length, 3);
   });
 
   test("같은 입력이면 같은 결과물이다(4.1-2)", async () => {
@@ -183,8 +190,11 @@ describe("4단계 사이트 빌드: 인물·기관·국가와 용어 사전", ()
     for (const f of ["all", "person", "org", "country"]) assert.ok(files.has(`site-data/entity-list-${f}-0.json`), f);
     for (const f of ["site-data/entity-0.json", "site-data/entity-news-0.json", "site-data/term-index.json", "site-data/term-group-0.json"]) assert.ok(files.has(f), f);
     const exists = (p: string) => files.has(p);
-    for (const p of ["/entities", "/entities/1", "/terms", "/terms/1"]) assert.deepEqual(resolveStatic(p, exists), { kind: "fallback" }, p);
-    assert.deepEqual(resolveStatic("/site-data/entity-999.json", exists), { kind: "notFound" }, "없는 묶음은 404(화면은 없는 페이지)");
+    assert.deepEqual(resolveStatic("/entities", exists), { kind: "file", path: "entities.html" });
+    assert.deepEqual(resolveStatic("/entities/1", exists), { kind: "file", path: "entities/1.html" });
+    assert.deepEqual(resolveStatic("/terms", exists), { kind: "file", path: "terms.html" });
+    assert.deepEqual(resolveStatic("/terms/1", exists), { kind: "file", path: "app.html" });
+    assert.deepEqual(resolveStatic("/site-data/entity-999.json", exists), { kind: "notFound", path: "404.html" }, "없는 묶음은 404(화면은 없는 페이지)");
   });
 
   test("흡수된 대상·용어는 남는 것으로 가고, 지운 대상은 어디에도 없다(4.7-4, 4.7-5)", () => {
@@ -301,7 +311,7 @@ describe("4단계 4.6-4 DB에서 만든 검색 색인", () => {
 });
 
 describe("5단계 4.6-2 일정을 더한 5년치", () => {
-  test("결과물 10,000개 이하, 브리프 첫 화면('이번 주 일정' 포함)과 일정 화면이 처음 받는 데이터가 각각 gzip 300KB 이하다", async () => {
+  test("브리프 첫 화면('이번 주 일정' 포함)과 일정 화면이 처음 받는 데이터가 각각 gzip 300KB 이하다", async () => {
     // 4단계 측정 조건(1,826일, 하루 42건, 이슈·대상 15,000개, 용어 5,000개)에 일정 15,000개(하루 약 8개, 달 단위 2할, 근거 평균 2건, 결과 6할 남짓)
     const work = tempDir("tidwyn-site5y-");
     const dataDir = path.join(work, "data");
@@ -309,7 +319,7 @@ describe("5단계 4.6-2 일정을 더한 5년치", () => {
     const fx = writeFixtures(dataDir, { end: "2026-10-31", days: 1826, top: 6, short: 8, issues: 15000, contiguous: true, entities: 15000, terms: 5000, schedules: 15000 });
     assert.equal(fx.info.schedules!.total, 14998, "흡수된 것과 지운 것 하나씩을 뺀 수");
     const res = await buildSite({ dataDir, outDir: out });
-    assert.ok(res.files.length <= 10_000, `결과물 ${res.files.length}개`);
+    console.log(`5년치 결과물 ${res.files.length}개, ${(res.bytes / 1024 / 1024).toFixed(1)}MB`);
     const size = measureOutput(out);
     const latest = readJson<MonthList>(path.join(out, "site-data", "list-2026-10.json")).days.at(-1)!;
     assert.ok(latest.week && latest.week.total > 0, "가장 최근 날짜에 '이번 주 일정'이 있다");

@@ -54,9 +54,10 @@ describe("4.7-6 새 주소", () => {
   test("새 화면 주소는 화면 틀로 가고, 없는 묶음 파일은 404다(호스팅 규칙)", () => {
     const files = new Set(["index.html", "site-data/entity-0.json", "site-data/term-index.json"]);
     const exists = (p: string) => files.has(p);
-    for (const p of ["/entities", "/entities/3", "/terms", "/terms/3", "/entities/99999"]) assert.deepEqual(resolveStatic(p, exists), { kind: "fallback" }, p);
+    assert.deepEqual(resolveStatic("/terms/3", exists), { kind: "file", path: "app.html" });
+    assert.deepEqual(resolveStatic("/entities/99999", exists), { kind: "notFound", path: "404.html" });
     assert.deepEqual(resolveStatic("/site-data/entity-0.json", exists), { kind: "file", path: "site-data/entity-0.json" });
-    for (const p of ["/site-data/entity-999.json", "/site-data/term-group-3.json"]) assert.deepEqual(resolveStatic(p, exists), { kind: "notFound" }, p);
+    for (const p of ["/site-data/entity-999.json", "/site-data/term-group-3.json"]) assert.deepEqual(resolveStatic(p, exists), { kind: "notFound", path: "404.html" }, p);
   });
   test("화면이 부르는 새 파일 이름이 사이트 데이터 약속(siteFiles)과 같다", () => {
     assert.equal(dataUrl.entityList("person", 2), `/site-data/${siteFiles.entityList("person", 2)}`);

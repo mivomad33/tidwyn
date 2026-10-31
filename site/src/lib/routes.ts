@@ -177,3 +177,6 @@ export function indicatorsPath(): string {
 export function indicatorPath(id: string): string {
   return `/indicators/${id}`;
 }
+
+/** RSS 주소. 구독자가 쓰므로 바꾸면 안 된다(4.5-1) */
+export const RSS_PATH = "/rss.xml";

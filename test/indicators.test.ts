@@ -23,7 +23,7 @@ import { buildSiteData } from "../src/siteData.ts";
 import type { DayList, IndicatorList, IndicatorSeries, IssueChunk, IssueDetail, MonthList } from "../src/siteTypes.ts";
 import { recordFirstCollectionDate, saveBrief } from "../src/store.ts";
 import { validateBrief } from "../src/validate.ts";
-import { cleanupTemp, gitIn, makeCtx, sampleBrief, tempDir, tempRepo } from "./helpers.ts";
+import { cleanupTemp, gitIn, makeCtx, sampleBrief, tempDir, tempRepo, writeFakePublicFiles } from "./helpers.ts";
 
 after(cleanupTemp);
 
@@ -235,7 +235,7 @@ describe("6단계 4.1 데이터와 저장", () => {
       const before = dumpDb(old);
       old.close();
       const db = openDb(file);
-      assert.equal(schemaVersion(db), 8);
+      assert.equal(schemaVersion(db), 9);
       const after = dumpDb(db);
       for (const [table, rows] of Object.entries(before)) assert.deepEqual(after[table], rows, table);
       for (const table of ["entities", "terms", "story_entities", "story_terms", ...(v >= 5 ? ["schedules"] : [])]) assert.equal(before[table]?.length, 1, table);
@@ -581,7 +581,7 @@ function backupAndSite(f: { repo: string; env: NodeJS.ProcessEnv; runFile: strin
   assert.match(b.text, /백업: /);
   const builder = ({ outDir }: { outDir: string }) => {
     fs.mkdirSync(outDir, { recursive: true });
-    fs.writeFileSync(path.join(outDir, "index.html"), "<!doctype html><title>t</title>");
+    writeFakePublicFiles(outDir);
     return { ok: true as const };
   };
   const ctx = { ...makeCtx(f.repo, f.env), buildSite: builder };
@@ -919,7 +919,7 @@ describe("6단계 4.5-2 사이트 빌드 줄", () => {
       const f = flowDir(env);
       const builder = ({ outDir }: { outDir: string }) => {
         fs.mkdirSync(outDir, { recursive: true });
-        fs.writeFileSync(path.join(outDir, "index.html"), "<!doctype html><title>t</title>");
+        writeFakePublicFiles(outDir);
         return { ok: true as const };
       };
       const ctx = { ...makeCtx(f.repo, f.env), buildSite: builder };

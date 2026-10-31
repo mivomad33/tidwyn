@@ -295,23 +295,32 @@ describe("사이트 데이터 주소와 호스팅 설정", () => {
     assert.equal(ISSUE_CHUNK, ISSUE_CHUNK_SIZE);
     for (const id of [0, 99, 100, 12345]) assert.equal(chunkOf(id), issueChunkOf(id));
   });
-  test("4.6-2 화면 주소는 화면 틀로, 데이터·색인·화면 파일의 없는 주소는 404", () => {
-    const files = new Set(["index.html", "site-data/dates.json", "assets/index-abc.js", "pagefind/pagefind.js", HOSTING_CONFIG_FILE]);
+  test("4.3-3 주소 규칙: 파일, 확장자 없는 주소, 앱 전용 주소, 그 밖은 404", () => {
+    const files = new Set(["index.html", "2026-10-27.html", "dates.html", "issues.html", "issues/3.html", "about.html", "app.html", "404.html", "site-data/dates.json", "assets/index-abc.js", "pagefind/pagefind.js", HOSTING_CONFIG_FILE]);
     const exists = (p: string) => files.has(p);
-    for (const p of ["/", "/2026-10-27", "/dates", "/issues", "/issues/3", "/search", "/about", "/nope"]) assert.deepEqual(resolveStatic(p, exists), { kind: "fallback" }, p);
-    assert.deepEqual(resolveStatic("/site-data/dates.json", exists), { kind: "file", path: "site-data/dates.json" });
-    for (const p of ["/site-data/list-1999-01.json", "/pagefind/x.pf_fragment", "/assets/nope.js"]) assert.deepEqual(resolveStatic(p, exists), { kind: "notFound" }, p);
-    assert.deepEqual(resolveStatic("/../package.json", exists), { kind: "notFound" });
-    assert.deepEqual(resolveStatic(`/${HOSTING_CONFIG_FILE}`, exists), { kind: "fallback" }, "설정 파일은 내주지 않는다");
+    const file = (path: string) => ({ kind: "file", path });
+    const missing = { kind: "notFound", path: "404.html" };
+    assert.deepEqual(resolveStatic("/", exists), file("index.html"));
+    for (const p of ["/2026-10-27", "/dates", "/issues", "/issues/3", "/about"]) assert.deepEqual(resolveStatic(p, exists), file(`${p.slice(1)}.html`), p);
+    assert.deepEqual(resolveStatic("/about/", exists), file("about.html"), "끝의 /는 같은 페이지다");
+    for (const p of ["/search", "/terms/7", "/schedules/7"]) assert.deepEqual(resolveStatic(p, exists), file("app.html"), p);
+    assert.deepEqual(resolveStatic("/site-data/dates.json", exists), file("site-data/dates.json"));
+    for (const p of ["/nope", "/2026-02-30", "/issues/99", "/terms/x", "/site-data/list-1999-01.json", "/pagefind/x.pf_fragment", "/assets/nope.js", "/../package.json", `/${HOSTING_CONFIG_FILE}`]) assert.deepEqual(resolveStatic(p, exists), missing, p);
   });
-  test("vercel.json 대체 경로는 site-data·pagefind·assets를 다시 쓰지 않는다", () => {
-    const cfg = vercelConfig() as { rewrites: { source: string; destination: string }[] };
-    assert.equal(cfg.rewrites.length, 1);
-    const rule = cfg.rewrites[0]!;
-    assert.equal(rule.destination, "/index.html");
-    // Vercel source는 path-to-regexp이고 괄호 안은 정규식이다. 같은 정규식으로 판정해 본다
-    const re = new RegExp(`^${rule.source}$`);
-    for (const p of ["/", "/2026-10-27", "/issues/3", "/search", "/site-dataX"]) assert.ok(re.test(p), p);
-    for (const p of ["/site-data/x.json", "/pagefind/pagefind.js", "/assets/a.js"]) assert.ok(!re.test(p), p);
+  test("4.3-5 vercel.json: 확장자 없는 주소, 앱 전용 주소, 수집 제외 헤더", () => {
+    const cfg = vercelConfig() as { cleanUrls: boolean; trailingSlash: boolean; rewrites: { source: string; destination: string }[]; headers: { source: string; headers: { key: string; value: string }[] }[] };
+    assert.equal(cfg.cleanUrls, true);
+    assert.equal(cfg.trailingSlash, false);
+    assert.deepEqual(cfg.rewrites.map((r) => r.destination), ["/app", "/app", "/app"]);
+    assert.deepEqual(cfg.rewrites.map((r) => r.source), ["/search", "/terms/:id(\\d+)", "/schedules/:id(\\d+)"]);
+    assert.equal(cfg.headers.length, 2);
+    for (const rule of cfg.headers) {
+      assert.deepEqual(rule.headers, [{ key: "X-Robots-Tag", value: "noindex" }]);
+      // Vercel source는 path-to-regexp이고 괄호 안은 정규식이다. 같은 정규식으로 판정해 본다
+      const re = new RegExp(`^${rule.source}$`);
+      for (const p of ["/", "/2026-10-27", "/issues", "/issues/3", "/about", "/site-dataX", "/pagefindX/a"]) assert.ok(!re.test(p), `${rule.source}: ${p}`);
+    }
+    assert.ok(new RegExp(`^${cfg.headers[0]!.source}$`).test("/site-data/dates.json"));
+    assert.ok(new RegExp(`^${cfg.headers[1]!.source}$`).test("/pagefind/pagefind.js"));
   });
 });

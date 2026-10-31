@@ -21,6 +21,14 @@ export function tempDir(prefix = "tidwyn-test-"): string {
   return dir;
 }
 
+/** 공개 페이지 검사를 통과하는 가짜 결과물의 파일들(첫 화면, robots.txt, 사이트맵). 사이트를 빌드하지 않는 테스트의 가짜 빌더가 쓴다 */
+export function writeFakePublicFiles(outDir: string): void {
+  const site = "https://tidwyn.vercel.app";
+  fs.writeFileSync(path.join(outDir, "index.html"), `<!doctype html><html lang="ko"><head><title>Tidwyn</title><meta name="description" content="설명" /><link rel="canonical" href="${site}/" /></head><body><div id="root"></div></body></html>\n`);
+  fs.writeFileSync(path.join(outDir, "robots.txt"), `User-agent: *\nDisallow: /search\n\nSitemap: ${site}/sitemap.xml\n`);
+  fs.writeFileSync(path.join(outDir, "sitemap.xml"), `<urlset><url><loc>${site}/</loc></url></urlset>\n`);
+}
+
 export function cleanupTemp(): void {
   for (const dir of created.splice(0)) fs.rmSync(dir, { recursive: true, force: true });
 }

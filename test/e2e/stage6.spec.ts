@@ -221,7 +221,7 @@ test.describe("지표 하나의 페이지", () => {
     await expect(page.getByRole("slider")).toHaveCount(0);
     for (const p of [`/indicators/${iinfo.off}`, "/indicators/nothing", "/indicators/BAD"]) {
       await page.goto(p);
-      await expect(page.getByRole("heading", { level: 1, name: "없는 페이지" })).toBeVisible();
+      await expect(page.getByRole("heading", { level: 1, name: "이 주소에는 페이지가 없다" })).toBeVisible();
     }
   });
 
@@ -334,12 +334,13 @@ test("머리 메뉴의 '지표'와 사이트 소개의 FRED 고지·약관 링�
   await expect(page.getByText(/지표는 공식 출처\(한국은행 ECOS, FRED\)에서 받은 값이지만 늦게 반영되거나/)).toBeVisible();
 });
 
-test("새 주소를 직접 요청하면 200과 화면 틀이 온다", async ({ request }) => {
-  for (const p of ["/indicators", "/indicators/usdkrw", "/indicators/nothing"]) {
-    const res = await request.get(p);
-    expect(res.status(), p).toBe(200);
-    expect(await res.text()).toContain('<div id="root"></div>');
-  }
+test("새 주소를 직접 요청하면 화면 틀이 오고, 파일이 없는 지표는 404다", async ({ request }) => {
+  const list = await request.get("/indicators");
+  expect(list.status()).toBe(200);
+  expect(await list.text()).toContain('<div id="root">');
+  const missing = await request.get("/indicators/nothing");
+  expect(missing.status()).toBe(404);
+  expect(await missing.text()).toContain('<div id="root">');
 });
 
 test.describe("375px 폭", () => {

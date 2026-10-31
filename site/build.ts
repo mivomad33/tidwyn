@@ -1,17 +1,21 @@
 // 사이트 빌드: node site/build.ts --data <폴더> --out <폴더>
 // <data>에는 site-data/*.json과 search-records.json이 있다. 결과물(--out)을 비우고 다시 만든다(4.1-2):
-//   화면(Vite) + site-data/ 복사 + 검색 색인(pagefind/) + 호스팅 설정(vercel.json).
+//   화면(Vite) + site-data/ 복사 + 페이지별 정적 HTML·수집기용 파일 + 아이콘·공유 이미지 + 검색 색인(pagefind/) + 호스팅 설정(vercel.json).
 // search-records.json과 그 밖의 파일은 결과물에 넣지 않는다(4.1-4).
 import fs from "node:fs";
 import path from "node:path";
 import * as pagefind from "pagefind";
 import { build } from "vite";
 import { HOSTING_CONFIG_FILE, vercelConfig } from "./hosting.ts";
+import { writeStaticSite } from "./staticSite.ts";
 import { SITE_DIR, siteViteConfig } from "./viteConfig.ts";
 
 export const SEARCH_RECORDS_FILE = "search-records.json";
 export const SITE_DATA_DIR = "site-data";
 export const PAGEFIND_DIR = "pagefind";
+
+/** 아이콘과 공유 이미지 원본. 결과물 맨 위로 복사한다(`docs/design.md`) */
+const BRAND_DIR = path.join(SITE_DIR, "brand");
 
 /** Pagefind가 쓰는 파일 중 화면이 쓰지 않는 기본 검색 UI 파일. 결과물에서 뺀다 */
 const PAGEFIND_UNUSED = /^pagefind-(ui|modular-ui|component-ui|highlight)\.(js|css)$/;
@@ -113,6 +117,9 @@ export async function buildSite(opts: { dataDir: string; outDir: string }): Prom
     const src = path.join(siteData, name);
     if (name.endsWith(".json") && fs.statSync(src).isFile()) fs.copyFileSync(src, path.join(dataOut, name));
   }
+
+  writeStaticSite(outDir);
+  for (const name of fs.readdirSync(BRAND_DIR).filter((n) => !n.startsWith("."))) fs.copyFileSync(path.join(BRAND_DIR, name), path.join(outDir, name));
 
   await buildSearchIndex(records, path.join(outDir, PAGEFIND_DIR));
 

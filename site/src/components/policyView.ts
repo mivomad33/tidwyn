@@ -7,7 +7,8 @@ import { createElement as h, Fragment } from "react";
 import { PRODUCTION_HOST } from "../lib/analytics.ts";
 import { BROWSER_KEYS } from "../lib/browserKeys.ts";
 import { fullKoreanDate } from "../lib/format.ts";
-import { CONSENT_TEXT, PRIVACY_TITLE, PRIVACY_UPDATED, REPO_ISSUES_URL } from "../lib/policy.ts";
+import { CORRECTIONS_LABEL, CORRECTIONS_PATH } from "../lib/menu.ts";
+import { CONSENT_TEXT, CONTACT_MAIL, PRIVACY_TITLE, PRIVACY_UPDATED, mailHref } from "../lib/policy.ts";
 import { privacyPath } from "../lib/routes.ts";
 import { GOOGLE_PRIVACY_LABEL, GOOGLE_PRIVACY_URL, VIDEO_KEEP_DAYS, YOUTUBE_TERMS_LABEL, YOUTUBE_TERMS_URL } from "../lib/videos.ts";
 import type { LinkLike } from "./termView.ts";
@@ -16,6 +17,7 @@ import { ExternalLink } from "./videoView.ts";
 /** 바닥 메뉴(주소, 글자). 끝의 개인정보 처리방침은 모든 화면에 있다(V6) */
 export const FOOTER_LINKS: readonly [string, string][] = [
   ["/about", "사이트 소개"],
+  [CORRECTIONS_PATH, CORRECTIONS_LABEL],
   ["/issues", "이슈 목록"],
   ["/schedules", "일정"],
   ["/indicators", "지표"],
@@ -29,7 +31,7 @@ export function FooterView({ Link }: { Link: LinkLike }) {
   return h(
     "footer",
     { className: "footer" },
-    h("p", null, "Tidwyn · AI가 매일 모아 바꿔 쓴 뉴스 요약"),
+    h("p", null, "Tidwyn · AI가 매일 모아 쉬운 말로 바꿔 쓴 뉴스 요약"),
     h("p", { className: "consent" }, CONSENT_TEXT),
     h("nav", { "aria-label": "바닥 메뉴" }, ...FOOTER_LINKS.map(([to, label]) => h(Link, { key: to, to }, label))),
   );
@@ -47,7 +49,9 @@ export function PrivacyView({ Link }: { Link: LinkLike }) {
     h("h1", { className: "page-title" }, PRIVACY_TITLE),
     P(`바뀐 날짜: ${fullKoreanDate(PRIVACY_UPDATED)}`),
     h("h2", { className: "h" }, "모으는 정보"),
-    P("Tidwyn은 회원 가입·로그인과 입력 양식이 없는 읽기 전용 사이트이고, 방문자의 개인정보를 모으거나 저장하거나 다른 곳에 넘기지 않는다. 검색어는 이 브라우저 안에서만 찾는 데 쓰고 어디로도 보내지 않는다."),
+    P("Tidwyn은 회원 가입·로그인과 입력 양식이 없는 읽기 전용 사이트이고, 사이트 자체는 방문자의 개인정보를 모으거나 저장하거나 다른 곳에 넘기지 않는다. 예외는 방문자가 직접 메일을 보낸 경우뿐이다. 검색어는 이 브라우저 안에서만 찾는 데 쓰고 어디로도 보내지 않는다."),
+    h("h2", { className: "h" }, "보내 주신 메일"),
+    P("오류 제보나 문의 메일을 보내면 보낸 사람의 주소와 내용을 답장과 정정에만 쓰고 공개하지 않는다. 보관 기간을 따로 정하지 않고 메일함에 두며, 요청하면 지운다."),
     h("h2", { className: "h" }, "방문 통계"),
     P(
       `운영 주소(${PRODUCTION_HOST})에서만 Vercel Web Analytics로 페이지 보기 수를 센다. 쿠키를 쓰지 않고, 방문자를 알아볼 수 있는 정보를 모으지 않으며, 검색어는 통계로 보내지 않는다. 미리 보기 주소와 로컬 주소에서는 통계를 보내지 않는다.`,
@@ -76,7 +80,7 @@ export function PrivacyView({ Link }: { Link: LinkLike }) {
     h("h2", { className: "h" }, "광고"),
     P("이 사이트는 제3자 광고를 싣지 않는다."),
     h("h2", { className: "h" }, "문의"),
-    P("개인정보 처리방침에 대한 질문은 ", h(ExternalLink, { href: REPO_ISSUES_URL, label: "원본 저장소의 GitHub 이슈" }), "로 보내 주세요."),
+    P("개인정보 처리방침에 대한 질문은 ", h("a", { href: mailHref(), className: "text-link" }, CONTACT_MAIL), "로 보내 주세요."),
     h("h2", { className: "h", id: "terms" }, "이용 조건"),
     P(CONSENT_TEXT, " ", h(ExternalLink, { href: YOUTUBE_TERMS_URL, label: YOUTUBE_TERMS_LABEL })),
     P("이 처리방침이 바뀌면 이 페이지의 바뀐 날짜를 고친다."),

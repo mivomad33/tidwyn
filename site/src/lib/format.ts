@@ -1,5 +1,7 @@
 // 날짜 글자와 페이지 제목. 날짜는 KST 대상일 그대로 쓴다(4.3-6): 문자열을 달력 날짜로만 다루고 시간대를 바꾸지 않는다.
 
+import { monthDay } from "../../../src/publicSite.ts";
+
 const WEEKDAYS = ["일", "월", "화", "수", "목", "금", "토"];
 
 function parts(date: string): [number, number, number] {
@@ -7,11 +9,7 @@ function parts(date: string): [number, number, number] {
   return [y ?? 0, m ?? 0, d ?? 0];
 }
 
-/** "2026-10-27" → "10월 27일" */
-export function monthDay(date: string): string {
-  const [, m, d] = parts(date);
-  return `${m}월 ${d}일`;
-}
+export { monthDay };
 
 /** "2026-10-27" → "10월 27일 (화)" */
 export function monthDayWeekday(date: string): string {
@@ -54,4 +52,25 @@ export const SITE_NAME = "Tidwyn";
 /** 페이지 제목(`<title>`) */
 export function pageTitle(label?: string): string {
   return label ? `${label} · ${SITE_NAME}` : SITE_NAME;
+}
+
+/** `/`의 제목. 브리프 쪽 제목은 탭이 좁아도 이름이 남게 이름부터 쓴다(`docs/design.md`) */
+export function latestTitle(): string {
+  return `${SITE_NAME} · 최신 뉴스 브리프`;
+}
+
+/** 날짜 브리프의 제목. 저장 날짜(`dates`)에 같은 월·일이 둘 이상이면 연도를 넣어 제목이 겹치지 않게 한다 */
+export function briefTitle(date: string, dates: readonly string[]): string {
+  const same = dates.filter((d) => d.slice(5) === date.slice(5)).length;
+  return `${SITE_NAME} · ${same > 1 ? fullKoreanDate(date) : monthDay(date)} 브리프`;
+}
+
+/** 이슈 페이지의 제목 글자. 다른 페이지와 이름이 같으면 번호로 구분한다 */
+export function issueLabel(issue: { id: number; name: string; dupName?: true }): string {
+  return issue.dupName ? `${issue.name} (이슈 ${issue.id})` : issue.name;
+}
+
+/** 대상 페이지의 제목 글자. 다른 페이지와 이름이 같으면 번호로 구분한다 */
+export function entityLabel(entity: { id: number; name: string; dupName?: true }): string {
+  return entity.dupName ? `${entity.name} (대상 ${entity.id})` : entity.name;
 }

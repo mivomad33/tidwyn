@@ -4,6 +4,7 @@ import os from "node:os";
 import path from "node:path";
 import { parseArgs as parseNodeArgs } from "node:util";
 import { BACKUP_DIR, backupMessage, commitBackup, exportBackup, readBackupDir, readBackupRef, restoreBackup } from "./backup.ts";
+import { CORRECTION_GUIDE, applyCorrection, checkCorrection, issuesOfStory } from "./corrections.ts";
 import { openDb, openExistingDb } from "./db.ts";
 import { gitTry } from "./git.ts";
 import { collectCandidates, describeFeedReport, feedSpecs, fetchText as realFetch, renderCandidatesMarkdown, type FetchText } from "./feeds.ts";
@@ -174,6 +175,7 @@ const USAGE = `명령:
   summary --run <파일>           실행 끝 출력
   render --date <날짜> | --all [--run <파일>]   DB에서 마크다운 다시 만들기(--all: 모든 브리프와 이슈 마크다운)
   restore [--repo <저장소> | --from <폴더>] [--out <DB 경로>] [--force]   백업에서 DB 복원
+  correct --file <JSON>          뉴스 하나의 글 정정(사용자가 직접 실행, /brief는 실행하지 않음)
 이슈(2단계):
   issues --run <파일> --date <날짜>       연결할 뉴스와 후보 이슈 목록(work/<날짜>.issues.md)
   issue-search [--run <파일>] --q <낱말>  이름·별칭·요약으로 이슈 찾기
@@ -1197,6 +1199,50 @@ function cmdRefUnmerge(argv: string[], ctx: Context): number {
   }
 }
 
+/** 뉴스 정정(9.5단계 4.7). 사용자가 직접 실행한다 */
+function cmdCorrect(argv: string[], ctx: Context): number {
+  const v = opts(argv, { file: { type: "string" } });
+  const file = path.resolve(ctx.cwd, need(v, "file"));
+  let raw: unknown;
+  try {
+    raw = JSON.parse(fs.readFileSync(file, "utf8"));
+  } catch (e) {
+    ctx.out(`정정 파일을 읽지 못했다: ${(e as Error).message}`);
+    return EXIT.failed;
+  }
+  ctx.out(CORRECTION_GUIDE);
+  const prep = userCommandDb(ctx);
+  if ("exit" in prep) return prep.exit;
+  const db = openExistingDb(prep.s.dbPath);
+  try {
+    const checked = checkCorrection(db, raw, homeOf(ctx), secretsOf(ctx));
+    if (!checked.ok) {
+      ctx.out(`고치지 않음:\n${formatViolations(checked.violations)}`);
+      return EXIT.failed;
+    }
+    const { date, key } = checked.input;
+    if (checked.changed.length === 0) {
+      ctx.out(`바뀐 것이 없다(${date} ${key}). 이미 적용한 정정이면 다시 하지 않아도 된다.`);
+      return EXIT.ok;
+    }
+    applyCorrection(db, checked, kstDate(ctx.now()));
+    const rendered = rerender(db, prep.s.dataDir);
+    const issues = issuesOfStory(db, checked.story.id);
+    ctx.out(
+      [
+        `고침: ${date} ${key} (${checked.changed.join(", ")}).`,
+        `- 실행 전 사본: ${prep.snapshot}`,
+        `- ${rendered}`,
+        "- 백업과 사이트 배포는 다음 /brief 실행이 한다. 바로 올리려면 docs/operations.md의 손으로 하는 배포를 쓴다.",
+        issues.length > 0 ? `- 같은 오류가 있는지 볼 이슈: ${issues.join(", ")}` : "- 붙은 이슈가 없다.",
+      ].join("\n"),
+    );
+    return EXIT.ok;
+  } finally {
+    db.close();
+  }
+}
+
 /** 대상·용어 지우기(4.3-4, E13). 사용자가 직접 실행한다 */
 function cmdRefDelete(argv: string[], ctx: Context): number {
   const v = opts(argv, { entity: { type: "string" }, term: { type: "string" } });
@@ -2186,6 +2232,7 @@ const COMMANDS: Record<string, (argv: string[], ctx: Context) => number> = {
   "ref-apply": cmdRefApply,
   "ref-unmerge": cmdRefUnmerge,
   "ref-delete": cmdRefDelete,
+  correct: cmdCorrect,
   schedules: cmdSchedules,
   "schedule-search": cmdScheduleSearch,
   "schedule-check": cmdScheduleCheck,

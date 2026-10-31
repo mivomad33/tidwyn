@@ -8,7 +8,7 @@ import { IssueSchedules } from "../components/scheduleView.ts";
 import { IssueEntityChips } from "../components/termView.ts";
 import { retry, useResource } from "../data.ts";
 import { issueEntityChips } from "../lib/entities.ts";
-import { monthDay, shortDate } from "../lib/format.ts";
+import { issueLabel, monthDay, shortDate } from "../lib/format.ts";
 import { chunkOf, dataUrl } from "../lib/paths.ts";
 import { briefPath, issuePath, resolveIssueId } from "../lib/routes.ts";
 import type { IssueChunk, SiteIssueList } from "../lib/types.ts";
@@ -37,7 +37,7 @@ export function IssuePage({ id }: { id: number }) {
     if (target?.mergedFrom) navigate(issuePath(target.id), { replace: true, state: { mergedFrom: target.mergedFrom } satisfies MergedState });
   }, [target?.id, target?.mergedFrom]);
 
-  useTitle(issue?.name ?? "이슈");
+  useTitle(issue ? issueLabel(issue) : "이슈");
   const today = useMemo(() => kstDate(new Date()), []);
   const back = <BackLink to="/issues" label="이슈" />;
   const urls = [listUrl, chunkUrl];

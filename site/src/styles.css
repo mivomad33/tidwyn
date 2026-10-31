@@ -9,6 +9,20 @@
 
 html {
   -webkit-text-size-adjust: 100%;
+  --bar-clear: 60px;
+}
+
+/* 고정 머리글과 하단 탭 뒤로 앵커 대상과 본문 포커스가 숨지 않게 한다. 머리글·탭 안의 요소는 고정이라 대상에서 뺀다(넣으면 포커스 때 페이지가 튄다) */
+.item,
+.short,
+.about section,
+.static-page h2[id] {
+  scroll-margin-top: var(--bar-clear);
+}
+
+main :focus,
+.footer :focus {
+  scroll-margin-block: var(--bar-clear) calc(64px + env(safe-area-inset-bottom));
 }
 
 body {
@@ -277,7 +291,6 @@ li:focus {
 /* 뉴스 줄 */
 .item {
   border-bottom: 1px solid var(--line);
-  scroll-margin-top: 60px;
 }
 
 .item-btn {
@@ -339,7 +352,6 @@ li:focus {
 .short {
   padding: 12px 18px;
   border-bottom: 1px solid var(--line);
-  scroll-margin-top: 60px;
 }
 
 .short.target {
@@ -601,7 +613,6 @@ li:focus {
   font-weight: 700;
   color: var(--accent);
   margin: 12px 0 0;
-  scroll-margin-top: 60px;
 }
 
 .gl {
@@ -609,7 +620,6 @@ li:focus {
   border-bottom: 1px solid var(--line);
   font-size: 13.5px;
   line-height: 1.55;
-  scroll-margin-top: 60px;
 }
 
 .gl.target {
@@ -811,6 +821,7 @@ li:focus {
 }
 
 .retry {
+  min-height: 44px;
   font-size: 14px;
   padding: 8px 16px;
   border-radius: 8px;
@@ -910,6 +921,11 @@ li:focus {
   display: flex;
   align-items: center;
   gap: 8px;
+}
+
+a.nrow:not(.row-link) {
+  min-height: 24px;
+  margin-block: -2px;
 }
 
 .nrow-txt {
@@ -1452,6 +1468,7 @@ button.short-text {
 .box-tabs button {
   font-weight: 700;
   color: var(--muted);
+  min-width: 24px;
   min-height: 32px;
   padding: 0;
   border-bottom: 2px solid transparent;
@@ -1927,3 +1944,123 @@ ul.isrc {
 .plain .keys code {
   font-size: 12.5px;
 }
+
+/* 9.5단계: 정정 표시, 제보 링크, 없는 페이지, 메일 상자, 누를 곳 넓히기(`docs/design.md`, 시안 design/final/site.css) */
+
+/* 정정 표시: 메타 줄의 글자 표시 하나다. 일반 글자색의 굵은 글자라 색 있는 대분류와 갈리고, 줄 높이를 늘리지 않는다. 펼쳐도 같은 자리에 남는다.
+   면(배지)도 테두리도 쓰지 않는다. 읽은 줄에서 제목보다 먼저 보이면 안 된다 */
+/* 폭이 모자라면 표시가 다음 줄로 내려간다. 대분류를 누르지 않는다 */
+.cat-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; margin-bottom: 4px; }
+.cat-row .cat { flex: 0 1 auto; min-width: 0; max-width: 100%; margin-bottom: 0; }
+.fix-mark { flex: none; color: var(--fg); font-size: 12px; line-height: 14px; font-weight: 700; white-space: nowrap; }
+/* 좁은 폭에서는 읽음 동그라미 왼쪽 한 세로줄에 모아, 고친 뉴스만 훑을 때 눈이 곧게 내려가게 한다. 대분류가 길면 다음 줄로 내려가도 같은 세로줄이다 */
+@media (max-width: 767.98px) {
+  .fix-mark { margin-left: auto; }
+  .short-meta .fix-mark { order: 1; }
+  /* 표시 끝과 읽음 버튼 사이를 띄워, 표시를 누르려다 읽음이 켜지지 않게 한다 */
+  .cat-row, .short-meta { padding-right: 12px; }
+}
+
+/* 펼친 카드의 바뀐 내용: 선과 면 없이 16px 띄운다. 머리말은 굵기로만 가른다. 한 건이면 날짜는 표시에만 두고 머리말은 '바뀐 내용:', 여러 건이면 최신순으로 쌓고 머리말에 날짜를 붙인다 */
+.fix { margin: 16px 0 0; font-size: 14px; line-height: 1.65; }
+.fix + .fix { margin-top: 8px; }
+.fix strong, .short-fix strong { font-weight: 700; color: var(--fg); }
+
+/* 짧은 소식의 정정: 펼침이 없어 메타 줄 아래에 사유까지 늘 보인다. 목록 안에 늘 보이는 글이라 본문만 낮춰 훑기를 막지 않는다. 펼친 카드의 .fix는 일반 글자색이다 */
+.short-fix { margin: 6px 0 0; font-size: 14px; line-height: 1.65; color: var(--muted); }
+/* 짧은 소식은 펼침이 없어 목록 끝에 제보 줄을 하나 둔다 */
+.short-report { margin: 0; padding: 0 18px; }
+
+/* 조용한 링크: 강조색을 쓰지 않는다 */
+.quiet { color: var(--muted); text-decoration: underline; text-underline-offset: 2px; }
+/* 제보 링크: 메일 앱이 없어도 주소를 볼 수 있게 글에 함께 쓴다. 넘치면 주소를 통째로 다음 줄로 내린다 */
+.report { display: inline-block; padding-block: 12px; margin-top: 6px; font-size: 14px; line-height: 20px; color: var(--muted); }
+.report-l, .report .addr-nb { text-decoration: underline; text-underline-offset: 2px; }
+.addr-nb { white-space: nowrap; }
+
+/* 없는 페이지 */
+.nf .p { max-width: 34em; }
+.btn { display: flex; align-items: center; justify-content: center; width: 100%; min-height: 48px; margin-top: 20px; padding: 0 24px; background: var(--accent); color: var(--on-accent); border-radius: 8px; font-size: 15px; font-weight: 700; }
+.btn:focus-visible { outline-color: var(--fg); }
+@media (min-width: 768px) { .btn { display: inline-flex; width: auto; } }
+/* 버튼 묶음은 어느 폭에서나 안내 바로 아래에 붙인다. 남는 높이는 보조 링크와 푸터 사이로 간다 */
+.nf-act { margin-top: 24px; }
+.nf-act .btn { margin-top: 0; }
+.nf-act .more { display: flex; flex-wrap: wrap; gap: 4px 16px; margin: 12px 0 0 -10px; padding: 0; font-size: 15px; }
+.nf-act .more a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 10px; }
+.nf .req { margin: 12px 0 0; word-break: break-all; font-size: 14px; line-height: 1.5; color: var(--muted); }
+
+/* 소개: 메일 상자. 상자 전체가 링크다 */
+.about h2.h { margin-top: 30px; }
+.about .p + .p { margin-top: 16px; }
+.about h2.h { font-size: 14px; font-weight: 700; color: var(--fg); }
+.mailbar { display: block; margin: 8px 0 16px; padding: 12px; background: var(--chip); border-radius: 10px; }
+.mailbar span { display: block; }
+.mailbar .lbl { margin-bottom: 4px; font-size: 14px; line-height: 1.5; color: var(--fg); }
+.mailbar .addr { font-size: 17px; line-height: 1.4; font-weight: 700; color: var(--accent); text-decoration: underline; text-underline-offset: 2px; overflow-wrap: anywhere; }
+
+/* 누를 곳 넓히기: 보이는 글자·칸과 줄 높이는 그대로 두고, padding·min 크기를 음수 여백으로 상쇄한다.
+   24px(전체)·44px(모바일) 관문을 맞춘다 */
+.brand { display: inline-flex; align-items: center; min-height: 44px; margin-block: -11px; }
+.datebtn .arrow { min-width: 44px; min-height: 44px; margin: -6px; }
+.datebtn .date-link { display: inline-flex; align-items: center; min-height: 44px; margin-block: -8px; padding: 0 2px; }
+.back { align-items: center; min-width: 44px; min-height: 44px; margin-block: -7px; }
+.icons { gap: 0; margin: -3px -3px -3px -7px; } /* 검색 아이콘이 왼쪽으로 4px 움직인다 */
+.icon-btn { width: 44px; height: 44px; }
+.short-text { padding-block: 11px; margin-block: -11px; }
+.short-meta { position: relative; }
+.short-meta a { display: inline-flex; align-items: center; min-height: 44px; margin-block: -14px; }
+.story b a { display: inline-flex; align-items: center; min-height: 44px; margin-block: -13px; }
+.src a { position: relative; display: inline-flex; align-items: center; min-height: 44px; margin-block: -9px; padding: 0 8px; border: none; }
+.src a::before { content: ""; position: absolute; inset: 9px 0; border: 1px solid var(--line); border-radius: 6px; pointer-events: none; }
+.footer a { display: inline-flex; justify-content: center; min-width: 24px; white-space: nowrap; }
+@media (max-width: 767px) {
+  /* 폭 맞춤은 좌우 padding으로 해 링크 사이 간격을 같게 둔다. 두 글자 링크도 44px를 넘는다 */
+  .footer nav { gap: 0; margin-left: -12px; }
+  .footer a { align-items: center; min-height: 44px; padding: 0 12px; }
+}
+
+/* 좁은 폭(확대 200% 포함)에서만 날짜를 둘째 줄로 내린다. 375 이상은 그대로다 */
+@media (max-width: 339.98px) {
+  .bar-row { flex-wrap: wrap; row-gap: 0; }
+  .bar-center { order: 3; flex-basis: 100%; }
+  /* 머리글이 두 줄이라 앵커 이동 때 가리지 않게 올린다 */
+  html { --bar-clear: 96px; }
+  /* 오른쪽 세로줄을 유지할 폭이 없다. 표시가 내려가면 글 시작선에 붙인다 */
+  .fix-mark { margin-left: 0; }
+}
+
+/* 9.5단계: 자바스크립트 없이 보이는 정적 페이지. 앱이 그리면 #root가 바뀌어 여기는 쓰이지 않는다 */
+.static-menu { border-bottom: 1px solid var(--line); padding: 0 8px; }
+.static-page { flex: 1; display: flex; flex-direction: column; }
+.static-page > main { flex: 1; }
+.static-menu ul { display: flex; flex-wrap: wrap; margin: 0; padding: 0; list-style: none; font-size: 14px; }
+.static-menu a { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; padding: 0 10px; color: var(--muted); white-space: nowrap; }
+.static-brief .brief-section + .brief-section { margin-top: 18px; }
+.static-brief .item { padding: 14px 18px; }
+.static-brief .short { padding: 12px 18px; }
+.static-brief .detail { padding: 8px 0 0; }
+.static-brief .title { display: block; margin: 0; }
+.static-terms dt { margin-top: 12px; font-size: 15px; font-weight: 700; }
+.static-terms dd { margin: 2px 0 0; font-size: 14px; line-height: 1.65; }
+.static-more { display: flex; justify-content: space-between; gap: 16px; padding: 18px; font-size: 15px; }
+.static-more a { display: inline-flex; align-items: center; min-height: 44px; }
+.static-jump { padding: 0 18px; }
+.static-brief .brief-section > h2.list-h { margin: 0; padding-top: 24px; border-top: 1px solid var(--line); font-size: 17px; color: var(--fg); }
+.static-brief .cat-row, .static-brief .short-meta { padding-right: 0; }
+.static-page a.nrow:not(.row-link) { min-height: 44px; margin-block: -4px; }
+.term-h { font-size: 17px; font-weight: 700; color: var(--fg); }
+.term-jump a { font-size: 15px; }
+.static-page .ev { border-radius: 0; }
+.static-page .ev .t { display: inline-block; min-width: 44px; padding-block: 12px; margin-block: -12px; }
+.static-page .rel { gap: 0 6px; }
+.static-page .rel a { position: relative; display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; padding: 0 10px; border: none; }
+.static-page .rel a::before { content: ""; position: absolute; inset: 7px 0; border: 1px solid var(--line); border-radius: 999px; pointer-events: none; }
+.noscript { display: flex; flex-wrap: wrap; column-gap: 16px; max-width: 640px; margin: 0 auto; padding: 16px 18px; font-size: 15px; }
+.noscript p { flex-basis: 100%; margin: 0 0 8px; line-height: 1.65; }
+.noscript a { display: inline-flex; align-items: center; min-height: 44px; color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
+
+/* 본문 건너뛰기: 키보드로 닿을 때만 보인다 */
+.skip { position: fixed; top: 8px; left: 8px; z-index: 30; transform: translateY(-200%); padding: 12px 16px; background: var(--accent); color: var(--on-accent); border-radius: 8px; font-size: 15px; font-weight: 700; }
+.skip:focus { transform: none; }
+.skip:focus-visible { outline-color: var(--fg); }

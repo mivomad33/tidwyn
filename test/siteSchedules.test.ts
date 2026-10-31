@@ -332,8 +332,8 @@ describe("4.7-6 일정 주소", () => {
 
   test("새 주소는 화면 틀로 가고, 화면이 부르는 파일 이름이 약속(siteFiles)과 같다", () => {
     const exists = (p: string) => p === "site-data/schedule-index.json";
-    for (const p of ["/schedules", "/schedules/3"]) assert.deepEqual(resolveStatic(p, exists), { kind: "fallback" }, p);
-    assert.deepEqual(resolveStatic("/site-data/schedule-ref-99.json", exists), { kind: "notFound" });
+    assert.deepEqual(resolveStatic("/schedules/3", exists), { kind: "file", path: "app.html" });
+    assert.deepEqual(resolveStatic("/site-data/schedule-ref-99.json", exists), { kind: "notFound", path: "404.html" });
     assert.equal(dataUrl.scheduleIndex(), `/site-data/${siteFiles.scheduleIndex}`);
     assert.equal(dataUrl.scheduleMonth("2026-10"), `/site-data/${siteFiles.scheduleMonth("2026-10")}`);
     assert.equal(dataUrl.scheduleRef(2), `/site-data/${siteFiles.scheduleRef(2)}`);

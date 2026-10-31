@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import { CONTACT_MAIL } from "./publicSite.ts";
 import { git, gitBuffer } from "./git.ts";
 import { NAME_KEY_FILE } from "./refs.ts";
 import { SNAPSHOT_NAME_RE } from "./snapshot.ts";
@@ -9,8 +10,8 @@ import { SNAPSHOT_NAME_RE } from "./snapshot.ts";
 
 /** 이 저장소의 GitHub noreply 주소(명세서 6장). 커밋 작성자·커미터 이메일은 이 주소여야 한다 */
 export const REPO_NOREPLY = "344780894+mivomad33@users.noreply.github.com";
-/** 커밋 메시지의 Co-Authored-By에 쓰는 주소 */
-const ALLOWED_EMAILS = [REPO_NOREPLY, "noreply@anthropic.com"];
+/** 커밋 메시지의 Co-Authored-By에 쓰는 주소와 공개 메일 */
+const ALLOWED_EMAILS = [REPO_NOREPLY, "noreply@anthropic.com", CONTACT_MAIL];
 /** 예시용 도메인(하위 도메인 포함) */
 const ALLOWED_DOMAINS = ["example.com", "example.org", "example.net"];
 /**
@@ -20,6 +21,18 @@ const ALLOWED_DOMAINS = ["example.com", "example.org", "example.net"];
 const FILE_EXTENSIONS = new Set(["png", "jpg", "jpeg", "gif", "svg", "webp", "avif", "ico", "js", "mjs", "cjs", "css", "json", "ts", "tsx", "jsx", "map", "html", "wasm", "woff", "woff2"]);
 
 export type FindingKind =
+  | "사이트맵 없음"
+  | "사이트맵 주소에 파일이 없음"
+  | "사이트맵에 첫 화면 없음"
+  | "robots.txt 없음"
+  | "robots.txt가 수집을 막음"
+  | "robots.txt에 사이트맵 줄 없음"
+  | "제목 없음"
+  | "설명 없음"
+  | "canonical이 주소와 다름"
+  | "색인 페이지에 noindex"
+  | "HTML에 영상 데이터"
+  | "사이트맵 밖 페이지에 noindex나 canonical이 없음"
   | "커밋 이메일이 noreply 주소가 아니다"
   | "홈 폴더 절대 경로"
   | "GitHub 토큰 모양"
@@ -69,8 +82,8 @@ const SECRET_PATTERNS: { kind: FindingKind; re: RegExp }[] = [
   { kind: "Google API 키 모양", re: /(?<![0-9A-Za-z_-])AIza[0-9A-Za-z_-]{35}(?![0-9A-Za-z_-])/ },
 ];
 
-/** 백업 파일 이름(backup.ts의 월별 JSON, issues.json, refs.json, schedules.json, indicators.json, meta.json). 결과물 검사도 쓴다 */
-export const BACKUP_NAME_RE = /^(?:\d{4}-\d{2}\.json|issues\.json|refs\.json|schedules\.json|indicators\.json|meta\.json)$/;
+/** 백업 파일 이름(backup.ts의 월별 JSON, issues.json, refs.json, schedules.json, indicators.json, corrections.json, meta.json). 결과물 검사도 쓴다 */
+export const BACKUP_NAME_RE = /^(?:\d{4}-\d{2}\.json|issues\.json|refs\.json|schedules\.json|indicators\.json|corrections\.json|meta\.json)$/;
 /** 영상 기록의 표시(영상 기록·사이트 영상 항목과 8단계 영상 요약 이름). 백업에는 영상 데이터를 넣지 않는다(7단계 4.4-2) */
 const VIDEO_RECORD_RE = /"(?:videoId|video_id|videos|videoSummary|video_summary)"\s*:/;
 

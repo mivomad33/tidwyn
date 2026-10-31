@@ -1,5 +1,5 @@
 // 결과물 로컬 미리 보기: node site/dev/serve.ts <결과물 폴더> [--port 4173]
-// Vercel과 같은 규칙(hosting.ts)으로 파일이 없으면 화면 틀을 주고, site-data/·pagefind/·assets/의 없는 파일은 404를 준다.
+// Vercel과 같은 규칙(hosting.ts)으로 주소를 파일로 풀고, 없는 주소는 404.html을 404로 준다.
 import fs from "node:fs";
 import http from "node:http";
 import path from "node:path";
@@ -10,6 +10,8 @@ const TYPES: Record<string, string> = {
   ".js": "text/javascript; charset=utf-8",
   ".css": "text/css; charset=utf-8",
   ".json": "application/json; charset=utf-8",
+  ".xml": "application/xml; charset=utf-8",
+  ".txt": "text/plain; charset=utf-8",
   ".svg": "image/svg+xml",
   ".png": "image/png",
   ".ico": "image/x-icon",
@@ -23,14 +25,9 @@ export function createStaticServer(root: string): http.Server {
   return http.createServer((req, res) => {
     const url = new URL(req.url ?? "/", "http://localhost");
     const r = resolveStatic(url.pathname, isFile);
-    if (r.kind === "notFound") {
-      res.writeHead(404, { "content-type": "text/plain; charset=utf-8" }).end("Not Found");
-      return;
-    }
-    const rel = r.kind === "file" ? r.path : "index.html";
-    const type = TYPES[path.extname(rel)] ?? "application/octet-stream";
-    res.writeHead(200, { "content-type": type, "cache-control": "no-cache" });
-    fs.createReadStream(path.join(dir, rel)).pipe(res);
+    const type = TYPES[path.extname(r.path)] ?? "application/octet-stream";
+    res.writeHead(r.kind === "file" ? 200 : 404, { "content-type": type, "cache-control": "no-cache" });
+    fs.createReadStream(path.join(dir, r.path)).pipe(res);
   });
 }
 

@@ -1,6 +1,7 @@
 import path from "node:path";
 import type { DatabaseSync } from "node:sqlite";
 import type { Source, StoredBrief } from "./brief.ts";
+import { correctionsByStory, type CorrectionRecord } from "./corrections.ts";
 import { briefIssues } from "./issueMarkdown.ts";
 import { allIssues, developments, relatedIssues, resolveIssue, storyKey, type Issue } from "./issues.ts";
 import { addDays } from "./kst.ts";
@@ -126,13 +127,16 @@ function storyRefs(db: DatabaseSync, entities: Entity[], terms: Term[]): StoryRe
   return out;
 }
 
-function buildDay(db: DatabaseSync, day: DayData, prev: DayData | null, details: Record<string, StoryDetail>, refs: StoryRefs, schedules: ScheduleSiteData, indicators: IndicatorSiteData, videos: VideoSiteData): DayList {
+function buildDay(db: DatabaseSync, day: DayData, prev: DayData | null, details: Record<string, StoryDetail>, refs: StoryRefs, schedules: ScheduleSiteData, indicators: IndicatorSiteData, videos: VideoSiteData, corrections: Map<string, CorrectionRecord[]>): DayList {
   const prevIssues = prev === null ? new Set<number>() : primaryIssuesOf(db, prev);
   const listStory = (key: string, base: Omit<ListStory, "issue" | "newIssue" | "continues">): ListStory => {
     const info = day.issues.get(key);
     let continues: Continues | null = null;
     if (info && prev !== null && prevIssues.has(resolveIssue(db, info.primary.id))) continues = { date: prev.date, label: continuesLabel(prev.date, day.date) };
-    return { ...base, issue: info ? { id: info.primary.id, name: info.primary.name } : null, newIssue: info !== undefined && info.previous.length === 0, continues };
+    const out: ListStory = { ...base, issue: info ? { id: info.primary.id, name: info.primary.name } : null, newIssue: info !== undefined && info.previous.length === 0, continues };
+    const fixes = corrections.get(`${day.date}/${key}`);
+    if (fixes) out.corrections = fixes.map((f) => ({ on: f.on, reason: f.reason })).reverse();
+    return out;
   };
   const sections: ListSection[] = day.stored.brief.sections.map((sec) => {
     const stories: ListStory[] = [];
@@ -214,7 +218,15 @@ function issueEntities(devs: { date: string; key: string }[], refs: StoryRefs): 
   return issueEntityChips([...counts.values()]);
 }
 
-function buildIssueDetail(db: DatabaseSync, i: Issue, names: Map<number, string>, refs: StoryRefs, schedules: ScheduleSiteData, indicators: IndicatorSiteData, videos: VideoSiteData): IssueDetail {
+/** 이름이 둘 이상의 페이지에 쓰이는지 세는 값: 남은 이슈, 페이지가 있는 대상, 공개 지표 */
+function nameCounts(live: Issue[], entities: Entity[], indicatorDefs: readonly IndicatorDef[]): Map<string, number> {
+  const out = new Map<string, number>();
+  const names = [...live.map((i) => i.name), ...entities.filter((e) => isLive(e) && e.count > 0).map((e) => e.name), ...indicatorDefs.filter((d) => d.public).map((d) => d.name)];
+  for (const n of names) out.set(n, (out.get(n) ?? 0) + 1);
+  return out;
+}
+
+function buildIssueDetail(db: DatabaseSync, i: Issue, names: Map<number, string>, refs: StoryRefs, schedules: ScheduleSiteData, indicators: IndicatorSiteData, videos: VideoSiteData, dup: boolean): IssueDetail {
   const devs = developments(db, i.id);
   const timeline = devs
     .slice()
@@ -231,6 +243,7 @@ function buildIssueDetail(db: DatabaseSync, i: Issue, names: Map<number, string>
   if (inds) detail.indicators = inds;
   const vids = videos.byIssue.get(i.id);
   if (vids) detail.videos = vids;
+  if (dup) detail.dupName = true;
   return detail;
 }
 
@@ -261,6 +274,7 @@ export function buildSiteData(db: DatabaseSync, indicatorDefs: readonly Indicato
   const schedules = buildScheduleData(db, days.map((d) => d.date));
   const indicators = buildIndicatorSiteData(db, days.map((d) => d.date), indicatorDefs);
   const videos = buildVideoSiteData(db);
+  const corrections = correctionsByStory(db);
   const lists = new Map<string, MonthList>();
   const details = new Map<string, MonthDetail>();
   days.forEach((day, idx) => {
@@ -270,7 +284,7 @@ export function buildSiteData(db: DatabaseSync, indicatorDefs: readonly Indicato
     let detail = details.get(month);
     if (!detail) details.set(month, (detail = { month, days: {} }));
     const dayDetails: Record<string, StoryDetail> = {};
-    list.days.push(buildDay(db, day, idx > 0 ? days[idx - 1]! : null, dayDetails, refs, schedules, indicators, videos));
+    list.days.push(buildDay(db, day, idx > 0 ? days[idx - 1]! : null, dayDetails, refs, schedules, indicators, videos, corrections));
     detail.days[day.date] = dayDetails;
   });
   const counts = new Map<string, number>();
@@ -290,12 +304,13 @@ export function buildSiteData(db: DatabaseSync, indicatorDefs: readonly Indicato
   const live = liveIssues(db);
   out.set(file(siteFiles.issueList), JSON.stringify(buildIssueList(db, live)));
   const names = new Map(allIssues(db).map((i) => [i.id, i.name]));
+  const nameUses = nameCounts(live, entities, indicatorDefs);
   for (const [chunk, issues] of issueChunks(live)) {
     const data: IssueChunk = { issues: {} };
-    for (const i of issues) data.issues[String(i.id)] = buildIssueDetail(db, i, names, refs, schedules, indicators, videos);
+    for (const i of issues) data.issues[String(i.id)] = buildIssueDetail(db, i, names, refs, schedules, indicators, videos, (nameUses.get(i.name) ?? 0) > 1);
     out.set(file(siteFiles.issueChunk(chunk)), JSON.stringify(data));
   }
-  for (const [name, content] of buildEntityFiles(db, entities)) out.set(file(name), content);
+  for (const [name, content] of buildEntityFiles(db, entities, nameUses)) out.set(file(name), content);
   for (const [name, content] of termSiteFiles(db, terms)) out.set(file(name), content);
   for (const [name, content] of schedules.files) out.set(file(name), content);
   for (const [name, content] of indicators.files) out.set(file(name), content);
@@ -322,7 +337,7 @@ function entityListItem(e: Entity): EntityListItem {
 }
 
 /** 대상 목록 쪽 파일, 상세 묶음, 나머지 뉴스 묶음(4.6-1, 4.6-2) */
-function buildEntityFiles(db: DatabaseSync, entities: Entity[]): Map<string, string> {
+function buildEntityFiles(db: DatabaseSync, entities: Entity[], nameUses: Map<string, number>): Map<string, string> {
   const out = new Map<string, string>();
   const live = entities.filter((e) => isLive(e) && e.count > 0);
   const items = live.map(entityListItem);
@@ -353,6 +368,7 @@ function buildEntityFiles(db: DatabaseSync, entities: Entity[]): Map<string, str
       news: news.slice(0, ENTITY_FIRST_NEWS),
       moreNews: Math.max(0, news.length - ENTITY_FIRST_NEWS),
     };
+    if ((nameUses.get(e.name) ?? 0) > 1) detail.dupName = true;
     const c = chunkOf(e.id);
     c.detail.entities[String(e.id)] = detail;
     if (news.length > ENTITY_FIRST_NEWS) c.more.news[String(e.id)] = news.slice(ENTITY_FIRST_NEWS);

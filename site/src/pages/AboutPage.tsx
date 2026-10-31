@@ -1,51 +1,19 @@
-// 사이트 소개(4.3-4, P9, P10). 4.5단계: 읽은 기록 설명과 지우기(4.6). 5단계: 일정 안내와 브라우저 기억 설명(4.7-3·4.7-7). 6단계: 지표 안내, FRED 고지·약관 링크·약관 동의 줄(4.7-6), 상자 탭 기억 설명(4.7-1). 7단계: '추천 영상' 절(4.7-5)
-import { useState } from "react";
+// 사이트 소개 화면. 본문은 components/aboutView.ts에 있고(정적 HTML과 같은 문구), 여기는 읽은 기록 지우기와 `#corrections`로 가는 스크롤만 맡는다
+import { useEffect, useState } from "react";
+import { ReadMarksText, AboutView } from "../components/aboutView.ts";
 import { BackLink, Layout, useTitle } from "../components/common.tsx";
-import { FredNotice } from "../components/indicatorView.ts";
-import { AboutVideos } from "../components/videoView.ts";
-import { FRED_AGREEMENT } from "../lib/indicators.ts";
-import { REPO_ISSUES_URL, REPO_URL } from "../lib/policy.ts";
 import { readStore } from "../readMarks.ts";
-import { Link } from "../router.tsx";
+import { Link, useLocation } from "../router.tsx";
 
 export function AboutPage() {
   useTitle("사이트 소개");
+  const { hash } = useLocation();
+  useEffect(() => {
+    if (hash) document.getElementById(hash.slice(1))?.scrollIntoView({ block: "start" });
+  }, [hash]);
   return (
     <Layout left={<BackLink to="/" label="브리프" />}>
-      <article className="plain">
-        <h1 className="page-title">사이트 소개</h1>
-        <h2 className="h">Tidwyn은</h2>
-        <p className="p">AI가 매일 한국·세계·IT·AI 뉴스를 모아 쉬운 말로 바꿔 쓴 요약이다. 뉴스는 이어지는 이슈로 묶어, 한 이야기가 어떻게 흘러왔는지 볼 수 있다.</p>
-        <p className="p">AI가 쓴 글이라 틀리거나 빠진 내용이 있을 수 있다. 중요한 내용은 각 뉴스의 출처(원문)에서 확인해 주세요.</p>
-        <p className="p">
-          인물·기관·국가의 한 줄 설명과 용어 설명도 AI가 쓴 글이라 틀릴 수 있다. 잘못된 내용은{" "}
-          <a href={REPO_ISSUES_URL} className="text-link" target="_blank" rel="noopener noreferrer">
-            원본 저장소의 GitHub 이슈
-            <span className="sr-only"> (새 탭)</span>
-          </a>
-          로 알려 주세요.
-        </p>
-        <p className="p">일정도 AI가 뉴스에서 뽑은 것이라 틀리거나 바뀌었을 수 있다. 날짜는 그 일이 열리는 곳의 현지 날짜다.</p>
-        <p className="p">지표는 공식 출처(한국은행 ECOS, FRED)에서 받은 값이지만 늦게 반영되거나 출처가 나중에 고칠 수 있다. 날짜는 출처 기준이다(한국 지표는 한국 날짜, 미국 지표는 미국 날짜).</p>
-        <h2 className="h">지표 출처</h2>
-        <p className="p">한국 지표는 한국은행 ECOS(작성기관 포함), 미국·국제 지표는 FRED(St. Louis Fed, 원 기관 표시)의 자료이고 이용 조건은 각 출처를 따른다.</p>
-        <FredNotice />
-        <p className="p">{FRED_AGREEMENT}</p>
-        <AboutVideos Link={Link} />
-        <h2 className="h">저작권</h2>
-        <p className="p">원문 기사의 저작권은 각 매체에 있다. 이 사이트는 원문 링크와 원문 이미지 주소만 연결하고 기사를 옮겨 싣지 않는다.</p>
-        <p className="p">브리프와 이슈 글의 저작권은 만든 사람(mivomad33)에게 있고, 다시 쓰거나 퍼 가는 것을 허락하지 않는다. 사이트의 코드는 MIT 라이선스다.</p>
-        <h2 className="h">방문 통계</h2>
-        <p className="p">Vercel Web Analytics로 페이지 보기 수만 센다. 쿠키를 쓰지 않고, 방문자를 알아볼 수 있는 정보를 모으지 않는다. 검색어는 통계로 보내지 않는다.</p>
-        <ReadMarksSection />
-        <h2 className="h">원본 저장소</h2>
-        <p className="p">
-          <a href={REPO_URL} className="text-link" target="_blank" rel="noopener noreferrer">
-            github.com/mivomad33/tidwyn
-            <span className="sr-only"> (새 탭)</span>
-          </a>
-        </p>
-      </article>
+      <AboutView Link={Link} readMarks={<ReadMarksSection />} />
     </Layout>
   );
 }
@@ -61,10 +29,7 @@ function ReadMarksSection() {
   }
   return (
     <>
-      <h2 className="h">읽은 기록</h2>
-      <p className="p">읽은 뉴스 표시는 이 브라우저에만 저장된다. 어디로도 보내지 않고, 다른 기기나 브라우저와 맞춰지지 않는다.</p>
-      <p className="p">뉴스 날짜로 1년이 지난 기록은 저절로 지워진다. 지운 기록은 되돌릴 수 없다.</p>
-      <p className="p">마지막으로 고른 브리프 섹션 탭, 일정 화면의 보기(목록·달력), 브리프 위 '이번 주 일정 | 지표' 상자를 접었는지와 그 상자에서 고른 탭(일정·지표)도 이 브라우저에만 기억한다. 읽은 기록 지우기는 이것들을 지우지 않는다.</p>
+      <ReadMarksText />
       <div className="actions">
         <button type="button" className="retry" onClick={clear}>
           읽은 기록 지우기

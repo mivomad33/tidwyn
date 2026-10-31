@@ -1,15 +1,17 @@
 // 날짜별 브리프와 펼친 뉴스 카드(4.2). 4.5단계: 읽음 버튼, 펼침·글 누름·링크로 읽음, '안 읽은 것만' 거르기. 5단계: 카드의 일정 칩. 6단계: 브리프 위 '이번 주 일정 | 지표' 상자. 7단계: 섹션 탭 끝의 '영상' 탭(4.7-1)
 import { useEffect, useMemo, useReducer, useRef, useState, type ReactNode } from "react";
 import { kstDate } from "../../../src/kst.ts";
-import { ALL_MAJORS, CategoryLine, Layout as Shell, ChipFilter, Empty, ErrorState, Footer, Loading, NewsTitle, ReadCheck, ReadToggle, SectionChip, ToggleChip, TopBar, useTitle } from "../components/common.tsx";
+import { ALL_MAJORS, CategoryLine, Layout as Shell, ChipFilter, Empty, ErrorState, Footer, Loading, NewsTitle, ReadCheck, ReadToggle, SectionChip, ToggleChip, TopBar, useFullTitle } from "../components/common.tsx";
 import { BriefBox } from "../components/briefBox.ts";
+import { FixMark, FixNotes } from "../components/correctionView.ts";
 import { ScheduleChips } from "../components/scheduleView.ts";
 import { VideoList, VideoSource } from "../components/videoView.ts";
 import { EntityChips, TermBox, TermChips, TermText } from "../components/termView.ts";
 import { retry, useResource, type Resource } from "../data.ts";
 import { ALL_TAB, BRIEF_TAB_KEY, VIDEO_TAB, briefTabs, currentTab, findDay, findStoryTarget, orderSources, parseBriefTab, sectionView, stateForHash, storyImage, type BriefTab, type BriefViewState } from "../lib/brief.ts";
-import { monthDay, monthDayWeekday, shortDate } from "../lib/format.ts";
+import { briefTitle, latestTitle, monthDay, monthDayWeekday, pageTitle, shortDate } from "../lib/format.ts";
 import { dataUrl } from "../lib/paths.ts";
+import { SITE_URL, shortReportHref, storyReportHref } from "../lib/policy.ts";
 import { placeTerms, storyBodyParts, termBoxPlace, toggleTerm } from "../lib/terms.ts";
 import { categoryVar } from "../lib/theme.ts";
 import { adjacentDates, briefPath, hashKey, issuePath, resolveBriefDate, VIDEO_HASH, type Route } from "../lib/routes.ts";
@@ -17,6 +19,7 @@ import { VIDEO_CHIPS, filterVideos, videoChips, videoTabLabel, type VideoChip } 
 import type { DayList, ListStory, MonthDetail, MonthList, SiteDates, StoryDetail } from "../lib/types.ts";
 import { readStored, writeStored } from "../lib/storage.ts";
 import { markRead, readStore, useReadVersion } from "../readMarks.ts";
+import { ReportLink } from "../components/reportLink.ts";
 import { Link, lastNavigation, navigate, useLocation } from "../router.tsx";
 import { boxTab, browserStorage, useRemembered, weekCollapsed } from "../storage.ts";
 import { NotFoundPage } from "./NotFoundPage.tsx";
@@ -150,7 +153,7 @@ export function BriefPage({ route }: { route: Route }) {
     el.focus({ preventScroll: true });
   }, [day, key, date, view, detailRes.status]);
 
-  useTitle(date ? `${monthDayWeekday(date)} 브리프` : route.name === "latest" ? "최근 브리프" : undefined);
+  useFullTitle(route.name === "latest" ? latestTitle() : route.name === "brief" ? briefTitle(route.date, datesRes.status === "ok" ? datesRes.data.dates : [route.date]) : pageTitle());
 
   if (datesRes.status === "error") return <Shell><ErrorState onRetry={() => retry([datesUrl])} /></Shell>;
   if (datesRes.status !== "ok") return <Shell><Loading /></Shell>;
@@ -291,6 +294,9 @@ export function BriefPage({ route }: { route: Route }) {
                 <ShortItem key={s.key} story={s} date={date} targeted={key === s.key} showSection={all} leaving={leaving(s)} onGone={() => onGone(s.key)} />
               ))}
             </ul>
+            <p className="short-report">
+              <ReportLink href={shortReportHref(monthDay(date), `${SITE_URL}${briefPath(date)}`)} label="짧은 소식 틀린 내용 알리기" />
+            </p>
           </section>
         )}
         {sv.section?.unverified && view.major === null && <p className="flow note">확인되지 않은 내용: {sv.section.unverified}</p>}
@@ -345,6 +351,18 @@ function DateNav({ date, prev, next }: { date: string; prev: string | null; next
   );
 }
 
+/** 대분류 줄. 정정이 있으면 뒤에 표시를 잇는다(펼쳐도 같은 자리다) */
+function StoryCategory({ story, open, showSection }: { story: ListStory; open: boolean; showSection: boolean }) {
+  const line = <CategoryLine major={story.category.major} minor={story.category.minor} isNewMinor={open && story.category.isNewMinor} section={showSection ? story.section : undefined} />;
+  if (!story.corrections) return line;
+  return (
+    <span className="cat-row">
+      {line}
+      <FixMark fixes={story.corrections} />
+    </span>
+  );
+}
+
 function ContLine({ story }: { story: ListStory }) {
   if (!story.continues && !story.issue) return null;
   return (
@@ -366,11 +384,21 @@ function TopItem({ story, date, open, onToggle, detail, onRetry, showSection, le
   const id = storyDomId(story.key);
   const ref = useLeave(leaving, onGone);
   const body = detail.status === "ok" ? detail.data.days[date]?.[story.key] : undefined;
+  const hasBody = body !== undefined;
+  const fixed = story.corrections !== undefined;
+  // 정정이 있는 카드를 펼쳤는데 줄이나 '바뀐 내용'이 화면 밖으로 밀리면 줄 윗선을 머리글 아래에 둔다(`docs/design.md`의 '펼침 스크롤')
+  useEffect(() => {
+    const el = ref.current;
+    if (!open || !hasBody || !fixed || !el) return;
+    const bar = document.querySelector(".bar")?.getBoundingClientRect().bottom ?? 0;
+    const lastFix = [...el.querySelectorAll(".fix")].at(-1);
+    if (el.getBoundingClientRect().top < bar || (lastFix?.getBoundingClientRect().bottom ?? 0) > window.innerHeight) el.scrollIntoView({ block: "start" });
+  }, [open, hasBody, fixed, ref]);
   return (
     <li ref={ref} id={id} tabIndex={-1} className={open ? "item open" : "item"} data-leaving={leaving || undefined}>
       <div className="item-row">
         <button type="button" className="item-btn" aria-expanded={open} aria-controls={open ? `${id}-body` : undefined} onClick={onToggle}>
-          <CategoryLine major={story.category.major} minor={story.category.minor} isNewMinor={open && story.category.isNewMinor} section={showSection ? story.section : undefined} />
+          <StoryCategory story={story} open={open} showSection={showSection} />
           <NewsTitle date={date} newsKey={story.key} className="title">
             {story.title}
           </NewsTitle>
@@ -448,6 +476,7 @@ function StoryBody({ story, detail, date }: { story: ListStory; detail: StoryDet
       )}
       <p className="sum">{text("summary")}</p>
       {box("summary")}
+      <FixNotes fixes={story.corrections} className="fix" />
       <h4 className="h">왜 중요한가</h4>
       <p className="p">{text("why")}</p>
       {box("why")}
@@ -529,6 +558,7 @@ function StoryBody({ story, detail, date }: { story: ListStory; detail: StoryDet
           </div>
         </>
       )}
+      <ReportLink href={storyReportHref(monthDay(date), story.title, `${SITE_URL}${briefPath(date, story.key)}`)} label="틀린 내용 알리기" />
     </>
   );
 }
@@ -551,7 +581,9 @@ function ShortItem({ story, date, targeted, showSection, leaving, onGone }: { st
           </span>
           {story.continues && <span className="badge">{story.continues.label}</span>}
           {story.issue && <Link to={issuePath(story.issue.id)}>{story.issue.name}</Link>}
+          <FixMark fixes={story.corrections} />
         </div>
+        <FixNotes fixes={story.corrections} className="short-fix" />
       </div>
       <ReadToggle date={date} newsKey={story.key} title={story.title} />
     </li>

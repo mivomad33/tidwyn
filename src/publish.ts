@@ -9,7 +9,8 @@ import { allEntities, allTerms, isLive } from "./refs.ts";
 import { allSchedules, dueOnOrAfter, isLiveSchedule } from "./schedules.ts";
 import { commitsAhead, describeFindings, precheck } from "./precheck.ts";
 import type { DeployResult, PostDeployCheck, PushResult, SiteResult } from "./run.ts";
-import { checkOutput } from "./siteCheck.ts";
+import { ROBOTS_FILE, SITEMAP_FILE, SITE_URL, monthDay } from "./publicSite.ts";
+import { checkBuiltSite, titleText } from "./siteCheck.ts";
 import { buildSearchRecords, buildSiteData } from "./siteData.ts";
 import { allVideos } from "./videoStore.ts";
 import { storedDates } from "./store.ts";
@@ -23,7 +24,7 @@ export const SITE_OUT_DIR = "site";
 export const SITE_INPUT_DIR = "site-input";
 export const SEARCH_RECORDS_FILE = "search-records.json";
 
-export const PRODUCTION_URL = "https://tidwyn.vercel.app";
+export const PRODUCTION_URL = SITE_URL;
 export const VERCEL_SCOPE = "mivomad33";
 export const VERCEL_PROJECT = "tidwyn";
 /** Vercel 무료 한도(100MB, 15,000개)에 가깝다고 알리는 문턱 */
@@ -46,6 +47,8 @@ export interface HttpResponse {
   status: number;
   contentType: string;
   body: string;
+  /** X-Robots-Tag 헤더 값. 없으면 빈 글자다 */
+  robotsTag: string;
 }
 export type HttpGet = (url: string) => Promise<HttpResponse>;
 /** 원격 저장소 작업. 실패하면 예외 대신 ok: false */
@@ -81,7 +84,7 @@ export const cliVercel: VercelRunner = (args, repoDir) => {
 
 export const fetchGet: HttpGet = async (url) => {
   const res = await fetch(url, { headers: { "cache-control": "no-cache" }, redirect: "follow", signal: AbortSignal.timeout(30_000) });
-  return { status: res.status, contentType: res.headers.get("content-type") ?? "", body: await res.text() };
+  return { status: res.status, contentType: res.headers.get("content-type") ?? "", robotsTag: res.headers.get("x-robots-tag") ?? "", body: await res.text() };
 };
 
 /** 원격 작업이 비밀번호를 묻고 멈추지 않게 한다 */
@@ -174,7 +177,7 @@ export function buildSite(input: BuildInput): SiteResult {
   }
   if (!built.ok) return { status: "failed", outDir, reason: built.message };
   if (!fs.existsSync(outDir)) return { status: "failed", outDir, reason: `빌더가 결과물 폴더를 만들지 않았다: ${outDir}` };
-  const check = checkOutput(outDir, input.home, input.secrets);
+  const check = checkBuiltSite(outDir, input.home, input.secrets);
   if (check.findings.length > 0) {
     return { status: "failed", outDir, reason: `결과물 검사에 걸렸다(${check.findings.length}건)`, findings: describeFindings(check.findings) };
   }
@@ -218,7 +221,8 @@ function latestStoredDate(dbPath: string): string | null {
 }
 
 /**
- * 배포 뒤 점검(4.6-3): 운영 주소의 첫 화면(200, HTML)과 dates.json의 최근 날짜가 DB의 최근 저장일과 같은지.
+ * 배포 뒤 점검(4.6-3, 9.5단계 4.8-2): 운영 주소의 첫 화면(200, HTML)과 dates.json의 최근 날짜가 DB의 최근 저장일과 같은지,
+ * 수집기용 파일, 최근 날짜 페이지, 없는 주소, 수집 제외 헤더가 맞는지.
  * vercel deploy가 끝난 직후에는 운영 주소가 아직 이전 배포를 가리킬 수 있어서, 통과할 때까지 정해진 횟수만큼 다시 본다.
  */
 export async function postDeployCheck(httpGet: HttpGet, expected: string | null, retry: CheckRetry = { attempts: 1, sleep: async () => {} }): Promise<PostDeployCheck> {
@@ -232,6 +236,26 @@ export async function postDeployCheck(httpGet: HttpGet, expected: string | null,
   return last;
 }
 
+/** 없는 주소 점검에 쓰는 경로. 파일로도 앱 주소로도 만들어지지 않는다 */
+const MISSING_PATH = "/no-such-page";
+
+/** 수집기용 파일, 최근 날짜 페이지, 없는 주소, 헤더를 본다. 틀린 곳의 설명을 돌려주고 맞으면 null이다 */
+async function crawlProblem(httpGet: HttpGet, date: string | null): Promise<string | null> {
+  const robots = await httpGet(`${PRODUCTION_URL}/${ROBOTS_FILE}`);
+  if (robots.status !== 200 || !/^sitemap\s*:/im.test(robots.body)) return `robots.txt가 ${robots.status}이거나 사이트맵 줄이 없다`;
+  const sitemap = await httpGet(`${PRODUCTION_URL}/${SITEMAP_FILE}`);
+  if (sitemap.status !== 200 || !sitemap.body.includes("<loc>")) return `sitemap.xml이 ${sitemap.status}이거나 주소가 없다`;
+  if (date !== null) {
+    const page = await httpGet(`${PRODUCTION_URL}/${date}`);
+    if (page.status !== 200) return `최근 날짜 페이지가 ${page.status}이다`;
+    if (!titleText(page.body).includes(monthDay(date))) return "최근 날짜 페이지의 제목에 그 날짜가 없다";
+    if (/noindex/i.test(page.robotsTag)) return "최근 날짜 페이지에 X-Robots-Tag: noindex가 붙었다";
+  }
+  const missing = await httpGet(`${PRODUCTION_URL}${MISSING_PATH}`);
+  if (missing.status !== 404) return `없는 주소가 ${missing.status}이다`;
+  return null;
+}
+
 async function checkOnce(httpGet: HttpGet, expected: string | null): Promise<PostDeployCheck> {
   const home = `${PRODUCTION_URL}/`;
   const datesUrl = `${PRODUCTION_URL}/site-data/dates.json`;
@@ -239,6 +263,7 @@ async function checkOnce(httpGet: HttpGet, expected: string | null): Promise<Pos
     const r = await httpGet(home);
     if (r.status !== 200) return { status: "failed", reason: `첫 화면이 ${r.status}이다(${home})` };
     if (!/text\/html/i.test(r.contentType)) return { status: "failed", reason: `첫 화면이 HTML이 아니다(${r.contentType || "형식 없음"})` };
+    if (/noindex/i.test(r.robotsTag)) return { status: "failed", reason: "첫 화면에 X-Robots-Tag: noindex가 붙었다" };
   } catch (e) {
     return { status: "failed", reason: `첫 화면을 받지 못했다: ${(e as Error).message}` };
   }
@@ -246,11 +271,18 @@ async function checkOnce(httpGet: HttpGet, expected: string | null): Promise<Pos
   try {
     const r = await httpGet(datesUrl);
     if (r.status !== 200) return { status: "failed", reason: `사이트 데이터(dates.json)가 ${r.status}이다` };
+    if (!/noindex/i.test(r.robotsTag)) return { status: "failed", reason: "사이트 데이터(dates.json)에 X-Robots-Tag: noindex가 없다" };
     latest = (JSON.parse(r.body) as { latestDate?: unknown }).latestDate;
   } catch (e) {
     return { status: "failed", reason: `사이트 데이터(dates.json)를 받지 못했다: ${(e as Error).message}` };
   }
   if (latest !== expected) return { status: "failed", reason: `운영 사이트의 최근 날짜(${String(latest)})가 DB의 최근 저장일(${String(expected)})과 다르다` };
+  try {
+    const problem = await crawlProblem(httpGet, expected);
+    if (problem !== null) return { status: "failed", reason: problem };
+  } catch (e) {
+    return { status: "failed", reason: `수집기용 주소를 받지 못했다: ${(e as Error).message}` };
+  }
   return { status: "passed", latestDate: expected };
 }
 
@@ -258,7 +290,7 @@ async function checkOnce(httpGet: HttpGet, expected: string | null): Promise<Pos
 export async function deployOutput(input: DeployInput): Promise<DeployResult> {
   if (!fs.existsSync(input.outDir) || !fs.statSync(input.outDir).isDirectory()) return { status: "failed", reason: `결과물 폴더가 없다: ${input.outDir}` };
   if (!fs.existsSync(input.dbPath)) return { status: "failed", reason: `DB가 없다: ${input.dbPath}` };
-  const check = checkOutput(input.outDir, input.home, input.secrets);
+  const check = checkBuiltSite(input.outDir, input.home, input.secrets);
   if (check.findings.length > 0) {
     return { status: "failed", reason: `결과물 검사에 걸려 올리지 않았다(${check.findings.length}건)`, findings: describeFindings(check.findings) };
   }
@@ -288,7 +320,7 @@ export type PreviewResult = { status: "deployed"; url: string } | { status: "fai
  */
 export function deployPreview(input: PreviewInput): PreviewResult {
   if (!fs.existsSync(input.outDir) || !fs.statSync(input.outDir).isDirectory()) return { status: "failed", reason: `결과물 폴더가 없다: ${input.outDir}` };
-  const check = checkOutput(input.outDir, input.home, input.secrets);
+  const check = checkBuiltSite(input.outDir, input.home, input.secrets);
   if (check.findings.length > 0) {
     return { status: "failed", reason: `결과물 검사에 걸려 올리지 않았다(${check.findings.length}건)`, findings: describeFindings(check.findings) };
   }

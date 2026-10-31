@@ -157,6 +157,8 @@ export interface EntityDetail extends EntityListItem {
   news: EntityNews[];
   /** news 뒤에 더 있는 뉴스 수(entity-news 묶음에 있다) */
   moreNews: number;
+  /** 9.5단계: 다른 이슈·대상·지표와 이름이 같으면 true(페이지 제목을 구분한다). 아니면 항목을 뺀다 */
+  dupName?: true;
 }
 
 /** `entity-<묶음>.json`: 흡수·지운 것은 entities에 없다. 흡수된 식별자는 merged에만 있다 */
@@ -335,6 +337,14 @@ export interface ListStory {
   /** 주 이슈가 있고 그날 기준 이전 전개가 없으면 true("새 이슈") */
   newIssue: boolean;
   continues: Continues | null;
+  /** 9.5단계: 정정 기록(최신순). 정정이 없으면 항목을 뺀다 */
+  corrections?: StoryCorrection[];
+}
+
+/** 뉴스 정정 한 건: 고친 날(KST)과 사유 */
+export interface StoryCorrection {
+  on: string;
+  reason: string;
 }
 
 export interface ListSection {
@@ -427,6 +437,8 @@ export interface IssueDetail extends IssueListItem {
   indicators?: IssueIndicator[];
   /** 7단계: 이 이슈(와 흡수된 이슈)에 붙은 추천 영상, 붙은 브리프 날짜 최근 순(같은 영상은 한 번). 개수 제한과 30일 숨김은 화면이 한다. 없으면 항목을 뺀다 */
   videos?: IssueVideo[];
+  /** 9.5단계: 다른 이슈·대상·지표와 이름이 같으면 true(페이지 제목을 구분한다). 아니면 항목을 뺀다 */
+  dupName?: true;
 }
 
 /** `issue-<묶음>.json` */

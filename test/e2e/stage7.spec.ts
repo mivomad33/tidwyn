@@ -240,7 +240,7 @@ test.describe("4.7-4 개인정보 처리방침", () => {
     // 이 데이터에는 지표 파일이 없어 지표 화면은 불러오기 오류 상태다(바닥글은 같다)
     ["/indicators", (p) => expect(p.getByRole("button", { name: "다시 시도" })).toBeVisible()],
     ["/about", (p) => expect(p.getByRole("heading", { level: 1, name: "사이트 소개" })).toBeVisible()],
-    ["/no-such-page", (p) => expect(p.getByRole("heading", { level: 1, name: "없는 페이지" })).toBeVisible()],
+    ["/no-such-page", (p) => expect(p.getByRole("heading", { level: 1, name: "이 주소에는 페이지가 없다" })).toBeVisible()],
   ];
   for (const [url, ready] of pages) {
     test(`${url}의 바닥글에 동의 문구가 있고 '개인정보 처리방침'으로 간다`, async ({ page }) => {
