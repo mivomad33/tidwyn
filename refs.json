@@ -1963,6 +1963,262 @@
       "describedOn": "2026-10-30",
       "describedStory": "2026-10-29/IT·AI-s1",
       "mergedInto": null
+    },
+    {
+      "id": 160,
+      "kind": "인물",
+      "name": "김기현",
+      "aliases": [
+        "Kim Gi-hyeon"
+      ],
+      "description": "국민의힘 국회의원, 전 당대표",
+      "describedOn": "2026-10-31",
+      "describedStory": "2026-10-30/한국-2",
+      "mergedInto": null
+    },
+    {
+      "id": 161,
+      "kind": "인물",
+      "name": "위성락",
+      "aliases": [
+        "Wi Sung-lac"
+      ],
+      "description": "대한민국 국가안보실장",
+      "describedOn": "2026-10-31",
+      "describedStory": "2026-10-30/한국-5",
+      "mergedInto": null
+    },
+    {
+      "id": 162,
+      "kind": "인물",
+      "name": "오세훈",
+      "aliases": [
+        "Oh Se-hoon"
+      ],
+      "description": "서울특별시장",
+      "describedOn": "2026-10-31",
+      "describedStory": "2026-10-30/한국-6",
+      "mergedInto": null
+    },
+    {
+      "id": 163,
+      "kind": "인물",
+      "name": "민중기",
+      "aliases": [],
+      "description": "김건희 여사 관련 의혹 특별검사",
+      "describedOn": "2026-10-31",
+      "describedStory": "2026-10-30/한국-6",
+      "mergedInto": null
+    },
+    {
+      "id": 164,
+      "kind": "인물",
+      "name": "최불암",
+      "aliases": [
+        "최영한"
+      ],
+      "description": "대한민국 배우, 초록우산 어린이재단 전국후원회장",
+      "describedOn": "2026-10-31",
+      "describedStory": "2026-10-30/한국-7",
+      "mergedInto": null
+    },
+    {
+      "id": 165,
+      "kind": "기관",
+      "name": "포스코",
+      "aliases": [
+        "POSCO"
+      ],
+      "description": "한국의 철강 기업",
+      "describedOn": "2026-10-31",
+      "describedStory": "2026-10-30/한국-s4",
+      "mergedInto": null
+    },
+    {
+      "id": 166,
+      "kind": "기관",
+      "name": "일본은행",
+      "aliases": [
+        "BOJ",
+        "Bank of Japan",
+        "일은"
+      ],
+      "description": "일본의 중앙은행",
+      "describedOn": "2026-10-31",
+      "describedStory": "2026-10-30/세계-2",
+      "mergedInto": null
+    },
+    {
+      "id": 167,
+      "kind": "인물",
+      "name": "우에다 가즈오",
+      "aliases": [
+        "우에다",
+        "Kazuo Ueda"
+      ],
+      "description": "일본은행 총재",
+      "describedOn": "2026-10-31",
+      "describedStory": "2026-10-30/세계-2",
+      "mergedInto": null
+    },
+    {
+      "id": 168,
+      "kind": "인물",
+      "name": "메리 펠톨라",
+      "aliases": [
+        "Mary Peltola"
+      ],
+      "description": "미국 민주당 알래스카 상원의원 후보",
+      "describedOn": "2026-10-31",
+      "describedStory": "2026-10-30/세계-3",
+      "mergedInto": null
+    },
+    {
+      "id": 169,
+      "kind": "인물",
+      "name": "댄 S. 설리번",
+      "aliases": [
+        "Dan S. Sullivan"
+      ],
+      "description": "미국 공화당 알래스카주 상원의원",
+      "describedOn": "2026-10-31",
+      "describedStory": "2026-10-30/세계-3",
+      "mergedInto": null
+    },
+    {
+      "id": 170,
+      "kind": "인물",
+      "name": "세르게이 라브로프",
+      "aliases": [
+        "라브로프",
+        "Sergey Lavrov"
+      ],
+      "description": "러시아 외무장관",
+      "describedOn": "2026-10-31",
+      "describedStory": "2026-10-30/세계-4",
+      "mergedInto": null
+    },
+    {
+      "id": 171,
+      "kind": "기관",
+      "name": "노바야 가제타",
+      "aliases": [
+        "Novaya Gazeta"
+      ],
+      "description": "러시아의 독립 신문",
+      "describedOn": "2026-10-31",
+      "describedStory": "2026-10-30/세계-6",
+      "mergedInto": null
+    },
+    {
+      "id": 172,
+      "kind": "인물",
+      "name": "드미트리 무라토프",
+      "aliases": [
+        "Dmitry Muratov"
+      ],
+      "description": "노바야 가제타 편집장 출신, 2021년 노벨평화상 수상자",
+      "describedOn": "2026-10-31",
+      "describedStory": "2026-10-30/세계-6",
+      "mergedInto": null
+    },
+    {
+      "id": 173,
+      "kind": "국가",
+      "name": "아르헨티나",
+      "aliases": [
+        "Argentina"
+      ],
+      "description": "남아메리카 남부의 나라",
+      "describedOn": "2026-10-31",
+      "describedStory": "2026-10-30/세계-s2",
+      "mergedInto": null
+    },
+    {
+      "id": 174,
+      "kind": "국가",
+      "name": "폴란드",
+      "aliases": [
+        "Poland"
+      ],
+      "description": "중부 유럽의 나라",
+      "describedOn": "2026-10-31",
+      "describedStory": "2026-10-30/세계-s3",
+      "mergedInto": null
+    },
+    {
+      "id": 175,
+      "kind": "인물",
+      "name": "레오 14세",
+      "aliases": [
+        "Pope Leo XIV",
+        "교황 레오 14세"
+      ],
+      "description": "가톨릭 교황, 미국 시카고 출신",
+      "describedOn": "2026-10-31",
+      "describedStory": "2026-10-30/세계-s4",
+      "mergedInto": null
+    },
+    {
+      "id": 176,
+      "kind": "기관",
+      "name": "TRM 랩스",
+      "aliases": [
+        "TRM Labs",
+        "TRM"
+      ],
+      "description": "블록체인 분석 기업",
+      "describedOn": "2026-10-31",
+      "describedStory": "2026-10-30/IT·AI-2",
+      "mergedInto": null
+    },
+    {
+      "id": 177,
+      "kind": "인물",
+      "name": "리처드 텅",
+      "aliases": [
+        "Richard Teng"
+      ],
+      "description": "바이낸스 최고경영자",
+      "describedOn": "2026-10-31",
+      "describedStory": "2026-10-30/IT·AI-2",
+      "mergedInto": null
+    },
+    {
+      "id": 178,
+      "kind": "기관",
+      "name": "커서",
+      "aliases": [
+        "Cursor"
+      ],
+      "description": "AI 코드 편집기를 만드는 기업",
+      "describedOn": "2026-10-31",
+      "describedStory": "2026-10-30/IT·AI-4",
+      "mergedInto": null
+    },
+    {
+      "id": 179,
+      "kind": "기관",
+      "name": "스냅",
+      "aliases": [
+        "Snap"
+      ],
+      "description": "스냅챗을 운영하는 미국 기업",
+      "describedOn": "2026-10-31",
+      "describedStory": "2026-10-30/IT·AI-s1",
+      "mergedInto": null
+    },
+    {
+      "id": 180,
+      "kind": "기관",
+      "name": "레딧",
+      "aliases": [
+        "Reddit"
+      ],
+      "description": "미국의 온라인 커뮤니티 기업",
+      "describedOn": "2026-10-31",
+      "describedStory": "2026-10-30/IT·AI-s2",
+      "mergedInto": null
     }
   ],
   "terms": [
@@ -2803,6 +3059,85 @@
         "매개변수"
       ],
       "description": "AI 모델이 학습으로 조정하는 숫자 값이다. 개수가 많을수록 모델 규모가 크다.",
+      "mergedInto": null
+    },
+    {
+      "id": 102,
+      "name": "청탁금지법",
+      "aliases": [
+        "김영란법"
+      ],
+      "description": "공직자 등이 직무와 관련해 금품을 받거나 부정한 청탁을 받지 못하게 막는 법이다. 공직자의 배우자가 받는 경우도 다룬다.",
+      "mergedInto": null
+    },
+    {
+      "id": 103,
+      "name": "기저효과",
+      "aliases": [],
+      "description": "비교 대상 시점의 수치가 유난히 낮거나 높아서 지금 수치가 실제보다 크게 달라 보이는 현상이다.",
+      "mergedInto": null
+    },
+    {
+      "id": 104,
+      "name": "완전운용능력",
+      "aliases": [
+        "FOC"
+      ],
+      "description": "전작권 전환을 위해 미래 연합사령부가 임무를 온전히 수행할 수 있는지 검증하는 단계다. 초기운용능력 평가 다음에 온다.",
+      "mergedInto": null
+    },
+    {
+      "id": 105,
+      "name": "상고심",
+      "aliases": [
+        "상고"
+      ],
+      "description": "2심 판결에 불복해 대법원에서 받는 재판이다. 사실을 다시 따지기보다 법을 제대로 적용했는지를 본다.",
+      "mergedInto": null
+    },
+    {
+      "id": 106,
+      "name": "기조 물가",
+      "aliases": [
+        "기조적 물가"
+      ],
+      "description": "에너지나 신선식품처럼 일시적으로 출렁이는 요인을 덜어 내고 본 물가의 흐름이다. 중앙은행이 금리를 정할 때 참고한다.",
+      "mergedInto": null
+    },
+    {
+      "id": 107,
+      "name": "준비금 증명",
+      "aliases": [
+        "Proof of Reserves"
+      ],
+      "description": "가상자산 거래소가 고객 자산만큼 실제로 코인을 갖고 있음을 블록체인 자료로 보여 주는 절차다.",
+      "mergedInto": null
+    },
+    {
+      "id": 108,
+      "name": "공급망 공격",
+      "aliases": [
+        "Supply chain attack"
+      ],
+      "description": "목표를 직접 뚫는 대신 그들이 쓰는 소프트웨어나 배포 경로를 오염시켜 침투하는 공격이다.",
+      "mergedInto": null
+    },
+    {
+      "id": 109,
+      "name": "SSH 키",
+      "aliases": [
+        "SSH"
+      ],
+      "description": "비밀번호 없이 다른 컴퓨터에 안전하게 원격 접속할 때 쓰는 암호 키 쌍이다. 공격자 키가 등록되면 공격자도 접속할 수 있다.",
+      "mergedInto": null
+    },
+    {
+      "id": 110,
+      "name": "피싱",
+      "aliases": [
+        "Phishing"
+      ],
+      "description": "믿을 만한 기관이나 사람을 사칭해 비밀번호 같은 정보를 빼내거나 악성 파일을 열게 하는 공격이다.",
       "mergedInto": null
     }
   ],
@@ -3830,6 +4165,242 @@
     {
       "story": "2026-10-29/한국-s5",
       "entity": 9
+    },
+    {
+      "story": "2026-10-30/IT·AI-1",
+      "entity": 65
+    },
+    {
+      "story": "2026-10-30/IT·AI-1",
+      "entity": 151
+    },
+    {
+      "story": "2026-10-30/IT·AI-2",
+      "entity": 12
+    },
+    {
+      "story": "2026-10-30/IT·AI-2",
+      "entity": 149
+    },
+    {
+      "story": "2026-10-30/IT·AI-2",
+      "entity": 176
+    },
+    {
+      "story": "2026-10-30/IT·AI-2",
+      "entity": 177
+    },
+    {
+      "story": "2026-10-30/IT·AI-3",
+      "entity": 50
+    },
+    {
+      "story": "2026-10-30/IT·AI-3",
+      "entity": 113
+    },
+    {
+      "story": "2026-10-30/IT·AI-4",
+      "entity": 50
+    },
+    {
+      "story": "2026-10-30/IT·AI-4",
+      "entity": 178
+    },
+    {
+      "story": "2026-10-30/IT·AI-5",
+      "entity": 12
+    },
+    {
+      "story": "2026-10-30/IT·AI-5",
+      "entity": 53
+    },
+    {
+      "story": "2026-10-30/IT·AI-6",
+      "entity": 62
+    },
+    {
+      "story": "2026-10-30/IT·AI-s1",
+      "entity": 56
+    },
+    {
+      "story": "2026-10-30/IT·AI-s1",
+      "entity": 179
+    },
+    {
+      "story": "2026-10-30/IT·AI-s2",
+      "entity": 62
+    },
+    {
+      "story": "2026-10-30/IT·AI-s2",
+      "entity": 180
+    },
+    {
+      "story": "2026-10-30/세계-1",
+      "entity": 40
+    },
+    {
+      "story": "2026-10-30/세계-1",
+      "entity": 107
+    },
+    {
+      "story": "2026-10-30/세계-1",
+      "entity": 137
+    },
+    {
+      "story": "2026-10-30/세계-2",
+      "entity": 166
+    },
+    {
+      "story": "2026-10-30/세계-2",
+      "entity": 167
+    },
+    {
+      "story": "2026-10-30/세계-3",
+      "entity": 38
+    },
+    {
+      "story": "2026-10-30/세계-3",
+      "entity": 168
+    },
+    {
+      "story": "2026-10-30/세계-3",
+      "entity": 169
+    },
+    {
+      "story": "2026-10-30/세계-4",
+      "entity": 30
+    },
+    {
+      "story": "2026-10-30/세계-4",
+      "entity": 42
+    },
+    {
+      "story": "2026-10-30/세계-4",
+      "entity": 170
+    },
+    {
+      "story": "2026-10-30/세계-5",
+      "entity": 29
+    },
+    {
+      "story": "2026-10-30/세계-5",
+      "entity": 30
+    },
+    {
+      "story": "2026-10-30/세계-5",
+      "entity": 31
+    },
+    {
+      "story": "2026-10-30/세계-5",
+      "entity": 42
+    },
+    {
+      "story": "2026-10-30/세계-6",
+      "entity": 30
+    },
+    {
+      "story": "2026-10-30/세계-6",
+      "entity": 171
+    },
+    {
+      "story": "2026-10-30/세계-6",
+      "entity": 172
+    },
+    {
+      "story": "2026-10-30/세계-s2",
+      "entity": 33
+    },
+    {
+      "story": "2026-10-30/세계-s2",
+      "entity": 35
+    },
+    {
+      "story": "2026-10-30/세계-s2",
+      "entity": 173
+    },
+    {
+      "story": "2026-10-30/세계-s3",
+      "entity": 174
+    },
+    {
+      "story": "2026-10-30/세계-s4",
+      "entity": 175
+    },
+    {
+      "story": "2026-10-30/한국-1",
+      "entity": 63
+    },
+    {
+      "story": "2026-10-30/한국-1",
+      "entity": 64
+    },
+    {
+      "story": "2026-10-30/한국-2",
+      "entity": 3
+    },
+    {
+      "story": "2026-10-30/한국-2",
+      "entity": 160
+    },
+    {
+      "story": "2026-10-30/한국-4",
+      "entity": 12
+    },
+    {
+      "story": "2026-10-30/한국-4",
+      "entity": 125
+    },
+    {
+      "story": "2026-10-30/한국-5",
+      "entity": 69
+    },
+    {
+      "story": "2026-10-30/한국-5",
+      "entity": 161
+    },
+    {
+      "story": "2026-10-30/한국-6",
+      "entity": 162
+    },
+    {
+      "story": "2026-10-30/한국-6",
+      "entity": 163
+    },
+    {
+      "story": "2026-10-30/한국-7",
+      "entity": 164
+    },
+    {
+      "story": "2026-10-30/한국-s1",
+      "entity": 70
+    },
+    {
+      "story": "2026-10-30/한국-s1",
+      "entity": 71
+    },
+    {
+      "story": "2026-10-30/한국-s2",
+      "entity": 8
+    },
+    {
+      "story": "2026-10-30/한국-s2",
+      "entity": 9
+    },
+    {
+      "story": "2026-10-30/한국-s2",
+      "entity": 84
+    },
+    {
+      "story": "2026-10-30/한국-s4",
+      "entity": 165
+    },
+    {
+      "story": "2026-10-30/한국-s5",
+      "entity": 8
+    },
+    {
+      "story": "2026-10-30/한국-s5",
+      "entity": 9
     }
   ],
   "termLinks": [
@@ -4447,6 +5018,101 @@
       "story": "2026-10-29/한국-8",
       "term": 86,
       "surface": "기금형 퇴직연금"
+    },
+    {
+      "story": "2026-10-30/IT·AI-1",
+      "term": 96,
+      "surface": "시가총액"
+    },
+    {
+      "story": "2026-10-30/IT·AI-2",
+      "term": 107,
+      "surface": "준비금 증명"
+    },
+    {
+      "story": "2026-10-30/IT·AI-4",
+      "term": 108,
+      "surface": "공급망 공격"
+    },
+    {
+      "story": "2026-10-30/IT·AI-4",
+      "term": 109,
+      "surface": "SSH 키"
+    },
+    {
+      "story": "2026-10-30/IT·AI-5",
+      "term": 110,
+      "surface": "피싱"
+    },
+    {
+      "story": "2026-10-30/IT·AI-6",
+      "term": 69,
+      "surface": "TPU"
+    },
+    {
+      "story": "2026-10-30/세계-1",
+      "term": 89,
+      "surface": "기뢰"
+    },
+    {
+      "story": "2026-10-30/세계-2",
+      "term": 53,
+      "surface": "기준금리"
+    },
+    {
+      "story": "2026-10-30/세계-2",
+      "term": 106,
+      "surface": "기조 물가"
+    },
+    {
+      "story": "2026-10-30/세계-5",
+      "term": 19,
+      "surface": "국지 휴전"
+    },
+    {
+      "story": "2026-10-30/한국-1",
+      "term": 37,
+      "surface": "사이드카"
+    },
+    {
+      "story": "2026-10-30/한국-2",
+      "term": 102,
+      "surface": "청탁금지법"
+    },
+    {
+      "story": "2026-10-30/한국-3",
+      "term": 65,
+      "surface": "설비투자"
+    },
+    {
+      "story": "2026-10-30/한국-3",
+      "term": 103,
+      "surface": "기저효과"
+    },
+    {
+      "story": "2026-10-30/한국-4",
+      "term": 75,
+      "surface": "탄도미사일"
+    },
+    {
+      "story": "2026-10-30/한국-5",
+      "term": 48,
+      "surface": "SCM"
+    },
+    {
+      "story": "2026-10-30/한국-5",
+      "term": 49,
+      "surface": "전작권"
+    },
+    {
+      "story": "2026-10-30/한국-5",
+      "term": 104,
+      "surface": "완전운용능력"
+    },
+    {
+      "story": "2026-10-30/한국-6",
+      "term": 105,
+      "surface": "상고심"
     }
   ],
   "merges": [],

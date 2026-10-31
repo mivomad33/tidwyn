@@ -94,7 +94,7 @@
       "name": "한미일 외교장관 회동",
       "due": "2026-10-30",
       "major": "국제",
-      "outcome": null,
+      "outcome": "result",
       "postponedTo": null,
       "mergedInto": null,
       "deleted": false,
@@ -169,6 +169,39 @@
     {
       "id": 16,
       "name": "ECB 12월 통화정책 회의",
+      "due": "2026-12",
+      "major": "경제",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 17,
+      "name": "배우 최불암 발인",
+      "due": "2026-11-02",
+      "major": "문화·스포츠",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 18,
+      "name": "노바야 가제타 사무실 폐쇄",
+      "due": "2026-11-09",
+      "major": "국제",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 19,
+      "name": "일본은행 12월 금융정책결정회의",
       "due": "2026-12",
       "major": "경제",
       "outcome": null,
@@ -297,6 +330,36 @@
     {
       "story": "2026-10-29/한국-8",
       "schedule": 13,
+      "role": "basis"
+    },
+    {
+      "story": "2026-10-30/세계-2",
+      "schedule": 19,
+      "role": "basis"
+    },
+    {
+      "story": "2026-10-30/세계-3",
+      "schedule": 6,
+      "role": "basis"
+    },
+    {
+      "story": "2026-10-30/세계-4",
+      "schedule": 9,
+      "role": "result"
+    },
+    {
+      "story": "2026-10-30/세계-6",
+      "schedule": 18,
+      "role": "basis"
+    },
+    {
+      "story": "2026-10-30/한국-5",
+      "schedule": 3,
+      "role": "basis"
+    },
+    {
+      "story": "2026-10-30/한국-7",
+      "schedule": 17,
       "role": "basis"
     }
   ],
