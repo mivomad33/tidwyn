@@ -209,6 +209,50 @@
       "mergedInto": null,
       "deleted": false,
       "deletedOn": null
+    },
+    {
+      "id": 20,
+      "name": "국회 국방위원회 방미단 하와이 일정 시작",
+      "due": "2026-11-01",
+      "major": "정치",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 21,
+      "name": "올레시키 지역 휴전 종료",
+      "due": "2026-11-01",
+      "major": "국제",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 22,
+      "name": "바이낸스 단계적 출금 재개",
+      "due": "2026-11-01",
+      "major": "IT·AI",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 23,
+      "name": "바이낸스 갱신된 준비금 증명 공개",
+      "due": "2026-11-02",
+      "major": "IT·AI",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
     }
   ],
   "links": [
@@ -360,6 +404,41 @@
     {
       "story": "2026-10-30/한국-7",
       "schedule": 17,
+      "role": "basis"
+    },
+    {
+      "story": "2026-10-31/IT·AI-1",
+      "schedule": 22,
+      "role": "basis"
+    },
+    {
+      "story": "2026-10-31/IT·AI-1",
+      "schedule": 23,
+      "role": "basis"
+    },
+    {
+      "story": "2026-10-31/세계-1",
+      "schedule": 6,
+      "role": "basis"
+    },
+    {
+      "story": "2026-10-31/세계-2",
+      "schedule": 6,
+      "role": "basis"
+    },
+    {
+      "story": "2026-10-31/세계-7",
+      "schedule": 21,
+      "role": "basis"
+    },
+    {
+      "story": "2026-10-31/한국-3",
+      "schedule": 10,
+      "role": "basis"
+    },
+    {
+      "story": "2026-10-31/한국-5",
+      "schedule": 20,
       "role": "basis"
     }
   ],

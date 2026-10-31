@@ -4649,18 +4649,1249 @@
       },
       "collectedAt": "2026-10-31T17:40:47+09:00",
       "late": false
+    },
+    {
+      "brief": {
+        "targetDate": "2026-10-31",
+        "headline": "이란 최고지도자가 지리적 제한 없는 대응을 명령한 가운데 루비오는 트럼프가 공격 재개를 아직 정하지 않았다고 밝혔고, 미국 중간선거 사전투표는 5천만 명을 넘겼다. 한국에서는 참사 뒤 처음 주말과 겹친 핼러윈에 홍대·이태원으로 16만 명이 몰렸지만 큰 사고 없이 지나갔다.",
+        "keywords": [
+          "핼러윈 인파",
+          "이란 공격 재개",
+          "미 중간선거",
+          "폴란드 헌재",
+          "바이낸스 복구"
+        ],
+        "sections": [
+          {
+            "name": "한국",
+            "flow": "참사 뒤 첫 주말 핼러윈은 이태원역 무정차 통과 속에 큰 사고 없이 지났고, 이재명 대통령은 다문화 지원과 순방 비판에 SNS로 맞서 여야 공방을 키웠다. 외교에서는 루비오가 북미 대화 가능성을 열어 뒀고, 진성준 국방위원장 비자 문제는 뒤늦게 풀렸다. 한화는 미 해군 함정 건조를 처음 따냈다.",
+            "topStories": [
+              {
+                "rank": 1,
+                "title": "참사 뒤 첫 주말 핼러윈에 홍대·이태원 16만 인파…이태원역 무정차 통과, 큰 사고는 없어",
+                "summary": "주말과 겹친 31일 밤 홍대와 이태원에 16만 명 안팎이 몰렸다. 6호선 이태원역은 오후 11시 47분부터 막차까지 무정차 통과했고, 경찰은 큰 사건·사고가 없었다고 밝혔다.",
+                "whyItMatters": "2022년 이태원 참사 이후 핼러윈이 토요일과 겹친 것은 처음이라, 인파 관리 체계가 실제로 작동하는지 보는 시험대였다. 사고는 없었지만 밤늦게 역을 지나쳐야 할 만큼 혼잡해 대책의 한계와 효과를 함께 보여 줬다.",
+                "background": "10·29 참사 뒤 정부와 서울시는 핼러윈 기간을 특별 관리 기간으로 정하고, 인파가 몰리는 지역을 미리 지정해 통제해 왔다. 무정차 통과는 역 안팎의 혼잡이 커질 때 열차가 서지 않고 지나가게 해 사람이 더 모이는 것을 막는 조치다.",
+                "keyFacts": [
+                  "서울시 실시간 도시데이터 기준 홍대는 밤 최대 13만 명, 이태원 관광특구는 0시 기준 3만~3만2천 명",
+                  "이태원역 무정차 통과는 오후 11시 47분부터 막차가 지난 11시 59분까지, 재난문자로 녹사평·한강진역 이용 안내",
+                  "이태원로 일부 차도는 오후 6시부터 차량을 막고 보행자에게 개방",
+                  "경찰은 전국 다중밀집 위험지역 28곳에 7,800여 명 배치",
+                  "홍대에서 '마약 사탕'을 받았다는 신고가 들어왔으나 경찰은 오인 신고로 확인"
+                ],
+                "outlook": "1일까지 이어지는 특별 대책 기간이 끝나면 서울시와 경찰이 혼잡 대응을 어떻게 평가할지, 골목 진입 통제 때 벌어진 실랑이 같은 현장 문제를 어떻게 고칠지 봐야 한다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "사회",
+                  "minor": "재난·안전"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261031044652004",
+                    "publishedAt": "2026-11-01",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/10/31/PYH2026103104180001300_P2.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261031050000004",
+                    "publishedAt": "2026-10-31",
+                    "imageUrl": "https://img.yna.co.kr/photo/cms/2026/03/16/67/PCM20260316000067990_P2.jpg"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261031049800004",
+                    "publishedAt": "2026-10-31",
+                    "imageUrl": "https://img.yna.co.kr/etc/inner/KR/2026/10/31/AKR20261031049800004_01_i_P2.jpg"
+                  },
+                  {
+                    "name": "파이낸셜뉴스",
+                    "url": "https://www.fnnews.com/news/202610312352117171",
+                    "publishedAt": "2026-10-31"
+                  },
+                  {
+                    "name": "아시아경제",
+                    "url": "https://view.asiae.co.kr/article/2026103123350638214",
+                    "publishedAt": "2026-10-31"
+                  },
+                  {
+                    "name": "경북매일",
+                    "url": "https://www.kbmaeil.com/article/20261101500016",
+                    "publishedAt": "2026-11-01"
+                  }
+                ]
+              },
+              {
+                "rank": 2,
+                "title": "이재명 대통령, 다문화 지원 논란에 \"역차별은 시정\"…순방 비판엔 \"링거 맞고 코피\" 반박",
+                "summary": "이 대통령은 31일 SNS에서 다문화 가정 지원은 필요하지만 역차별을 낳는 제도는 고쳐야 한다고 나흘째 주장했다. 잦은 순방 비판에는 불교 속담을 빗댄 표현으로 맞섰고, 국민의힘은 국민을 모욕했다고 반발했다.",
+                "whyItMatters": "대통령이 이주민 정책의 방향을 직접 건드리면서 복지 형평성 논쟁이 정치 쟁점으로 커지고 있다. 지원이 줄어들 수 있다는 다문화 가정의 불안과 내국인 역차별 불만이 맞부딪히는 사안이다.",
+                "background": "대통령은 27일 국무회의에서 외국인 노동자의 경제 기여와 다문화 가정의 공공산후조리원 우대를 언급해 논란이 일었다. 순방 문제는 29일 국회 운영위 국정감사에서 국민의힘 의원이 14차례 23개국 순방과 배우자 동행을 지적하며 불거졌다.",
+                "keyFacts": [
+                  "이 대통령은 문화 적응·이중언어 지원은 강화하되 어린이집 입소 가점, 공공산후조리원 우선 이용 같은 우선권은 점검하자는 취지로 설명",
+                  "다문화 가족 지원 축소와 약자 배제를 우려하는 비판도 나옴",
+                  "순방 관련해 이 대통령은 수시로 링거를 맞고 코피가 터지는 일정이라고 주장하고, 전직 대통령과의 성과 차이는 동행 기자단이 안다고 언급",
+                  "국민의힘은 비판하는 국민이 전부 돼지냐고 반발, 민주당은 대통령 발언의 진의가 왜곡됐다고 맞섬"
+                ],
+                "outlook": "산후조리원 우대 등 실제 시행령·조례 개정이 어떤 범위로 추진될지가 핵심이다. 청와대가 구체안을 내놓으면 지방정부 협의와 당사자 반응이 이어진다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "정치",
+                  "minor": "행정부"
+                },
+                "sources": [
+                  {
+                    "name": "경향신문",
+                    "url": "https://www.khan.co.kr/article/202610311028001/",
+                    "publishedAt": "2026-10-31",
+                    "primary": true
+                  },
+                  {
+                    "name": "한국일보",
+                    "url": "https://www.hankookilbo.com/news/article/A2026103110110000533",
+                    "publishedAt": "2026-10-31"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261031023500001",
+                    "publishedAt": "2026-10-31",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/10/29/PYH2026102906640001300_P2.jpg"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261031028951001",
+                    "publishedAt": "2026-10-31",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/09/27/PYH2026092700410001300_P2.jpg"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261031041700001",
+                    "publishedAt": "2026-10-31",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/10/26/PYH2026102602150001300_P2.jpg"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261031028300001",
+                    "publishedAt": "2026-10-31",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2024/12/02/PYH2024120213850001300_P2.jpg"
+                  },
+                  {
+                    "name": "시사저널",
+                    "url": "https://www.sisajournal.com/news/articleView.html?idxno=392413",
+                    "publishedAt": "2026-10-31",
+                    "publishedAtEstimated": true
+                  }
+                ]
+              },
+              {
+                "rank": 3,
+                "title": "루비오 \"트럼프, 김정은과 대화 준비돼…회담 일정은 없어\"…스위스 외무는 방북 결과 한국에 설명",
+                "summary": "루비오 미 국무장관은 G20 외교장관회의를 마치며 북한이 미국과 동맹의 우려를 다룰 뜻이 있다면 트럼프 대통령이 김정은 위원장과 대화할 수 있다고 밝혔다. 다만 잡힌 일정은 없다고 선을 그었다.",
+                "whyItMatters": "다음 달 중국 선전 APEC을 앞두고 북미 접촉 가능성이 다시 거론되는 시점에 미국이 문을 열어 둔 발언이다. 북한은 같은 날 제재는 통하지 않는다고 주장해 양쪽 입장 차는 여전하다.",
+                "background": "북한은 핵보유국 지위를 내세우며 비핵화 협상을 거부해 왔고, 최근 드론 전시회와 600㎜ 방사포 사격으로 무력을 과시했다. 미국 주최 G20 회의 계기에 한미일 외교장관은 비핵화 의지를 재확인했다.",
+                "keyFacts": [
+                  "루비오는 대화나 회담을 양보로 보지 않는 것이 트럼프 대통령의 시각이라고 설명",
+                  "북한에서 조용원 당 비서·최선희 외무상을 만난 카시스 스위스 외무장관이 30일 방한해 한국 정부에 결과를 설명",
+                  "북한은 다국적제재모니터링팀(MSMT) 회원국을 비난하며 제재가 통하지 않는다고 주장",
+                  "APEC 전후 북미 접촉 가능성이 거론되나 구체적 계획은 확인되지 않음"
+                ],
+                "outlook": "11월 중국 선전 APEC 정상회의 기간과 그 전후에 북미 사이의 신호가 나오는지 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "정치",
+                  "minor": "북한"
+                },
+                "sources": [
+                  {
+                    "name": "SBS",
+                    "url": "https://news.sbs.co.kr/english/article.do?news_id=N1008824573",
+                    "publishedAt": "2026-11-01",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261101001700071",
+                    "publishedAt": "2026-11-01",
+                    "imageUrl": "https://img.yna.co.kr/etc/inner/KR/2026/11/01/AKR20261101001700071_01_i_P2.jpg"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261030182252504",
+                    "publishedAt": "2026-10-31",
+                    "imageUrl": "https://img.yna.co.kr/etc/inner/KR/2026/10/30/AKR20261030182252504_01_i_P2.jpg"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261031010200504",
+                    "publishedAt": "2026-10-31",
+                    "imageUrl": "https://img.yna.co.kr/photo/cms/2024/05/17/92/PCM20240517000192990_P2.jpg"
+                  },
+                  {
+                    "name": "K-VIBE",
+                    "url": "https://korean-vibe.com/article/179519245461263",
+                    "publishedAt": "2026-11-01",
+                    "publishedAtEstimated": true
+                  }
+                ]
+              },
+              {
+                "rank": 4,
+                "title": "한화디펜스USA, 미 해군 중형상륙함 첫 수주…약 3,600억 원, 필리조선소서 건조",
+                "summary": "한화디펜스USA가 2억6,900만 달러 규모의 미 해군 중형상륙함(LSM) 1척 건조 계약을 따냈다. 2024년 필리조선소 인수 뒤 미 해군 함정 신규 건조를 맡은 첫 사례다.",
+                "whyItMatters": "미국 조선 시장은 해외 업체의 진입 장벽이 높아, 한미 조선 협력 '마스가'가 실제 건조 물량으로 이어진 사례라는 의미가 있다.",
+                "background": "미 해군은 조선소와 직접 계약하지 않고 전문업체가 건조를 관리하는 방식을 택했고, 토트서비스가 경쟁 입찰로 건조사를 골랐다. 미 해군·해병대는 LSM 35척을 들여올 계획이지만 한화의 후속 수주가 보장된 것은 아니다.",
+                "keyFacts": [
+                  "계약 규모 2억6,900만 달러, 필리조선소에서 1척 건조",
+                  "3척을 더 건조할 수 있는 옵션 포함",
+                  "건조는 2027년 4분기 시작, 사업 첫 함정은 2030년 인도 예정"
+                ],
+                "outlook": "옵션 3척 행사 여부와 다른 미 해군 함정 사업 참여가 다음 관심사다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "경제",
+                  "minor": "산업·기업"
+                },
+                "sources": [
+                  {
+                    "name": "뉴스1",
+                    "url": "https://news1.kr/industry/general-industry/6338677",
+                    "publishedAt": "2026-10-31",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261031004600071",
+                    "publishedAt": "2026-10-31",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2025/08/27/PYH2025082700970001300_P2.jpg"
+                  },
+                  {
+                    "name": "뉴데일리",
+                    "url": "https://www.newdaily.co.kr/site/data/html/2026/10/31/2026103100017.html",
+                    "publishedAt": "2026-10-31"
+                  }
+                ]
+              },
+              {
+                "rank": 5,
+                "title": "진성준 국방위원장, 거부 사흘 만에 미국 비자 받아…여야 \"외교 참사\" \"반국익적 자해\" 공방",
+                "summary": "미국 공무 비자가 거부됐던 진성준 국회 국방위원장이 31일 비자를 받아 예정대로 하와이 방문에 나선다. 여야는 책임을 놓고 맞붙었고, 루비오 장관은 수십 년 전 행동과 관련된 문제라며 해결하겠다고 말했다.",
+                "whyItMatters": "여당 소속 국방위원장의 입국 문제가 한미동맹 논쟁으로 번졌다. 정청래 의원 비자 보류에 이어 나온 일이라 미국의 심사 기준에도 관심이 쏠린다.",
+                "background": "미국은 사유를 공식적으로 밝히지 않았지만 과거 판결문 제출을 요구한 것으로 알려졌다. 진 위원장은 1991년 국가보안법 위반으로 실형을 받았고, 이 사건은 뒤에 민주화운동으로 인정받았다.",
+                "keyFacts": [
+                  "국방위 방미단은 11월 1~5일 하와이 일정을 진행, 국민의힘 임종득 의원도 포함",
+                  "국민의힘 박성훈 수석대변인은 외교적 망신이라며 사과를 요구",
+                  "민주당 이주희 원내대변인은 미국이 아닌 진 위원장에게 책임을 돌린다고 반박",
+                  "외교부는 개별 비자 사안을 한미관계 전반과 연결하는 것은 적절하지 않다는 입장"
+                ],
+                "outlook": "미국이 비슷한 이력의 다른 의원 비자를 어떻게 처리할지, 루비오가 말한 해결이 어떤 조치로 나올지 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "정치",
+                  "minor": "국회·정당"
+                },
+                "sources": [
+                  {
+                    "name": "시사저널",
+                    "url": "https://www.sisajournal.com/news/articleView.html?idxno=392412",
+                    "publishedAt": "2026-10-31",
+                    "primary": true,
+                    "publishedAtEstimated": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261031019851001",
+                    "publishedAt": "2026-10-31",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/10/15/PYH2026101508910005400_P2.jpg"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261031029151001",
+                    "publishedAt": "2026-10-31",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/10/26/PYH2026102602200001300_P2.jpg"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261101002000071",
+                    "publishedAt": "2026-11-01",
+                    "imageUrl": "https://img.yna.co.kr/etc/inner/KR/2026/11/01/AKR20261101002000071_01_i_P2.jpg"
+                  },
+                  {
+                    "name": "한국경제",
+                    "url": "https://www.hankyung.com/article/202610294310H",
+                    "publishedAt": "2026-10-29"
+                  }
+                ]
+              },
+              {
+                "rank": 6,
+                "title": "검찰청 폐지 한 달, 보완수사 요구 1만 건 넘어…경찰 처리 지연과 재판 현장 혼선",
+                "summary": "10월 2일 개정 형사소송법 시행으로 검찰청이 문을 닫은 지 한 달 만에 공소청이 경찰로 돌려보낸 보완수사 요구가 1만 건을 넘겼다. 현장에서는 수사 지연과 증거 활용 혼선을 호소한다.",
+                "whyItMatters": "수사가 늦어지면 피해자와 피의자 모두 사건 결론을 오래 기다려야 한다. 78년 만의 형사사법 구조 변화가 초기부터 시험대에 올랐다.",
+                "background": "개편으로 검사는 수사권을 잃고 공소 제기와 유지를 맡으며, 대부분의 수사는 경찰이, 중대범죄는 중대범죄수사청이 맡는다. 수사 인력이 늘어난 경찰에서도 경험 부족과 업무 과부하가 지적된다.",
+                "keyFacts": [
+                  "연합뉴스 집계로 보완수사 요구 1만 건 초과, 출범 첫 주 1,654건에서 크게 늘어남",
+                  "경찰 수사 인력 가운데 9%가 수사 경험이 없고 초과근무에도 처리가 늦어진다는 보도",
+                  "개정법 뒤 영장 청구 전 피의자 면담 운영과 검사가 다룬 증거의 효력을 두고 혼선",
+                  "경찰청은 아직 감당 가능한 수준이라는 입장"
+                ],
+                "outlook": "90일 유예기간이 끝나는 시점의 사건 이송 처리와 정부의 보완 입법 여부를 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "사회",
+                  "minor": "법·재판"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261030171400004",
+                    "publishedAt": "2026-11-01",
+                    "imageUrl": "https://img.yna.co.kr/etc/inner/KR/2026/10/30/AKR20261030171400004_01_i_P2.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261030164300004",
+                    "publishedAt": "2026-11-01",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/09/03/PYH2026090302360001301_P2.jpg"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261031034600004",
+                    "publishedAt": "2026-11-01",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/10/02/PYH2026100210050001300_P2.jpg"
+                  },
+                  {
+                    "name": "뉴스1",
+                    "url": "https://www.news1.kr/society/court-prosecution/6318452",
+                    "publishedAt": "2026-10-13"
+                  }
+                ]
+              }
+            ],
+            "shortNews": [
+              {
+                "summary": "금리 상승기에 5대 은행의 중소기업 등 대출 연체율이 9년 반 만에 최고로 올랐고, 부실채권도 1년 새 1.3조 원 늘어 8년 6개월 만에 최대가 됐다.",
+                "category": {
+                  "major": "경제",
+                  "minor": "금융·증시"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261031045300002",
+                    "publishedAt": "2026-11-01",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/10/25/PYH2026102505950001300_P2.jpg"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261031044700002",
+                    "publishedAt": "2026-11-01",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/07/22/PYH2026072208060001300_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "대선후보 시절 허위 발언 혐의로 기소된 윤석열 전 대통령의 항소심 선고가 다음 주 나온다. 국민의힘의 397억 원이 걸린 재판이라 결과가 주목된다.",
+                "category": {
+                  "major": "정치",
+                  "minor": "사법·검찰"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261031041100004",
+                    "publishedAt": "2026-11-01",
+                    "imageUrl": "https://img.yna.co.kr/photo/cms/2025/10/15/33/PCM20251015000033365_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "이 대통령이 농어촌 기본소득 시범 지역인 경북 청송·영양을 찾아 집행 실태를 점검하고 더 많은 지역으로 넓히겠다고 밝혔다.",
+                "category": {
+                  "major": "정치",
+                  "minor": "행정부"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261031029651001",
+                    "publishedAt": "2026-10-31",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/10/31/PYH2026103103840001300_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "국민연금 수급자가 800만 명을 넘어 2015년 400만 명에서 11년 만에 두 배가 됐지만, 10명 중 7명은 월 60만 원 미만을 받는다.",
+                "category": {
+                  "major": "사회",
+                  "minor": "복지·인구"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261030170400530",
+                    "publishedAt": "2026-11-01",
+                    "imageUrl": "https://img.yna.co.kr/etc/inner/KR/2026/10/30/AKR20261030170400530_01_i_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "KBO가 한화 내야수 노시환의 포스팅을 메이저리그 사무국에 요청해 미국 진출 절차가 시작됐다.",
+                "category": {
+                  "major": "문화·스포츠",
+                  "minor": "스포츠"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261031042600007",
+                    "publishedAt": "2026-10-31",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/02/23/PYH2026022302300000700_P2.jpg"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "세계",
+            "flow": "이란은 전면 대응을 경고하고 미국은 결정을 미룬 채 카타르 중재가 이어졌다. 미국 중간선거는 사흘을 앞두고 사전투표 기록과 법원 공방으로 달아올랐고, 폴란드 헌재와 프랑스·독일 청년 시위로 유럽도 흔들렸다. 민주콩고 에볼라 사망자는 5천 명을 넘었다.",
+            "topStories": [
+              {
+                "rank": 1,
+                "title": "이란 하메네이 \"지리적 제한 없는 대응\" 명령…루비오 \"트럼프, 공격 재개 아직 결정 안 해\"",
+                "summary": "모즈타바 하메네이 이란 최고지도자가 어떤 위협에도 즉각적이고 지리적 제한 없는 대응을 하라고 군에 지시했다. 카타르 중재단은 테헤란에서 12시간 넘게 협상했고, 미국은 외교를 선호하지만 군사 옵션은 남겨 뒀다.",
+                "whyItMatters": "미국 중간선거 뒤 공격이 재개될 수 있다는 보도가 이어지는 가운데, 전쟁이 다시 커지면 호르무즈를 지나는 원유와 세계 물가, 한국의 에너지 수입이 곧바로 영향을 받는다.",
+                "background": "전쟁은 2월 28일 미국·이스라엘의 공습으로 시작됐고 4월 8일 휴전 뒤에도 해협 공격이 이어져 왔다. 이번 주 호르무즈에서 유조선 화재가 잇따르면서 유가가 6개월 만의 최고로 올랐다.",
+                "keyFacts": [
+                  "하메네이는 미국·이스라엘의 유무형 자산을 표적 목록에 더하라고 지시",
+                  "아라그치 외무장관은 지금은 미국을 만날 계획이 없다면서도 중재안을 검토 중이라고 언급",
+                  "악시오스는 카타르 중재단이 금요일 테헤란에서 12시간 넘게 협상했고 도하에서 이어 간다고 보도",
+                  "루비오는 트럼프 대통령이 기한을 정하지 않았고 외교적 해결을 선호한다고 설명",
+                  "개전 이후 중동 미군 기지 26곳이 이란 공격으로 수십억 달러 피해를 입었다는 보도"
+                ],
+                "outlook": "3일 미국 중간선거 뒤 트럼프 대통령의 결정, 도하 협상에 미국 대표단이 합류하는지, 호르무즈 유조선 공격 재발 여부를 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "국제",
+                  "minor": "중동"
+                },
+                "sources": [
+                  {
+                    "name": "France 24",
+                    "url": "https://www.france24.com/en/middle-east/20261031-iran-s-khamenei-warns-us-and-israel-against-new-attacks",
+                    "publishedAt": "2026-10-31",
+                    "primary": true
+                  },
+                  {
+                    "name": "CNBC",
+                    "url": "https://www.cnbc.com/2026/10/31/qatar-iran-us-talks-mediation.html",
+                    "publishedAt": "2026-10-31"
+                  },
+                  {
+                    "name": "The National",
+                    "url": "https://www.thenationalnews.com/news/us/2026/10/31/us-iran-strikes-g20-rubio/",
+                    "publishedAt": "2026-10-31"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261031048751108",
+                    "publishedAt": "2026-10-31",
+                    "imageUrl": "https://img.yna.co.kr/etc/inner/KR/2026/10/31/AKR20261031048751108_01_i_P2.jpg"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261031049600108",
+                    "publishedAt": "2026-10-31",
+                    "imageUrl": "https://img.yna.co.kr/photo/reuters/2026/10/30/PRU20261030056801009_P2.jpg"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261101002700071",
+                    "publishedAt": "2026-11-01",
+                    "imageUrl": "https://img.yna.co.kr/etc/inner/KR/2026/11/01/AKR20261101002700071_01_i_P2.jpg"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261101000700071",
+                    "publishedAt": "2026-11-01",
+                    "imageUrl": "https://img.yna.co.kr/etc/inner/KR/2026/11/01/AKR20261101000700071_01_i_P2.jpg"
+                  }
+                ],
+                "analogy": "두 쪽이 협상 테이블 밑으로 서로 칼을 보여 주며 중개인을 오가게 하는 모습과 비슷하다."
+              },
+              {
+                "rank": 2,
+                "title": "미 중간선거 사흘 앞 사전투표 5천만 돌파…법원, 법무부의 선거 관리인 위협에 첫 금지 명령",
+                "summary": "11월 3일 선거를 앞두고 사전투표자가 5,100만 명을 넘어 2022년 전체를 웃돌았다. 연방 판사는 법무부가 선거 관리인에게 처벌을 경고하는 것을 막는 임시 명령을 내렸다.",
+                "whyItMatters": "상·하원 다수당이 트럼프 2기 후반의 정책 추진력을 좌우하고, 선거 절차를 둘러싼 연방정부와 주정부의 충돌은 개표 뒤 결과 불복 논란으로 이어질 수 있다.",
+                "background": "법무부는 비시민권자 투표가 드러나면 처벌할 수 있다고 주·지방 선거 관리인들에게 경고해 왔고, 캘리포니아 투표지 분리 요구도 법원에서 잇달아 막혔다. 민주당은 이를 선거 개입이라고 비판한다.",
+                "keyFacts": [
+                  "플로리다대 선거연구소 집계 31일 오후 2시 30분 기준 사전투표 5,131만 명, 가디언은 2022년 전체보다 500만 표 가까이 많다고 분석",
+                  "트리나 톰슨 연방판사가 임시 금지 명령을 내렸고, 이런 위협을 법적으로 막은 첫 사례",
+                  "앞서 데이비드 카터 판사도 법무부의 캘리포니아 요구를 기각하며 위협 중단을 촉구",
+                  "트럼프 대통령은 취소했던 캔자스·아이오와 유세를 1일 재개"
+                ],
+                "outlook": "3일 개표, 초박빙 상원 경합주 결과, 알래스카·캘리포니아 투표지를 둘러싼 소송의 추가 판단을 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "국제",
+                  "minor": "미국"
+                },
+                "sources": [
+                  {
+                    "name": "CBS",
+                    "url": "https://www.cbsnews.com/news/judge-orders-doj-stop-threaten-intimidate-california-election-officials/",
+                    "publishedAt": "2026-10-31",
+                    "primary": true,
+                    "publishedAtEstimated": true
+                  },
+                  {
+                    "name": "Democracy Docket",
+                    "url": "https://www.democracydocket.com/news-alerts/judge-orders-doj-to-stop-threatening-election-officials/",
+                    "publishedAt": "2026-10-31",
+                    "publishedAtEstimated": true
+                  },
+                  {
+                    "name": "아주경제",
+                    "url": "https://www.ajunews.com/view/20261101045205141",
+                    "publishedAt": "2026-11-01"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261101002200071",
+                    "publishedAt": "2026-11-01",
+                    "imageUrl": "https://img.yna.co.kr/photo/etc/epa/2026/11/01/PEP20261101029601009_P2.jpg"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261031017000075",
+                    "publishedAt": "2026-10-31",
+                    "imageUrl": "https://img.yna.co.kr/photo/ap/2024/11/06/PAP20241106221301009_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 3,
+                "title": "폴란드 헌재소장 직무정지에 경찰 투입…나브로츠키 대통령 \"헌정 질서 침해\", 투스크와 정면충돌",
+                "summary": "폴란드 헌법재판소 소장의 직무가 정지되자 경찰이 재판소에 배치되고 항의 시위가 벌어졌다. 해외 방문을 돌린 나브로츠키 대통령은 소장과 함께 재판소에 들어가며 정부가 장악을 시도한다고 비판했다.",
+                "whyItMatters": "유럽연합 주요국의 대통령과 총리가 사법기관을 놓고 정면으로 맞서고 있다. 판결의 정당성 다툼이 길어지면 법치 위기와 유럽연합과의 관계에도 영향을 준다.",
+                "background": "폴란드 헌재는 전 정권 때 임명된 판사들이 다수이고, 투스크 정부는 이들의 정당성을 문제 삼아 왔다. 정부와 다수당이 뽑은 새 판사들을 대통령이 인정하지 않으면서 갈등이 쌓였다.",
+                "keyFacts": [
+                  "30일 재판소 누리집에 시비엥치코프스키 소장 직무정지가 공지, 키이우포스트는 소장과 부소장 한 달 정지라고 보도",
+                  "코르빈피오트로프스카 판사가 대행을 맡았으나 재판소 소셜 계정은 누리집이 불법 장악됐다고 주장",
+                  "경찰은 위험한 물체를 던진 3명을 체포",
+                  "나브로츠키 대통령은 세네갈 방문을 돌리고 원내 대표 긴급회의를 소집",
+                  "정부는 소장이 위법을 거듭했다는 입장이고, 야권은 쿠데타라고 반발"
+                ],
+                "outlook": "재판소를 누가 운영하는지와 이후 결정의 효력, 유럽연합의 반응이 관건이다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "국제",
+                  "minor": "유럽·러시아"
+                },
+                "sources": [
+                  {
+                    "name": "CNN",
+                    "url": "https://www.cnn.com/2026/10/31/europe/poland-protests-president-karol-nawrocki-flies-home-hnk-intl",
+                    "publishedAt": "2026-10-31",
+                    "primary": true
+                  },
+                  {
+                    "name": "Al Jazeera",
+                    "url": "https://www.aljazeera.com/news/2026/10/30/polish-police-deployed-to-top-court-after-head-judge-suspended",
+                    "publishedAt": "2026-10-30"
+                  },
+                  {
+                    "name": "Kyiv Post",
+                    "url": "https://www.kyivpost.com/post/88734",
+                    "publishedAt": "2026-10-31",
+                    "publishedAtEstimated": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261031027851009",
+                    "publishedAt": "2026-10-31",
+                    "imageUrl": "https://img.yna.co.kr/photo/etc/af/2026/10/31/PAF20261031119001009_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 4,
+                "title": "민주콩고 에볼라 사망 5,026명, 역대 두 번째 규모…아프리카 전역 확산 우려",
+                "summary": "민주콩고 보건부 자료에서 에볼라 사망자가 5천 명을 넘겼다. 감염자는 1만351명, 치명률은 50%에 가깝고 승인된 치료제와 백신은 없다.",
+                "whyItMatters": "서아프리카 유행 다음으로 큰 에볼라 유행이다. 이웃 나라를 넘어 케냐·나이지리아에서도 확진이 나와 국제 보건 위기로 커지고 있다.",
+                "background": "5월 중순 선포된 이번 유행은 분디부교 바이러스가 일으켰다. 분쟁과 뒤늦은 발견, 약한 보건 체계가 빠른 확산을 불렀다.",
+                "keyFacts": [
+                  "26개 주 가운데 8개 주로 번짐",
+                  "유럽질병예방통제센터는 28일까지 확진 1만274명, 사망 4,992명으로 집계",
+                  "케냐 확진 8명·사망 2명, 나이지리아 확진자는 스위스로 이송"
+                ],
+                "outlook": "주변국 추가 확진과 국제 지원, 후보 백신 시험 일정을 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "과학·건강",
+                  "minor": "의료·건강"
+                },
+                "sources": [
+                  {
+                    "name": "PBS",
+                    "url": "https://www.pbs.org/newshour/world/congos-ebola-deaths-top-5000-as-fear-of-continent-wide-spread-mounts",
+                    "publishedAt": "2026-10-31",
+                    "primary": true,
+                    "publishedAtEstimated": true
+                  },
+                  {
+                    "name": "Al Jazeera",
+                    "url": "https://www.aljazeera.com/news/2026/10/31/ebola-death-toll-in-dr-congo-passes-5000",
+                    "publishedAt": "2026-10-31"
+                  },
+                  {
+                    "name": "Washington Post",
+                    "url": "https://www.washingtonpost.com/world/2026/10/31/congo-ebola-deaths-5000/2625f7e0-d504-11f1-9931-2a41b76fc976_story.html",
+                    "publishedAt": "2026-10-31"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261031044500108",
+                    "publishedAt": "2026-10-31",
+                    "imageUrl": "https://img.yna.co.kr/photo/etc/af/2026/10/30/PAF20261030002501009_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 5,
+                "title": "프랑스 3주째 시위 32만 명…독일도 첫 'Z세대 집회', 유럽 청년 분노 확산",
+                "summary": "프랑스에서 세 번째 주말 시위가 열려 내무부 집계 32만 명이 참여했다. 독일 베를린에서도 청년 집회가 열렸지만 참가자는 주최 측 기대보다 적었다.",
+                "whyItMatters": "생활비와 교육 문제에서 시작한 청년 시위가 유럽 여러 나라로 번져 각국 정부의 재정·노동 정책에 부담이 되고 있다.",
+                "background": "프랑스 시위는 고등학생들의 교육 여건 항의에서 시작해 생활비 시위로 커졌다. 이탈리아에서도 임금과 생활비를 내건 전국 파업과 대규모 시위가 열렸다.",
+                "keyFacts": [
+                  "프랑스 시위는 파리 7만 명 포함 32만 명으로 지난주 41만 명보다 감소, 주최 측은 약 50만 명",
+                  "베를린 브란덴부르크문 집회는 경찰 추산 약 5천 명, 주최 측 1만 명",
+                  "일부 지역에서 충돌이 있었으나 양국 모두 대체로 평화적 진행"
+                ],
+                "outlook": "프랑스 정부의 추가 대응과 다음 주말 시위 규모를 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "국제",
+                  "minor": "유럽·러시아"
+                },
+                "sources": [
+                  {
+                    "name": "franceinfo",
+                    "url": "https://www.franceinfo.fr/societe/manifestations/mobilisation-importante-mais-en-baisse-heurts-en-marge-de-certains-corteges-centres-villes-sous-haute-protection-ce-qu-il-faut-retenir-de-la-journee-de-mobilisation-du-31-octobre_8262017.html",
+                    "publishedAt": "2026-10-31",
+                    "primary": true
+                  },
+                  {
+                    "name": "t-online",
+                    "url": "https://berlin.t-online.de/region/berlin/id_101506564/gen-z-demo-in-berlin-tausende-menschen-bei-protest-und-viel-polizei.html",
+                    "publishedAt": "2026-10-31"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261101001051082",
+                    "publishedAt": "2026-11-01",
+                    "imageUrl": "https://img.yna.co.kr/photo/etc/af/2026/11/01/PAF20261101058801009_P2.jpg"
+                  },
+                  {
+                    "name": "Euronews",
+                    "url": "https://www.euronews.com/2026/10/31/berlin-student-protests-youth-demands-meet-extremist-mobilisation",
+                    "publishedAt": "2026-10-31"
+                  }
+                ]
+              },
+              {
+                "rank": 6,
+                "title": "트럼프의 WSJ 100억 달러 소송 재기각…판사 \"이번에도 실패\", 같은 법원 재소송 불가",
+                "summary": "미국 연방판사가 엡스틴 생일 편지 보도를 문제 삼은 트럼프 대통령의 명예훼손 소송을 다시 고칠 수 없게 기각했다. 편지의 진위는 판단하지 않았다.",
+                "whyItMatters": "현직 대통령이 언론을 상대로 낸 거액 소송이 언론의 실제 악의 기준을 넘지 못했다. 언론 보호 기준과 대통령의 언론 소송 흐름에 영향을 준다.",
+                "background": "WSJ는 2025년 7월 엡스틴 50세 생일 앨범에 트럼프 이름의 편지가 있다고 보도했고, 트럼프 대통령은 쓰지 않았다며 소송을 냈다. 4월 1차 기각 뒤 소장을 고쳐 냈다.",
+                "keyFacts": [
+                  "대런 게일스 판사가 31일 기각, 20쪽 의견서",
+                  "기각 사유는 실제 악의를 충분히 주장하지 못한 점",
+                  "백악관은 소송을 계속 밀고 나가겠다는 입장"
+                ],
+                "outlook": "항소 여부와 트럼프 대통령의 다른 언론 소송 판단을 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "국제",
+                  "minor": "미국"
+                },
+                "sources": [
+                  {
+                    "name": "CBC",
+                    "url": "https://www.cbc.ca/news/world/trump-jeffrey-epstein-lawsuit-dismissed-9.7404357",
+                    "publishedAt": "2026-10-31",
+                    "primary": true
+                  },
+                  {
+                    "name": "CNBC",
+                    "url": "https://www.cnbc.com/2026/10/31/trump-murdoch-wsj-epstein-defamation-lawsuit-dismissed.html",
+                    "publishedAt": "2026-10-31"
+                  },
+                  {
+                    "name": "WRAL",
+                    "url": "https://www.wral.com/news/ap/f27c9-trump-lawsuit-against-wall-street-journal-over-epstein-birthday-letter-is-dismissed-with-prejudice/",
+                    "publishedAt": "2026-10-31",
+                    "publishedAtEstimated": true
+                  }
+                ]
+              },
+              {
+                "rank": 7,
+                "title": "올레시키 대피 주민 수백 명 우크라 땅 도착…멜라니아 중재 휴전, 1일 종료 예정",
+                "summary": "러시아 점령지 올레시키에서 대피한 주민 수백 명이 러시아와 벨라루스를 돌아 우크라이나 통제 지역에 닿았다. 일부는 러시아행이나 잔류를 택했다.",
+                "whyItMatters": "4년 넘은 전쟁에서 이런 인도적 휴전은 처음이라, 흑해 등 제한적 휴전 논의로 이어질지 관심을 모은다.",
+                "background": "올레시키는 드니프로강 건너 고립돼 식량과 전기가 끊겼다. 멜라니아 트럼프 여사와 교황의 중재로 지역 휴전이 성사됐다.",
+                "keyFacts": [
+                  "주민들은 러시아 아나파를 거쳐 벨라루스 호멜로 간 뒤 귀환",
+                  "지역에 남은 주민은 약 2천 명으로 추산, 강을 곧바로 건너는 경로는 불가능",
+                  "젤렌스키 대통령은 튀르키예 대통령과 만나 흑해 문제를 논의"
+                ],
+                "outlook": "1일 휴전 종료 뒤 전투 재개 여부와 흑해 휴전 논의를 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "국제",
+                  "minor": "유럽·러시아"
+                },
+                "sources": [
+                  {
+                    "name": "CNN",
+                    "url": "https://www.cnn.com/2026/10/31/europe/oleshky-ceasefire-russia-ukraine-arrivals-intl",
+                    "publishedAt": "2026-10-31"
+                  },
+                  {
+                    "name": "CBC",
+                    "url": "https://www.cbc.ca/news/world/evacuees-oleshky-belarus-ukraine-9.7404117",
+                    "publishedAt": "2026-10-31",
+                    "primary": true
+                  },
+                  {
+                    "name": "CBS",
+                    "url": "https://www.cbsnews.com/news/residents-evacuated-oleshky-arrive-ukraine-temporary-us-brokered-ceasefire/",
+                    "publishedAt": "2026-10-31",
+                    "publishedAtEstimated": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261031049100108",
+                    "publishedAt": "2026-10-31",
+                    "imageUrl": "https://img.yna.co.kr/photo/reuters/2026/10/31/PRU20261031265501009_P2.jpg"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261101001900108",
+                    "publishedAt": "2026-11-01",
+                    "imageUrl": "https://img.yna.co.kr/photo/reuters/2026/11/01/PRU20261101081601009_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 8,
+                "title": "쿼드 외교장관 \"자의적 수출 제한에 깊은 우려\"…G20 회의는 합의 없이 끝나",
+                "summary": "미국·일본·호주·인도 외교장관이 애틀랜타에서 공급망과 경제적 강압을 논의했다. 이름은 거론하지 않았지만 중국을 겨냥한 내용으로 풀이되고, G20 외교장관회의는 핵심 쟁점 합의 없이 마쳤다.",
+                "whyItMatters": "희토류 같은 핵심 광물 수출 통제가 안보 쟁점이 되면서 반도체를 포함한 공급망에 영향을 준다.",
+                "background": "일본은 중국의 핵심 광물 수출 제한을 비판해 왔다. 이번 회의는 올해 세 번째 쿼드 외교장관 회의다.",
+                "keyFacts": [
+                  "공동성명은 호르무즈·홍해 항행의 자유와 통행료 없는 통과를 강조",
+                  "루비오는 쿼드가 반중 연합이 아니라고 언급",
+                  "G20 회의는 러시아 문제로 단체 사진이 취소되며 시작"
+                ],
+                "outlook": "쿼드의 핵심 광물 협력 구체화와 중국의 반응을 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "경제",
+                  "minor": "무역·통상"
+                },
+                "sources": [
+                  {
+                    "name": "Al-Monitor",
+                    "url": "https://www.al-monitor.com/originals/2026/10/indo-pacific-quad-ministers-work-supply-chains-denounce-arbitrary-export",
+                    "publishedAt": "2026-10-31",
+                    "primary": true,
+                    "publishedAtEstimated": true
+                  },
+                  {
+                    "name": "ThePrint",
+                    "url": "https://theprint.in/world/quad-foreign-ministers-express-grave-concern-over-economic-coercion/3087309/",
+                    "publishedAt": "2026-10-31",
+                    "publishedAtEstimated": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261101003200071",
+                    "publishedAt": "2026-11-01",
+                    "imageUrl": "https://img.yna.co.kr/photo/ap/2026/11/01/PAP20261101061501009_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 9,
+                "title": "중국 10월 제조업 PMI 49.3, 넉 달 새 세 번째 위축…수출 주문 약세",
+                "summary": "중국 공식 제조업 구매관리자지수가 9월 50.1에서 49.3으로 내려 기준선 50을 밑돌았다. 로이터 조사 예상 50.0에도 못 미쳤다.",
+                "whyItMatters": "중국 공장 경기가 식으면 한국의 대중 수출과 세계 원자재 수요에도 부담이 된다.",
+                "background": "PMI는 기업 구매 담당자에게 경기를 물어 만든 지수로, 50보다 낮으면 위축을 뜻한다. 국가통계국은 연휴 전 수요 선반영과 복잡한 대외 환경을 이유로 들었다.",
+                "keyFacts": [
+                  "신규 수출 주문 48.7, 생산 49.8, 신규 주문 49.4",
+                  "비제조업 PMI도 49.7로 하락",
+                  "대기업 50.2, 중형 48.4, 소형 47.5로 규모별 격차"
+                ],
+                "outlook": "11월 수출 지표와 중국 정부의 경기 부양 여부를 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "경제",
+                  "minor": "거시·정책"
+                },
+                "sources": [
+                  {
+                    "name": "AP",
+                    "url": "https://www.usnews.com/news/business/articles/2026-10-31/chinas-factory-activity-slips-as-new-export-orders-weaken",
+                    "publishedAt": "2026-10-31",
+                    "primary": true
+                  },
+                  {
+                    "name": "Reuters",
+                    "url": "https://whbl.com/2026/10/30/chinas-october-factory-activity-contracts-at-fastest-pace-in-3-months-pmi-survey-shows/",
+                    "publishedAt": "2026-10-31",
+                    "publishedAtEstimated": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261031026100009",
+                    "publishedAt": "2026-10-31",
+                    "imageUrl": "https://img.yna.co.kr/photo/etc/xi/2026/10/20/PXI20261020000501009_P2.jpg"
+                  }
+                ]
+              }
+            ],
+            "shortNews": [
+              {
+                "summary": "피치가 재정 건전화 난항을 이유로 프랑스 신용등급 전망을 '부정적'으로 낮췄다.",
+                "category": {
+                  "major": "경제",
+                  "minor": "거시·정책"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261031021300009",
+                    "publishedAt": "2026-10-31",
+                    "imageUrl": "https://img.yna.co.kr/photo/etc/af/2026/10/19/PAF20261019138001009_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "튀르키예가 전직 외무장관을 후보로 내면서 차기 유엔 사무총장 경쟁이 8파전이 됐다.",
+                "category": {
+                  "major": "국제",
+                  "minor": "국제기구·안보"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261031019900072",
+                    "publishedAt": "2026-10-31",
+                    "imageUrl": "https://img.yna.co.kr/photo/etc/ta/2026/09/24/PTA20260924016701009_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "캐나다가 22년 만에 새 국가안보전략을 내놓고 미국과 갈등 속에서 자율성을 강조했다.",
+                "category": {
+                  "major": "국제",
+                  "minor": "기타 지역"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261101002300072",
+                    "publishedAt": "2026-11-01",
+                    "imageUrl": "https://img.yna.co.kr/photo/etc/af/2026/10/19/PAF20261019036501009_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "일본 정부가 연내 고치는 안보 문서에서 중국을 '위협'으로 쓰지 않고 '도전' 표현을 유지할 전망이라고 전해졌다.",
+                "category": {
+                  "major": "국제",
+                  "minor": "동아시아"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261031029200073",
+                    "publishedAt": "2026-10-31",
+                    "imageUrl": "https://img.yna.co.kr/photo/etc/epa/2026/09/02/PEP20260902087001009_P2.jpg"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "IT·AI",
+            "flow": "바이낸스는 해킹 손실의 90%를 메우고 출금 재개에 나섰고, S&P는 메타의 AI 투자 부담을 경고했다. 올트먼은 방한해 삼성·SK를 잇달아 만났고, 키옥시아는 사상 최대 실적을 내면서도 전망에서 실망을 줬다. 청소년 보호에서는 메타 합의와 오픈AI의 새 제한이 나왔다.",
+            "topStories": [
+              {
+                "rank": 1,
+                "title": "바이낸스, 해킹 손실 90% 메우고 1일 출금 재개…약 30억 달러 동결, 2일 준비금 증명",
+                "summary": "63억 달러를 탈취당한 바이낸스가 피해 자산의 90%를 되채웠다며 보안 점검을 전제로 1일 단계적으로 출금을 재개한다고 밝혔다. 체이널리시스는 올해 가상자산 해킹 피해의 89%를 북한 소행으로 추정했다.",
+                "whyItMatters": "세계 최대 거래소가 고객 자산을 지킬 수 있는지 시험대에 올랐다. 출금이 안정되지 않으면 가상자산 시장 전체의 신뢰가 흔들리고, 북한의 불법 자금 문제도 커진다.",
+                "background": "바이낸스는 지난주 핫월렛(인터넷에 연결된 지갑) 공격으로 약 20분 사이 자산이 빠져나갔다고 밝혔다. TRM랩스와 체이널리시스는 북한 조직 트레이더트레이터를 지목했지만 공식 수사 결론은 아니다.",
+                "keyFacts": [
+                  "바이낸스는 회사 자금 63억4천만 달러를 손실 보전에 배정",
+                  "약 30억 달러가 동결됐고 그중 23억 달러 이상은 테더·서클이 묶음",
+                  "11월 2일 갱신된 준비금 증명 공개 예정",
+                  "체이널리시스는 북한 비중이 2021년 15%에서 올해 89%로 늘었다고 분석",
+                  "업비트·빗썸 등 국내 거래소도 바이낸스 출금 주의를 공지"
+                ],
+                "outlook": "1일 출금 재개가 원활한지, 2일 준비금 증명 수치, 미국 수사기관의 공식 판단을 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "보안"
+                },
+                "sources": [
+                  {
+                    "name": "CNBC",
+                    "url": "https://www.cnbc.com/2026/10/31/binance-hack-asset-coverage-withdrawals.html",
+                    "publishedAt": "2026-10-31",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261101001800091",
+                    "publishedAt": "2026-11-01",
+                    "imageUrl": "https://img.yna.co.kr/photo/etc/gt/2026/10/30/PGT20261030187601009_P2.jpg"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261101003600072",
+                    "publishedAt": "2026-11-01",
+                    "imageUrl": "https://img.yna.co.kr/photo/reuters/2026/10/27/PRU20261027216001009_P2.jpg"
+                  },
+                  {
+                    "name": "경향신문",
+                    "url": "https://www.khan.co.kr/article/202610311244001/",
+                    "publishedAt": "2026-10-31"
+                  },
+                  {
+                    "name": "헤럴드경제",
+                    "url": "https://biz.heraldcorp.com/article/10921344",
+                    "publishedAt": "2026-10-31",
+                    "publishedAtEstimated": true
+                  }
+                ],
+                "devCheckpoint": "거래소 API를 쓰는 서비스는 바이낸스 출금 재개 공지와 주소 화이트리스트, 입출금 지연 처리를 점검한다."
+              },
+              {
+                "rank": 2,
+                "title": "S&P, 메타 신용등급 전망 '부정적'으로…\"AI 수익화 경쟁사보다 제한적\", 메타는 반발",
+                "summary": "S&P가 메타의 AA- 등급을 유지하면서 전망을 안정적에서 부정적으로 낮췄다. 2027년 설비투자가 2,250억 달러를 넘길 것으로 보고, 현금 흐름과 AI 수익화를 우려했다.",
+                "whyItMatters": "주식시장의 AI 투자 의심이 채권·신용평가로 번졌다는 신호다. 빅테크의 자금 조달 비용이 오르면 AI 설비 투자와 메모리 수요 전망에도 영향을 준다.",
+                "background": "메타는 3분기 잉여현금흐름이 2012년 이후 처음 적자로 돌아섰다. 30일 뉴욕 증시에서는 인텔 폭락으로 나스닥이 2.9% 내렸고, AI 우려 속에 애플이 다시 시가총액 1위에 올랐다.",
+                "keyFacts": [
+                  "S&P 추정 올해 설비투자 약 1,400억 달러, 2027년 2,250억 달러 초과",
+                  "데이터센터 임차가 부채 지표를 2027년 하향 기준 위로 밀어 올릴 수 있다고 분석",
+                  "메타는 AI 수익 창출력에 대한 평가에 동의하지 않는다고 밝힘",
+                  "등급이 한 단계 내려가도 높은 투자등급은 유지"
+                ],
+                "outlook": "메타의 추가 회사채 발행 조건과 다른 평가사의 판단, 다음 주 미국 고용 지표와 시장 반응을 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "AI 산업·기업"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261101002800091",
+                    "publishedAt": "2026-11-01",
+                    "imageUrl": "https://img.yna.co.kr/photo/ap/2026/09/30/PAP20260930066901009_P2.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "Yahoo Finance",
+                    "url": "https://finance.yahoo.com/markets/stocks/articles/p-says-meta-t-money-173602682.html",
+                    "publishedAt": "2026-10-31",
+                    "publishedAtEstimated": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261031009500091",
+                    "publishedAt": "2026-10-31",
+                    "imageUrl": "https://img.yna.co.kr/photo/ap/2026/05/14/PAP20260514277701009_P2.jpg"
+                  },
+                  {
+                    "name": "PPC Land",
+                    "url": "https://ppc.land/meta-faces-s-p-downgrade-as-2027-ai-capex-forecast-tops-225bn/",
+                    "publishedAt": "2026-10-31",
+                    "publishedAtEstimated": true
+                  }
+                ]
+              },
+              {
+                "rank": 3,
+                "title": "올트먼 1박 2일 깜짝 방한, 삼성 사장단 50여 명·최태원 회장과 연쇄 회동",
+                "summary": "샘 올트먼 오픈AI CEO가 31일 삼성 사장단 간담회와 최태원 SK 회장 오찬에 참석했다. 구체적인 사업 합의는 나오지 않았다.",
+                "whyItMatters": "오픈AI는 삼성·SK의 메모리와 데이터센터 협력 상대다. AI 투자 의심이 커진 시점에 핵심 공급망과 관계를 다졌다는 의미가 있다.",
+                "background": "올트먼은 지난해 10월 방한 때 스타게이트 협력을 논의했고, 올해 6월 방한은 연기됐다. 이재용 회장은 7월 샌프란시스코에서 올트먼을 만났다.",
+                "keyFacts": [
+                  "삼성인력개발원 간담회 주제는 AI가 바꿀 다음 10년과 기업의 선택",
+                  "올트먼은 코딩 에이전트용 코덱스 마이크로 키보드(230달러)를 선물",
+                  "삼성은 내년 2월까지 전 임직원 AI 교육을 마칠 계획"
+                ],
+                "outlook": "메모리 공급과 국내 데이터센터 협력이 구체적 계약으로 이어지는지 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "AI 산업·기업"
+                },
+                "sources": [
+                  {
+                    "name": "SBS",
+                    "url": "https://news.sbs.co.kr/news/endPage.do?news_id=N1008824384",
+                    "publishedAt": "2026-10-31",
+                    "primary": true
+                  },
+                  {
+                    "name": "뉴시스",
+                    "url": "https://www.newsis.com/view/NISX20261031_0003849356",
+                    "publishedAt": "2026-10-31"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261031030751003",
+                    "publishedAt": "2026-10-31",
+                    "imageUrl": "https://img.yna.co.kr/etc/inner/KR/2026/10/31/AKR20261031030751003_01_i_P2.jpg"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261031034400003",
+                    "publishedAt": "2026-10-31",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2025/10/01/PYH2025100122070000300_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 4,
+                "title": "키옥시아 상반기 사상 최대, 순이익 37배…3분기 전망은 시장 기대 밑돌아",
+                "summary": "일본 낸드 업체 키옥시아의 4~9월 매출이 4조2,471억 엔, 순이익이 2조1,978억 엔으로 반기 최대를 기록했다. 다음 분기 영업이익 전망은 2조 엔으로 시장 예상 2조3,500억 엔에 못 미쳤다.",
+                "whyItMatters": "낸드 호황이 이어지지만 가격 상승세가 꺾이기 시작했다는 신호여서 삼성전자·SK하이닉스 전망을 읽는 데 참고가 된다.",
+                "background": "낸드 플래시는 데이터센터 저장장치에 쓰이는 메모리로, AI 보급으로 수요가 크게 늘었다.",
+                "keyFacts": [
+                  "영업이익 3조2,647억 엔, 영업이익률 76.9%",
+                  "매출은 전년의 5.4배",
+                  "낸드 평균 판매가 상승폭이 전 분기 70%에서 20% 안팎으로 둔화"
+                ],
+                "outlook": "메모리 가격 흐름과 상장 뒤 첫 배당, 경쟁사 증설 계획을 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "반도체·하드웨어"
+                },
+                "sources": [
+                  {
+                    "name": "서울경제",
+                    "url": "https://en.sedaily.com/international/2026/10/30/kioxia-outlook-misses-estimates-as-memory-price-surge-cools",
+                    "publishedAt": "2026-10-30",
+                    "primary": true
+                  },
+                  {
+                    "name": "파이낸셜뉴스",
+                    "url": "https://en.fnnews.com/news/202610311227228808",
+                    "publishedAt": "2026-10-31"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261031026600073",
+                    "publishedAt": "2026-10-31",
+                    "imageUrl": "https://img.yna.co.kr/etc/inner/KR/2026/10/31/AKR20261031026600073_01_i_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 5,
+                "title": "메타, LA 'SNS 중독' 재판서 청소년 원고와 합의…스냅만 배심원 앞에",
+                "summary": "메타가 인스타그램·페이스북 설계로 정신 건강이 나빠졌다고 주장한 18세 원고와 합의했다. 합의 금액은 공개되지 않았고 재판은 스냅만 상대로 이어진다.",
+                "whyItMatters": "수천 건의 소송 가운데 시험 사건이어서, 배심 판단과 합의 흐름이 플랫폼의 청소년 보호 책임 기준에 영향을 준다.",
+                "background": "앞선 K.G.M. 사건에서 배심원단은 원고 손을 들어 600만 달러를 인정했다. 메타는 다른 원고와도 앞서 합의했다.",
+                "keyFacts": [
+                  "배심원 선정은 28일 시작",
+                  "두 원고 모두 틱톡·유튜브와 합의",
+                  "메타는 청소년 보호에 힘쓰고 법정에서 계속 방어한다는 입장"
+                ],
+                "outlook": "스냅 재판 판결과 나머지 소송의 합의 조건을 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "플랫폼·인터넷"
+                },
+                "sources": [
+                  {
+                    "name": "The Star",
+                    "url": "https://www.thestar.com.my/tech/tech-news/2026/10/31/meta-settles-with-teen-during-trial-testing-claims-social-media-caused-depression-eating-disorders",
+                    "publishedAt": "2026-10-31",
+                    "primary": true
+                  },
+                  {
+                    "name": "코리아타임스",
+                    "url": "https://www.koreatimes.co.kr/world/20261031/meta-settles-with-teen-in-social-media-depression-trial",
+                    "publishedAt": "2026-10-31"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261031003600075",
+                    "publishedAt": "2026-10-31",
+                    "imageUrl": "https://img.yna.co.kr/photo/reuters/2026/10/26/PRU20261026390801009_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 6,
+                "title": "오픈AI, 18세 미만 무기 정보 제한…폭력 집착 대화는 자동 종료, 3분기 수사기관 의뢰 200건",
+                "summary": "오픈AI가 미성년자에게 무기·보안 시스템의 실용 정보를 제한하고, 전체 이용자의 폭력 집착 대화를 끊는 기능을 몇 주에 걸쳐 도입한다.",
+                "whyItMatters": "챗봇이 폭력 사건에 쓰인다는 우려가 커지면서 AI 회사의 안전 조치가 규제와 소송의 기준이 되고 있다.",
+                "background": "오픈AI는 8월 청소년 모드를 도입했고, 연령 예측으로 18세 미만 추정 이용자를 분리한다.",
+                "keyFacts": [
+                  "여러 번 폭력을 다룬 계정은 일시 정지, 청소년 계정은 부모에게 알림",
+                  "과거 대규모 공격의 무기·장비 정보도 전체 이용자에게 제한",
+                  "2026년 3분기 200건 넘게 수사기관에 의뢰, 6개월마다 안전 보고서 공개"
+                ],
+                "outlook": "연령 오판 사례 처리와 다른 AI 회사의 비슷한 조치를 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "AI 산업·기업"
+                },
+                "sources": [
+                  {
+                    "name": "Reuters",
+                    "url": "https://www.investing.com/news/stock-market-news/openai-to-limit-weapons-information-for-teens-on-chatgpt-in-violenceprevention-push-4988471",
+                    "publishedAt": "2026-10-30",
+                    "primary": true,
+                    "publishedAtEstimated": true
+                  },
+                  {
+                    "name": "말레이메일",
+                    "url": "https://www.malaymail.com/news/tech-gadgets/2026/10/31/openai-limits-weapons-information-for-teens-using-chatgpt/241446",
+                    "publishedAt": "2026-10-31"
+                  }
+                ],
+                "devCheckpoint": "ChatGPT API 기반 서비스는 연령 정책 변경이 응답 거부율에 주는 영향을 확인한다."
+              },
+              {
+                "rank": 7,
+                "title": "금융당국, 해킹 사고 금융권에 보안 개선계획 촉구…10월 해킹 도미노에 아파트 입주민 정보도 노출",
+                "summary": "금융당국이 금융권과 실무회의를 이어 가며 보안 개선안 마련을 재촉했고, 다음 주 점검회의를 연다. GS건설 아파트 예약 시스템 해킹으로 입주민 정보 보안도 도마에 올랐다.",
+                "whyItMatters": "은행부터 카페, 학교까지 개인정보 유출이 이어져, 일상 서비스 전반의 보안 투자 필요성이 커졌다.",
+                "background": "10월 초 AI 도구를 쓴 자동화 공격으로 은행 등 7개 금융사 피해가 드러났고, 이후 16개사로 늘었다.",
+                "keyFacts": [
+                  "금융위는 10월 4일 긴급 점검회의에서 유사 사고 때 엄중 책임 방침을 밝힘",
+                  "금융당국 파악 침해 사고는 16개사, 유출 약 10만 건",
+                  "GS건설 아파트 커뮤니티 시설 예약 시스템도 해킹 피해"
+                ],
+                "outlook": "다음 주 점검회의 결과와 기업별 보안 개선안, 제재 수위를 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "보안"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261031045700002",
+                    "publishedAt": "2026-11-01",
+                    "imageUrl": "https://img.yna.co.kr/photo/cms/2026/02/28/30/PCM20260228000030895_P2.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261031047400003",
+                    "publishedAt": "2026-11-01",
+                    "imageUrl": "https://img.yna.co.kr/etc/inner/KR/2026/10/31/AKR20261031047400003_02_i_P2.jpg"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261031035200017",
+                    "publishedAt": "2026-11-01",
+                    "imageUrl": "https://img.yna.co.kr/photo/cms/2024/08/01/01/PCM20240801000201990_P2.jpg"
+                  },
+                  {
+                    "name": "머니투데이",
+                    "url": "https://www.mt.co.kr/finance/2026/10/04/2026100413213585509",
+                    "publishedAt": "2026-10-04"
+                  }
+                ],
+                "devCheckpoint": "외부 노출 IT 자산의 취약점과 인증 강화를 점검한다."
+              }
+            ],
+            "shortNews": [
+              {
+                "summary": "메모리 호황 속에 삼성전자가 HBM4에서 추격하고 SK하이닉스가 수성에 나서 경쟁이 새 국면에 들어섰다.",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "반도체·하드웨어"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261030165200003",
+                    "publishedAt": "2026-11-01",
+                    "imageUrl": "https://img.yna.co.kr/photo/cms/2026/06/24/86/PCM20260624000086990_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "미국 연방통신위원회의 압박으로 홍콩 통신사 HKT가 미국 사업을 접기로 했다.",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "규제·정책"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261031031800009",
+                    "publishedAt": "2026-10-31",
+                    "imageUrl": "https://img.yna.co.kr/photo/ap/2026/07/18/PAP20260718032301009_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "스마트안경으로 촬영한 SAT 문제에 제미나이가 83%를 맞혔다는 실험 결과가 나와 시험 부정행위 우려가 커졌다.",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "AI 모델·연구"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261030178900530",
+                    "publishedAt": "2026-11-01",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/10/29/PYH2026102917100001300_P2.jpg"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "collectedAt": "2026-11-01T06:19:16+09:00",
+      "late": false
     }
   ],
   "extracted": [
     "2026-10-27",
     "2026-10-28",
     "2026-10-29",
-    "2026-10-30"
+    "2026-10-30",
+    "2026-10-31"
   ],
   "scheduled": [
     "2026-10-27",
     "2026-10-28",
     "2026-10-29",
-    "2026-10-30"
+    "2026-10-30",
+    "2026-10-31"
   ]
 }
