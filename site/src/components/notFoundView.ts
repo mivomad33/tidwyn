@@ -5,6 +5,16 @@ import type { LinkLike } from "./termView.ts";
 
 export const NOT_FOUND_LABEL = "없는 페이지";
 
+/** 앱이 없어도 이어 갈 곳. 없는 페이지와 정적 앱 틀이 같이 쓴다 */
+export function RecoverLinks({ Link, noSearch = false }: { Link: LinkLike; noSearch?: boolean }) {
+  return h(
+    "div",
+    { className: "nf-act" },
+    h(Link, { to: "/", className: "btn" }, "최근 뉴스 브리프 보기"),
+    h("div", { className: "more" }, h(Link, { to: "/issues", className: "quiet" }, "이슈 목록"), noSearch ? h(Link, { to: "/dates", className: "quiet" }, "날짜 목록") : h(Link, { to: searchPath(""), className: "quiet" }, "검색")),
+  );
+}
+
 export function NotFoundView({ Link, requested, noSearch = false }: { Link: LinkLike; requested?: string; noSearch?: boolean }) {
   return h(
     "div",
@@ -12,11 +22,6 @@ export function NotFoundView({ Link, requested, noSearch = false }: { Link: Link
     h("h1", { className: "page-title" }, "이 주소에는 페이지가 없다"),
     h("p", { className: "p" }, `주소가 바뀌었거나 잘못 입력했을 수 있다. 지난 뉴스는 ${noSearch ? "날짜 목록" : "검색"}에서 찾을 수 있다.`),
     requested ? h("p", { className: "req" }, "404 · 요청한 주소 ", h("span", null, requested)) : null,
-    h(
-      "div",
-      { className: "nf-act" },
-      h(Link, { to: "/", className: "btn" }, "최근 뉴스 브리프 보기"),
-      h("div", { className: "more" }, h(Link, { to: "/issues", className: "quiet" }, "이슈 목록"), noSearch ? h(Link, { to: "/dates", className: "quiet" }, "날짜 목록") : h(Link, { to: searchPath(""), className: "quiet" }, "검색")),
-    ),
+    h(RecoverLinks, { Link, noSearch }),
   );
 }

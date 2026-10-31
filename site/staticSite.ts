@@ -42,7 +42,7 @@ import { APP_FILE, NOT_FOUND_FILE } from "./hosting.ts";
 import { AboutView, ReadMarksText } from "./src/components/aboutView.ts";
 import { FixMark, FixNotes } from "./src/components/correctionView.ts";
 import { FredNotice, SourceNote } from "./src/components/indicatorView.ts";
-import { NOT_FOUND_LABEL, NotFoundView } from "./src/components/notFoundView.ts";
+import { NOT_FOUND_LABEL, NotFoundView, RecoverLinks } from "./src/components/notFoundView.ts";
 import { FooterView, PrivacyView } from "./src/components/policyView.ts";
 import { ReportLink } from "./src/components/reportLink.ts";
 import { EntityChips, IssueEntityChips, type LinkLike } from "./src/components/termView.ts";
@@ -552,11 +552,14 @@ function buildPages(input: SiteInput): StaticPage[] {
   return pages;
 }
 
+/** 앱 전용 주소(검색, 용어·일정 상세)의 틀. 앱이 그리면 사라지고, 앱이 없으면 빈 화면 대신 이 안내가 남는다 */
+function AppOnlyBody() {
+  return h("div", { className: "plain nf" }, h("h1", { className: "page-title" }, "이 화면을 열지 못했다"), h("p", { className: "p" }, "이 화면은 자바스크립트로 그린다. 자바스크립트가 꺼져 있거나 화면 파일을 받지 못했다. 다시 불러오거나 아래에서 이어서 볼 수 있다."), h(RecoverLinks, { Link: A, noSearch: true }));
+}
+
 /** 빌드 뒤 공개할 파일: 페이지마다의 HTML과 수집기용 파일. Vite가 만든 index.html을 틀로 쓴다 */
-function renderTemplate(template: string, head: string, body: string | null): string {
-  const withHead = fill(template, /<title>[\s\S]*?<\/title>/, head);
-  if (body === null) return withHead;
-  return fill(withHead, /<div id="root"><\/div>/, `<div id="root">${body}</div>`).replace(/\s*<noscript>[\s\S]*?<\/noscript>/, "");
+function renderTemplate(template: string, head: string, body: string): string {
+  return fill(fill(template, /<title>[\s\S]*?<\/title>/, head), /<div id="root"><\/div>/, `<div id="root">${body}</div>`);
 }
 
 /** 틀의 자리를 바꾼다. 빌드 결과 모양이 달라져 자리가 없으면 본문 없는 페이지를 내지 않고 멈춘다 */
@@ -575,7 +578,7 @@ export function writeStaticSite(outDir: string): void {
     fs.writeFileSync(file, content);
   };
   for (const p of pages) write(pageFile(p.path), renderTemplate(template, renderHead(p.head), renderToStaticMarkup(p.body as never)));
-  write(APP_FILE, renderTemplate(template, renderHead({ title: pageTitle(), description: metaDescription(""), noindex: true }), null));
+  write(APP_FILE, renderTemplate(template, renderHead({ title: pageTitle(), description: metaDescription(""), noindex: true }), renderToStaticMarkup(h(Shell, null, h(AppOnlyBody)))));
   write(NOT_FOUND_FILE, renderTemplate(template, renderHead({ title: pageTitle(NOT_FOUND_LABEL), description: metaDescription(""), noindex: true }), renderToStaticMarkup(h(Shell, null, h(NotFoundView, { Link: A, noSearch: true })))));
 
   const entries: SitemapEntry[] = pages.filter((p) => p.indexed).map((p) => ({ path: p.path, lastmod: p.lastmod }));

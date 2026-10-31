@@ -213,16 +213,17 @@ describe("정적 HTML", () => {
     assert.match(page, /지난 뉴스는 날짜 목록에서 찾을 수 있다/);
   });
 
-  test("앱 틀의 안내는 본문 칸보다 앞에 있고 자바스크립트 없이 갈 곳을 보여 준다", () => {
+  test("앱 틀에도 정적 안내가 있어 앱을 못 받아도 빈 화면이 아니고, 쓸 수 없는 검색 대신 갈 곳을 보여 준다", () => {
     const page = html(b.out, "app.html");
-    const notice = page.match(/<noscript>([\s\S]*?)<\/noscript>/)?.[1] ?? "";
-    assert.ok(page.indexOf("<noscript>") < page.indexOf('<div id="root">'), "순서");
-    assert.deepEqual(hrefsOf(notice), ["/", "/dates", "/issues"]);
+    assert.match(page, /<div id="root"><div class="static-page">/);
+    assert.match(page, /<h1 class="page-title">이 화면을 열지 못했다<\/h1>/);
+    const hrefs = hrefsOf(page);
+    for (const href of ["/", "/dates", "/issues"]) assert.ok(hrefs.includes(href), href);
+    assert.ok(!hrefs.some((href) => href.startsWith("/search")));
   });
 
-  test("4.1-5 정적 본문이 있는 페이지에는 noscript 안내가 없고, 앱 틀에는 있다. 앱을 못 받으면 숨김이 풀린다", () => {
-    for (const p of b.indexed) assert.doesNotMatch(html(b.out, pageFile(p)), /<noscript/, p);
-    assert.match(html(b.out, "app.html"), /<noscript/);
+  test("4.1-5 어느 페이지에도 noscript 안내가 남지 않는다. 앱을 못 받으면 숨김이 풀린다", () => {
+    for (const f of [...b.indexed.map(pageFile), "app.html", "404.html"]) assert.doesNotMatch(html(b.out, f), /<noscript/, f);
     const page = html(b.out, "index.html");
     assert.match(page, /html\.app #root>\.static-page\{display:none\}/);
     assert.match(page, /addEventListener\("error",function\(\)\{document\.documentElement\.classList\.remove\("app"\)\},true\)/);

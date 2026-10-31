@@ -21,7 +21,7 @@ for (const width of [375, 1280]) {
   test.describe(`자바스크립트 끈 화면 ${width}`, () => {
     test.use({ viewport: { width, height: 800 }, javaScriptEnabled: false });
 
-    for (const [name, url] of [["브리프", `/${latest}`], ["날짜", "/dates"], ["용어", "/terms"], ["지표", "/indicators"], ["없는 페이지", "/nope"]] as const) {
+    for (const [name, url] of [["브리프", `/${latest}`], ["날짜", "/dates"], ["용어", "/terms"], ["지표", "/indicators"], ["없는 페이지", "/nope"], ["앱 전용", "/search"]] as const) {
       test(`정적 ${name}`, async ({ page }) => {
         await page.goto(url);
         await expect(page).toHaveScreenshot(`static-${name}-${width}.png`, { animations: "disabled" });

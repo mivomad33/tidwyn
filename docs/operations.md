@@ -456,7 +456,7 @@ node src/cli.ts schedule-delete --id 번호
 - 매일 `/brief`의 실제 실행이 끝에 사이트를 빌드하고(`site`), 결과물을 운영 배포하고(`deploy`), 배포 뒤 점검을 한다. 시험 모드와 데이터 폴더 지정 실행은 빌드만 한다.
 - 결과물은 `<데이터 폴더>/site/`에 매번 새로 만든다. 다음만 들어간다. DB와 백업 파일은 들어가지 않는다.
   - 색인 페이지마다의 정적 HTML: `index.html`, `<날짜>.html`, `dates.html`, `issues.html`, `issues/<번호>.html`, `entities.html`, `entities/<번호>.html`, `terms.html`, `schedules.html`, `indicators.html`, `indicators/<식별자>.html`, `about.html`, `privacy.html`. 본문이 든 HTML이고 앱이 그 위에 같은 화면을 그린다. 영상과 기사 이미지는 넣지 않고, 코스피·코스닥 값도 넣지 않는다.
-  - 흡수된 이슈·대상의 주소 파일(canonical이 남는 주소다), 앱 전용 주소의 틀 `app.html`(`noindex`), 없는 페이지 `404.html`(`noindex`).
+  - 흡수된 이슈·대상의 주소 파일(canonical이 남는 주소다), 앱 전용 주소의 틀 `app.html`(`noindex`, 앱을 못 받으면 안내와 갈 곳이 보인다), 없는 페이지 `404.html`(`noindex`).
   - 수집기용 파일 `robots.txt`, `sitemap.xml`, `rss.xml`, 아이콘과 공유 이미지(`icon*`, `apple-touch-icon.png`, `share.png`, 원본은 `site/brand/`).
   - 화면 파일(`assets/`), 사이트 데이터(`site-data/`), 검색 색인(`pagefind/`), 호스팅 설정(`vercel.json`).
 - 없는 주소는 HTTP 404와 없는 페이지를 돌려준다. 예외로 `/terms/<번호>`, `/schedules/<번호>`는 숫자 모양이면 200으로 앱이 열고, 없는 번호는 앱이 없는 페이지를 보인다(`noindex`). 끝의 `/`는 없는 주소로 넘겨준다.

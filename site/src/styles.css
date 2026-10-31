@@ -2056,9 +2056,6 @@ ul.isrc {
 .static-page .rel { gap: 0 6px; }
 .static-page .rel a { position: relative; display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; padding: 0 10px; border: none; }
 .static-page .rel a::before { content: ""; position: absolute; inset: 7px 0; border: 1px solid var(--line); border-radius: 999px; pointer-events: none; }
-.noscript { display: flex; flex-wrap: wrap; column-gap: 16px; max-width: 640px; margin: 0 auto; padding: 16px 18px; font-size: 15px; }
-.noscript p { flex-basis: 100%; margin: 0 0 8px; line-height: 1.65; }
-.noscript a { display: inline-flex; align-items: center; min-height: 44px; color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
 
 /* 본문 건너뛰기: 키보드로 닿을 때만 보인다 */
 .skip { position: fixed; top: 8px; left: 8px; z-index: 30; transform: translateY(-200%); padding: 12px 16px; background: var(--accent); color: var(--on-accent); border-radius: 8px; font-size: 15px; font-weight: 700; }

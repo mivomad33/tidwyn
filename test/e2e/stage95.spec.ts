@@ -55,6 +55,20 @@ test.describe("4.1-5 자바스크립트를 끈 방문자", () => {
       await expectNoHorizontalScroll(page, url);
     });
   }
+  for (const url of ["/search", "/terms/1", "/schedules/1"]) {
+    test(`앱 전용 주소 ${url}에는 안내와 갈 곳이 보인다`, async ({ page }) => {
+      await page.goto(url);
+      await expect(page.getByRole("heading", { level: 1, name: "이 화면을 열지 못했다" })).toBeVisible();
+      await expect(page.getByRole("link", { name: "최근 뉴스 브리프 보기" })).toBeVisible();
+      await expectNoHorizontalScroll(page, url);
+    });
+  }
+});
+
+test("앱 코드를 받지 못해도 앱 전용 주소가 빈 화면이 아니다", async ({ page }) => {
+  await page.route("**/assets/*.js", (route) => route.abort());
+  await page.goto("/search");
+  await expect(page.getByRole("heading", { level: 1, name: "이 화면을 열지 못했다" })).toBeVisible();
 });
 
 test("4.2-1 날짜 목록을 받지 못해도 브리프 제목이 남는다", async ({ page, request }) => {
@@ -94,6 +108,7 @@ test.describe("4.3 상태 코드와 앱 전용 주소", () => {
   test("앱 전용 주소를 직접 열어도 지금처럼 움직인다", async ({ page }) => {
     await page.goto(`/search?q=${encodeURIComponent(info.issues.first.name)}`);
     await expect(page.getByRole("region", { name: "이슈" })).toBeVisible();
+    await expect(page.getByText("이 화면을 열지 못했다")).toHaveCount(0);
     await page.goto(`/issues/${info.issues.merged.id}`);
     await expect(page.getByRole("note")).toContainText("합쳐졌다");
   });
