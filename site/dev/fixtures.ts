@@ -3,7 +3,7 @@
 //   [--entities 30] [--terms 24] [--hub]   (4단계: 인물·기관·국가와 용어. --hub는 대상 1을 모든 뉴스에 붙인다(5년치 측정용))
 //   [--schedules 0]   (5단계: 일정 수. 0이면 빈 일정 색인만 만든다)
 //   [--indicators 0] [--indicators-all]   (6단계: 지표 값의 햇수. 0이면 지표 파일을 만들지 않는다. --indicators-all은 12개 모두 공개·값 있음(크기 측정용))
-//   [--videos] [--videos-full]   (7단계: 끝 날짜까지 30일의 추천 영상. --videos-full은 날마다 16개·추천 이유 150자·관련 이슈 2개(크기 측정용))
+//   [--videos] [--videos-full]   (7단계: 끝 날짜까지 30일의 추천 영상. --videos-full은 날마다 16개·추천 이유 150자·요약 350자·관련 이슈 2개(크기 측정용))
 //   화면 확인·/browser-check에서는 영상이 30일이 지나 숨지 않게 `--end <오늘>`로 만든다
 // <폴더>/site-data/*.json과 <폴더>/search-records.json을 만든다. 같은 인자면 같은 결과다.
 import fs from "node:fs";
@@ -68,7 +68,7 @@ export interface FixtureOptions {
   indicatorsAll?: boolean;
   /** 7단계: 끝 날짜까지 30일의 추천 영상(받은 날은 브리프 날짜). 없으면 영상 항목을 만들지 않고 다른 파일은 그대로다 */
   videos?: boolean;
-  /** 7단계: 영상을 날마다 16개(추천 이유 150자, 관련 이슈 2개) 붙인다(크기 측정용). videos를 켠다 */
+  /** 7단계: 영상을 날마다 16개(추천 이유 150자, 요약 350자, 관련 이슈 2개) 붙인다(크기 측정용). videos를 켠다 */
   videosFull?: boolean;
 }
 

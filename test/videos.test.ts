@@ -237,7 +237,7 @@ describe("7단계 4.1 데이터와 저장", () => {
   });
 
   for (const v of [4, 5, 6]) {
-    test(`4.1-3 버전 ${v} DB(브리프, 이슈, 대상, 용어${v >= 5 ? ", 일정" : ""}${v >= 6 ? ", 지표" : ""}, 합치기 기록)를 새 코드로 열면 버전 7이 되고, 데이터가 그대로이며 영상 기록이 없다`, () => {
+    test(`4.1-3 버전 ${v} DB(브리프, 이슈, 대상, 용어${v >= 5 ? ", 일정" : ""}${v >= 6 ? ", 지표" : ""}, 합치기 기록)를 새 코드로 열면 버전 8이 되고, 데이터가 그대로이며 영상 기록이 없다`, () => {
       const file = path.join(tempDir(), "t.db");
       const old = openDb(file, MIGRATIONS.filter((m) => m.version <= v));
       assert.equal(schemaVersion(old), v);
@@ -257,7 +257,7 @@ describe("7단계 4.1 데이터와 저장", () => {
       const before = dumpDb(old);
       old.close();
       const db = openDb(file);
-      assert.equal(schemaVersion(db), 7);
+      assert.equal(schemaVersion(db), 8);
       const after = dumpDb(db);
       for (const [table, rows] of Object.entries(before)) assert.deepEqual(after[table], rows, table);
       for (const t of ["videos", "video_issues", "video_picked"]) assert.deepEqual(after[t], [], t);
@@ -1001,7 +1001,7 @@ describe("7단계 4.5 start 출력과 요약, 4.2-7·4.3 흐름, 4.8 새지 않�
     const done = backupSiteSummary(f);
     assert.match(done.summary, /- 영상 고르기 실패\(3번, 작업 파일을 남겼다, 다음 실행이 다시 받는다\)/);
     assert.match(done.summary, /- 사이트 빌드: /);
-    for (const name of VIDEO_WORK_FILES) assert.ok(fs.existsSync(path.join(f.dataDir, "work", name)), `실패 뒤 ${name}이 남는다`);
+    for (const name of VIDEO_WORK_FILES.filter((x) => !/check|notes/.test(x))) assert.ok(fs.existsSync(path.join(f.dataDir, "work", name)), `실패 뒤 ${name}이 남는다`);
     const next = startFlow(f);
     assert.match(next.text, /- 영상: 2026-10-27 받기 할 것/);
     assert.match(next.text, /지난 실행의 영상 작업 파일 4개/);
@@ -1123,7 +1123,7 @@ describe("7단계 4.1-2 30일 지우기", () => {
     assert.deepEqual(fs.readFileSync(v6), v6Bytes, "버전 6 사본은 바이트 그대로");
     assert.equal(versionOf(v4), 4);
     assert.equal(versionOf(v6), 6);
-    assert.equal(versionOf(withVideos), 7, "영상 기록이 있는 사본은 user_version 그대로");
+    assert.equal(versionOf(withVideos), 8, "영상 기록이 있는 사본은 user_version 그대로");
     for (const snap of [withVideos, newSnap]) {
       const db = openDb(snap, []);
       assert.deepEqual(allVideos(db).map((v) => v.videoId), [IDS.d29], snap);
@@ -1170,7 +1170,7 @@ describe("7단계 4.1-2 30일 지우기", () => {
       assert.ok(filesContaining(path.join(dir, "tidwyn.db"), `${prefix}${IDS.d29}`).length === 1, "29일 전 것은 남는다");
       assert.ok(!fs.existsSync(path.join(dir, "site-input")) && !fs.existsSync(path.join(dir, "site")), "30일 지난 영상이 든 site-input·site는 통째로 지운다");
       assert.ok(fs.existsSync(path.join(dir, "briefs", "note.md")), "그 밖의 데이터는 남는다");
-      assert.equal(versionOf(path.join(dir, "tidwyn.db")), 7);
+      assert.equal(versionOf(path.join(dir, "tidwyn.db")), 8);
     }
     assert.deepEqual(snapshotBytes(other), otherBefore, "다른 이름의 폴더는 바이트 그대로");
     assert.deepEqual([v1Dir, v4Dir, brokenDir, recentWork].map(snapshotBytes), keepBefore, "옛 버전 DB·깨진 DB·30일 안의 작업 파일은 그대로");

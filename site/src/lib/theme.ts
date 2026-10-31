@@ -143,6 +143,9 @@ export function textPairs(p: Palette): { name: string; fg: string; bg: string }[
     { name: "추천 이유 머리", fg: p.accent, bg: p.chip },
     { name: "영상 길이", fg: p.durFg, bg: p.durBg },
     { name: "영상 출처 줄", fg: p.muted, bg: p.bg },
+    // 8단계: '요약 보기' 버튼과 펼친 요약
+    { name: "요약 버튼", fg: p.accent, bg: p.bg },
+    { name: "영상 요약", fg: p.fg, bg: p.chip },
   );
   return pairs;
 }

@@ -218,7 +218,7 @@ describe("6단계 4.1 데이터와 저장", () => {
   });
 
   for (const v of [4, 5]) {
-    test(`4.1-4 버전 ${v} DB(브리프, 이슈, 대상, 용어${v >= 5 ? ", 일정" : ""}, 합치기 기록)를 새 코드로 열면 버전 7이 되고, 데이터가 남으며 모든 이슈가 지표 판단 대상이다`, () => {
+    test(`4.1-4 버전 ${v} DB(브리프, 이슈, 대상, 용어${v >= 5 ? ", 일정" : ""}, 합치기 기록)를 새 코드로 열면 버전 8이 되고, 데이터가 남으며 모든 이슈가 지표 판단 대상이다`, () => {
       const file = path.join(tempDir(), "t.db");
       const old = openDb(file, MIGRATIONS.filter((m) => m.version <= v));
       assert.equal(schemaVersion(old), v);
@@ -235,7 +235,7 @@ describe("6단계 4.1 데이터와 저장", () => {
       const before = dumpDb(old);
       old.close();
       const db = openDb(file);
-      assert.equal(schemaVersion(db), 7);
+      assert.equal(schemaVersion(db), 8);
       const after = dumpDb(db);
       for (const [table, rows] of Object.entries(before)) assert.deepEqual(after[table], rows, table);
       for (const table of ["entities", "terms", "story_entities", "story_terms", ...(v >= 5 ? ["schedules"] : [])]) assert.equal(before[table]?.length, 1, table);
@@ -365,10 +365,10 @@ describe("6단계 4.2 지표 받기", () => {
   test("키: 환경 변수가 있으면 그것을, 없으면 .env.local을 읽고, 짧거나 빈 값은 없는 것으로 본다", () => {
     const dir = tempDir();
     fs.writeFileSync(path.join(dir, ".env.local"), `ECOS_API_KEY="FILE-ECOS-KEY-000"\nFRED_API_KEY=short\n`);
-    assert.deepEqual(readKeys({}, dir), { ECOS_API_KEY: "FILE-ECOS-KEY-000", FRED_API_KEY: null, YOUTUBE_API_KEY: null });
-    assert.deepEqual(readKeys({ ECOS_API_KEY: "ENV-ECOS-KEY-000", FRED_API_KEY: "" }, dir), { ECOS_API_KEY: "ENV-ECOS-KEY-000", FRED_API_KEY: null, YOUTUBE_API_KEY: null });
+    assert.deepEqual(readKeys({}, dir), { ECOS_API_KEY: "FILE-ECOS-KEY-000", FRED_API_KEY: null, YOUTUBE_API_KEY: null, GEMINI_API_KEY: null });
+    assert.deepEqual(readKeys({ ECOS_API_KEY: "ENV-ECOS-KEY-000", FRED_API_KEY: "" }, dir), { ECOS_API_KEY: "ENV-ECOS-KEY-000", FRED_API_KEY: null, YOUTUBE_API_KEY: null, GEMINI_API_KEY: null });
     fs.writeFileSync(path.join(dir, ".env.local"), `ECOS_API_KEY=FILE-ECOS-KEY-000 # 한국은행\nFRED_API_KEY="FILE-FRED#KEY-000"  # FRED\n`);
-    assert.deepEqual(readKeys({}, dir), { ECOS_API_KEY: "FILE-ECOS-KEY-000", FRED_API_KEY: "FILE-FRED#KEY-000", YOUTUBE_API_KEY: null }, "줄 끝 주석을 값에 넣지 않는다");
+    assert.deepEqual(readKeys({}, dir), { ECOS_API_KEY: "FILE-ECOS-KEY-000", FRED_API_KEY: "FILE-FRED#KEY-000", YOUTUBE_API_KEY: null, GEMINI_API_KEY: null }, "줄 끝 주석을 값에 넣지 않는다");
   });
 });
 

@@ -73,6 +73,24 @@ function daysBetween(from: string, to: string): number {
   return Math.round((Date.parse(`${to}T00:00:00Z`) - Date.parse(`${from}T00:00:00Z`)) / 86400000);
 }
 
+const SUMMARY_MAX = 350;
+const SUMMARY_WORDS = "가상 탐사 궤도 예시 기록 실험 표본 지도 항구 농장 공장 시장 금리 환율 수출 물가 고용 임금 주택 전력 배터리 반도체 위성 망원경 화석 빙하 해류 태풍 지진 산불 도시 철도 교량 항만 도서관 박물관 병원 학교 연구진 기자 교수 기술자 주민 상인 농부 선원 조종사 설계 비용 효과 원인 결과 근거 사례 통계 추세 변화 위험 대안 장점 한계 배경 역사 전망 조건 절차 규칙 제도 예산 계획 시험 측정 분석 비교 검증".split(" ");
+const SUMMARY_ENDS = ["을 살핀다", "의 과정을 짚는다", "을 숫자로 비교한다", "의 이유를 설명한다", "을 사례로 보여 준다", "의 한계를 따져 본다"];
+
+/** 영상마다 다른 지어낸 요약. 반복으로 늘리면 gzip이 없애 크기 측정이 거짓으로 통과한다(8단계 4.6-4) */
+function fixtureSummary(serial: number, length: number): string {
+  let x = (serial * 2654435761) >>> 0;
+  const next = (n: number) => {
+    x = (Math.imul(x, 1664525) + 1013904223) >>> 0;
+    return (x >>> 8) % n;
+  };
+  let out = "";
+  while ([...out].length < length) out += `${SUMMARY_WORDS[next(SUMMARY_WORDS.length)]} ${SUMMARY_WORDS[next(SUMMARY_WORDS.length)]} ${SUMMARY_WORDS[next(SUMMARY_WORDS.length)]}${SUMMARY_ENDS[next(SUMMARY_ENDS.length)]}. `;
+  const body = [...out].slice(0, length - 1);
+  if (body.at(-1) === " ") body[length - 2] = "다";
+  return `${body.join("")}.`;
+}
+
 export function fixtureVideos(opts: { end: string; dates: string[]; issues: number[]; merged: { id: number; into: number }; full?: boolean }): VideoFixtures {
   const byDate = new Map<string, SiteVideo[]>();
   const links: { video: SiteVideo; date: string; issues: number[] }[] = [];
@@ -107,6 +125,9 @@ export function fixtureVideos(opts: { end: string; dates: string[]; issues: numb
           reason,
           fetchedOn: date,
         };
+        // 요약: full은 모두 350자, 보통은 둘에 하나만 있고 둘째 영상은 긴 요약이다
+        if (opts.full) video.videoSummary = fixtureSummary(serial, SUMMARY_MAX);
+        else if (serial % 2 === 0) video.videoSummary = fixtureSummary(serial, serial === 2 ? SUMMARY_MAX : 180);
         if (!opts.full && k === 0 && bundle === "kr" && n === 1) {
           video.thumb = BROKEN_THUMB;
           info.broken = { date, id: video.id };

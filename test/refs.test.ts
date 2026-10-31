@@ -176,7 +176,7 @@ describe("4단계 4.1 데이터와 저장", () => {
     db.close();
   });
 
-  test("버전 3 DB(브리프, 이슈, 합치기 기록)를 새 코드로 열면 버전 7이 되고, 기존 데이터를 그대로 읽으며 모든 날짜가 뽑기 대상이다", () => {
+  test("버전 3 DB(브리프, 이슈, 합치기 기록)를 새 코드로 열면 버전 8이 되고, 기존 데이터를 그대로 읽으며 모든 날짜가 뽑기 대상이다", () => {
     const file = path.join(tempDir(), "t.db");
     const old = openDb(file, MIGRATIONS.filter((m) => m.version <= 3));
     assert.equal(schemaVersion(old), 3);
@@ -192,7 +192,7 @@ describe("4단계 4.1 데이터와 저장", () => {
     old.close();
 
     const db = openDb(file);
-    assert.equal(schemaVersion(db), 7);
+    assert.equal(schemaVersion(db), 8);
     assert.deepEqual(loadBrief(db, "2026-10-26")?.brief, brief);
     assert.equal(getIssue(db, i2)?.mergedInto, i1);
     assert.deepEqual(extractableDates(db), ["2026-10-26", "2026-10-27"]);

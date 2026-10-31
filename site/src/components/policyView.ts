@@ -62,7 +62,7 @@ export function PrivacyView({ Link }: { Link: LinkLike }) {
     P("읽은 뉴스 표시는 ", h(Link, { to: "/about", className: "text-link" }, "사이트 소개"), "의 '읽은 기록 지우기'로 지울 수 있다. 모든 기록은 브라우저 설정에서 이 사이트의 데이터(사이트 데이터·저장 공간)를 지우면 지워진다."),
     h("h2", { className: "h" }, "추천 영상과 YouTube"),
     P(
-      `브리프의 '영상' 탭과 이슈 페이지의 '관련 영상'은 YouTube API Services를 쓴다. 영상 정보(제목, 채널, 길이, 썸네일)는 YouTube에서 받은 것이고 받은 날부터 ${VIDEO_KEEP_DAYS}일 동안만 보인다. 추천 이유는 Tidwyn이 쓴 글이다. Tidwyn은 YouTube API로 방문자의 정보나 YouTube 계정에 접근하지 않는다.`,
+      `브리프의 '영상' 탭과 이슈 페이지의 '관련 영상'은 YouTube API Services를 쓴다. 영상 정보(제목, 채널, 길이, 썸네일)는 YouTube에서 받은 것이고 받은 날부터 ${VIDEO_KEEP_DAYS}일 동안만 보인다. 추천 이유와 요약은 Tidwyn이 쓴 글이다. 확인할 수 있는 영상은 내용을 Google의 Gemini API로 확인해 고르고, 요약은 AI가 영상 내용을 바탕으로 쓴 글이라 틀릴 수 있다. Gemini API에는 영상 주소만 보내고 방문자 정보는 보내지 않는다. Tidwyn은 YouTube API로 방문자의 정보나 YouTube 계정에 접근하지 않는다.`,
     ),
     P(
       "영상 썸네일은 YouTube(Google) 서버에서 바로 불러온다. 그래서 영상이 보이는 화면을 열면 방문자의 브라우저가 YouTube 서버에 접속하고, 그때 IP 주소 같은 접속 정보가 그 서버에 전달된다. 영상을 누르면 YouTube로 이동한다. 그 뒤의 처리는 Google이 정한다: ",

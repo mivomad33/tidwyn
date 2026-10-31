@@ -119,10 +119,35 @@ export interface VideoPickState {
   picked?: Record<VideoBundle, number>;
   /** 관련 이슈를 붙인 영상 수 */
   withIssues?: number;
+  /** 요약을 붙인 영상 수(8단계 4.5-2) */
+  withSummary?: number;
   /** 적용 뒤 지운 영상 작업 파일 수 */
   cleaned?: number;
   reason?: string;
   violations?: Violation[];
+}
+
+/**
+ * 영상 내용 확인 결과(8단계 4.1). 영상 ID·제목·메모는 쓰지 않고 수만 쓴다(4.4-4). attempts는 확인 후보 검사를 통과하지 못한 횟수,
+ * rejected는 고쳐서 다시 검사할 차례, alreadyDone은 고르기 끝남이라 부르지 않은 것이다
+ */
+export interface VideoNotesState {
+  status: "rejected" | "done" | "alreadyDone";
+  target: string | null;
+  attempts: number;
+  violations?: Violation[];
+  /** 위반이 세 번 나와 그때까지 받은 메모만 남기고 넘어갔다(4.2-1) */
+  gaveUp?: boolean;
+  candidates?: number;
+  noted?: number;
+  failures?: Record<string, number>;
+  notCalled?: number;
+  stop?: string;
+  timeLimit?: boolean;
+  costCap?: boolean;
+  input?: number;
+  output?: number;
+  usd?: number;
 }
 
 /** 사이트 빌드 결과(3단계 4.1, 4.5) */
@@ -177,6 +202,8 @@ export interface RunState {
   videoPlanned?: { date: string | null; done: boolean };
   videoPurge?: VideoPurgeResult;
   videoFetch?: VideoFetchState;
+  /** 8단계: 영상 내용 확인. 앞 단계 실행 기록에는 없다 */
+  videoNotes?: VideoNotesState;
   videoPick?: VideoPickState;
   /** 지난 날짜 이미지 채우기(3단계). 1·1.5·2단계 실행 기록에는 없다 */
   images?: ImagesResult;

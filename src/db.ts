@@ -303,6 +303,13 @@ export const MIGRATIONS: Migration[] = [
       `);
     },
   },
+  {
+    // 8단계 4.3-3: 영상 요약. 영상 기록의 일부라 함께 지워진다. 없을 수 있다(T11)
+    version: 8,
+    up: (db) => {
+      db.exec("ALTER TABLE videos ADD COLUMN video_summary TEXT");
+    },
+  },
 ];
 
 export function schemaVersion(db: DatabaseSync): number {

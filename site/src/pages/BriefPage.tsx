@@ -242,7 +242,7 @@ export function BriefPage({ route }: { route: Route }) {
             />
             <h2 className="sr-only">추천 영상</h2>
             <div className="vbox">
-              <VideoList videos={filterVideos(videos, chip)} mode="brief" Link={Link} />
+              <VideoList videos={filterVideos(videos, chip)} mode="brief" Link={Link} resetKey={String(chip)} />
               <VideoSource />
             </div>
           </>

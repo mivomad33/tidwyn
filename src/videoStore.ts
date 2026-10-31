@@ -40,6 +40,8 @@ export interface VideoRecord {
   thumb: string;
   publishedAt: string;
   reason: string;
+  /** 영상 내용 메모로 쓴 요약(8단계). 메모 없이 고른 영상과 8단계 이전 기록은 null */
+  summary: string | null;
   /** 묶음 안 순서(1부터) */
   position: number;
   /** 관련 이슈 식별자(고른 순서) */
@@ -59,6 +61,7 @@ interface VideoRow {
   thumb: string;
   published_at: string;
   reason: string;
+  video_summary: string | null;
   position: number;
 }
 
@@ -78,6 +81,7 @@ function toRecord(db: DatabaseSync, r: VideoRow): VideoRecord {
     thumb: r.thumb,
     publishedAt: r.published_at,
     reason: r.reason,
+    summary: r.video_summary,
     position: r.position,
     issues,
   };
@@ -111,7 +115,7 @@ export function videoTargetDate(db: DatabaseSync): string | null {
   return (db.prepare("SELECT MAX(target_date) AS d FROM briefs").get() as { d: string | null }).d;
 }
 
-export type NewVideo = Omit<VideoRecord, "briefDate" | "fetchedOn">;
+export type NewVideo = Omit<VideoRecord, "briefDate" | "fetchedOn" | "summary"> & { summary?: string | null };
 
 /**
  * 고르기를 한 번에 적용한다(4.3-3): 그 날짜의 영상 기록을 고른 것으로 바꾸고 "고르기 끝남"으로 둔다.
@@ -122,11 +126,11 @@ export function applyVideoPick(db: DatabaseSync, date: string, fetchedOn: string
   try {
     db.prepare("DELETE FROM videos WHERE brief_date = ?").run(date);
     const put = db.prepare(
-      "INSERT INTO videos (video_id, bundle, sources, brief_date, fetched_on, title, channel, seconds, thumb, published_at, reason, position) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      "INSERT INTO videos (video_id, bundle, sources, brief_date, fetched_on, title, channel, seconds, thumb, published_at, reason, video_summary, position) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
     );
     const link = db.prepare("INSERT INTO video_issues (video, issue_id, position) VALUES (?, ?, ?)");
     for (const v of videos) {
-      const r = put.run(v.videoId, v.bundle, JSON.stringify(v.sources), date, fetchedOn, v.title, v.channel, v.seconds, v.thumb, v.publishedAt, v.reason, v.position);
+      const r = put.run(v.videoId, v.bundle, JSON.stringify(v.sources), date, fetchedOn, v.title, v.channel, v.seconds, v.thumb, v.publishedAt, v.reason, v.summary ?? null, v.position);
       const id = Number(r.lastInsertRowid);
       v.issues.forEach((issue, i) => link.run(id, issue, i + 1));
     }

@@ -1727,7 +1727,7 @@ ul.isrc {
 .vrow {
   display: grid;
   grid-template-columns: 128px minmax(0, 1fr);
-  grid-template-rows: auto 1fr auto;
+  grid-template-rows: auto 1fr auto auto;
   column-gap: 10px;
   padding: 10px 0;
   border-bottom: 1px solid var(--line);
@@ -1825,6 +1825,33 @@ ul.isrc {
   margin-right: 6px;
 }
 
+/* 8단계 '요약 보기': 추천 이유 아래의 글자 버튼과 펼친 요약. 누를 곳은 44px 높이다 */
+.vsum {
+  grid-column: 1 / -1;
+  grid-row: 4;
+}
+
+.vsumbtn {
+  min-height: 44px;
+  padding: 0 2px;
+  border: 0;
+  background: none;
+  color: var(--accent);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.vsumtext {
+  margin: 0 0 2px;
+  font-size: 13.5px;
+  line-height: 1.6;
+  background: var(--chip);
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+
 .vsrc {
   margin: 8px 0 0;
   padding-bottom: 6px;
@@ -1841,12 +1868,27 @@ ul.isrc {
 @media (min-width: 600px) {
   .vrow {
     grid-template-columns: 200px minmax(0, 1fr);
-    grid-template-rows: auto auto 1fr;
+    grid-template-rows: auto auto auto 1fr;
     column-gap: 14px;
   }
 
+  /* 추천 이유와 요약이 놓일 줄까지 걸치므로, 누르는 곳과 초점 표시는 썸네일과 제목으로 좁힌다 */
   .vlink {
-    grid-row: 1 / 4;
+    grid-row: 1 / 5;
+    pointer-events: none;
+  }
+
+  .vlink > * {
+    pointer-events: auto;
+  }
+
+  .vlink:focus-visible {
+    outline: none;
+  }
+
+  .vlink:focus-visible .vthumb {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
   }
 
   .vthumb {
@@ -1861,6 +1903,10 @@ ul.isrc {
   .why {
     grid-column: 2;
     align-self: start;
+  }
+
+  .vsum {
+    grid-column: 2;
   }
 }
 

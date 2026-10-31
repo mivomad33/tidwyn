@@ -9,14 +9,14 @@ const TEXT_EXTENSIONS = new Set([".html", ".htm", ".js", ".mjs", ".cjs", ".css",
 /**
  * 실행 기록(`runs/<YYYYMMDD-HHMMSS>.json`), 작업 파일·후보 목록(`work/<날짜>.json`, `.candidates.*`, `.issues.md`, `.links.json`,
  * `.refs.md`, `.refs.json`, `.schedules.md`, `.schedules.json`, `merges.*`, 6단계 지표 판단 `indicators.candidates-<번호>.md`, `indicators.judge-<번호>.json`,
- * 7단계 영상 후보 목록·상세·고르기 파일 `videos.candidates.json`, `videos.candidates.md`, `videos.details.md`, `videos.pick.json`)
+ * 7단계 영상 후보 목록·상세·고르기 파일 `videos.candidates.json`, `videos.candidates.md`, `videos.details.md`, `videos.pick.json`, 8단계 확인 후보·메모 파일 `videos.check.json`, `videos.notes.json`, `videos.notes.tmp.json`)
  */
 const RUN_FILE_RES = [
   /^\d{8}-\d{6}\.json$/,
   /^\d{4}-\d{2}-\d{2}\.(?:json|candidates\.json|candidates\.md|issues\.md|links\.json|refs\.md|refs\.json|schedules\.md|schedules\.json)$/,
   /^merges\.(?:json|candidates\.md)$/,
   /^indicators\.(?:candidates-\d+\.md|judge-\d+\.json)$/,
-  /^videos\.(?:candidates\.json|candidates\.md|details\.md|pick\.json)$/,
+  /^videos\.(?:candidates\.json|candidates\.md|details\.md|pick\.json|check\.json|notes\.json|notes\.tmp\.json)$/,
 ];
 /** 데이터 폴더의 작업 폴더 이름. 결과물 안에 이런 폴더가 있으면 데이터 폴더가 섞인 것이다 */
 const DATA_DIRS = new Set(["runs", "work", "snapshots", "backup", "site-input"]);

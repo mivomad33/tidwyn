@@ -58,7 +58,7 @@ test.describe("4.7-1 브리프의 '영상' 탭", () => {
     await expect(rows(page).locator(".tag")).toHaveText(vids.map((x) => ({ kr: "한국", us: "미국", "ai-ko": "AI · 한국어", "ai-en": "AI · 영어" })[x.bundle]));
     await expect(rows(page).first().locator(".why")).toContainText("추천 이유");
     const src = page.locator("main p.vsrc");
-    await expect(src).toHaveText("영상 정보: YouTube · YouTube 이용약관 (새 탭) · 추천 이유는 Tidwyn이 썼습니다.");
+    await expect(src).toHaveText("영상 정보: YouTube · YouTube 이용약관 (새 탭) · 추천 이유와 요약은 Tidwyn이 썼습니다.");
     await expect(src.getByRole("link")).toHaveAttribute("href", YOUTUBE_TERMS_URL);
 
     await chipGroup(page).getByRole("button", { name: `AI ${ai}` }).click();

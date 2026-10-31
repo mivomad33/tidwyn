@@ -36,7 +36,8 @@ import { fetchAllIndicators, fetchHttp, type HttpJson, type IndicatorFetchResult
 import { applyJudgeFile, checkJudgeFile, judgeBatches, judgeWorkFile, readJudgeFile, renderJudgeCandidates } from "./indicatorJudge.ts";
 import { unjudgedIssues } from "./indicatorStore.ts";
 import { readKeys, secretValues, maskSecrets } from "./keys.ts";
-import { buildCandidateFile, checkPickFile, readCandidateFile, readJsonFile, removeVideoWorkFiles, restoreCandidateLists, videoWorkFile, writeCandidateFiles } from "./videoPick.ts";
+import { DEFAULT_GEMINI_LIMITS, STOP_LABELS, emptyNotes, estimateUsd, fetchGemini, notCalled, readNotes, realClock, runNotes, writeNotes, type GeminiClock, type GeminiHttp, type GeminiLimits, type NotesFile } from "./gemini.ts";
+import { buildCandidateFile, checkCheckFile, checkPickFile, readCandidateFile, readJsonFile, removeVideoWorkFiles, restoreCandidateLists, videoWorkFile, writeCandidateFiles } from "./videoPick.ts";
 import { purgeDataDir, purgeTestDirs, type VideoPurgeResult } from "./videoPurge.ts";
 import { applyVideoPick, isPicked, issueCandidates, purgeExpiredRows, recentVideoIds, videoTargetDate } from "./videoStore.ts";
 import { EXCLUDE_LABELS, YoutubeClient, fetchVideos, fetchYoutube, type ExcludeReason, type Usage, type YoutubeHttp } from "./youtube.ts";
@@ -86,6 +87,7 @@ import {
   type ScheduleResult,
   type SiteResult,
   type VideoFetchState,
+  type VideoNotesState,
   type VideoPickState,
 } from "./run.ts";
 import { DB_FILE, ENV_DATA_DIR, checkRunCondition, describeSettings, parseArgs, resolveSettings, type Settings } from "./settings.ts";
@@ -133,6 +135,12 @@ export interface Context {
   youtubeLimits?: Usage;
   /** YouTube 다시 시도 간격(밀리초). 없으면 2초 */
   youtubeRetryGapMs?: number;
+  /** Gemini 요청(8단계 4.1). 없으면 fetch */
+  geminiHttp?: GeminiHttp;
+  /** Gemini 시간 제한의 시계. 테스트가 가짜로 바꾼다 */
+  geminiClock?: GeminiClock;
+  /** Gemini 상한. 테스트가 낮춰 넣는다 */
+  geminiLimits?: Partial<GeminiLimits>;
 }
 
 /** 의존성 잠금 파일대로, 잠금 파일을 바꾸지 않고 대화형 확인 없이 설치한다 */
@@ -197,6 +205,7 @@ const USAGE = `명령:
   indicator-fetch --run <파일>            12개 지표를 ECOS·FRED에서 받아 저장(지표 하나가 실패해도 계속한다)
 영상(7단계):
   video-fetch --run <파일>                가장 늦은 브리프 날짜의 영상 받기(차트·검색·상세·거르기) → 후보 목록(work/videos.candidates.md). 이미 고르기 끝남이면 YouTube를 부르지 않는다
+  video-notes --run <파일>                확인 후보 검사 → Gemini로 영상 내용 메모(work/videos.notes.json)
   video-check --run <파일>                고르기 파일(work/videos.pick.json) 검사
   video-apply --run <파일>                검사 → 한 번에 적용 → 고르기 끝남 → 영상 작업 파일 지우기(실패하면 실행 기록에 남기고 파일을 남긴다)`;
 
@@ -1496,7 +1505,7 @@ function secretsOf(ctx: Context): string[] {
 function keyLine(ctx: Context): string {
   const k = readKeys(ctx.env, keyDirOf(ctx));
   const has = (v: string | null) => (v === null ? "없음" : "있음");
-  return `- 키: ECOS ${has(k.ECOS_API_KEY)}, FRED ${has(k.FRED_API_KEY)}, YouTube ${has(k.YOUTUBE_API_KEY)}`;
+  return `- 키: ECOS ${has(k.ECOS_API_KEY)}, FRED ${has(k.FRED_API_KEY)}, YouTube ${has(k.YOUTUBE_API_KEY)}, Gemini ${has(k.GEMINI_API_KEY)}`;
 }
 
 /** 판단할 이슈를 파일로 나눠 후보 목록을 쓴다(4.3-2). 나눈 결과를 실행 기록에 남긴다 */
@@ -1770,13 +1779,112 @@ function videoFetchLines(r: VideoFetchState): string[] {
   return lines;
 }
 
+/** 확인 후보 파일을 고쳐 다시 검사하는 최대 횟수(8단계 4.2-1). 처음 + 2번. 세 번째 위반이면 그때까지 받은 메모만 남기고 넘어간다 */
+const CHECK_MAX_ATTEMPTS = 3;
+
+/** 메모 파일의 결과를 실행 기록에 남길 모양으로(수만 쓴다, 4.4-4) */
+function notesState(n: NotesFile, attempts: number): VideoNotesState {
+  const failures: Record<string, number> = {};
+  for (const f of n.failures) failures[f.reason] = (failures[f.reason] ?? 0) + 1;
+  const out: VideoNotesState = { status: "done", target: n.target, attempts, candidates: n.total, noted: n.videos.length, failures, notCalled: notCalled(n), input: n.usage.input, output: n.usage.output, usd: estimateUsd(n.usage) };
+  if (n.stop !== null) out.stop = STOP_LABELS[n.stop];
+  if (n.timeLimit) out.timeLimit = true;
+  if (n.costCap) out.costCap = true;
+  return out;
+}
+
+/** 영상 내용 확인 결과 줄(출력과 요약이 함께 쓴다). 수와 정해진 이유만 쓴다 */
+function videoNotesLines(r: VideoNotesState): string[] {
+  if (r.status === "alreadyDone") return ["- 영상 내용 확인: 이미 고르기 끝남이라 Gemini를 부르지 않았다"];
+  if (r.status === "rejected") return [`- 영상 내용 확인: 확인 후보 검사를 통과하지 못했다(${r.attempts}번)`];
+  const fails = Object.entries(r.failures ?? {});
+  const failText = fails.length === 0 ? "실패 0개" : `실패 ${fails.reduce((a, [, n]) => a + n, 0)}개(${fails.map(([k, n]) => `${k} ${n}`).join(", ")})`;
+  const lines = [`- 영상 내용 확인: 확인 후보 ${r.candidates ?? 0}개, 메모 받음 ${r.noted ?? 0}개, ${failText}, 부르지 않음 ${r.notCalled ?? 0}개`];
+  if (r.gaveUp) lines.push(`  - 확인 후보 검사를 ${CHECK_MAX_ATTEMPTS}번 통과하지 못해 ${(r.noted ?? 0) > 0 ? "받은 메모만 남기고" : "메모 없이"} 넘어갔다`);
+  if (r.stop) lines.push(`  - ${r.stop}`);
+  if (r.timeLimit) lines.push("  - 시간 제한 도달");
+  if (r.costCap) lines.push("  - 비용 상한 도달");
+  lines.push(`  - Gemini 토큰: 입력 ${r.input ?? 0}, 출력 ${r.output ?? 0}, 예상 $${(r.usd ?? 0).toFixed(3)}`);
+  return lines;
+}
+
+/** 확인 후보를 검사하고 Gemini로 메모를 받는다(8단계 4.1, 4.2). 검사를 통과한 뒤에는 어느 경우든 메모 파일을 쓰고 흐름을 멈추지 않는다(T11) */
+async function cmdVideoNotes(argv: string[], ctx: Context): Promise<number> {
+  const v = opts(argv, { run: { type: "string" } });
+  const runFile = need(v, "run");
+  const state = readRun(runFile);
+  const refused = indicatorCondition(state, ctx);
+  if (refused !== null) return refused;
+  const record = (r: VideoNotesState) => updateRun(runFile, (s) => (s.videoNotes = r));
+  const db = openExistingDb(state.dbPath);
+  let target: string | null;
+  try {
+    target = videoTargetDate(db);
+    if (target !== null && isPicked(db, target)) {
+      if (state.videoNotes?.status !== "done") record({ status: "alreadyDone", target, attempts: 0 });
+      ctx.out(`영상: ${target} 이미 고르기 끝남. Gemini를 부르지 않는다.`);
+      return EXIT.ok;
+    }
+  } finally {
+    db.close();
+  }
+  const cand = readCandidateFile(state.dataDir);
+  if (!cand.ok || cand.file.targetDate !== target) {
+    ctx.out(`영상 내용 확인 실패: ${cand.ok ? "후보 목록의 날짜가 대상 날짜와 다르다" : cand.reason}(먼저 video-fetch)`);
+    return EXIT.failed;
+  }
+  const existing = readNotes(state.dataDir, target);
+  if (existing?.finished) {
+    ctx.out(`영상 내용 확인: 이미 끝남. Gemini를 다시 부르지 않는다. 메모 파일 ${videoWorkFile(state.dataDir, "notes")}`);
+    return EXIT.ok;
+  }
+  const attempts = state.videoNotes?.status === "rejected" ? state.videoNotes.attempts : 0;
+  const finish = (n: NotesFile, a: number, extra: Partial<VideoNotesState> = {}): number => {
+    n.finished = true;
+    writeNotes(state.dataDir, n);
+    const st = { ...notesState(n, a), ...extra };
+    record(st);
+    ctx.out(maskSecrets([`메모 파일: ${videoWorkFile(state.dataDir, "notes")}`, ...videoNotesLines(st)].join("\n"), secretsOf(ctx)));
+    return EXIT.ok;
+  };
+  const read = readJsonFile(videoWorkFile(state.dataDir, "check"), "확인 후보 파일");
+  const checked = read.ok ? checkCheckFile(read.data, cand.file) : { ok: false as const, violations: [{ where: "확인 후보 파일", why: read.reason }] };
+  if (!checked.ok) {
+    const n = attempts + 1;
+    if (n >= CHECK_MAX_ATTEMPTS) return finish(existing ?? emptyNotes(target, 0), n, { gaveUp: true, violations: checked.violations });
+    record({ status: "rejected", target, attempts: n, violations: checked.violations });
+    ctx.out(`영상 확인 후보 검사 실패(${n}/${CHECK_MAX_ATTEMPTS}번째), 위반 ${checked.violations.length}개:\n${formatViolations(checked.violations)}`);
+    return EXIT.failed;
+  }
+  if (checked.videos.length === 0) return finish(existing ?? emptyNotes(target, 0), attempts);
+  const notes = existing ?? emptyNotes(target, checked.videos.length);
+  const key = readKeys(ctx.env, keyDirOf(ctx)).GEMINI_API_KEY;
+  if (key === null) {
+    notes.stop = "key";
+    return finish(notes, attempts);
+  }
+  const done = new Set([...notes.videos.map((x) => x.n), ...notes.failures.map((x) => x.n)]);
+  writeNotes(state.dataDir, notes);
+  await runNotes({
+    videos: checked.videos.filter((x) => !done.has(x.n)),
+    notes,
+    save: () => writeNotes(state.dataDir, notes),
+    http: ctx.geminiHttp ?? fetchGemini,
+    key,
+    clock: ctx.geminiClock ?? realClock,
+    limits: { ...DEFAULT_GEMINI_LIMITS, ...ctx.geminiLimits },
+  });
+  return finish(notes, attempts);
+}
+
 /** 고르기 검사·적용의 공통 준비: 후보 목록과 고르기 파일을 읽는다 */
-function readPick(state: RunState): { ok: true; file: ReturnType<typeof buildCandidateFile>; data: unknown } | { ok: false; reason: string } {
+function readPick(state: RunState): { ok: true; file: ReturnType<typeof buildCandidateFile>; data: unknown; noted: Set<string> } | { ok: false; reason: string } {
   const cand = readCandidateFile(state.dataDir);
   if (!cand.ok) return { ok: false, reason: `${cand.reason}(먼저 video-fetch)` };
   const pick = readJsonFile(videoWorkFile(state.dataDir, "pick"), "고르기 파일");
   if (!pick.ok) return pick;
-  return { ok: true, file: cand.file, data: pick.data };
+  const noted = new Set(readNotes(state.dataDir, cand.file.targetDate)?.videos.map((x) => x.videoId) ?? []);
+  return { ok: true, file: cand.file, data: pick.data, noted };
 }
 
 /** 고르기 파일을 고쳐 다시 검사하는 최대 횟수(4.3-4). 처음 + 2번 */
@@ -1794,7 +1902,7 @@ function cmdVideoCheck(argv: string[], ctx: Context): number {
   }
   const db = openExistingDb(state.dbPath);
   try {
-    const c = checkPickFile(db, r.data, r.file);
+    const c = checkPickFile(db, r.data, r.file, r.noted);
     if (!c.ok) {
       ctx.out(`영상 고르기 검사 실패, 위반 ${c.violations.length}개:\n${formatViolations(c.violations)}`);
       return EXIT.failed;
@@ -1852,11 +1960,11 @@ function cmdVideoApply(argv: string[], ctx: Context): number {
     const r = readPick(state);
     if (!r.ok) return fail(r.reason);
     if (r.file.targetDate !== target) return fail(`후보 목록의 날짜(${r.file.targetDate})가 대상 날짜(${target ?? "없음"})와 다르다(video-fetch를 다시 한다)`);
-    const c = checkPickFile(db, r.data, r.file);
+    const c = checkPickFile(db, r.data, r.file, r.noted);
     if (!c.ok) return fail("고르기 파일이 검사를 통과하지 못했다", c.violations);
     applyVideoPick(db, target, r.file.fetchedOn, c.videos);
     const cleaned = removeVideoWorkFiles(state.dataDir);
-    updateRun(runFile, (s) => (s.videoPick = { status: "applied", target, attempts, picked: countByBundle(c.videos), withIssues: c.videos.filter((x) => x.issues.length > 0).length, cleaned }));
+    updateRun(runFile, (s) => (s.videoPick = { status: "applied", target, attempts, picked: countByBundle(c.videos), withIssues: c.videos.filter((x) => x.issues.length > 0).length, withSummary: c.videos.filter((x) => (x.summary ?? null) !== null).length, cleaned }));
     ctx.out(`영상 고르기 적용함(${target}): ${pickCounts(c.videos)}. 고르기 끝남으로 두었다. 영상 작업 파일 ${cleaned}개를 지웠다.`);
     return EXIT.ok;
   } finally {
@@ -1871,11 +1979,13 @@ function videoSummaryLines(s: RunState): string[] {
   const f = s.videoFetch;
   if (f === undefined) lines.push("- 영상 받기: 하지 않았다(다음 실행이 다시 받는다)");
   else lines.push(...videoFetchLines(f));
+  if (s.videoNotes !== undefined) lines.push(...videoNotesLines(s.videoNotes));
   const p = s.videoPick;
   if (p === undefined) {
     if (f !== undefined && (f.status === "ok" || f.status === "partial")) lines.push("- 영상 고르기: 적용하지 않았다(작업 파일을 남겼다, 다음 실행이 다시 받는다)");
   } else if (p.status === "applied") {
     lines.push(`- 영상 고르기: ${describeBundles(p.picked!)}, 관련 이슈를 붙인 영상 ${p.withIssues ?? 0}개${p.attempts > 0 ? ` (고쳐서 다시 검사 ${p.attempts}번)` : ""}`);
+    lines.push(`  - 요약을 붙인 영상: ${p.withSummary ?? 0}개`);
   } else if (p.status === "alreadyDone") lines.push("- 영상 고르기: 이미 끝남");
   else {
     lines.push(`- 영상 고르기 실패(${p.attempts}번, 작업 파일을 남겼다, 다음 실행이 다시 받는다): ${p.reason ?? ""}`);
@@ -2135,6 +2245,7 @@ const ASYNC_COMMANDS: Record<string, (argv: string[], ctx: Context) => Promise<n
   deploy: cmdDeploy,
   "indicator-fetch": cmdIndicatorFetch,
   "video-fetch": cmdVideoFetch,
+  "video-notes": cmdVideoNotes,
 };
 
 /** 모든 명령 이름(스킬 문서의 명령 이름 검사, 3단계 4.5-1) */

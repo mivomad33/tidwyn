@@ -17,7 +17,9 @@ export interface VideoSiteData {
 }
 
 function siteVideo(v: VideoRecord): SiteVideo {
-  return { id: v.videoId, bundle: v.bundle, title: v.title, channel: v.channel, seconds: v.seconds, thumb: v.thumb, reason: v.reason, fetchedOn: v.fetchedOn };
+  const out: SiteVideo = { id: v.videoId, bundle: v.bundle, title: v.title, channel: v.channel, seconds: v.seconds, thumb: v.thumb, reason: v.reason, fetchedOn: v.fetchedOn };
+  if (v.summary !== null) out.videoSummary = v.summary;
+  return out;
 }
 
 export function buildVideoSiteData(db: DatabaseSync): VideoSiteData {

@@ -71,8 +71,8 @@ const SECRET_PATTERNS: { kind: FindingKind; re: RegExp }[] = [
 
 /** 백업 파일 이름(backup.ts의 월별 JSON, issues.json, refs.json, schedules.json, indicators.json, meta.json). 결과물 검사도 쓴다 */
 export const BACKUP_NAME_RE = /^(?:\d{4}-\d{2}\.json|issues\.json|refs\.json|schedules\.json|indicators\.json|meta\.json)$/;
-/** 영상 기록의 표시(영상 기록·사이트 영상 항목 이름). 백업에는 영상 데이터를 넣지 않는다(7단계 4.4-2) */
-const VIDEO_RECORD_RE = /"(?:videoId|video_id|videos)"\s*:/;
+/** 영상 기록의 표시(영상 기록·사이트 영상 항목과 8단계 영상 요약 이름). 백업에는 영상 데이터를 넣지 않는다(7단계 4.4-2) */
+const VIDEO_RECORD_RE = /"(?:videoId|video_id|videos|videoSummary|video_summary)"\s*:/;
 
 /** 백업 파일 자리(data 브랜치 최상위나 backup/ 폴더)의 백업 이름 파일인지 */
 export function isBackupPath(file: string): boolean {
@@ -86,7 +86,7 @@ export function videoBackupFindings(where: string, file: string, content: Buffer
   if (!isBackupPath(file) || isBinary(content)) return [];
   return VIDEO_RECORD_RE.test(content.toString("utf8")) ? [{ where, kind: "백업 파일에 영상 기록" }] : [];
 }
-const EMAIL_RE = /[A-Za-z0-9._%+-]+@([A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,})/g;
+export const EMAIL_RE = /[A-Za-z0-9._%+-]+@([A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,})/g;
 
 function emailAllowed(email: string, domain: string): boolean {
   const e = email.toLowerCase();

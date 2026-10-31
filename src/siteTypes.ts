@@ -580,6 +580,8 @@ export interface SiteVideo {
   thumb: string;
   /** Tidwyn(Claude)이 쓴 추천 이유 */
   reason: string;
+  /** 8단계: Tidwyn(Claude)이 영상 내용 메모로 쓴 요약. 없으면 항목이 없다. 이슈의 summary와 구별되는 이름이다(공개 전 점검이 찾는다) */
+  videoSummary?: string;
   /** 받은 날(KST, YYYY-MM-DD). 화면이 이 날부터 30일이 지나면 숨긴다(V14) */
   fetchedOn: string;
 }

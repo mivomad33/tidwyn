@@ -12,6 +12,7 @@ import { resolveStatic } from "../site/hosting.ts";
 import { FIRST_SCREEN_BUDGET, measureOutput } from "../site/size.ts";
 import { FOOTER_LINKS, FooterView, PrivacyView } from "../site/src/components/policyView.ts";
 import type { LinkLikeProps } from "../site/src/components/termView.ts";
+import { fixtureVideos } from "../site/dev/videoFixtures.ts";
 import { AboutVideos, VideoList, VideoRow, VideoSource } from "../site/src/components/videoView.ts";
 import { ALL_TAB, BRIEF_TAB_KEY, VIDEO_TAB, briefTabs, currentTab, parseBriefTab, stateForHash } from "../site/src/lib/brief.ts";
 import { BOX_TAB_KEY as BOX_KEY_FROM_INDICATORS } from "../site/src/lib/indicators.ts";
@@ -134,6 +135,22 @@ describe("4.7-1 브리프의 '영상' 탭", () => {
     assert.equal(videoUrl("a b"), "https://www.youtube.com/watch?v=a%20b");
   });
 
+  test("8단계 4.6-2 요약이 있는 줄에만 영상 링크 밖의 '요약 보기'가 있고, 닫힌 영역과 aria로 이어진다", () => {
+    const html = renderToStaticMarkup(h(VideoRow, { video: video("kr", TODAY, { videoSummary: "지어낸 영상 요약이다." }), mode: "brief", Link }));
+    const m = /<\/a>.*<button type="button" class="vsumbtn" aria-expanded="false" aria-controls="([^"]+)">요약 보기<\/button><p id="([^"]+)" class="vsumtext" hidden="">지어낸 영상 요약이다\.<\/p>/.exec(html);
+    assert.ok(m, html);
+    assert.equal(m[1], m[2]);
+    assert.ok(!renderToStaticMarkup(h(VideoRow, { video: video("kr", TODAY), mode: "brief", Link })).includes("vsum"));
+  });
+
+  test("8단계 4.6-4 크기 측정용 요약은 영상마다 다른 350자 글이다", () => {
+    const f = fixtureVideos({ end: "2026-10-31", dates: ["2026-10-30", "2026-10-31"], issues: [1, 2, 3], merged: { id: 3, into: 1 }, full: true });
+    const texts = [...f.byDate.values()].flat().map((x) => x.videoSummary!);
+    assert.equal(texts.length, 32);
+    assert.equal(new Set(texts).size, 32);
+    for (const t of texts) assert.equal([...t].length, 350);
+  });
+
   test("묶음 표시와 길이 글자", () => {
     const tags = (["kr", "us", "ai-ko", "ai-en"] as const).map((b) => /<span class="tag">([^<]+)</.exec(renderToStaticMarkup(h(VideoRow, { video: video(b), mode: "brief", Link })))![1]);
     assert.deepEqual(tags, ["한국", "미국", "AI · 한국어", "AI · 영어"]);
@@ -147,7 +164,7 @@ describe("4.7-1 브리프의 '영상' 탭", () => {
     const html = renderToStaticMarkup(h(VideoSource));
     assert.equal(
       html,
-      `<p class="vsrc">영상 정보: YouTube · <a href="${YOUTUBE_TERMS_URL}" class="text-link" target="_blank" rel="noopener noreferrer">YouTube 이용약관<span class="sr-only"> (새 탭)</span></a> · 추천 이유는 Tidwyn이 썼습니다.</p>`,
+      `<p class="vsrc">영상 정보: YouTube · <a href="${YOUTUBE_TERMS_URL}" class="text-link" target="_blank" rel="noopener noreferrer">YouTube 이용약관<span class="sr-only"> (새 탭)</span></a> · 추천 이유와 요약은 Tidwyn이 썼습니다.</p>`,
     );
   });
 });
@@ -229,8 +246,12 @@ describe("4.7-4 개인정보 처리방침과 바닥글", () => {
       "YouTube(Google) 서버에서 바로 불러온다",
       "각 매체 서버에서 바로 불러온다",
       "제3자 광고를 싣지 않는다",
-      "바뀐 날짜: 2026년 10월 30일",
+      "바뀐 날짜: 2026년 10월 31일",
       "브라우저 설정에서",
+      "추천 이유와 요약은 Tidwyn이 쓴 글",
+      "Google의 Gemini API",
+      "틀릴 수 있다",
+      "방문자 정보는 보내지 않는다",
     ]) assert.ok(html.includes(text), text);
     assert.ok(html.includes(`href="${GOOGLE_PRIVACY_URL}"`), "Google 개인정보처리방침 링크");
     assert.equal(GOOGLE_PRIVACY_URL, "http://www.google.com/policies/privacy");
@@ -270,7 +291,7 @@ describe("4.7-5 사이트 소개의 '추천 영상'", () => {
   test("고르는 방법, YouTube API Services와 30일, 이용약관 링크와 동의 문구, 처리방침 링크가 있다", () => {
     const html = renderToStaticMarkup(h(AboutVideos, { Link }));
     assert.match(html, /^<h2 class="h">추천 영상<\/h2>/);
-    for (const text of ["인기 차트", "주제 검색", "Claude가 제목과 설명을 보고", "추천 이유는 Tidwyn이 쓴 글", "YouTube API Services", "30일 동안만 보인다", CONSENT_TEXT]) assert.ok(html.includes(text), text);
+    for (const text of ["인기 차트", "주제 검색", "Claude가 제목과 설명으로 후보를 추린다", "Gemini API로 확인", "틀릴 수 있다", "방문자 정보는 보내지 않는다", "매일 브리프를 만들 때", "추천 이유와 요약은 Tidwyn이 쓴 글", "YouTube API Services", "30일 동안만 보인다", CONSENT_TEXT]) assert.ok(html.includes(text), text);
     assert.ok(html.includes(`<a href="${YOUTUBE_TERMS_URL}" class="text-link" target="_blank" rel="noopener noreferrer">`));
     assert.ok(html.includes('<a href="/privacy" class="text-link">개인정보 처리방침</a>'));
     assert.match(fs.readFileSync(path.join(import.meta.dirname, "..", "site", "src", "pages", "AboutPage.tsx"), "utf8"), /<AboutVideos Link=\{Link\} \/>/);
@@ -283,7 +304,7 @@ describe("4.7-6 새 색의 대비", () => {
     ["다크", DARK],
   ] as const) {
     test(`${name}: 묶음 표시, 정보 줄, 추천 이유 상자, 썸네일 위 길이, 출처 줄이 4.5:1 이상`, () => {
-      const names = ["영상 묶음 표시", "영상 정보 줄", "추천 이유", "추천 이유 머리", "영상 길이", "영상 출처 줄"];
+      const names = ["영상 묶음 표시", "영상 정보 줄", "추천 이유", "추천 이유 머리", "영상 길이", "영상 출처 줄", "요약 버튼", "영상 요약"];
       for (const n of names) {
         const pair = textPairs(p).find((x) => x.name === n);
         assert.ok(pair, n);
@@ -330,7 +351,7 @@ describe("4.7-6 지어낸 데이터의 영상", () => {
 });
 
 describe("4.6-3 영상을 더한 5년치", () => {
-  test("30일 × 하루 16개 영상(추천 이유 150자, 관련 이슈 2개)을 더해도 결과물 10,000개 이하, 브리프 첫 화면 gzip 300KB 이하다", async () => {
+  test("30일 × 하루 16개 영상(추천 이유 150자, 요약 350자, 관련 이슈 2개)을 더해도 결과물 10,000개 이하, 브리프 첫 화면 gzip 300KB 이하다", async () => {
     // 6단계 측정 조건(1,826일, 하루 42건, 이슈·대상 15,000개, 용어 5,000개, 일정 15,000개, 지표 12개 × 5년)에 영상 30일 × 16개
     const work = tempDir("tidwyn-site7y-");
     const dataDir = path.join(work, "data");
