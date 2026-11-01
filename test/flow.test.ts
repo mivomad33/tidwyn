@@ -60,8 +60,8 @@ describe("4.1-6 실패한 날짜와 나머지 날짜", () => {
     const s = run(repo, ["summary", "--run", run2]);
     assert.match(s.text, /저장한 날짜: 2026-10-25, 2026-10-27/);
     assert.match(s.text, /2026-10-26: 검사를 통과하지 못했다\n\s+- 한국 섹션 1위 핵심 사실: 1개/);
-    assert.match(s.text, /다른 날짜의 마크다운:\n\s+- .*2026-10-25\.md/);
-    assert.match(s.text, /---\n\n# 2026-10-27 브리프/, "가장 최근 저장 날짜의 마크다운 전체를 보여 준다");
+    assert.match(s.text, /저장한 날짜의 마크다운:\n\s+- .*2026-10-25\.md\n\s+- .*2026-10-27\.md/);
+    assert.doesNotMatch(s.text, /# 2026-10-27 브리프/, "브리프 본문은 대화창에 보여 주지 않는다");
   });
   test("조사 실패를 기록하면 요약에 이유가 나오고, 결과가 없는 날짜도 실패로 나온다", () => {
     const repo = tempRepo();
@@ -91,7 +91,7 @@ describe("4.1-6 실패한 날짜와 나머지 날짜", () => {
     assert.match(b.text, /백업: 실패/);
     const s = run(repo, ["summary", "--run", runFile]);
     assert.match(s.text, /백업: 실패/);
-    assert.match(s.text, /# 2026-10-27 브리프/, "백업이 실패해도 브리프 출력은 나온다");
+    assert.match(s.text, /저장한 날짜의 마크다운:\n\s+- .*2026-10-27\.md/, "백업이 실패해도 마크다운 경로는 나온다");
   });
   test("처리할 날짜가 없어도 DB가 있으면 백업한다(밀린 백업 따라잡기)", () => {
     const repo = tempRepo();

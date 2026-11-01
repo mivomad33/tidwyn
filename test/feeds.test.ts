@@ -217,7 +217,7 @@ describe("1.5단계 4.4 실행 요약", () => {
     assert.match(b.text(), new RegExp(`- ${DATE} 우선 출처 비율: 대표 출처 15건 중 8건`));
     assert.doesNotMatch(b.text(), /경고: 우선 출처/);
     assert.match(b.text(), /- 저장한 날짜: 2026-10-27/);
-    assert.match(b.text(), /# 2026-10-27 브리프/);
+    assert.doesNotMatch(b.text(), /# 2026-10-27 브리프/);
   });
 
   test("4.4-2 실행 기록에 피드 실패가 있으면 요약에 날짜·피드·이유가 나온다", () => {

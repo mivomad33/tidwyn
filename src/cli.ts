@@ -580,16 +580,9 @@ function cmdSummary(argv: string[], ctx: Context): number {
   lines.push(...imageSummaryLines(s, saved));
   lines.push(`- 백업: ${describeBackup(s.backup)}`);
   lines.push(...siteSummaryLines(s));
-  const latest = saved.at(-1);
-  const others = saved.slice(0, -1);
-  if (others.length > 0) {
-    lines.push("- 다른 날짜의 마크다운:");
-    for (const d of others) lines.push(`  - ${markdownPath(s.dataDir, d)}`);
-  }
-  if (latest !== undefined) {
-    const file = markdownPath(s.dataDir, latest);
-    lines.push(`- ${latest} 마크다운: ${file}`, "", "---", "");
-    lines.push(fs.existsSync(file) ? fs.readFileSync(file, "utf8").trimEnd() : `(마크다운 파일이 없다: ${file})`);
+  if (saved.length > 0) {
+    lines.push("- 저장한 날짜의 마크다운:");
+    for (const d of saved) lines.push(`  - ${markdownPath(s.dataDir, d)}`);
   }
   ctx.out(lines.join("\n"));
   return EXIT.ok;
