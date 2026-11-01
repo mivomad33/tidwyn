@@ -1835,15 +1835,22 @@ ul.isrc {
   white-space: nowrap;
 }
 
-/* 위의 제목 링크를 덮지 않게 누를 곳을 아래로만 넓힌다 */
+/* 위의 제목 링크를 덮지 않게 누를 곳을 아래로만 넓힌다. 마우스로는 추천 이유를 덮지 않는 24px까지만 넓힌다 */
 .vm .vrec {
   position: relative;
   z-index: 1;
   display: inline-flex;
-  min-height: 44px;
-  margin-bottom: -26px;
+  min-height: 24px;
+  margin-bottom: -6px;
   text-decoration: underline;
   text-underline-offset: 2px;
+}
+
+@media (pointer: coarse) {
+  .vm .vrec {
+    min-height: 44px;
+    margin-bottom: -26px;
+  }
 }
 
 /* 영상이 도착해도 아래 내용이 밀리지 않게 줄 수만큼 자리를 잡는다. 줄 높이는 대략값이다 */

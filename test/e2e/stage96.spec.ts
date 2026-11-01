@@ -149,6 +149,30 @@ test.describe("4.4-1 처리방침의 새 문구", () => {
   });
 });
 
+test.describe("추천 날짜 링크의 누를 곳", () => {
+  const box = async (page: Page, selector: string) => (await page.locator(selector).first().boundingBox())!;
+
+  test("마우스로 쓸 때는 24px 높이이고 아래 추천 이유를 덮지 않는다", async ({ page }) => {
+    await useVideoData(page);
+    await page.goto(`/issues/${v.spread}`);
+    await expect(rows(page).first()).toBeVisible();
+    const link = await box(page, "a.vrec");
+    expect(link.height).toBeGreaterThanOrEqual(24);
+    expect(link.y + link.height).toBeLessThanOrEqual((await box(page, "li.vrow .why")).y);
+  });
+
+  test.describe("터치 화면", () => {
+    test.use({ hasTouch: true, viewport: { width: 375, height: 812 } });
+
+    test("44px 높이다", async ({ page }) => {
+      await useVideoData(page);
+      await page.goto(`/issues/${v.spread}`);
+      await expect(rows(page).first()).toBeVisible();
+      expect((await box(page, "a.vrec")).height).toBeGreaterThanOrEqual(44);
+    });
+  });
+});
+
 test.describe("4.3-8 디자인 점검에서 고친 것", () => {
   test("관련 영상이 도착해도 아래 내용이 한 줄 높이 넘게 밀리지 않는다", async ({ page }) => {
     await useVideoData(page);
@@ -185,13 +209,12 @@ test.describe("4.3-8 디자인 점검에서 고친 것", () => {
     await expect(related(page).locator(".vsrc")).toHaveCount(0);
   });
 
-  test("모바일의 하단 탭과 추천 날짜 링크는 44px 높이이고, 추천 날짜 링크가 제목 링크를 덮지 않는다", async ({ page }) => {
+  test("모바일의 하단 탭은 44px 높이이고, 추천 날짜 링크가 제목 링크를 덮지 않는다", async ({ page }) => {
     await useVideoData(page);
     await page.setViewportSize({ width: 375, height: 812 });
     await page.goto(`/issues/${v.spread}`);
     await expect(rows(page).first()).toBeVisible();
     const vrec = page.locator("a.vrec").first();
-    expect((await vrec.boundingBox())!.height).toBeGreaterThanOrEqual(44);
     const title = await page.locator("li.vrow .vt").first().boundingBox();
     expect((await vrec.boundingBox())!.y).toBeGreaterThanOrEqual(title!.y + title!.height);
     await page.goto(`/${PAST}`);
