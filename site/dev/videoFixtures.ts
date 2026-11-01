@@ -4,6 +4,9 @@
 // 썸네일은 외부를 부르지 않는다: 묶음마다 색이 다른 작은 SVG(data: 주소)이고, 한 영상은 결과물에 없는 로컬 주소(불러오기 실패)다.
 // 보통은 날짜마다 묶음을 섞는다(한국 3·미국 2·AI 4, 미국 0개, 한국만, 영상 없음, AI 영어 0개를 돌아가며). full이면 날마다 최대 16개
 // (한국 5·미국 5·AI 한국어 3·AI 영어 3), 추천 이유 150자, 관련 이슈 2개다(4.6-3 크기 측정).
+// 9.6단계: full은 모든 브리프 날짜에 붙이고 받은 날은 최근 7일 안이며, 관련 영상이 300개 몰린 이슈를 둔다(4.3-2).
+// archive는 30일보다 앞선 브리프 날짜에도 영상을 붙이고 받은 날을 최근으로 두며(새로 받은 기록), 여러 달에 걸쳐 관련 영상이 7개인 이슈를 둔다.
+import { addDays } from "./random.ts";
 import { VIDEO_BUNDLES, type IssueVideo, type SiteVideo, type VideoBundle } from "../../src/siteTypes.ts";
 
 export interface VideoFixtureInfo {
@@ -25,6 +28,12 @@ export interface VideoFixtureInfo {
   many: number | null;
   /** 영상이 1개인 이슈 */
   one: number | null;
+  /** 9.6단계 full: 관련 영상이 몰린 이슈 */
+  pile: number | null;
+  /** 9.6단계 archive: 30일보다 앞선 브리프 날짜 중 가장 최근 것(받은 날은 최근) */
+  pastDate: string | null;
+  /** 9.6단계 archive: 관련 영상이 여러 달에 걸쳐 7개인 이슈 */
+  spread: number | null;
 }
 
 export interface VideoFixtures {
@@ -61,6 +70,10 @@ const REASONS = [
 ];
 /** full의 추천 이유 길이(4.3-2의 상한) */
 const REASON_MAX = 150;
+/** 4.3-2의 몰린 이슈 */
+const PILE = 300;
+/** 4.3-5의 여러 달 관련 영상 */
+const SPREAD = 7;
 const THUMB_COLOR: Record<VideoBundle, string> = { kr: "#8a9bb0", us: "#a08f7a", "ai-ko": "#7aa08c", "ai-en": "#9c86a8" };
 /** 결과물에 없는 로컬 주소(썸네일 불러오기 실패). assets/ 아래는 대체 경로가 없어 404다 */
 export const BROKEN_THUMB = "/assets/fixture-missing-thumb.jpg";
@@ -91,14 +104,18 @@ function fixtureSummary(serial: number, length: number): string {
   return `${body.join("")}.`;
 }
 
-export function fixtureVideos(opts: { end: string; dates: string[]; issues: number[]; merged: { id: number; into: number }; full?: boolean }): VideoFixtures {
+export function fixtureVideos(opts: { end: string; dates: string[]; issues: number[]; merged: { id: number; into: number }; full?: boolean; archive?: boolean }): VideoFixtures {
   const byDate = new Map<string, SiteVideo[]>();
   const links: { video: SiteVideo; date: string; issues: number[] }[] = [];
-  const info: VideoFixtureInfo = { dates: [], noVideoDate: null, oneBundleDate: null, zeroBundleDate: null, broken: null, stale: null, absorbed: null, many: null, one: null };
-  const recent = [...opts.dates].filter((d) => d <= opts.end && daysBetween(d, opts.end) <= 30).sort().reverse();
+  const info: VideoFixtureInfo = { dates: [], noVideoDate: null, oneBundleDate: null, zeroBundleDate: null, broken: null, stale: null, absorbed: null, many: null, one: null, pile: null, pastDate: null, spread: null };
+  const recent = [...opts.dates].filter((d) => d <= opts.end && (opts.full || opts.archive || daysBetween(d, opts.end) <= 30)).sort().reverse();
   let serial = 0;
   for (const [k, date] of recent.entries()) {
     const age = daysBetween(date, opts.end);
+    // 새로 받은 기록: 붙은 브리프 날짜가 오래돼도 받은 날은 최근이다
+    const refreshed = opts.full || age > 30;
+    const fetchedOn = refreshed ? addDays(opts.end, -(k % 7)) : date;
+    if (opts.archive && age > 30) info.pastDate ??= date;
     const counts = opts.full ? FULL : PATTERNS[k % PATTERNS.length]!;
     if (!opts.full && age < 30) {
       if (counts.every((c) => c === 0)) info.noVideoDate ??= date;
@@ -123,7 +140,7 @@ export function fixtureVideos(opts: { end: string; dates: string[]; issues: numb
           seconds: serial % 3 === 0 ? 3600 + ((serial * 377) % 1800) : 240 + ((serial * 613) % 3000),
           thumb: thumbOf(bundle),
           reason,
-          fetchedOn: date,
+          fetchedOn,
         };
         // 요약: full은 모두 350자, 보통은 둘에 하나만 있고 둘째 영상은 긴 요약이다
         if (opts.full) video.videoSummary = fixtureSummary(serial, SUMMARY_MAX);
@@ -142,7 +159,7 @@ export function fixtureVideos(opts: { end: string; dates: string[]; issues: numb
     if (day.length) {
       byDate.set(date, day);
       info.dates.push(date);
-      if (age >= 30) info.stale ??= date;
+      if (age >= 30 && !refreshed) info.stale ??= date;
     }
   }
 
@@ -164,6 +181,31 @@ export function fixtureVideos(opts: { end: string; dates: string[]; issues: numb
       info.one = one;
     }
     info.many = many;
+  }
+
+  // full: 고르게 흩어진 영상 300개를 이슈 하나에 몬다(브리프 날짜가 서로 달라 첫 5개가 파일 5개를 받는다)
+  if (opts.full && links.length) {
+    const pile = opts.issues[0]!;
+    const step = Math.max(1, Math.floor(links.length / PILE));
+    for (const l of links) l.issues = l.issues.filter((i) => i !== pile);
+    for (let i = 0; i < PILE && i * step < links.length; i++) {
+      const l = links[i * step]!;
+      l.issues = [pile, ...l.issues].slice(0, 2);
+    }
+    info.pile = pile;
+  }
+
+  // archive: 영상이 있는 날짜 중 고르게 7개를 골라 이슈 하나에 붙인다(여러 달에 걸친다)
+  if (opts.archive && links.length) {
+    const spread = opts.issues.find((i) => i !== info.many && i !== info.one && i !== opts.merged.into && i !== opts.merged.id)!;
+    for (const l of links) l.issues = l.issues.filter((i) => i !== spread);
+    const dates = info.dates.filter((d) => daysBetween(d, opts.end) !== 30);
+    for (let i = 0; i < SPREAD; i++) {
+      const date = dates[Math.floor((i * (dates.length - 1)) / (SPREAD - 1))]!;
+      const l = links.find((x) => x.date === date)!;
+      l.issues = [spread, ...l.issues].slice(0, 2);
+    }
+    info.spread = spread;
   }
 
   // 이슈마다 관련 영상(흡수된 이슈의 영상은 남는 이슈로, 같은 영상은 한 번), 붙은 브리프 날짜 최근 순

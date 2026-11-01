@@ -10,17 +10,18 @@ import { createIssue, getIssue, linkStory, storiesOfDate } from "../src/issues.t
 import { readKeys } from "../src/keys.ts";
 import { applyMerges, unmerge } from "../src/merge.ts";
 import { precheck } from "../src/precheck.ts";
+import { dirHasExpiredVideos } from "../src/videoPurge.ts";
 import { createEntity, createTerm, linkEntity, linkTerm } from "../src/refs.ts";
 import { readRun, writeRun, type RunState } from "../src/run.ts";
 import { createSchedule } from "../src/schedules.ts";
-import { checkOutput } from "../src/siteCheck.ts";
+import { checkOutput, checkPublicPages } from "../src/siteCheck.ts";
 import { buildSiteData } from "../src/siteData.ts";
-import type { DayList, IssueChunk, IssueDetail, MonthList } from "../src/siteTypes.ts";
+import { siteFiles, type DayList, type DayVideos, type IssueChunk, type IssueDetail, type MonthList } from "../src/siteTypes.ts";
 import { recordFirstCollectionDate, saveBrief } from "../src/store.ts";
 import { validateBrief } from "../src/validate.ts";
 import { applyJudgment, upsertValues } from "../src/indicatorStore.ts";
 import { VIDEO_WORK_FILES, buildCandidateFile, checkPickFile, renderCandidateDetails, renderCandidates, videoWorkFile, type CandidateFile } from "../src/videoPick.ts";
-import { allVideos, applyVideoPick, isPicked, issueCandidates, purgeExpiredRows, recentVideoIds, type NewVideo } from "../src/videoStore.ts";
+import { allVideos, applyVideoPick, isPicked, issueCandidates, pickedVideoIds, purgeExpiredRows, type NewVideo } from "../src/videoStore.ts";
 import {
   DEFAULT_LIMITS,
   SEARCH_FIELDS,
@@ -275,7 +276,7 @@ describe("7단계 4.1 데이터와 저장", () => {
     applyVideoPick(db, "2026-09-29", "2026-09-29", [newVideo("Keep29dayCC", "kr", 1)]);
     assert.equal(purgeExpiredRows(db, TODAY), 2);
     assert.deepEqual(allVideos(db).map((v) => v.videoId), ["Keep29dayCC"]);
-    assert.deepEqual([...recentVideoIds(db, TODAY)], ["Keep29dayCC"]);
+    assert.deepEqual([...pickedVideoIds(db)], ["Keep29dayCC"]);
     assert.ok(isPicked(db, "2026-09-27"), "고르기 끝남 상태는 남아도 된다");
     db.close();
     const bytes = fs.readFileSync(file);
@@ -302,7 +303,7 @@ describe("7단계 4.2 영상 받기", () => {
       },
       notFound: ["KR 27"],
     });
-    const r = await fetchVideos({ client: client(fake), now: NOW, recent: new Set(), topics: [] });
+    const r = await fetchVideos({ client: client(fake), now: NOW, picked: new Set(), topics: [] });
     assert.equal(r.status, "ok", JSON.stringify(r.failures));
     assert.deepEqual(r.charts, [
       { region: "KR", fetched: 2, skipped: ["27"] },
@@ -328,7 +329,7 @@ describe("7단계 4.2 영상 받기", () => {
 
   test("4.2-2 YouTube Data API v3만 부르고, 키는 x-goog-api-key 헤더로만 보낸다", async () => {
     const fake = fakeYoutube({ search: () => [{ id: "SearchOnly1" }] });
-    await fetchVideos({ client: client(fake), now: NOW, recent: new Set() });
+    await fetchVideos({ client: client(fake), now: NOW, picked: new Set() });
     assert.ok(fake.calls.length > 0);
     for (const c of fake.calls) {
       assert.ok(c.url.startsWith(YOUTUBE_BASE), c.url);
@@ -346,7 +347,7 @@ describe("7단계 4.2 영상 받기", () => {
     assert.ok(specs.length <= DEFAULT_LIMITS.searches);
     assert.equal(specs.length, SEARCH_TOPICS.length * 2 * 2);
     const fake = fakeYoutube();
-    const r = await fetchVideos({ client: client(fake), now: NOW, recent: new Set() });
+    const r = await fetchVideos({ client: client(fake), now: NOW, picked: new Set() });
     const searches = fake.calls.filter((c) => kind(c.url) === "search").map((c) => new URL(c.url).searchParams);
     assert.equal(searches.length, specs.length);
     assert.equal(r.usage.searches, specs.length);
@@ -372,7 +373,7 @@ describe("7단계 4.2 영상 받기", () => {
           ? [{ id: "KeepNormal1" }, { id: "IsLiveNow01", live: "live" }, { id: "IsUpcoming1", live: "upcoming" }, { id: "TooShort001", seconds: 239 }, { id: "Exactly240s", seconds: 240 }, { id: "Vertical001", vertical: true }, { id: "AlreadyRec1" }, { id: "LiveRecord1", liveRecord: true }]
           : [],
     });
-    const r = await fetchVideos({ client: client(fake), now: NOW, recent: new Set(["AlreadyRec1"]) });
+    const r = await fetchVideos({ client: client(fake), now: NOW, picked: new Set(["AlreadyRec1"]) });
     assert.equal(r.status, "ok");
     assert.deepEqual(r.videos.map((v) => v.videoId).sort(), ["Exactly240s", "KeepNormal1", "LiveRecord1"]);
     assert.deepEqual(r.excluded, { already: 1, live: 2, short: 1, vertical: 1, unavailable: 0 });
@@ -393,7 +394,7 @@ describe("7단계 4.2 영상 받기", () => {
   test("4.2-5 상세는 한 번에 50개씩 받는다", async () => {
     const many = Array.from({ length: 120 }, (_, i) => ({ id: `Many${String(i).padStart(7, "0")}` }));
     const fake = fakeYoutube({ search: (p) => (topicOf(p) === "경제·금융" && p.get("relevanceLanguage") === "ko" && p.get("videoDuration") === "long" ? many : []) });
-    const r = await fetchVideos({ client: client(fake), now: NOW, recent: new Set() });
+    const r = await fetchVideos({ client: client(fake), now: NOW, picked: new Set() });
     const sizes = fake.calls.filter((c) => kind(c.url) === "details").map((c) => new URL(c.url).searchParams.get("id")!.split(",").length);
     assert.deepEqual(sizes, [50, 50, 20]);
     assert.equal(r.videos.length, 120);
@@ -402,7 +403,7 @@ describe("7단계 4.2 영상 받기", () => {
   test("4.2-2 가짜 응답(할당량 사유들·429, 인증 오류, 시간 초과, 일시 오류)에 대해 결과와 실패 기록이 맞고, 할당량·인증 오류는 다시 시도하지 않는다", async () => {
     for (const quota of [apiError(403, "quotaExceeded"), apiError(403, "dailyLimitExceeded"), apiError(403, "rateLimitExceeded"), { status: 429, body: "" }]) {
       const fake = fakeYoutube({ fail: (u) => (kind(u.href) === "search" && topicOf(u.searchParams) === "과학" ? quota : undefined) });
-      const r = await fetchVideos({ client: client(fake), now: NOW, recent: new Set() });
+      const r = await fetchVideos({ client: client(fake), now: NOW, picked: new Set() });
       assert.equal(r.status, "failed", JSON.stringify(quota));
       assert.equal(r.quota, true);
       assert.match(r.failures.join("\n"), /할당량 초과/);
@@ -412,32 +413,32 @@ describe("7단계 4.2 영상 받기", () => {
       assert.deepEqual(r.videos, []);
     }
     const auth = fakeYoutube({ fail: () => apiError(400, "keyInvalid") });
-    const a = await fetchVideos({ client: client(auth), now: NOW, recent: new Set() });
+    const a = await fetchVideos({ client: client(auth), now: NOW, picked: new Set() });
     assert.ok(a.status === "failed" && a.keyProblem && !a.quota);
     assert.match(a.failures[0]!, /키 확인 필요/);
     assert.equal(auth.calls.length, 1, "인증 오류는 다시 시도하지 않고 멈춘다");
 
     const flaky = fakeYoutube({ categories: { KR: ["24"], US: [] }, charts: { "KR 24": [[{ id: "AfterRetry1" }]] }, fail: (u, n) => (u.searchParams.get("videoCategoryId") === "24" && n === 1 ? { status: 503, body: "{}" } : undefined) });
-    const f = await fetchVideos({ client: client(flaky), now: NOW, recent: new Set(), topics: [] });
+    const f = await fetchVideos({ client: client(flaky), now: NOW, picked: new Set(), topics: [] });
     assert.equal(f.status, "ok");
     assert.ok(f.videos.some((v) => v.videoId === "AfterRetry1"), "일시 오류는 다시 시도해 받는다");
 
     const timeout = fakeYoutube({ categories: { KR: ["24", "25"], US: [] }, charts: { "KR 25": [[{ id: "StillGot001" }]] }, fail: (u) => (u.searchParams.get("videoCategoryId") === "24" ? "timeout" : undefined) });
-    const t = await fetchVideos({ client: client(timeout), now: NOW, recent: new Set(), topics: [] });
+    const t = await fetchVideos({ client: client(timeout), now: NOW, picked: new Set(), topics: [] });
     assert.equal(t.status, "partial");
     assert.deepEqual(t.failures, ["KR 24 차트: 시간 초과"]);
     assert.equal(timeout.calls.filter((c) => new URL(c.url).searchParams.get("videoCategoryId") === "24").length, 3, "시간 초과는 두 번 더 시도한다");
     assert.deepEqual(t.videos.map((v) => v.videoId), ["StillGot001"]);
 
     const down = fakeYoutube({ fail: () => "network" });
-    const d = await fetchVideos({ client: client(down), now: NOW, recent: new Set() });
+    const d = await fetchVideos({ client: client(down), now: NOW, picked: new Set() });
     assert.equal(d.status, "failed", "모든 호출이 실패하면 받기 실패다");
     assert.ok(!d.failures.join("\n").includes("https://"), "오류 글에 주소(영상 ID가 들 수 있다)를 넣지 않는다");
   });
 
   test("4.2-2 상한을 낮춰 넣으면 상한을 넘겨 부르지 않고, 빠진 받기를 남기며 받은 것으로 끝난다", async () => {
     const fake = fakeYoutube({ categories: { KR: ["23", "24", "25", "27"], US: ["24"] }, charts: { "KR 23": [[{ id: "LimitKr0001" }]] }, search: () => [{ id: "SearchHit01" }] });
-    const r = await fetchVideos({ client: client(fake, { searches: 3, units: 4 }), now: NOW, recent: new Set() });
+    const r = await fetchVideos({ client: client(fake, { searches: 3, units: 4 }), now: NOW, picked: new Set() });
     assert.equal(fake.calls.filter((c) => kind(c.url) === "search").length, 3);
     assert.equal(fake.calls.filter((c) => kind(c.url) !== "search").length, 4);
     assert.deepEqual(r.usage, { searches: 3, units: 4 });
@@ -468,7 +469,7 @@ describe("7단계 4.2 영상 받기", () => {
         return [];
       },
     });
-    const r = await fetchVideos({ client: client(fake), now: NOW, recent: new Set() });
+    const r = await fetchVideos({ client: client(fake), now: NOW, picked: new Set() });
     const f = buildCandidateFile("2026-10-27", TODAY, r.videos, issueCandidates(db, "2026-10-27"));
     assert.deepEqual(
       f.candidates.map((c) => [c.n, c.videoId, c.bundles.join("+"), c.sources.join(" / ")]),
@@ -605,7 +606,7 @@ describe("7단계 4.3 영상 고르기", () => {
     const rows = () => db.prepare("SELECT * FROM videos ORDER BY id").all().map((r) => ({ ...r }));
     const links = () => db.prepare("SELECT * FROM video_issues ORDER BY video, issue_id").all().map((r) => ({ ...r }));
     const before = { rows: rows(), links: links() };
-    const videosOf = (id: number) => (issueDetail(buildSiteData(db), id).videos ?? []).map((v) => `${v.date} ${v.id}`);
+    const videosOf = (id: number) => (issueDetail(buildSiteData(db), id).videoRefs ?? []).map((v) => `${v.date} ${v.id}`);
     assert.deepEqual(videosOf(s), ["2026-10-27 MergeVid004", "2026-10-26 MergeVid002"]);
     assert.deepEqual(videosOf(a), ["2026-10-26 MergeVid002", "2026-10-26 MergeVid003", "2026-10-25 MergeVid001"]);
     const m = merge(db, s, a);
@@ -661,6 +662,37 @@ describe("7단계 4.4 백업과 복원, 공개 데이터 검사", () => {
     gitIn(repo, "commit", "-qm", "clean");
     const clean = precheck({ repo, commits: [gitIn(repo, "rev-parse", "HEAD").trim()], trackedFiles: true, home: null });
     assert.deepEqual(videoFindings(clean), []);
+  });
+
+  test("9.6단계 4.2-3 날짜별 영상 파일이 백업 자리에 있으면 공개 전 점검이 실패하고, 사이트 폴더의 같은 이름은 걸리지 않는다", () => {
+    const repo = tempRepo();
+    fs.mkdirSync(path.join(repo, "backup"));
+    fs.mkdirSync(path.join(repo, "site-data"));
+    fs.writeFileSync(path.join(repo, "videos-2026-10-27.json"), "{}");
+    fs.writeFileSync(path.join(repo, "backup", "videos-2026-10-26.json"), "{}");
+    fs.writeFileSync(path.join(repo, "site-data", "videos-2026-10-25.json"), "{}");
+    gitIn(repo, "add", ".");
+    gitIn(repo, "commit", "-qm", "videos");
+    const r = precheck({ repo, commits: [], trackedFiles: true, home: null });
+    assert.deepEqual(r.findings.filter((f) => f.kind === "백업 파일에 영상 기록").map((f) => f.where).sort(), ["지금 파일 backup/videos-2026-10-26.json", "지금 파일 videos-2026-10-27.json"]);
+  });
+
+  test("9.6단계 4.2-3 HTML에 날짜별 영상 파일 주소가 있으면 결과물 검사가 실패한다", () => {
+    const out = tempDir();
+    fs.writeFileSync(path.join(out, "page.html"), `<a href="/site-data/${siteFiles.videoDay("2026-10-27")}">x</a>`);
+    assert.ok(checkPublicPages(out).some((f) => f.where === "page.html" && f.kind === "HTML에 영상 데이터"));
+  });
+
+  test("9.6단계 4.2-1 나눈 영상 파일에 30일 지난 기록이 있으면 찾아내고, 이슈 묶음의 위치도 놓치지 않는다", () => {
+    const dir = tempDir();
+    fs.mkdirSync(path.join(dir, "site-data"));
+    fs.writeFileSync(path.join(dir, "site-data", "videos-2024-01-01.json"), JSON.stringify({ date: "2024-01-01", videos: [{ fetchedOn: "2026-10-20" }] }));
+    assert.equal(dirHasExpiredVideos(dir, "2026-10-30"), false, "브리프 날짜가 오래돼도 받은 날이 최근이면 지우지 않는다");
+    fs.writeFileSync(path.join(dir, "site-data", "videos-2024-01-02.json"), JSON.stringify({ date: "2024-01-02", videos: [{ fetchedOn: "2026-09-30" }] }));
+    assert.equal(dirHasExpiredVideos(dir, "2026-10-30"), true);
+    fs.rmSync(path.join(dir, "site-data", "videos-2024-01-02.json"));
+    fs.writeFileSync(path.join(dir, "site-data", "issue-0.json"), JSON.stringify({ issues: { 1: { videoRefs: [{ id: "x", date: "2024-01-02", fetchedOn: "2026-09-30" }] } } }));
+    assert.equal(dirHasExpiredVideos(dir, "2026-10-30"), true);
   });
 
   test("4.4-2 결과물에 영상 작업 파일 이름의 파일이 있으면 결과물 검사가 실패한다", () => {
@@ -762,6 +794,13 @@ function startFlow(f: { repo: string; env: NodeJS.ProcessEnv }, now = NOW): { ru
   return { runFile: /실행 기록: (.+)/.exec(s.text)![1]!, text: s.text };
 }
 
+/** 새로 받기와 30일 지우기(9.6단계 L3). env에 키가 없으면 새로 받기만 실패하고 지우기는 돈다 */
+async function refreshFlow(f: { repo: string; env: NodeJS.ProcessEnv }, runFile: string, now = NOW, http?: YoutubeHttp): Promise<{ code: number; text: string }> {
+  const ctx = { ...makeCtx(f.repo, f.env, now), ...(http ? { youtubeHttp: http } : {}), youtubeRetryGapMs: 0 };
+  const code = await mainAsync(["video-refresh", "--run", runFile], ctx);
+  return { code, text: ctx.text() };
+}
+
 function flowDir(env: NodeJS.ProcessEnv = KEY_ENV, dates = ["2026-10-26", "2026-10-27"]) {
   const repo = tempRepo();
   const dataDir = tempDir();
@@ -807,11 +846,11 @@ function filesContaining(dir: string, needle: string): string[] {
 }
 
 describe("7단계 4.5 start 출력과 요약, 4.2-7·4.3 흐름, 4.8 새지 않음", () => {
-  test("4.5-1 start에 YouTube 키 있음/없음, 영상 대상 예정 날짜, 30일 지움 줄이 나오고 키 값은 출력에 없다", () => {
+  test("4.5-1 start에 YouTube 키 있음/없음, 영상 대상 예정 날짜 줄이 나오고 키 값은 출력에 없다", () => {
     const f = flowDir();
     assert.match(f.start, /- 키: ECOS 없음, FRED 없음, YouTube 있음/);
     assert.match(f.start, /- 영상: 2026-10-27 받기 할 것/, "모을 날짜가 없으면 DB의 가장 늦은 브리프 날짜");
-    assert.match(f.start, /- 30일 지난 영상 지움: 0개/);
+    assert.doesNotMatch(f.start, /30일 지난 영상 지움/, "지우기는 video-refresh로 옮겼다(L3)");
     assert.ok(!f.start.includes(FAKE_YT));
     const none = flowDir({});
     assert.match(none.start, /YouTube 없음/);
@@ -897,6 +936,8 @@ describe("7단계 4.5 start 출력과 요약, 4.2-7·4.3 흐름, 4.8 새지 않�
     const late = await fetchCli(f, fake);
     assert.match(late.text, /이미 고르기 끝남/);
     assert.equal(fake.calls.length, calls);
+    const refreshed = await refreshFlow(f, f.runFile);
+    assert.match(refreshed.text, /- 30일 지난 영상 지움: 0개/);
     const after = backupSiteSummary(f);
     assert.match(after.text, /영상이 있는 브리프 날짜 1개\(영상 3개\)/);
     for (const line of [
@@ -904,7 +945,7 @@ describe("7단계 4.5 start 출력과 요약, 4.2-7·4.3 흐름, 4.8 새지 않�
       /- 영상 받기: 받음/,
       /- KR 차트: 받은 차트 1개, 건너뛴 카테고리 0개/,
       /- 쓴 양: 검색 48번, 그 밖의 호출 \d+단위/,
-      /- 후보: 거르기 전 4개 → 거른 뒤 4개\(뺀 것: 이미 추천함\(최근 30일\) 0, 생방송 중·예정 0, 4분 미만 0, 세로 영상 0, 상세 없음 0\)/,
+      /- 후보: 거르기 전 4개 → 거른 뒤 4개\(뺀 것: 이미 추천함 0, 생방송 중·예정 0, 4분 미만 0, 세로 영상 0, 상세 없음 0\)/,
       /- 영상 고르기: 한국 2개, 미국 0개, AI 한국어 0개, AI 영어 1개, 관련 이슈를 붙인 영상 2개 \(고쳐서 다시 검사 1번\)/,
       /- 30일 지난 영상 지움: 0개/,
       /- 사이트 빌드: .*영상이 있는 브리프 날짜 1개\(영상 3개\)/,
@@ -1004,8 +1045,9 @@ describe("7단계 4.5 start 출력과 요약, 4.2-7·4.3 흐름, 4.8 새지 않�
     for (const name of VIDEO_WORK_FILES.filter((x) => !/check|notes/.test(x))) assert.ok(fs.existsSync(path.join(f.dataDir, "work", name)), `실패 뒤 ${name}이 남는다`);
     const next = startFlow(f);
     assert.match(next.text, /- 영상: 2026-10-27 받기 할 것/);
-    assert.match(next.text, /지난 실행의 영상 작업 파일 4개/);
-    for (const name of VIDEO_WORK_FILES) assert.ok(!fs.existsSync(path.join(f.dataDir, "work", name)), `다음 실행의 start 뒤 ${name}이 없다`);
+    const refreshed = await refreshFlow(f, next.runFile);
+    assert.match(refreshed.text, /지난 실행의 영상 작업 파일 4개/);
+    for (const name of VIDEO_WORK_FILES) assert.ok(!fs.existsSync(path.join(f.dataDir, "work", name)), `다음 실행의 video-refresh 뒤 ${name}이 없다`);
     assert.equal(readRun(next.runFile).videoPurge!.workFiles, 4, "정리가 실행 기록에 남는다");
   });
 
@@ -1111,7 +1153,9 @@ describe("7단계 4.1-2 30일 지우기", () => {
     oldSiteDirs(dataDir);
     const env = { ...KEY_ENV, TIDWYN_DATA_DIR: dataDir };
     const s = startFlow({ repo, env });
-    assert.match(s.text, /- 30일 지난 영상 지움: 2개 \(그 밖에 실행 전 사본의 기록 4개, 열 수 없어 지운 실행 전 사본 1개\(tidwyn-20261023-090000\.db\), 지난 실행의 영상 작업 파일 4개, 사이트 입력·결과물 폴더 2개\)/);
+    const refreshed = await refreshFlow({ repo, env: { TIDWYN_DATA_DIR: dataDir } }, s.runFile);
+    assert.equal(refreshed.code, 0, refreshed.text);
+    assert.match(refreshed.text, /- 30일 지난 영상 지움: 2개 \(그 밖에 실행 전 사본의 기록 4개, 열 수 없어 지운 실행 전 사본 1개\(tidwyn-20261023-090000\.db\), 지난 실행의 영상 작업 파일 4개, 사이트 입력·결과물 폴더 2개\)/);
     const p = readRun(s.runFile).videoPurge!;
     assert.deepEqual(p.removedSnapshots, ["tidwyn-20261023-090000.db"], "깨진 사본은 지워지고 실행 기록에 남는다");
     assert.equal(p.rows, 2);
@@ -1136,7 +1180,7 @@ describe("7단계 4.1-2 30일 지우기", () => {
     assert.ok(filesContaining(path.join(dataDir, "site"), IDS.d29).length > 0, "29일 전 것은 사이트에 남는다");
   });
 
-  test("V17 시험 모드 이름 모양 폴더(-N 꼬리 포함)만 영상 데이터가 지워지고, 다른 이름의 폴더와 옛 버전·깨진 DB는 바이트 그대로다", () => {
+  test("V17 시험 모드 이름 모양 폴더(-N 꼬리 포함)만 영상 데이터가 지워지고, 다른 이름의 폴더와 옛 버전·깨진 DB는 바이트 그대로다", async () => {
     const repo = tempRepo();
     const root = path.join(repo, ".test-data");
     const shaped = path.join(root, "20260920-090000");
@@ -1165,6 +1209,8 @@ describe("7단계 4.1-2 30일 지우기", () => {
     // 시험 모드 실행(새 시험 폴더가 생긴다)
     const s = cli(repo, ["start", "test"], KEY_ENV);
     assert.equal(s.code, 0, s.text);
+    const refreshed = await refreshFlow({ repo, env: KEY_ENV }, /실행 기록: (.+)/.exec(s.text)![1]!);
+    assert.equal(refreshed.code, 0, refreshed.text);
     for (const [dir, prefix] of [[shaped, "A"], [tailed, "B"]] as const) {
       for (const id of [IDS.d30, IDS.d31]) assert.deepEqual(filesContaining(dir, `${prefix}${id}`), [], `${dir}에 ${prefix}${id}가 없다`);
       assert.ok(filesContaining(path.join(dir, "tidwyn.db"), `${prefix}${IDS.d29}`).length === 1, "29일 전 것은 남는다");
@@ -1183,7 +1229,7 @@ describe("7단계 4.1-2 30일 지우기", () => {
         ["20261001-090000-2", 2, 2, 4, 2, []],
       ],
     );
-    assert.match(s.text, /경고: 시험 폴더의 열 수 없는 DB를 지우지 않고 두었다\(사용자가 살펴본다\): 20260903-090000\/tidwyn\.db/);
+    assert.match(refreshed.text, /경고: 시험 폴더의 열 수 없는 DB를 지우지 않고 두었다\(사용자가 살펴본다\): 20260903-090000\/tidwyn\.db/);
   });
 });
 
@@ -1196,6 +1242,10 @@ function issueDetail(files: Map<string, string>, id: number): IssueDetail {
     if (d) return d;
   }
   assert.fail(`이슈 ${id} 상세가 없다`);
+}
+
+function dayVideos(files: Map<string, string>, date: string): DayVideos {
+  return JSON.parse(files.get(`site-data/videos-${date}.json`)!) as DayVideos;
 }
 
 function dayList(files: Map<string, string>, date: string): DayList {
@@ -1227,9 +1277,10 @@ describe("7단계 4.6 사이트 데이터", () => {
   test("4.6-1 날짜마다 영상(묶음 순, 고른 순서)과 이슈마다 관련 영상(흡수된 이슈 포함, 날짜 최근 순, 한 번)이 나오고, 영상이 없는 날짜·이슈에는 항목이 없으며 설명·통계가 없다", () => {
     const { db, ids } = siteDb();
     const files = buildSiteData(db);
-    const d27 = dayList(files, "2026-10-27");
-    assert.deepEqual(d27.videos!.map((v) => `${v.bundle} ${v.id}`), ["kr SiteVid0002", "kr SiteVid0005", "us SiteVid0003", "ai-ko SiteVid0006", "ai-en SiteVid0004"]);
-    assert.deepEqual(d27.videos![0], {
+    const d27 = dayVideos(files, "2026-10-27");
+    assert.deepEqual(dayList(files, "2026-10-27").videoGroups, [{ fetchedOn: "2026-10-27", count: 5 }]);
+    assert.deepEqual(d27.videos.map((v) => `${v.bundle} ${v.id}`), ["kr SiteVid0002", "kr SiteVid0005", "us SiteVid0003", "ai-ko SiteVid0006", "ai-en SiteVid0004"]);
+    assert.deepEqual(d27.videos[0], {
       id: "SiteVid0002",
       bundle: "kr",
       title: "가짜 영상 제목 SiteVid0002",
@@ -1239,18 +1290,25 @@ describe("7단계 4.6 사이트 데이터", () => {
       reason: "가짜 추천 이유 SiteVid0002",
       fetchedOn: "2026-10-27",
     });
-    assert.deepEqual(dayList(files, "2026-10-25").videos!.map((v) => v.id), ["SiteVid0001"]);
-    assert.ok(!("videos" in dayList(files, "2026-10-26")), "0개를 고른 날짜에는 항목이 없다");
+    assert.deepEqual(dayVideos(files, "2026-10-25").videos.map((v) => v.id), ["SiteVid0001"]);
+    assert.ok(!("videoGroups" in dayList(files, "2026-10-26")), "0개를 고른 날짜에는 항목이 없다");
+    assert.ok(!files.has("site-data/videos-2026-10-26.json"), "0개를 고른 날짜에는 영상 파일이 없다");
     const main = issueDetail(files, ids.main);
-    assert.deepEqual(main.videos!.map((v) => `${v.date} ${v.id}`), ["2026-10-27 SiteVid0002", "2026-10-27 SiteVid0004", "2026-10-25 SiteVid0001"]);
-    assert.ok(!("videos" in issueDetail(files, ids.plain)), "영상이 없는 이슈에는 항목이 없다");
+    assert.deepEqual(main.videoRefs!.map((v) => `${v.date} ${v.id}`), ["2026-10-27 SiteVid0002", "2026-10-27 SiteVid0004", "2026-10-25 SiteVid0001"]);
+    assert.ok(!("videoRefs" in issueDetail(files, ids.plain)), "영상이 없는 이슈에는 항목이 없다");
+    // 9.6단계 4.3-1: 달 목록과 이슈 묶음에는 영상 본문과 옛 videos 키가 없다
+    for (const [name, text] of files) {
+      if (!/site-data\/(?:list-|issue-\d)/.test(name)) continue;
+      assert.ok(!text.includes('"videos"'), name);
+      assert.ok(!text.includes("가짜 영상 제목") && !text.includes("가짜 추천 이유"), name);
+    }
     // 영상 항목에는 정해진 항목만 있다(설명·통계·받은 곳·올린 시각을 싣지 않는다)
     const keys = new Set<string>();
     for (const [name, text] of files) {
-      if (/site-data\/list-/.test(name)) for (const d of (JSON.parse(text) as MonthList).days) for (const v of d.videos ?? []) Object.keys(v).forEach((k) => keys.add(k));
-      if (/site-data\/issue-\d+\.json$/.test(name)) for (const d of Object.values((JSON.parse(text) as IssueChunk).issues)) for (const v of d.videos ?? []) Object.keys(v).forEach((k) => keys.add(`issue:${k}`));
+      if (/site-data\/videos-/.test(name)) for (const v of (JSON.parse(text) as DayVideos).videos) Object.keys(v).forEach((k) => keys.add(k));
+      if (/site-data\/issue-\d+\.json$/.test(name)) for (const d of Object.values((JSON.parse(text) as IssueChunk).issues)) for (const v of d.videoRefs ?? []) Object.keys(v).forEach((k) => keys.add(`issue:${k}`));
     }
-    assert.deepEqual([...keys].sort(), ["bundle", "channel", "fetchedOn", "id", "issue:bundle", "issue:channel", "issue:date", "issue:fetchedOn", "issue:id", "issue:reason", "issue:seconds", "issue:thumb", "issue:title", "reason", "seconds", "thumb", "title"]);
+    assert.deepEqual([...keys].sort(), ["bundle", "channel", "fetchedOn", "id", "issue:date", "issue:fetchedOn", "issue:id", "reason", "seconds", "thumb", "title"]);
     db.close();
   });
 

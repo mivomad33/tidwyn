@@ -1,8 +1,7 @@
 // 브리프 화면의 섹션·카테고리 거르기와 `#<뉴스 키>` 처리(4.2-2, 4.2-4). 4.5단계: 세 섹션을 한 목록으로 보는 '전체' 탭. 7단계: 섹션 탭 끝의 '영상' 탭
 import { SECTIONS } from "../../../src/categories.ts";
 import { VIDEO_HASH } from "./routes.ts";
-import { VIDEO_TAB, visibleVideos } from "./videos.ts";
-import type { SiteVideo } from "../../../src/siteTypes.ts";
+import { VIDEO_TAB, visibleVideoCount } from "./videos.ts";
 import type { DayList, ListSection, ListStory, Major, MonthList, SectionName, SourceLike } from "./types.ts";
 
 export const SECTION_ORDER: readonly SectionName[] = SECTIONS;
@@ -115,14 +114,14 @@ export function storyImage(sources: SourceLike[]): string | null {
 }
 
 /**
- * 7단계: 그 날짜의 섹션 탭(전체 → 섹션들 → 보이는 영상이 있으면 '영상')과 보이는 영상(받은 지 30일 안, 묶음 순서).
- * today는 방문자 브라우저의 오늘(KST)이다(V14)
+ * 7단계: 그 날짜의 섹션 탭(전체 → 섹션들 → 보이는 영상이 있으면 '영상')과 보이는 영상 수(받은 지 30일 안).
+ * 영상 파일을 받기 전에 정한다. today는 방문자 브라우저의 오늘(KST)이다(V14)
  */
-export function briefTabs(day: DayList, today: string): { tabs: BriefTab[]; videos: SiteVideo[] } {
-  const videos = visibleVideos(day.videos, today);
+export function briefTabs(day: DayList, today: string): { tabs: BriefTab[]; videoCount: number } {
+  const videoCount = visibleVideoCount(day.videoGroups, today);
   const tabs: BriefTab[] = [ALL_TAB, ...daySections(day)];
-  if (videos.length) tabs.push(VIDEO_TAB);
-  return { tabs, videos };
+  if (videoCount) tabs.push(VIDEO_TAB);
+  return { tabs, videoCount };
 }
 
 /** 보일 탭: 고른(기억한) 탭이 그 날짜에 없으면 첫 섹션 탭(영상이 없는 날짜의 '영상' 포함) */

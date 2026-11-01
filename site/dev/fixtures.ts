@@ -3,13 +3,13 @@
 //   [--entities 30] [--terms 24] [--hub]   (4단계: 인물·기관·국가와 용어. --hub는 대상 1을 모든 뉴스에 붙인다(5년치 측정용))
 //   [--schedules 0]   (5단계: 일정 수. 0이면 빈 일정 색인만 만든다)
 //   [--indicators 0] [--indicators-all]   (6단계: 지표 값의 햇수. 0이면 지표 파일을 만들지 않는다. --indicators-all은 12개 모두 공개·값 있음(크기 측정용))
-//   [--videos] [--videos-full]   (7단계: 끝 날짜까지 30일의 추천 영상. --videos-full은 날마다 16개·추천 이유 150자·요약 350자·관련 이슈 2개(크기 측정용))
+//   [--videos] [--videos-full] [--videos-archive]   (7단계: 끝 날짜까지 30일의 추천 영상. --videos-full은 모든 날짜에 16개·추천 이유 150자·요약 350자·관련 이슈 2개, 몰린 이슈 하나(크기 측정용). --videos-archive는 30일보다 앞선 날짜에도 새로 받은 영상을 붙인다)
 //   화면 확인·/browser-check에서는 영상이 30일이 지나 숨지 않게 `--end <오늘>`로 만든다
 // <폴더>/site-data/*.json과 <폴더>/search-records.json을 만든다. 같은 인자면 같은 결과다.
 import fs from "node:fs";
 import path from "node:path";
 import { CONFIDENCE_LEVELS, MINORS_BY_MAJOR, SECTIONS, type Major, type SectionName } from "../../src/categories.ts";
-import { ENTITY_FILTERS, ENTITY_FIRST_NEWS, byCount, dayStoryCount, entityChunkOf, issueEntityChips, entityRecordUrl, termRecordUrl, type EntityKind } from "../../src/siteTypes.ts";
+import { ENTITY_FILTERS, ENTITY_FIRST_NEWS, byCount, dayStoryCount, entityChunkOf, issueEntityChips, entityRecordUrl, siteFiles, termRecordUrl, videoGroupsOf, type EntityKind } from "../../src/siteTypes.ts";
 import { addDays, rng } from "./random.ts";
 import { fixtureIndicators, type IndicatorFixtureInfo } from "./indicatorFixtures.ts";
 import { fixtureSchedules, type FixtureStory, type ScheduleFixtureInfo } from "./scheduleFixtures.ts";
@@ -70,6 +70,8 @@ export interface FixtureOptions {
   videos?: boolean;
   /** 7단계: 영상을 날마다 16개(추천 이유 150자, 요약 350자, 관련 이슈 2개) 붙인다(크기 측정용). videos를 켠다 */
   videosFull?: boolean;
+  /** 9.6단계: 30일보다 앞선 브리프 날짜에도 새로 받은 영상을 붙이고, 관련 영상이 여러 달에 걸친 이슈를 둔다. videos를 켠다 */
+  videosArchive?: boolean;
   /** 9.5단계: 끝 날짜의 첫 섹션에 정정 표시를 둔다(첫 주요 뉴스 2번, 둘째 주요 뉴스와 첫 짧은 소식 1번). 없으면 다른 파일은 그대로다 */
   corrections?: boolean;
 }
@@ -506,10 +508,10 @@ export function generateFixtures(opts: FixtureOptions = {}): Fixture {
   }
 
   // 7단계: 추천 영상. 난수를 쓰지 않고, 영상이 없으면 다른 파일을 바꾸지 않는다
-  const vids = opts.videos || opts.videosFull ? fixtureVideos({ end, dates: datesAsc, issues: activeIssues.map((i) => i.id), merged: { id: mergedId, into: mergedInto }, full: opts.videosFull }) : null;
+  const vids = opts.videos || opts.videosFull || opts.videosArchive ? fixtureVideos({ end, dates: datesAsc, issues: activeIssues.map((i) => i.id), merged: { id: mergedId, into: mergedInto }, full: opts.videosFull, archive: opts.videosArchive }) : null;
   if (vids) for (const l of lists.values()) for (const day of l.days) {
     const v = vids.byDate.get(day.date);
-    if (v) day.videos = v;
+    if (v) day.videoGroups = videoGroupsOf(v);
   }
 
   const chunks = new Map<number, IssueChunk>();
@@ -526,7 +528,7 @@ export function generateFixtures(opts: FixtureOptions = {}): Fixture {
     const issueIndicators = ind?.byIssue.get(i.id);
     if (issueIndicators) detail.indicators = issueIndicators;
     const issueVideos = vids?.byIssue.get(i.id);
-    if (issueVideos) detail.videos = issueVideos;
+    if (issueVideos) detail.videoRefs = issueVideos.map(({ id, date, fetchedOn }) => ({ id, date, fetchedOn }));
     const c = Math.floor(i.id / 100);
     if (!chunks.has(c)) chunks.set(c, { issues: {} });
     chunks.get(c)!.issues[String(i.id)] = detail;
@@ -633,6 +635,7 @@ export function generateFixtures(opts: FixtureOptions = {}): Fixture {
   for (const [g, terms] of [...termFiles.groups].sort((a, b) => a[0] - b[0])) files.set(`site-data/term-group-${g}.json`, json({ group: g, terms }));
   for (const [name, content] of sched.files) files.set(`site-data/${name}`, content);
   for (const [name, content] of ind?.files ?? []) files.set(`site-data/${name}`, content);
+  for (const [date, videos] of vids?.byDate ?? []) files.set(`site-data/${siteFiles.videoDay(date)}`, json({ date, videos }));
   files.set("search-records.json", json([...newsRecords, ...issueRecords, ...entityRecords, ...termRecords]));
   const most = entityDetails.reduce<EntityDetail | null>((m, e) => (!m || e.count > m.count ? e : m), null);
   return {
@@ -669,7 +672,7 @@ if (import.meta.main) {
   };
   const out = get("--out");
   if (!out) {
-    console.error("사용법: node site/dev/fixtures.ts --out <폴더> [--end YYYY-MM-DD] [--days N] [--top N] [--short N] [--issues N] [--contiguous] [--entities N] [--terms N] [--hub] [--schedules N] [--indicators N] [--indicators-all] [--videos] [--videos-full] [--corrections]");
+    console.error("사용법: node site/dev/fixtures.ts --out <폴더> [--end YYYY-MM-DD] [--days N] [--top N] [--short N] [--issues N] [--contiguous] [--entities N] [--terms N] [--hub] [--schedules N] [--indicators N] [--indicators-all] [--videos] [--videos-full] [--videos-archive] [--corrections]");
     process.exit(1);
   }
   const num = (name: string) => (get(name) ? Number(get(name)) : undefined);
@@ -688,6 +691,7 @@ if (import.meta.main) {
     indicatorsAll: args.includes("--indicators-all"),
     videos: args.includes("--videos"),
     videosFull: args.includes("--videos-full"),
+    videosArchive: args.includes("--videos-archive"),
     corrections: args.includes("--corrections"),
   });
   console.log(`가짜 사이트 데이터: ${out} (날짜 ${fx.dates.length}개, 파일 ${fx.files.size}개)`);

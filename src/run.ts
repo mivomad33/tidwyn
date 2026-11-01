@@ -90,6 +90,28 @@ export interface IndicatorJudgeState {
   results: Record<string, JudgeResult>;
 }
 
+/** 영상 기록 새로 받기(9.6단계 4.2-4). 수와 정해진 이유만 쓴다 */
+export interface VideoRefreshState {
+  status: "none" | "stopped" | "ok" | "failed";
+  targets: number;
+  changed: number;
+  removed: number;
+  units: number;
+  /** 이상으로 보고 적용하지 않은 호출 수와 그 호출이 물은 영상 수 */
+  suspectCalls: number;
+  suspectVideos: number;
+  /** 응답에 있지만 읽을 수 없어 그대로 둔 영상 수 */
+  unreadable: number;
+  /** 상한에 닿아 멈췄다 */
+  limited: boolean;
+  keyProblem: boolean;
+  quota: boolean;
+  /** 멈춘 이유(영상 정보 없음) */
+  failure: string | null;
+  /** DB를 다시 써야 한다. 지우기가 실패해 다시 실행해도 남는다 */
+  rewrite?: boolean;
+}
+
 /**
  * 영상 받기 결과(7단계 4.2). 영상 ID·제목은 넣지 않고 수만 남긴다(4.8-3). 차트는 지역과 카테고리 ID 숫자로만 쓴다.
  * alreadyDone은 대상 날짜가 이미 고르기 끝남이라 부르지 않은 것, noBrief는 브리프가 없어 건너뛴 것이다
@@ -200,6 +222,8 @@ export interface RunState {
   unjudgedAtStart?: number;
   /** 7단계: start가 예정한 영상 대상 날짜, 30일 지우기, 영상 받기와 고르기. 앞 단계 실행 기록에는 없다 */
   videoPlanned?: { date: string | null; done: boolean };
+  /** 9.6단계: 영상 기록 새로 받기. 앞 단계 실행 기록에는 없다 */
+  videoRefresh?: VideoRefreshState;
   videoPurge?: VideoPurgeResult;
   videoFetch?: VideoFetchState;
   /** 8단계: 영상 내용 확인. 앞 단계 실행 기록에는 없다 */

@@ -5,6 +5,8 @@ import type { Confidence, Major, SectionName } from "./categories.ts";
 // 파일은 결과물의 `site-data/` 아래에 둔다. 이름은 백업 파일 이름(`YYYY-MM.json`, `issues.json`, `meta.json`)과 겹치지 않는다.
 
 export const SITE_DATA_VERSION = 1;
+/** 날짜별 영상 파일 이름(siteFiles.videoDay) */
+export const VIDEO_DAY_FILE_RE = /^videos-\d{4}-\d{2}-\d{2}\.json$/;
 export const SITE_DATA_DIR = "site-data";
 /** 이슈 상세는 식별자를 이 크기로 묶은 파일에 둔다(파일 수 한도, 4.1-3) */
 export const ISSUE_CHUNK_SIZE = 100;
@@ -12,6 +14,8 @@ export const ISSUE_CHUNK_SIZE = 100;
 export const siteFiles = {
   dates: "dates.json",
   list: (month: string) => `list-${month}.json`,
+  /** 9.6단계: 브리프 날짜 하나의 영상(영상 탭이나 관련 영상을 열 때만 받는다) */
+  videoDay: (date: string) => `videos-${date}.json`,
   detail: (month: string) => `detail-${month}.json`,
   issueList: "issue-list.json",
   issueChunk: (chunk: number) => `issue-${chunk}.json`,
@@ -363,8 +367,8 @@ export interface DayList {
   week?: WeekSchedules;
   /** 6단계: 브리프 위 상자의 지표 칩(그 브리프 날짜 이하의 가장 최근 값). 없으면 항목을 뺀다 */
   indicators?: IndicatorChip[];
-  /** 7단계: 그 브리프 날짜에 붙은 추천 영상(묶음 순 kr → us → ai-ko → ai-en, 묶음 안은 고른 순서). 없으면 항목을 뺀다 */
-  videos?: SiteVideo[];
+  /** 9.6단계: 그 브리프 날짜의 영상을 받은 날별로 센 것(영상 파일을 받기 전에 '영상 N' 탭을 정한다). 영상 본문은 `videos-<날짜>.json`에 있다. 없으면 항목을 뺀다 */
+  videoGroups?: VideoGroup[];
 }
 
 /** `list-YYYY-MM.json` */
@@ -435,8 +439,8 @@ export interface IssueDetail extends IssueListItem {
   schedules?: ScheduleLine[];
   /** 6단계: 고른 공개 지표와 그래프 기간(이슈 시작일 30일 전부터 그 지표의 마지막 값 날짜까지). 없으면 항목을 뺀다 */
   indicators?: IssueIndicator[];
-  /** 7단계: 이 이슈(와 흡수된 이슈)에 붙은 추천 영상, 붙은 브리프 날짜 최근 순(같은 영상은 한 번). 개수 제한과 30일 숨김은 화면이 한다. 없으면 항목을 뺀다 */
-  videos?: IssueVideo[];
+  /** 9.6단계: 이 이슈(와 흡수된 이슈)에 붙은 추천 영상의 위치, 붙은 브리프 날짜 최근 순(같은 영상은 한 번). 본문은 날짜별 영상 파일에 있다. 개수 제한과 30일 숨김은 화면이 한다. 없으면 항목을 뺀다 */
+  videoRefs?: IssueVideoRef[];
   /** 9.5단계: 다른 이슈·대상·지표와 이름이 같으면 true(페이지 제목을 구분한다). 아니면 항목을 뺀다 */
   dupName?: true;
 }
@@ -601,4 +605,27 @@ export interface SiteVideo {
 /** 7단계: 이슈 페이지의 관련 영상. date는 영상이 붙은 브리프 날짜다 */
 export interface IssueVideo extends SiteVideo {
   date: string;
+}
+
+/** 9.6단계: 달 목록의 영상 수. 받은 날로 나눠 화면이 30일 지난 영상을 뺀 수를 낼 수 있다 */
+export interface VideoGroup {
+  fetchedOn: string;
+  count: number;
+}
+
+/** 9.6단계: 이슈 묶음의 관련 영상 위치 */
+export type IssueVideoRef = Pick<IssueVideo, "id" | "date" | "fetchedOn">;
+
+/** 9.6단계: `videos-<날짜>.json` */
+export interface DayVideos {
+  date: string;
+  /** 묶음 순 kr → us → ai-ko → ai-en, 묶음 안은 고른 순서 */
+  videos: SiteVideo[];
+}
+
+/** 받은 날별 영상 수(먼저 나온 받은 날부터) */
+export function videoGroupsOf(videos: readonly Pick<SiteVideo, "fetchedOn">[]): VideoGroup[] {
+  const counts = new Map<string, number>();
+  for (const v of videos) counts.set(v.fetchedOn, (counts.get(v.fetchedOn) ?? 0) + 1);
+  return [...counts].map(([fetchedOn, count]) => ({ fetchedOn, count }));
 }

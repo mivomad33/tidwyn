@@ -16,3 +16,6 @@ export const E2E_SCHEDULE_INFO_FILE = path.join(E2E_ROOT, "schedule-info.json");
 /** 6단계: 일정과 지표가 있는 지어낸 데이터(stage6.spec.ts가 사이트 데이터 요청을 이 폴더의 파일로 바꿔 준다) */
 export const E2E_INDICATOR_DATA_DIR = path.join(E2E_ROOT, "indicator-data");
 export const E2E_INDICATOR_INFO_FILE = path.join(E2E_ROOT, "indicator-info.json");
+/** 9.6단계: 30일보다 앞선 브리프 날짜에 새로 받은 영상이 있는 지어낸 데이터(stage96.spec.ts가 사이트 데이터 요청을 이 폴더의 파일로 바꿔 준다) */
+export const E2E_VIDEO_DATA_DIR = path.join(E2E_ROOT, "video-data");
+export const E2E_VIDEO_INFO_FILE = path.join(E2E_ROOT, "video-info.json");

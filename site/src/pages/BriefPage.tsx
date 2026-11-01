@@ -1,7 +1,7 @@
 // 날짜별 브리프와 펼친 뉴스 카드(4.2). 4.5단계: 읽음 버튼, 펼침·글 누름·링크로 읽음, '안 읽은 것만' 거르기. 5단계: 카드의 일정 칩. 6단계: 브리프 위 '이번 주 일정 | 지표' 상자. 7단계: 섹션 탭 끝의 '영상' 탭(4.7-1)
 import { useEffect, useMemo, useReducer, useRef, useState, type ReactNode } from "react";
 import { kstDate } from "../../../src/kst.ts";
-import { ALL_MAJORS, CategoryLine, Layout as Shell, ChipFilter, Empty, ErrorState, Footer, Loading, NewsTitle, ReadCheck, ReadToggle, SectionChip, ToggleChip, TopBar, useFullTitle } from "../components/common.tsx";
+import { ALL_MAJORS, CategoryLine, Layout as Shell, ChipFilter, Empty, ErrorState, Footer, Loading, NewsTitle, ReadCheck, ReadToggle, SectionChip, ToggleChip, TopBar, useFullTitle, VideoLoading, VIDEO_LOAD_ERROR } from "../components/common.tsx";
 import { BriefBox } from "../components/briefBox.ts";
 import { FixMark, FixNotes } from "../components/correctionView.ts";
 import { ScheduleChips } from "../components/scheduleView.ts";
@@ -11,11 +11,12 @@ import { retry, useResource, type Resource } from "../data.ts";
 import { ALL_TAB, BRIEF_TAB_KEY, VIDEO_TAB, briefTabs, currentTab, findDay, findStoryTarget, orderSources, parseBriefTab, sectionView, stateForHash, storyImage, type BriefTab, type BriefViewState } from "../lib/brief.ts";
 import { briefTitle, latestTitle, monthDay, monthDayWeekday, pageTitle, shortDate } from "../lib/format.ts";
 import { dataUrl } from "../lib/paths.ts";
+import type { DayVideos } from "../../../src/siteTypes.ts";
 import { SITE_URL, shortReportHref, storyReportHref } from "../lib/policy.ts";
 import { placeTerms, storyBodyParts, termBoxPlace, toggleTerm } from "../lib/terms.ts";
 import { categoryVar } from "../lib/theme.ts";
 import { adjacentDates, briefPath, hashKey, issuePath, resolveBriefDate, VIDEO_HASH, type Route } from "../lib/routes.ts";
-import { VIDEO_CHIPS, filterVideos, videoChips, videoTabLabel, type VideoChip } from "../lib/videos.ts";
+import { VIDEO_CHIPS, filterVideos, videoChips, videoTabLabel, visibleVideos, type VideoChip } from "../lib/videos.ts";
 import type { DayList, ListStory, MonthDetail, MonthList, SiteDates, StoryDetail } from "../lib/types.ts";
 import { readStored, writeStored } from "../lib/storage.ts";
 import { markRead, readStore, useReadVersion } from "../readMarks.ts";
@@ -93,6 +94,36 @@ function rememberTab(tab: BriefTab): void {
   writeStored(browserStorage(), BRIEF_TAB_KEY, tab);
 }
 
+function tabViewOf(day: DayList, today: string, section: BriefTab) {
+  const t = briefTabs(day, today);
+  return { ...t, current: currentTab(day, t.tabs, section) };
+}
+
+/** 영상 탭 본문. 고른 칩의 묶음이 없는 날짜면 '전체'로 본다 */
+function VideoTabBody({ res, count, today, picked, onPick, onRetry }: { res: Resource<DayVideos>; count: number; today: string; picked: VideoChip | null; onPick: (c: VideoChip | null) => void; onRetry: () => void }) {
+  if (res.status === "error") return <ErrorState message={VIDEO_LOAD_ERROR} onRetry={onRetry} />;
+  if (res.status !== "ok") return <VideoLoading rows={count} />;
+  const videos = visibleVideos(res.data.videos, today);
+  const chips = videoChips(videos);
+  const chip = chips.some((c) => c.chip === picked) ? picked : null;
+  return (
+    <>
+      <ChipFilter
+        label="영상 묶음"
+        options={VIDEO_CHIPS.filter((c) => chips.some((x) => x.chip === c))}
+        value={chip}
+        onChange={onPick}
+        labelOf={(c) => chips.find((x) => x.chip === c)!.label}
+      />
+      <h2 className="sr-only">추천 영상</h2>
+      <div className="vbox">
+        <VideoList videos={filterVideos(videos, chip)} mode="brief" Link={Link} resetKey={String(chip)} />
+        <VideoSource />
+      </div>
+    </>
+  );
+}
+
 export function BriefPage({ route }: { route: Route }) {
   const loc = useLocation();
   const datesUrl = dataUrl.dates();
@@ -114,6 +145,10 @@ export function BriefPage({ route }: { route: Route }) {
   useEffect(() => {
     if (day) setView((v) => stateForHash(day, key, v));
   }, [day, key]);
+  // 9.6단계: 영상 파일은 영상 탭을 열 때만 받는다(4.3-1). 주소의 `#`가 정할 탭까지 보고 정해 첫 그리기에 잘못 받지 않게 한다
+  const tabView = day ? tabViewOf(day, today, stateForHash(day, key, view).section) : null;
+  const videoUrl = date && tabView?.current === VIDEO_TAB ? dataUrl.videoDay(date) : null;
+  const videoRes = useResource<DayVideos>(videoUrl);
 
   // `#<뉴스 키>`로 화면이 열리면(카드 펼치기, 다른 목록의 링크, 직접 연 주소, 새로 고침, 뒤로 가기) 그 뉴스는 읽음이다(M1, 4.2-3)
   useEffect(() => {
@@ -172,12 +207,9 @@ export function BriefPage({ route }: { route: Route }) {
   if (!day) return <NotFoundPage />;
 
   // 7단계: 그 날짜에 보이는(받은 지 30일 안의) 영상이 있으면 섹션 탭 끝에 '영상 N'. 기억한 탭이 없는 날짜면 첫 섹션 탭
-  const { tabs, videos } = briefTabs(day, today);
-  const current = currentTab(day, tabs, view.section);
+  const { tabs, videoCount, current } = tabView!;
   const all = current === ALL_TAB;
   const onVideos = current === VIDEO_TAB;
-  const chips = videoChips(videos);
-  const chip = videoChip.date === date && chips.some((c) => c.chip === videoChip.chip) ? videoChip.chip : null;
   const sv = sectionView(day, current, view.major);
   const hasStories = sv.top.length + sv.short.length > 0;
   const token = `${date}|${current}|${unread.round}`;
@@ -235,20 +267,7 @@ export function BriefPage({ route }: { route: Route }) {
         </div>
         <TopBox day={day} />
         {onVideos ? (
-          <>
-            <ChipFilter
-              label="영상 묶음"
-              options={VIDEO_CHIPS.filter((c) => chips.some((x) => x.chip === c))}
-              value={chip}
-              onChange={(c) => setVideoChip({ date, chip: c })}
-              labelOf={(c) => chips.find((x) => x.chip === c)!.label}
-            />
-            <h2 className="sr-only">추천 영상</h2>
-            <div className="vbox">
-              <VideoList videos={filterVideos(videos, chip)} mode="brief" Link={Link} resetKey={String(chip)} />
-              <VideoSource />
-            </div>
-          </>
+          <VideoTabBody res={videoRes} count={videoCount} today={today} picked={videoChip.date === date ? videoChip.chip : null} onPick={(c) => setVideoChip({ date, chip: c })} onRetry={() => retry([videoUrl])} />
         ) : (
           <>
         <ChipFilter
@@ -307,7 +326,7 @@ export function BriefPage({ route }: { route: Route }) {
       <nav className="tabs" aria-label="섹션">
         {tabs.map((s) => (
           <button key={s} type="button" className={s === current ? "on" : ""} aria-pressed={s === current} onClick={() => chooseSection(s)}>
-            {s === VIDEO_TAB ? videoTabLabel(videos.length) : s}
+            {s === VIDEO_TAB ? videoTabLabel(videoCount) : s}
           </button>
         ))}
       </nav>

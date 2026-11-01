@@ -118,7 +118,7 @@ export class YoutubeError extends Error {
 }
 
 /** 상한에 닿아 부르지 않았다 */
-class LimitReached extends Error {}
+export class LimitReached extends Error {}
 
 const AUTH_REASONS = new Set(["keyInvalid", "keyExpired", "accessNotConfigured", "ipRefererBlocked", "API_KEY_INVALID", "API_KEY_SERVICE_BLOCKED", "authError", "unauthorized"]);
 
@@ -225,7 +225,7 @@ export interface RawVideo {
   vertical: boolean;
 }
 
-interface VideoItem {
+export interface VideoItem {
   id?: string | { videoId?: string };
   snippet?: {
     title?: string;
@@ -295,6 +295,9 @@ export function categoriesUrl(region: Region): string {
   return `${YOUTUBE_BASE}videoCategories?${new URLSearchParams({ part: "snippet", regionCode: region }).toString()}`;
 }
 
+/** videos.list 한 번에 묻는 영상 수 */
+export const DETAILS_BATCH = 50;
+
 export function detailsUrl(ids: string[]): string {
   return `${YOUTUBE_BASE}videos?${new URLSearchParams({ part: VIDEO_PARTS, id: ids.join(","), maxResults: "50", maxWidth: PLAYER_WIDTH }).toString()}`;
 }
@@ -303,7 +306,7 @@ export function detailsUrl(ids: string[]): string {
 
 export type ExcludeReason = "already" | "live" | "short" | "vertical" | "unavailable";
 export const EXCLUDE_LABELS: Record<ExcludeReason, string> = {
-  already: "이미 추천함(최근 30일)",
+  already: "이미 추천함",
   live: "생방송 중·예정",
   short: "4분 미만",
   vertical: "세로 영상",
@@ -344,8 +347,8 @@ export interface FetchReport {
 export interface FetchVideosInput {
   client: YoutubeClient;
   now: Date;
-  /** DB에 남은 최근 30일 영상 ID */
-  recent: Set<string>;
+  /** DB에 남은 모든 영상 기록의 ID(L6) */
+  picked: Set<string>;
   topics?: readonly SearchTopic[];
 }
 
@@ -462,7 +465,7 @@ export async function fetchVideos(input: FetchVideosInput): Promise<FetchReport>
   report.before = found.size;
   // ③ 이미 추천한 영상은 상세를 받기 전에 뺀다
   for (const id of [...found.keys()]) {
-    if (input.recent.has(id)) {
+    if (input.picked.has(id)) {
       found.delete(id);
       report.excluded.already++;
     }
@@ -471,8 +474,8 @@ export async function fetchVideos(input: FetchVideosInput): Promise<FetchReport>
   const need = [...found].filter(([, c]) => c.raw === null).map(([id]) => id);
   let detailCalls = 0;
   let detailFailed = 0;
-  for (let i = 0; i < need.length && !stopped; i += 50) {
-    const batch = need.slice(i, i + 50);
+  for (let i = 0; i < need.length && !stopped; i += DETAILS_BATCH) {
+    const batch = need.slice(i, i + DETAILS_BATCH);
     detailCalls++;
     try {
       const j = (await client.get(detailsUrl(batch), "unit")) as { items?: VideoItem[] };

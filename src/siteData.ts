@@ -14,6 +14,7 @@ import {
   ENTITY_FIRST_NEWS,
   SITE_DATA_DIR,
   SITE_DATA_VERSION,
+  videoGroupsOf,
   buildTermFiles,
   byCount,
   compareTerms,
@@ -46,6 +47,7 @@ import {
   type ListSection,
   type ListStory,
   type MonthDetail,
+  type DayVideos,
   type MonthList,
   type SearchRecord,
   type SiteDates,
@@ -179,7 +181,7 @@ function buildDay(db: DatabaseSync, day: DayData, prev: DayData | null, details:
   const chips = indicators.chips.get(day.date);
   if (chips) out.indicators = chips;
   const dayVideos = videos.byDate.get(day.date);
-  if (dayVideos) out.videos = dayVideos;
+  if (dayVideos) out.videoGroups = videoGroupsOf(dayVideos);
   return out;
 }
 
@@ -242,7 +244,7 @@ function buildIssueDetail(db: DatabaseSync, i: Issue, names: Map<number, string>
   const inds = indicators.byIssue.get(i.id);
   if (inds) detail.indicators = inds;
   const vids = videos.byIssue.get(i.id);
-  if (vids) detail.videos = vids;
+  if (vids) detail.videoRefs = vids;
   if (dup) detail.dupName = true;
   return detail;
 }
@@ -300,6 +302,7 @@ export function buildSiteData(db: DatabaseSync, indicatorDefs: readonly Indicato
   out.set(file(siteFiles.dates), JSON.stringify(dates));
   for (const [month, list] of lists) out.set(file(siteFiles.list(month)), JSON.stringify(list));
   for (const [month, detail] of details) out.set(file(siteFiles.detail(month)), JSON.stringify(detail));
+  for (const [date, list] of videos.byDate) out.set(file(siteFiles.videoDay(date)), JSON.stringify({ date, videos: list } satisfies DayVideos));
 
   const live = liveIssues(db);
   out.set(file(siteFiles.issueList), JSON.stringify(buildIssueList(db, live)));

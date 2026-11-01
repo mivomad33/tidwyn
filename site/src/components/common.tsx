@@ -1,5 +1,5 @@
 // 여러 화면이 함께 쓰는 컴포넌트(시안 A의 머리 줄, 칩, 분류 줄, 대기·오류 상태, 4.5단계 읽음 표시)
-import { useCallback, useEffect, useRef, useState, type ReactNode, type RefObject } from "react";
+import { useCallback, useEffect, useRef, useState, type CSSProperties, type ReactNode, type RefObject } from "react";
 import { MAJORS } from "../../../src/categories.ts";
 import { pageTitle } from "../lib/format.ts";
 import { MENU, SKIP_LABEL } from "../lib/menu.ts";
@@ -190,6 +190,17 @@ export function Layout({ left, center, children }: { left?: ReactNode; center?: 
 /** 바닥글(7단계: 동의 문구와 개인정보 처리방침 링크, components/policyView.ts) */
 export function Footer() {
   return <FooterView Link={Link} />;
+}
+
+export const VIDEO_LOAD_ERROR = "영상을 불러오지 못했다. 네트워크를 확인하고 다시 시도해 주세요.";
+
+/** 영상 파일을 기다리는 대기 표시. 올 줄 수만큼 자리를 잡는다 */
+export function VideoLoading({ rows }: { rows: number }) {
+  return (
+    <div className="vwait" style={{ "--rows": rows } as CSSProperties}>
+      <Loading />
+    </div>
+  );
 }
 
 export function Loading({ label = "불러오는 중…" }: { label?: string }) {

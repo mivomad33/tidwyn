@@ -12,7 +12,7 @@ import { precheck } from "../src/precheck.ts";
 import { readRun, writeRun, type RunState } from "../src/run.ts";
 import { checkOutput } from "../src/siteCheck.ts";
 import { buildSiteData } from "../src/siteData.ts";
-import type { DayList } from "../src/siteTypes.ts";
+import type { DayVideos } from "../src/siteTypes.ts";
 import { recordFirstCollectionDate, saveBrief } from "../src/store.ts";
 import { validateBrief } from "../src/validate.ts";
 import { checkPickFile, removeVideoWorkFiles, videoWorkFile, writeCandidateFiles, type Candidate, type CandidateFile } from "../src/videoPick.ts";
@@ -499,8 +499,7 @@ describe("8단계 4.3 최종 고르기와 저장", () => {
     assert.deepEqual(allVideos(db).map((v) => v.summary), [SUMMARY.trim(), null]);
     const site = buildSiteData(db);
     db.close();
-    const list = JSON.parse([...site].find(([k]) => k.includes(`list-${TARGET.slice(0, 7)}`))![1]) as { days: DayList[] };
-    const vids = list.days[0]!.videos!;
+    const vids = (JSON.parse(site.get(`site-data/videos-${TARGET}.json`)!) as DayVideos).videos;
     assert.equal(vids[0]!.videoSummary, SUMMARY.trim());
     assert.ok(!("videoSummary" in vids[1]!), "요약이 없는 영상은 항목이 없다");
   });
@@ -537,7 +536,7 @@ describe("8단계 4.3 최종 고르기와 저장", () => {
 describe("8단계 4.4 30일 지우기, 백업, 유출 막기", () => {
   const OLD_SUMMARY = "지워져야 하는 가짜 요약 문자열이다 XQZ".repeat(3);
 
-  test("4.4-1 30·31일 전 기록의 요약이 DB, 사본, 작업 파일에서 나오지 않고 29일 전 것은 남는다", () => {
+  test("4.4-1 30·31일 전 기록의 요약이 DB, 사본, 작업 파일에서 나오지 않고 29일 전 것은 남는다", async () => {
     const repo = tempRepo();
     const dataDir = tempDir();
     const dbFile = path.join(dataDir, "tidwyn.db");
@@ -555,6 +554,8 @@ describe("8단계 4.4 30일 지우기, 백업, 유출 막기", () => {
     const env = { TIDWYN_DATA_DIR: dataDir };
     const ctx = makeCtx(repo, env);
     assert.equal(main(["start"], ctx), 0, ctx.text());
+    // 키가 없어 새로 받기는 실패하고 30일 지우기는 돈다(9.6단계 L4)
+    assert.equal(await mainAsync(["video-refresh", "--run", /실행 기록: (.+)/.exec(ctx.text())![1]!], ctx), 0, ctx.text());
     const leak = Buffer.from("XQZ");
     const walk = (d: string): string[] => fs.readdirSync(d, { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? walk(path.join(d, e.name)) : [path.join(d, e.name)]));
     for (const file of walk(dataDir)) assert.ok(!fs.readFileSync(file).includes(leak), `${file}에 요약이 남았다`);

@@ -8,7 +8,7 @@ import { SITE_INPUT_DIR, SITE_OUT_DIR } from "./publish.ts";
 import { VIDEO_WORK_NAMES, removeVideoWorkFiles } from "./videoPick.ts";
 import { hasVideoTables, isExpired, purgeExpiredRows } from "./videoStore.ts";
 
-// 7단계 4.1-2: 30일 지우기. 모든 실행의 start가 한다. 데이터 폴더의 DB·실행 전 사본·영상 작업 파일·사이트 입력과 결과물,
+// 7단계 4.1-2: 30일 지우기. 모든 실행의 video-refresh가 새로 받기 뒤에 한다(9.6단계 L3). 데이터 폴더의 DB·실행 전 사본·영상 작업 파일·사이트 입력과 결과물,
 // 그리고 시험 모드가 만든 `.test-data/<KST 시각>[-N]` 폴더(V17)에서 받은 지 30일 지난 YouTube 데이터를 지운다.
 // 실행 전 사본과 시험 폴더의 DB는 마이그레이션하지 않고 연다(openDb는 열면서 마이그레이션한다). 영상 표가 없는 DB는 건드리지 않는다.
 

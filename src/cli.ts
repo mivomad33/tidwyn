@@ -2,6 +2,7 @@ import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import type { DatabaseSync } from "node:sqlite";
 import { parseArgs as parseNodeArgs } from "node:util";
 import { BACKUP_DIR, backupMessage, commitBackup, exportBackup, readBackupDir, readBackupRef, restoreBackup } from "./backup.ts";
 import { CORRECTION_GUIDE, applyCorrection, checkCorrection, issuesOfStory } from "./corrections.ts";
@@ -40,7 +41,8 @@ import { readKeys, secretValues, maskSecrets } from "./keys.ts";
 import { DEFAULT_GEMINI_LIMITS, STOP_LABELS, emptyNotes, estimateUsd, fetchGemini, notCalled, readNotes, realClock, runNotes, writeNotes, type GeminiClock, type GeminiHttp, type GeminiLimits, type NotesFile } from "./gemini.ts";
 import { buildCandidateFile, checkCheckFile, checkPickFile, readCandidateFile, readJsonFile, removeVideoWorkFiles, restoreCandidateLists, videoWorkFile, writeCandidateFiles } from "./videoPick.ts";
 import { purgeDataDir, purgeTestDirs, type VideoPurgeResult } from "./videoPurge.ts";
-import { applyVideoPick, isPicked, issueCandidates, purgeExpiredRows, recentVideoIds, videoTargetDate } from "./videoStore.ts";
+import { REFRESH_UNITS, VIDEO_REFRESH_STOPPED, dueVideoIds, refreshBacklog, refreshState, refreshVideos } from "./videoRefresh.ts";
+import { applyVideoPick, isPicked, issueCandidates, pickedVideoIds, purgeExpiredRows, videoTargetDate } from "./videoStore.ts";
 import { EXCLUDE_LABELS, YoutubeClient, fetchVideos, fetchYoutube, type ExcludeReason, type Usage, type YoutubeHttp } from "./youtube.ts";
 import { VIDEO_BUNDLES, type VideoBundle } from "./siteTypes.ts";
 import { commitsOfRefs, describeFindings, homeValue, localBranches, precheck } from "./precheck.ts";
@@ -88,6 +90,7 @@ import {
   type ScheduleResult,
   type SiteResult,
   type VideoFetchState,
+  type VideoRefreshState,
   type VideoNotesState,
   type VideoPickState,
 } from "./run.ts";
@@ -136,6 +139,10 @@ export interface Context {
   youtubeLimits?: Usage;
   /** YouTube 다시 시도 간격(밀리초). 없으면 2초 */
   youtubeRetryGapMs?: number;
+  /** 새로 받기 한 실행의 상한(단위, 9.6단계 4.1-1). 없으면 500단위. 테스트가 낮춰 넣는다 */
+  youtubeRefreshUnits?: number;
+  /** 새로 받기를 멈춘 상태인지(L1). 없으면 VIDEO_REFRESH_STOPPED. 테스트가 바꿔 넣는다 */
+  videoRefreshStopped?: boolean;
   /** Gemini 요청(8단계 4.1). 없으면 fetch */
   geminiHttp?: GeminiHttp;
   /** Gemini 시간 제한의 시계. 테스트가 가짜로 바꾼다 */
@@ -205,7 +212,8 @@ const USAGE = `명령:
   indicator-check --run <파일> --file <번호>   판단 파일(work/indicators.judge-<번호>.json) 검사
   indicator-apply --run <파일> --file <번호>   검사 → 파일 단위로 적용(실패하면 실행 기록에 남긴다)
   indicator-fetch --run <파일>            12개 지표를 ECOS·FRED에서 받아 저장(지표 하나가 실패해도 계속한다)
-영상(7단계):
+영상(7단계, 9.6단계):
+  video-refresh --run <파일>              영상 기록 새로 받기(받은 지 7일이 된 기록) → 30일 지우기. 새로 받기가 실패해도 지우기를 하고 종료 코드는 0, 지우기가 실패하면 0이 아니다
   video-fetch --run <파일>                가장 늦은 브리프 날짜의 영상 받기(차트·검색·상세·거르기) → 후보 목록(work/videos.candidates.md). 이미 고르기 끝남이면 YouTube를 부르지 않는다
   video-notes --run <파일>                확인 후보 검사 → Gemini로 영상 내용 메모(work/videos.notes.json)
   video-check --run <파일>                고르기 파일(work/videos.pick.json) 검사
@@ -260,9 +268,6 @@ function cmdStart(argv: string[], ctx: Context): number {
   fs.mkdirSync(s.dataDir, { recursive: true });
   const snapshot = takeSnapshot(s.dataDir, s.dbPath, now);
   const pruned = pruneSnapshots(s.dataDir, now);
-  // 7단계 4.1-2: 30일 지우기(실행 전 사본은 마이그레이션 없이, 새로 만든 사본 포함)
-  const today = kstDate(now);
-  const purgeFiles = purgeDataDir(s.dataDir, today);
   const db = openDb(s.dbPath);
   let targets: string[];
   let linkDates: string[];
@@ -271,10 +276,8 @@ function cmdStart(argv: string[], ctx: Context): number {
   let warning: string | null;
   let mergeLine: string;
   let unjudged: number;
-  let purgedRows: number;
   let videoPlanned: { date: string | null; done: boolean };
   try {
-    purgedRows = purgeExpiredRows(db, today);
     const plan = planTargets(db, now, s.startDate);
     if (plan.firstDateToRecord !== null) recordFirstCollectionDate(db, plan.firstDateToRecord);
     targets = plan.dates;
@@ -290,8 +293,6 @@ function cmdStart(argv: string[], ctx: Context): number {
   } finally {
     db.close();
   }
-  const testDirs = purgeTestDirs(s.repo.toplevel, today, s.dataDir);
-  const purge: VideoPurgeResult = { rows: purgedRows, ...purgeFiles, testDirs };
   const runFile = path.join(s.dataDir, RUNS_DIR, `${kstStamp(now)}.json`);
   const state: RunState = {
     startedAt: kstIso(now),
@@ -314,7 +315,6 @@ function cmdStart(argv: string[], ctx: Context): number {
     push: null,
     unjudgedAtStart: unjudged,
     videoPlanned,
-    videoPurge: purge,
   };
   writeRun(runFile, state);
   ctx.out(
@@ -331,7 +331,6 @@ function cmdStart(argv: string[], ctx: Context): number {
       `- 지표 판단 안 한 이슈: ${unjudged}개`,
       keyLine(ctx),
       videoPlanned.date === null ? "- 영상: 브리프가 없어 받을 날짜가 없다" : `- 영상: ${videoPlanned.date} ${videoPlanned.done ? "이미 끝남" : "받기 할 것"}`,
-      ...purgeLines(purge),
     ].join("\n"),
   );
   return EXIT.ok;
@@ -551,6 +550,7 @@ function cmdSummary(argv: string[], ctx: Context): number {
   lines.push(...scheduleSummaryLines(s));
   lines.push(...indicatorSummaryLines(s));
   lines.push(...videoSummaryLines(s));
+  lines.push(...videoBacklogLines(s, ctx));
   lines.push(...imageSummaryLines(s, saved));
   lines.push(`- 백업: ${describeBackup(s.backup)}`);
   lines.push(...siteSummaryLines(s));
@@ -1729,6 +1729,71 @@ function purgeLines(p: VideoPurgeResult): string[] {
   return lines;
 }
 
+/** 키와 할당량 안내(받기와 새로 받기가 함께 쓴다) */
+function youtubeTroubleLines(r: { keyProblem?: boolean; quota?: boolean }): string[] {
+  return [...(r.keyProblem ? ["  - 키 확인 필요(docs/operations.md의 영상 절)"] : []), ...(r.quota ? ["  - 할당량 초과, 태평양 시간 자정에 풀림"] : [])];
+}
+
+function youtubeClientOf(ctx: Context, key: string, limits?: ConstructorParameters<typeof YoutubeClient>[0]["limits"]): YoutubeClient {
+  return new YoutubeClient({ http: ctx.youtubeHttp ?? fetchYoutube, key, ...(limits ? { limits } : {}), retryGapMs: ctx.youtubeRetryGapMs ?? 2000 });
+}
+
+/** 새로 받기 결과 줄(출력과 요약이 함께 쓴다, 4.2-4). 수와 정해진 이유만 쓴다 */
+function videoRefreshLines(r: VideoRefreshState): string[] {
+  if (r.status === "stopped") return ["- 새로 받기: 멈춰 두었다(받은 지 30일 지난 기록은 지운다, docs/operations.md의 영상 절)"];
+  const lines = [`- 새로 받기: 대상 ${r.targets}, 바꿈 ${r.changed}, 응답에 없어 지움 ${r.removed}, 쓴 단위 ${r.units}, 남음 ${r.targets - r.changed - r.removed}`];
+  if (r.suspectCalls > 0) lines.push(`  - 경고: 이상한 응답 ${r.suspectCalls}번, 영상 ${r.suspectVideos}개를 그대로 두었다(다음 실행이 다시 받는다)`);
+  if (r.unreadable > 0) lines.push(`  - 읽을 수 없어 그대로 둔 영상: ${r.unreadable}개`);
+  if (r.limited) lines.push(`  - 상한(${REFRESH_UNITS}단위)에 닿아 멈췄다. 남은 기록은 다음 실행이 한다`);
+  lines.push(...youtubeTroubleLines(r));
+  if (r.failure !== null) lines.push(`  - 실패(다음 실행이 다시 한다): ${r.failure}`);
+  return lines;
+}
+
+/** 새로 받을 기록을 받는다. 키가 없거나 호출이 실패해도 던지지 않고 결과에 남긴다(L4) */
+async function refreshStep(db: DatabaseSync, today: string, ctx: Context): Promise<VideoRefreshState> {
+  if (ctx.videoRefreshStopped ?? VIDEO_REFRESH_STOPPED) return refreshState("stopped", 0);
+  const ids = dueVideoIds(db, today);
+  if (ids.length === 0) return refreshState("none", 0);
+  const key = readKeys(ctx.env, keyDirOf(ctx)).YOUTUBE_API_KEY;
+  if (key === null) return refreshState("failed", ids.length, { keyProblem: true, failure: "YOUTUBE_API_KEY가 없다" });
+  const client = youtubeClientOf(ctx, key, { searches: 0, units: ctx.youtubeRefreshUnits ?? REFRESH_UNITS });
+  const r = await refreshVideos(db, client, ids, today);
+  return refreshState(r.failure === null ? "ok" : "failed", ids.length, r, client.used.units);
+}
+
+/** 영상 기록 새로 받기와 30일 지우기(9.6단계 L3). 새로 받기는 실패해도 종료 코드 0이고, 지우기가 실패하면 예외로 0이 아닌 코드가 된다 */
+async function cmdVideoRefresh(argv: string[], ctx: Context): Promise<number> {
+  const v = opts(argv, { run: { type: "string" } });
+  const runFile = need(v, "run");
+  const state = readRun(runFile);
+  const refused = indicatorCondition(state, ctx);
+  if (refused !== null) return refused;
+  if (state.videoPurge !== undefined) {
+    ctx.out("영상: 이 실행에서 이미 새로 받고 지웠다.");
+    return EXIT.ok;
+  }
+  const today = kstDate(ctx.now());
+  const db = openExistingDb(state.dbPath);
+  let refresh: VideoRefreshState;
+  let rows: number;
+  try {
+    const found = await refreshStep(db, today, ctx);
+    refresh = { ...found, failure: found.failure === null ? null : maskSecrets(found.failure, secretsOf(ctx)), rewrite: state.videoRefresh?.rewrite === true || found.changed + found.removed > 0 };
+    updateRun(runFile, (s) => (s.videoRefresh = refresh));
+    rows = purgeExpiredRows(db, today);
+    // 지운 칸과 덮어쓴 옛 값이 빈 공간이나 나뉜 페이지에 남지 않게 다시 쓴다. 30일 지우기를 했으면 이미 다시 썼다
+    if (rows === 0 && refresh.rewrite) db.exec("VACUUM");
+  } finally {
+    db.close();
+  }
+  // 실행 전 사본은 마이그레이션 없이 지운다. 새로 받은 기록이어도 사본 쪽 규칙대로다(L3)
+  const purge: VideoPurgeResult = { rows, ...purgeDataDir(state.dataDir, today), testDirs: purgeTestDirs(requireRepo(ctx.cwd).toplevel, today, state.dataDir) };
+  updateRun(runFile, (s) => (s.videoPurge = purge));
+  ctx.out([...videoRefreshLines(refresh), ...purgeLines(purge)].join("\n"));
+  return EXIT.ok;
+}
+
 /** 영상 받기(4.2). 대상 날짜가 이미 고르기 끝남이면 YouTube를 부르지 않는다. 받기 실패는 종료 코드 1(뒤 단계는 계속한다) */
 async function cmdVideoFetch(argv: string[], ctx: Context): Promise<number> {
   const v = opts(argv, { run: { type: "string" } });
@@ -1770,8 +1835,8 @@ async function cmdVideoFetch(argv: string[], ctx: Context): Promise<number> {
       ctx.out(`영상 받기 실패(${target}): 키 확인 필요: YOUTUBE_API_KEY가 없다. 고르기를 건너뛴다. 다음 실행이 다시 받는다.`);
       return EXIT.failed;
     }
-    const client = new YoutubeClient({ http: ctx.youtubeHttp ?? fetchYoutube, key, ...(ctx.youtubeLimits ? { limits: ctx.youtubeLimits } : {}), retryGapMs: ctx.youtubeRetryGapMs ?? 2000 });
-    const report = await fetchVideos({ client, now, recent: recentVideoIds(db, today) });
+    const client = youtubeClientOf(ctx, key, ctx.youtubeLimits);
+    const report = await fetchVideos({ client, now, picked: pickedVideoIds(db) });
     const base: VideoFetchState = {
       status: report.status,
       target,
@@ -1809,8 +1874,7 @@ function videoFetchLines(r: VideoFetchState): string[] {
   if (r.status === "noBrief") return [...lines, "- 영상 받기: 브리프가 없어 하지 않았다"];
   const head = { ok: "받음", partial: "일부만 받음(받은 것으로 후보 목록을 썼다)", failed: "실패(고르기 끝남이 되지 않아 다음 실행이 다시 받는다)" }[r.status];
   lines.push(`- 영상 받기: ${head}`);
-  if (r.keyProblem) lines.push("  - 키 확인 필요(docs/operations.md의 영상 절)");
-  if (r.quota) lines.push("  - 할당량 초과, 태평양 시간 자정에 풀림");
+  lines.push(...youtubeTroubleLines(r));
   for (const c of r.charts ?? []) lines.push(`  - ${c.region} 차트: 받은 차트 ${c.fetched}개, 건너뛴 카테고리 ${c.skipped.length}개${c.skipped.length > 0 ? `(${c.skipped.join(", ")})` : ""}`);
   if (r.usage) lines.push(`  - 쓴 양: 검색 ${r.usage.searches}번, 그 밖의 호출 ${r.usage.units}단위`);
   const sr = Object.entries(r.searchResults ?? {});
@@ -2022,6 +2086,7 @@ function cmdVideoApply(argv: string[], ctx: Context): number {
 function videoSummaryLines(s: RunState): string[] {
   if (s.videoPlanned === undefined && s.videoPurge === undefined && s.videoFetch === undefined && s.videoPick === undefined) return [];
   const lines: string[] = [];
+  if (s.videoRefresh !== undefined) lines.push(...videoRefreshLines(s.videoRefresh));
   const f = s.videoFetch;
   if (f === undefined) lines.push("- 영상 받기: 하지 않았다(다음 실행이 다시 받는다)");
   else lines.push(...videoFetchLines(f));
@@ -2038,7 +2103,24 @@ function videoSummaryLines(s: RunState): string[] {
     for (const vi of p.violations ?? []) lines.push(`  - ${vi.where}: ${vi.why}`);
   }
   if (s.videoPurge !== undefined) lines.push(...purgeLines(s.videoPurge));
+  else lines.push("- 영상 새로 받기와 30일 지우기: 끝내지 못했다(다음 실행이 한다)");
   return lines;
+}
+
+/** 요약의 밀림 경고(4.2-5). 멈춰 둔 동안에는 내지 않는다. DB를 열 수 없으면 줄을 뺀다 */
+function videoBacklogLines(s: RunState, ctx: Context): string[] {
+  if (ctx.videoRefreshStopped ?? VIDEO_REFRESH_STOPPED) return [];
+  try {
+    const db = openExistingDb(s.dbPath);
+    try {
+      const b = refreshBacklog(db, kstDate(ctx.now()));
+      return b === null ? [] : [`- 새로 받기가 밀림: ${b.count}개, 가장 오래된 기록이 ${b.days}일 뒤 지워짐`];
+    } finally {
+      db.close();
+    }
+  } catch {
+    return [];
+  }
 }
 
 function homeOf(ctx: Context): string | null {
@@ -2291,6 +2373,7 @@ const ASYNC_COMMANDS: Record<string, (argv: string[], ctx: Context) => Promise<n
   images: cmdImages,
   deploy: cmdDeploy,
   "indicator-fetch": cmdIndicatorFetch,
+  "video-refresh": cmdVideoRefresh,
   "video-fetch": cmdVideoFetch,
   "video-notes": cmdVideoNotes,
 };

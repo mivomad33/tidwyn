@@ -99,7 +99,7 @@ export function IssuePage({ id }: { id: number }) {
           <p className="p muted">아직 전개가 없다.</p>
         )}
         <IssueIndicators indicators={issue.indicators} newsDates={issue.timeline.map((t) => t.date)} />
-        <IssueVideos videos={issue.videos} today={today} />
+        <IssueVideos refs={issue.videoRefs} today={today} />
         <IssueSchedules lines={issue.schedules} today={today} Link={Link} />
         {issueEntityChips(issue.entities).length > 0 && (
           <>

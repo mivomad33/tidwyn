@@ -1,3 +1,4 @@
+import { VIDEO_DAY_FILE_RE } from "./siteTypes.ts";
 import fs from "node:fs";
 import path from "node:path";
 import { CONTACT_MAIL } from "./publicSite.ts";
@@ -87,15 +88,21 @@ export const BACKUP_NAME_RE = /^(?:\d{4}-\d{2}\.json|issues\.json|refs\.json|sch
 /** 영상 기록의 표시(영상 기록·사이트 영상 항목과 8단계 영상 요약 이름). 백업에는 영상 데이터를 넣지 않는다(7단계 4.4-2) */
 const VIDEO_RECORD_RE = /"(?:videoId|video_id|videos|videoSummary|video_summary)"\s*:/;
 
-/** 백업 파일 자리(data 브랜치 최상위나 backup/ 폴더)의 백업 이름 파일인지 */
-export function isBackupPath(file: string): boolean {
+/** 백업 파일 자리(data 브랜치 최상위나 backup/ 폴더)인지 */
+function inBackupPlace(file: string): boolean {
   const parts = file.replaceAll("\\", "/").split("/");
-  const base = parts.at(-1)!;
-  return BACKUP_NAME_RE.test(base) && (parts.length === 1 || parts.at(-2) === "backup");
+  return parts.length === 1 || parts.at(-2) === "backup";
+}
+
+/** 백업 자리의 백업 이름 파일인지 */
+export function isBackupPath(file: string): boolean {
+  return BACKUP_NAME_RE.test(file.replaceAll("\\", "/").split("/").at(-1)!) && inBackupPlace(file);
 }
 
 /** 백업 파일에 영상 기록이 들어 있는지(7단계 4.4-2) */
 export function videoBackupFindings(where: string, file: string, content: Buffer): Finding[] {
+  // 날짜별 영상 파일은 사이트 결과물의 site-data/에만 있어야 한다(9.6단계 4.2-3)
+  if (VIDEO_DAY_FILE_RE.test(file.replaceAll("\\", "/").split("/").at(-1)!) && inBackupPlace(file)) return [{ where, kind: "백업 파일에 영상 기록" }];
   if (!isBackupPath(file) || isBinary(content)) return [];
   return VIDEO_RECORD_RE.test(content.toString("utf8")) ? [{ where, kind: "백업 파일에 영상 기록" }] : [];
 }

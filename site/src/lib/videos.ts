@@ -1,7 +1,7 @@
 // 7단계 추천 영상의 화면 로직(4.7, 확정 시안 design/site.html): 30일 숨기기(V14), 묶음 칩, 길이 글자, YouTube 주소, 이슈 페이지의 순서와 더 보기.
 // 화면(DOM) 없이 테스트한다. "오늘"은 부르는 쪽이 넣는다(방문자 브라우저의 오늘, KST).
 import { addDays } from "../../../src/kst.ts";
-import { VIDEO_BUNDLES, VIDEO_KEEP_DAYS, type IssueVideo, type SiteVideo, type VideoBundle } from "../../../src/siteTypes.ts";
+import { VIDEO_BUNDLES, VIDEO_KEEP_DAYS, type DayVideos, type IssueVideo, type IssueVideoRef, type SiteVideo, type VideoBundle, type VideoGroup } from "../../../src/siteTypes.ts";
 import { monthDay } from "./format.ts";
 
 export { VIDEO_BUNDLES, VIDEO_KEEP_DAYS, type VideoBundle };
@@ -42,6 +42,11 @@ export function isVideoVisible(video: Pick<SiteVideo, "fetchedOn">, today: strin
 export function visibleVideos<T extends SiteVideo>(videos: readonly T[] | undefined, today: string): T[] {
   const shown = (videos ?? []).filter((v) => isVideoVisible(v, today));
   return shown.map((v, i) => ({ v, i })).sort((a, b) => VIDEO_BUNDLES.indexOf(a.v.bundle) - VIDEO_BUNDLES.indexOf(b.v.bundle) || a.i - b.i).map((x) => x.v);
+}
+
+/** 보이는 영상 수(영상 파일을 받기 전에 '영상 N' 탭을 정한다) */
+export function visibleVideoCount(groups: readonly VideoGroup[] | undefined, today: string): number {
+  return (groups ?? []).reduce((n, g) => (isVideoVisible(g, today) ? n + g.count : n), 0);
 }
 
 export interface ChipCount {
@@ -99,7 +104,7 @@ export function recommendedOnText(date: string): string {
  * 이슈 페이지의 '관련 영상': 30일 안의 것만, 붙은 브리프 날짜 최근 순(같은 날짜는 받은 순서 그대로), 같은 영상은 한 번.
  * 처음에는 ISSUE_VIDEO_FIRST개만 보이고 나머지 수를 more로 준다
  */
-export function issueVideoRows(videos: readonly IssueVideo[] | undefined, today: string, expanded = false): { rows: IssueVideo[]; more: number } {
+export function issueVideoRows<T extends IssueVideoRef>(videos: readonly T[] | undefined, today: string, expanded = false): { rows: T[]; more: number } {
   const seen = new Set<string>();
   const all = (videos ?? [])
     .filter((v) => isVideoVisible(v, today))
@@ -109,4 +114,24 @@ export function issueVideoRows(videos: readonly IssueVideo[] | undefined, today:
     .filter((v) => (seen.has(v.id) ? false : (seen.add(v.id), true)));
   if (expanded || all.length <= ISSUE_VIDEO_FIRST) return { rows: all, more: 0 };
   return { rows: all.slice(0, ISSUE_VIDEO_FIRST), more: all.length - ISSUE_VIDEO_FIRST };
+}
+
+/** 이 위치들을 그리려면 받아야 하는 날짜(처음 나온 순서) */
+export function refDates(refs: readonly IssueVideoRef[]): string[] {
+  return [...new Set(refs.map((r) => r.date))];
+}
+
+/**
+ * 받은 날짜 파일로 위치를 영상 줄로 바꾼다. 순서가 바뀌지 않게 아직 받지 못한 날짜의 첫 위치에서 멈춘다.
+ * 파일에 없는 영상(배포가 바뀌는 사이의 어긋남)은 건너뛴다
+ */
+export function issueVideosFrom(refs: readonly IssueVideoRef[], files: ReadonlyMap<string, DayVideos>): IssueVideo[] {
+  const out: IssueVideo[] = [];
+  for (const r of refs) {
+    const file = files.get(r.date);
+    if (!file) break;
+    const v = file.videos.find((x) => x.id === r.id);
+    if (v) out.push({ ...v, date: r.date });
+  }
+  return out;
 }

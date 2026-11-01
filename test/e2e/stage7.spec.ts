@@ -10,7 +10,7 @@ import { BROKEN_THUMB } from "../../site/dev/videoFixtures.ts";
 import { BRIEF_TAB_KEY } from "../../site/src/lib/browserKeys.ts";
 import { CONSENT_TEXT } from "../../site/src/lib/policy.ts";
 import { YOUTUBE_TERMS_URL } from "../../site/src/lib/videos.ts";
-import type { DayList, IssueChunk, IssueDetail, MonthList, SiteVideo } from "../../src/siteTypes.ts";
+import type { DayList, DayVideos, IssueChunk, IssueDetail, MonthList, SiteVideo } from "../../src/siteTypes.ts";
 
 const SITE_DATA = path.join(E2E_DATA_DIR, "site-data");
 const json = <T>(name: string) => JSON.parse(fs.readFileSync(path.join(SITE_DATA, name), "utf8")) as T;
@@ -19,12 +19,11 @@ for (const f of fs.readdirSync(SITE_DATA).filter((n) => n.startsWith("list-"))) 
 const issues = json<IssueChunk>("issue-0.json").issues;
 const v = info.videos;
 const LATEST = v.dates[0]!;
-const latest = days.get(LATEST)!;
-const vids = latest.videos!;
+const vids = json<DayVideos>(`videos-${LATEST}.json`).videos;
 const count = (pred: (x: SiteVideo) => boolean) => vids.filter(pred).length;
 const many: IssueDetail = issues[String(v.many)]!;
 const one: IssueDetail = issues[String(v.one)]!;
-const noVideoIssue = Object.values(issues).find((i) => !i.videos)!;
+const noVideoIssue = Object.values(issues).find((i) => !i.videoRefs)!;
 
 const tabs = (page: Page) => page.getByRole("navigation", { name: "섹션" });
 const videoTab = (page: Page, n = vids.length) => tabs(page).getByRole("button", { name: `영상 ${n}` });
@@ -91,11 +90,11 @@ test.describe("4.7-1 브리프의 '영상' 탭", () => {
     await expect(page.locator("ul.list > li.item").first()).toBeVisible();
     expect(await page.evaluate((k) => localStorage.getItem(k), BRIEF_TAB_KEY), "기억은 그대로").toBe("영상");
 
-    const single = days.get(v.oneBundleDate!)!.videos!;
+    const single = json<DayVideos>(`videos-${v.oneBundleDate}.json`).videos;
     await page.goto(`/${v.oneBundleDate}`);
     await expect(videoTab(page, single.length)).toHaveAttribute("aria-pressed", "true");
     await expect(chipGroup(page).getByRole("button")).toHaveText(["전체", `한국 ${single.length}`]);
-    const zero = days.get(v.zeroBundleDate!)!.videos!;
+    const zero = json<DayVideos>(`videos-${v.zeroBundleDate}.json`).videos;
     await page.goto(`/${v.zeroBundleDate}`);
     await expect(chipGroup(page).getByRole("button", { name: /^미국/ })).toHaveCount(0);
     await expect(rows(page)).toHaveCount(zero.length);
@@ -166,23 +165,23 @@ test.describe("4.7-2 이슈 페이지의 '관련 영상'", () => {
     const section = page.locator("section", { has: page.getByRole("heading", { name: "관련 영상" }) });
     await expect(section.locator("li.vrow")).toHaveCount(5);
     await expect(section.locator(".tag")).toHaveCount(0);
-    await expect(section.locator(".vrec").first()).toHaveText(`${Number(many.videos![0]!.date.slice(5, 7))}월 ${Number(many.videos![0]!.date.slice(8))}일 추천`);
+    await expect(section.locator(".vrec").first()).toHaveText(`${Number(many.videoRefs![0]!.date.slice(5, 7))}월 ${Number(many.videoRefs![0]!.date.slice(8))}일 추천`);
     await expect(section.locator("p.vsrc").getByRole("link", { name: /YouTube 이용약관/ })).toHaveAttribute("href", YOUTUBE_TERMS_URL);
-    const more = section.getByRole("button", { name: `더 보기 (${many.videos!.length - 5})` });
+    const more = section.getByRole("button", { name: `더 보기 (${many.videoRefs!.length - 5})` });
     await more.focus();
     await page.keyboard.press("Enter");
-    await expect(section.locator("li.vrow")).toHaveCount(many.videos!.length);
+    await expect(section.locator("li.vrow")).toHaveCount(many.videoRefs!.length);
     await expect(section.locator("li.vrow").nth(5).locator("a.vlink")).toBeFocused();
   });
 
   test("'M월 D일 추천'을 누르면 그 날짜 브리프의 영상 탭이 열린다", async ({ page }) => {
     await page.goto(`/issues/${one.id}`);
-    const date = one.videos![0]!.date;
+    const date = one.videoRefs![0]!.date;
     await page.locator("main .vrec").first().click();
     await expect(page).toHaveURL(`/${date}#videos`);
-    const n = days.get(date)!.videos!.length;
+    const n = json<DayVideos>(`videos-${date}.json`).videos.length;
     await expect(videoTab(page, n)).toHaveAttribute("aria-pressed", "true");
-    await expect(page.locator(`main li.vrow[data-video="${one.videos![0]!.id}"]`)).toBeVisible();
+    await expect(page.locator(`main li.vrow[data-video="${one.videoRefs![0]!.id}"]`)).toBeVisible();
     expect(await page.evaluate("window.scrollY")).toBe(0);
     // 새로 고쳐도 영상 탭이고, 다른 탭을 고르면 주소의 #videos가 빠진다
     await page.reload();
@@ -212,7 +211,7 @@ test.describe("4.7-7 30일 지난 영상 숨기기", () => {
     await expect(tabs(page).getByRole("button", { name: /^영상/ })).toHaveCount(0);
 
     // 이슈: 1개뿐인 영상이 30일째에 빠지면 절이 없다
-    const issueFetched = one.videos![0]!.fetchedOn;
+    const issueFetched = one.videoRefs![0]!.fetchedOn;
     await setToday(page, addDaysIso(issueFetched, 29));
     await page.goto(`/issues/${one.id}`);
     await expect(page.getByRole("heading", { name: "관련 영상" })).toBeVisible();

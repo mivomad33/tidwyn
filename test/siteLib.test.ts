@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, test } from "node:test";
-import { ISSUE_CHUNK_SIZE, issueChunkOf, siteFiles } from "../src/siteTypes.ts";
+import { ISSUE_CHUNK_SIZE, VIDEO_DAY_FILE_RE, issueChunkOf, siteFiles } from "../src/siteTypes.ts";
 import type { DayList, IssueChunk, IssueDetail, IssueListItem, ListStory, SiteIssueList, SiteSource, StoryDetail } from "../src/siteTypes.ts";
 import { HOSTING_CONFIG_FILE, resolveStatic, vercelConfig } from "../site/hosting.ts";
 import { analyticsEnabled, stripSearchQuery } from "../site/src/lib/analytics.ts";
@@ -290,6 +290,8 @@ describe("사이트 데이터 주소와 호스팅 설정", () => {
     assert.equal(dataUrl.dates(), `/site-data/${siteFiles.dates}`);
     assert.equal(dataUrl.list("2026-10"), `/site-data/${siteFiles.list("2026-10")}`);
     assert.equal(dataUrl.detail("2026-10"), `/site-data/${siteFiles.detail("2026-10")}`);
+    assert.equal(dataUrl.videoDay("2026-10-27"), `/site-data/${siteFiles.videoDay("2026-10-27")}`);
+    assert.ok(VIDEO_DAY_FILE_RE.test(siteFiles.videoDay("2026-10-27")));
     assert.equal(dataUrl.issueList(), `/site-data/${siteFiles.issueList}`);
     assert.equal(dataUrl.issueChunk(3), `/site-data/${siteFiles.issueChunk(3)}`);
     assert.equal(ISSUE_CHUNK, ISSUE_CHUNK_SIZE);

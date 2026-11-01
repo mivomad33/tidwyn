@@ -7,13 +7,15 @@
 // 브리프 첫 화면의 '이번 주 일정'은 달 목록 파일(list-*.json)에 들어 있어 첫 화면 크기에 이미 들어간다.
 // 6단계(4.6-2): 지표 페이지(지표 목록)와 지표 하나의 페이지(지표 목록 + 그 지표의 5년 값, 가장 큰 지표로)가 처음 받는 사이트 데이터도 잰다.
 // 브리프 위 상자의 지표 칩도 달 목록 파일에 들어 있어 첫 화면 크기에 들어간다.
+// 9.6단계(4.3-2): 영상 탭(가장 큰 날짜 파일), 이슈 페이지 본문(issue-list와 관련 영상이 가장 많은 이슈의 묶음), 관련 영상이 처음 받는 파일도 잰다.
 import fs from "node:fs";
 import path from "node:path";
 import { gzipSync } from "node:zlib";
-import { ENTITY_FILTERS, entityChunkOf, siteFiles, type EntityChunk, type ScheduleIndex, type TermIndex } from "../src/siteTypes.ts";
+import { ENTITY_FILTERS, VIDEO_DAY_FILE_RE, entityChunkOf, siteFiles, type EntityChunk, type IssueChunk, type IssueVideoRef, type ScheduleIndex, type TermIndex } from "../src/siteTypes.ts";
 import { listFilesRecursive } from "./build.ts";
 import { firstLoadMonths } from "./src/lib/schedules.ts";
 import { initialTermGroups } from "./src/lib/terms.ts";
+import { ISSUE_VIDEO_FIRST, refDates } from "./src/lib/videos.ts";
 
 export const FIRST_SCREEN_BUDGET = 300 * 1024;
 
@@ -94,6 +96,34 @@ export function measureIndicatorScreens(outDir: string): ScreenData[] {
   return out;
 }
 
+/** 9.6단계: 영상을 나눈 화면이 처음 받는 사이트 데이터와 날짜별 영상 파일 수. 영상이 없으면 screens가 비어 있다 */
+export function measureVideoScreens(outDir: string): { screens: ScreenData[]; files: number } {
+  const data = path.join(outDir, "site-data");
+  const names = fs.readdirSync(data);
+  const dayFiles = names.filter((n) => VIDEO_DAY_FILE_RE.test(n));
+  if (dayFiles.length === 0) return { screens: [], files: 0 };
+  const biggest = dayFiles.map((n) => ({ n, size: fs.statSync(path.join(data, n)).size })).sort((a, b) => b.size - a.size || a.n.localeCompare(b.n))[0]!;
+  const screens = [screen(outDir, "영상 탭", [`site-data/${biggest.n}`])];
+  let pile: { chunk: string; id: string; refs: IssueVideoRef[] } | null = null;
+  for (const name of names.filter((n) => /^issue-\d+\.json$/.test(n))) {
+    const chunk = JSON.parse(fs.readFileSync(path.join(data, name), "utf8")) as IssueChunk;
+    for (const [id, issue] of Object.entries(chunk.issues)) {
+      const refs = issue.videoRefs ?? [];
+      if (refs.length > (pile?.refs.length ?? 0)) pile = { chunk: name, id, refs };
+    }
+  }
+  if (pile) {
+    screens.push(screen(outDir, `이슈 페이지 본문(이슈 ${pile.id}, 관련 영상 ${pile.refs.length}개)`, [`site-data/${siteFiles.issueList}`, `site-data/${pile.chunk}`]));
+    screens.push(screen(outDir, "관련 영상", refDates(pile.refs.slice(0, ISSUE_VIDEO_FIRST)).map((d) => `site-data/${siteFiles.videoDay(d)}`)));
+  }
+  return { screens, files: dayFiles.length };
+}
+
+function printScreen(sc: ScreenData): void {
+  console.log(`${sc.name}: gzip ${(sc.gzip / 1024).toFixed(1)}KB (한도 ${FIRST_SCREEN_BUDGET / 1024}KB)${sc.gzip > FIRST_SCREEN_BUDGET ? " 넘음" : ""}`);
+  for (const f of sc.files) console.log(`  ${f.path}: gzip ${(f.gzip / 1024).toFixed(1)}KB`);
+}
+
 if (import.meta.main) {
   const dir = process.argv[2];
   if (!dir) {
@@ -106,8 +136,7 @@ if (import.meta.main) {
   console.log(`첫 화면 합계: gzip ${(s.firstScreen.gzip / 1024).toFixed(1)}KB (한도 ${FIRST_SCREEN_BUDGET / 1024}KB)`);
   if (fs.existsSync(path.join(dir, "site-data", "term-index.json"))) {
     for (const sc of measureScreens(dir)) {
-      console.log(`${sc.name}: gzip ${(sc.gzip / 1024).toFixed(1)}KB (한도 ${FIRST_SCREEN_BUDGET / 1024}KB)${sc.gzip > FIRST_SCREEN_BUDGET ? " 넘음" : ""}`);
-      for (const f of sc.files) console.log(`  ${f.path}: gzip ${(f.gzip / 1024).toFixed(1)}KB`);
+      printScreen(sc);
     }
   }
   if (fs.existsSync(path.join(dir, "site-data", siteFiles.scheduleIndex))) {
@@ -115,13 +144,16 @@ if (import.meta.main) {
     const dates = JSON.parse(fs.readFileSync(path.join(dir, "site-data/dates.json"), "utf8")) as { latestDate: string | null };
     const today = process.argv[3] ?? (dates.latestDate ? new Date(Date.parse(`${dates.latestDate}T00:00:00Z`) + 86400000).toISOString().slice(0, 10) : new Date().toISOString().slice(0, 10));
     const sc = measureScheduleScreen(dir, today);
-    console.log(`${sc.name}: gzip ${(sc.gzip / 1024).toFixed(1)}KB (한도 ${FIRST_SCREEN_BUDGET / 1024}KB)${sc.gzip > FIRST_SCREEN_BUDGET ? " 넘음" : ""}`);
-    for (const f of sc.files) console.log(`  ${f.path}: gzip ${(f.gzip / 1024).toFixed(1)}KB`);
+    printScreen(sc);
+  }
+  const videoScreens = measureVideoScreens(dir);
+  if (videoScreens.files > 0) console.log(`날짜별 영상 파일: ${videoScreens.files}개`);
+  for (const sc of videoScreens.screens) {
+    printScreen(sc);
   }
   if (fs.existsSync(path.join(dir, "site-data", siteFiles.indicatorList))) {
     for (const sc of measureIndicatorScreens(dir)) {
-      console.log(`${sc.name}: gzip ${(sc.gzip / 1024).toFixed(1)}KB (한도 ${FIRST_SCREEN_BUDGET / 1024}KB)${sc.gzip > FIRST_SCREEN_BUDGET ? " 넘음" : ""}`);
-      for (const f of sc.files) console.log(`  ${f.path}: gzip ${(f.gzip / 1024).toFixed(1)}KB`);
+      printScreen(sc);
     }
   }
 }

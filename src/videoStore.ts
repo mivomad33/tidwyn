@@ -2,7 +2,7 @@ import type { DatabaseSync } from "node:sqlite";
 import { addDays } from "./kst.ts";
 import { VIDEO_BUNDLES, VIDEO_KEEP_DAYS, type VideoBundle } from "./siteTypes.ts";
 
-// 7단계 4.1: 영상 기록, 영상-이슈 연결, 날짜별 영상 고르기 끝남. 영상 기록은 YouTube 데이터라 받은 날부터 30일이 지나면 지운다(V1).
+// 7단계 4.1: 영상 기록, 영상-이슈 연결, 날짜별 영상 고르기 끝남. 영상 기록은 YouTube 데이터라 새로 받지 못한 채 받은 날부터 30일이 지나면 지운다(V1, 9.6단계 L4).
 
 /** 하루 묶음별 최대 개수(V5) */
 export const BUNDLE_MAX: Record<VideoBundle, number> = { kr: 5, us: 5, "ai-ko": 3, "ai-en": 3 };
@@ -100,9 +100,9 @@ export function videosOfDate(db: DatabaseSync, date: string): VideoRecord[] {
   return allVideos(db).filter((v) => v.briefDate === date);
 }
 
-/** "이미 추천한 영상" 거르기에 쓰는 영상 ID(DB에 남은 최근 30일 기록) */
-export function recentVideoIds(db: DatabaseSync, today: string): Set<string> {
-  const rows = db.prepare("SELECT video_id FROM videos WHERE fetched_on > ?").all(expiredOnOrBefore(today)) as { video_id: string }[];
+/** "이미 추천한 영상" 거르기에 쓰는 영상 ID(DB에 남은 모든 기록, L6) */
+export function pickedVideoIds(db: DatabaseSync): Set<string> {
+  const rows = db.prepare("SELECT video_id FROM videos").all() as { video_id: string }[];
   return new Set(rows.map((r) => r.video_id));
 }
 

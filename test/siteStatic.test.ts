@@ -20,7 +20,7 @@ import { buildSearchRecords, buildSiteData } from "../src/siteData.ts";
 import { renderMarkdown } from "../src/markdown.ts";
 import { loadBrief } from "../src/store.ts";
 import { openDb } from "../src/db.ts";
-import type { DayList, IndicatorList, IssueChunk, IssueDetail, MonthDetail, MonthList, SiteDates } from "../src/siteTypes.ts";
+import type { DayList, DayVideos, IndicatorList, IssueChunk, IssueDetail, MonthDetail, MonthList, SiteDates } from "../src/siteTypes.ts";
 import { cleanupTemp, tempDir } from "./helpers.ts";
 import { REF_DATES, refSiteDb } from "./refsFixture.ts";
 
@@ -160,7 +160,7 @@ describe("정적 HTML", () => {
   });
 
   test("4.1-2 R7: 영상 제목, 썸네일, 기사 이미지 주소가 어떤 HTML에도 없다", () => {
-    const videos = [...b.days.values()].flatMap((d) => d.videos ?? []);
+    const videos = fs.readdirSync(path.join(b.out, "site-data")).filter((n) => /^videos-/.test(n)).flatMap((n) => (JSON.parse(fs.readFileSync(path.join(b.out, "site-data", n), "utf8")) as DayVideos).videos);
     assert.ok(videos.length > 0, "지어낸 영상이 있어야 한다");
     const images = [...b.details.values()].flatMap((stories) => Object.values(stories)).flatMap((s) => s.sources.flatMap((x) => x.imageUrl ?? []));
     for (const f of allHtml()) {
@@ -647,11 +647,11 @@ describe("4.7-5 정정의 파생 반영", () => {
 });
 
 describe("4.10-1 파일 수 회귀 방지", () => {
-  test("365일, 이슈·대상 각 3,000개에서 결과물이 15,000개 이하다", { timeout: 300_000 }, async () => {
+  test("365일, 이슈·대상 각 3,000개, 영상 365일치에서 결과물이 15,000개 이하다", { timeout: 300_000 }, async () => {
     const work = tempDir("tidwyn-count-");
     const dataDir = path.join(work, "data");
     const out = path.join(work, "out");
-    const fx = generateFixtures({ days: 365, contiguous: true, issues: 3000, entities: 3000 });
+    const fx = generateFixtures({ days: 365, contiguous: true, issues: 3000, entities: 3000, videosFull: true });
     for (const [rel, content] of fx.files) {
       fs.mkdirSync(path.dirname(path.join(dataDir, rel)), { recursive: true });
       fs.writeFileSync(path.join(dataDir, rel), content);

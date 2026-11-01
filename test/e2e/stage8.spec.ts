@@ -4,14 +4,14 @@ import path from "node:path";
 import type { Page } from "@playwright/test";
 import { expect, expectNoHorizontalScroll, info, test } from "./base.ts";
 import { E2E_DATA_DIR } from "./paths.ts";
-import type { DayList, IssueChunk, MonthList } from "../../src/siteTypes.ts";
+import type { DayList, DayVideos, IssueChunk, MonthList } from "../../src/siteTypes.ts";
 
 const SITE_DATA = path.join(E2E_DATA_DIR, "site-data");
 const json = <T>(name: string) => JSON.parse(fs.readFileSync(path.join(SITE_DATA, name), "utf8")) as T;
 const days = new Map<string, DayList>();
 for (const f of fs.readdirSync(SITE_DATA).filter((n) => n.startsWith("list-"))) for (const d of json<MonthList>(f).days) days.set(d.date, d);
 const LATEST = info.videos.dates[0]!;
-const vids = days.get(LATEST)!.videos!;
+const vids = json<DayVideos>(`videos-${LATEST}.json`).videos;
 const many = json<IssueChunk>("issue-0.json").issues[String(info.videos.many)]!;
 
 const videoTab = (page: Page) => page.getByRole("navigation", { name: "섹션" }).getByRole("button", { name: `영상 ${vids.length}` });

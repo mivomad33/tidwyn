@@ -4,12 +4,12 @@ import path from "node:path";
 import { after, describe, test } from "node:test";
 import { createElement as h } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
-import type { DayList, IssueChunk, IssueVideo, MonthList, SiteVideo, VideoBundle } from "../src/siteTypes.ts";
+import { siteFiles, videoGroupsOf, type DayList, type DayVideos, type IssueChunk, type IssueVideo, type MonthList, type SiteVideo, type VideoBundle } from "../src/siteTypes.ts";
 import { buildSite } from "../site/build.ts";
 import { generateFixtures, writeFixtures } from "../site/dev/fixtures.ts";
 import { BROKEN_THUMB } from "../site/dev/videoFixtures.ts";
-import { resolveStatic } from "../site/hosting.ts";
-import { FIRST_SCREEN_BUDGET, measureOutput } from "../site/size.ts";
+import { resolveStatic, vercelConfig } from "../site/hosting.ts";
+import { FIRST_SCREEN_BUDGET, measureOutput, measureVideoScreens } from "../site/size.ts";
 import { FOOTER_LINKS, FooterView, PrivacyView } from "../site/src/components/policyView.ts";
 import type { LinkLikeProps } from "../site/src/components/termView.ts";
 import { fixtureVideos } from "../site/dev/videoFixtures.ts";
@@ -31,10 +31,13 @@ import {
   filterVideos,
   isVideoVisible,
   issueVideoRows,
+  issueVideosFrom,
   recommendedOnText,
+  refDates,
   videoChips,
   videoTabLabel,
   videoUrl,
+  visibleVideoCount,
   visibleVideos,
 } from "../site/src/lib/videos.ts";
 import { cleanupTemp, tempDir } from "./helpers.ts";
@@ -54,7 +57,7 @@ function video(bundle: VideoBundle, fetchedOn = TODAY, extra: Partial<SiteVideo>
 
 function day(videos?: SiteVideo[]): DayList {
   const d: DayList = { date: "2026-10-29", headline: "가짜", keywords: [], sections: [{ name: "한국", flow: "", stories: [] }, { name: "세계", flow: "", stories: [] }] };
-  if (videos) d.videos = videos;
+  if (videos) d.videoGroups = videoGroupsOf(videos);
   return d;
 }
 
@@ -68,12 +71,12 @@ describe("4.7-7 30일 지난 영상 숨기기", () => {
   });
 
   test("탭의 N·칩의 수는 보이는 영상으로 세고, 모두 숨으면 영상 탭이 없다", () => {
-    const d = day([video("kr", "2026-10-01"), video("kr", "2026-09-30"), video("us", "2026-09-30"), video("ai-en", "2026-10-29")]);
-    const { tabs, videos } = briefTabs(d, TODAY);
+    const list = [video("kr", "2026-10-01"), video("kr", "2026-09-30"), video("us", "2026-09-30"), video("ai-en", "2026-10-29")];
+    const { tabs, videoCount } = briefTabs(day(list), TODAY);
     assert.deepEqual(tabs, [ALL_TAB, "한국", "세계", VIDEO_TAB]);
-    assert.equal(videos.length, 2);
-    assert.equal(videoTabLabel(videos.length), "영상 2");
-    assert.deepEqual(videoChips(videos).map((c) => c.label), ["한국 1", "AI 1"], "미국은 모두 숨어 칩이 없다");
+    assert.equal(videoCount, 2);
+    assert.equal(videoTabLabel(videoCount), "영상 2");
+    assert.deepEqual(videoChips(visibleVideos(list, TODAY)).map((c) => c.label), ["한국 1", "AI 1"], "미국은 모두 숨어 칩이 없다");
     const allOld = day([video("kr", "2026-09-30"), video("ai-ko", "2026-09-01")]);
     assert.deepEqual(briefTabs(allOld, TODAY).tabs, [ALL_TAB, "한국", "세계"]);
   });
@@ -130,7 +133,7 @@ describe("4.7-1 브리프의 '영상' 탭", () => {
     assert.match(link[3]!, /<img src="\/t.svg" alt=""/);
     assert.match(link[3]!, /<small class="vdur" aria-hidden="true">1:05:03<\/small>/);
     assert.match(link[3]!, /<span class="vt">Example: a made-up talk<\/span><span class="sr-only"> \(새 탭\)<\/span>$/);
-    assert.match(html, /<div class="vm"><span class="tag">AI · 영어<\/span>Example Lab · 1시간 5분<\/div>/);
+    assert.match(html, /<div class="vm"><span class="tag">AI · 영어<\/span>Example Lab · <span class="nw">1시간 5분<\/span><\/div>/);
     assert.match(html, /<p class="why"><b>추천 이유<\/b>가짜 추천 이유다\.<\/p>/);
     assert.equal(videoUrl("a b"), "https://www.youtube.com/watch?v=a%20b");
   });
@@ -189,7 +192,7 @@ describe("4.7-2 이슈 페이지의 '관련 영상'", () => {
     const v = iv("2026-10-29", "us");
     const html = renderToStaticMarkup(h(VideoList, { videos: [v], mode: "issue", Link }));
     assert.match(html, /^<ul class="vlist"><li class="vrow"/);
-    assert.match(html, /<div class="vm">예시 채널 · 44분 · <a href="\/2026-10-29#videos" class="vrec">10월 29일 추천<\/a><\/div>/);
+    assert.match(html, /<div class="vm">예시 채널 · <span class="nw">44분<\/span><span class="nw"> · <a href="\/2026-10-29#videos" class="vrec">10월 29일 추천<\/a><\/span><\/div>/);
     assert.ok(!html.includes('class="tag"'), "이슈 페이지에는 묶음 표시를 붙이지 않는다(확정 시안)");
     assert.equal(recommendedOnText("2026-01-05"), "1월 5일 추천");
   });
@@ -199,15 +202,15 @@ describe("4.7-2 이슈 페이지의 '관련 영상'", () => {
     const v = fx.info.videos!;
     const issues = JSON.parse(fx.files.get("site-data/issue-0.json")!) as IssueChunk;
     const survivor = issues.issues[String(v.absorbed!.into)]!;
-    assert.ok(survivor.videos!.some((x) => x.id === v.absorbed!.id));
+    assert.ok(survivor.videoRefs!.some((x) => x.id === v.absorbed!.id));
     assert.equal(issues.issues[String(v.absorbed!.issue)], undefined, "흡수된 이슈는 따로 없다");
-    assert.ok(issues.issues[String(v.many)]!.videos!.length > ISSUE_VIDEO_FIRST);
-    assert.equal(issues.issues[String(v.one)]!.videos!.length, 1);
-    assert.ok(Object.values(issues.issues).some((i) => !i.videos));
+    assert.ok(issues.issues[String(v.many)]!.videoRefs!.length > ISSUE_VIDEO_FIRST);
+    assert.equal(issues.issues[String(v.one)]!.videoRefs!.length, 1);
+    assert.ok(Object.values(issues.issues).some((i) => !i.videoRefs));
     for (const i of Object.values(issues.issues)) {
-      const dates = (i.videos ?? []).map((x) => x.date);
+      const dates = (i.videoRefs ?? []).map((x) => x.date);
       assert.deepEqual(dates, [...dates].sort().reverse(), `이슈 ${i.id}는 최근 순`);
-      assert.equal(new Set((i.videos ?? []).map((x) => x.id)).size, (i.videos ?? []).length);
+      assert.equal(new Set((i.videoRefs ?? []).map((x) => x.id)).size, (i.videoRefs ?? []).length);
     }
   });
 });
@@ -245,7 +248,8 @@ describe("4.7-4 개인정보 처리방침과 바닥글", () => {
       "페이지 보기 수",
       "쿠키를 쓰지 않",
       "YouTube API Services",
-      "30일 동안만 보인다",
+      "30일이 지나도록 새로 받지 못하면 화면에서 숨기고 다음 브리프를 만들 때 지운다",
+      "YouTube에서 사라진 영상도 지운다",
       "YouTube(Google) 서버에서 바로 불러온다",
       "각 매체 서버에서 바로 불러온다",
       "제3자 광고를 싣지 않는다",
@@ -295,7 +299,7 @@ describe("4.7-5 사이트 소개의 '추천 영상'", () => {
   test("고르는 방법, YouTube API Services와 30일, 이용약관 링크와 동의 문구, 처리방침 링크가 있다", () => {
     const html = renderToStaticMarkup(h(AboutVideos, { Link }));
     assert.match(html, /^<h2 class="h">추천 영상<\/h2>/);
-    for (const text of ["인기 차트", "주제 검색", "Claude가 제목과 설명으로 후보를 추린다", "Gemini API로 확인", "틀릴 수 있다", "방문자 정보는 보내지 않는다", "매일 브리프를 만들 때", "추천 이유와 요약은 Tidwyn이 쓴 글", "YouTube API Services", "30일 동안만 보인다", CONSENT_TEXT]) assert.ok(html.includes(text), text);
+    for (const text of ["인기 차트", "주제 검색", "Claude가 제목과 설명으로 후보를 추린다", "Gemini API로 확인", "틀릴 수 있다", "방문자 정보는 보내지 않는다", "매일 브리프를 만들 때", "추천 이유와 요약은 Tidwyn이 쓴 글", "YouTube API Services", "주기적으로 새로 받는다", "30일이 지나도록 새로 받지 못하면", CONSENT_TEXT]) assert.ok(html.includes(text), text);
     assert.ok(html.includes(`<a href="${YOUTUBE_TERMS_URL}" class="text-link" target="_blank" rel="noopener noreferrer">`));
     assert.ok(html.includes('<a href="/privacy" class="text-link">개인정보 처리방침</a>'));
     assert.match(fs.readFileSync(path.join(import.meta.dirname, "..", "site", "src", "components", "aboutView.ts"), "utf8"), /h\(AboutVideos, \{ Link \}\)/);
@@ -322,24 +326,27 @@ describe("4.7-6 지어낸 데이터의 영상", () => {
   const fx = generateFixtures({ end: "2026-10-27", days: 40, contiguous: true, videos: true });
   const v = fx.info.videos!;
   const days = [...fx.files.keys()].filter((k) => k.startsWith("site-data/list-")).flatMap((k) => (JSON.parse(fx.files.get(k)!) as MonthList).days);
-  const all = days.flatMap((d) => d.videos ?? []);
+  const videosOf = (date: string | null): SiteVideo[] | undefined => {
+    const f = fx.files.get(`site-data/videos-${date}.json`);
+    return f ? (JSON.parse(f) as DayVideos).videos : undefined;
+  };
+  const all = days.flatMap((d) => videosOf(d.date) ?? []);
 
   test("끝 날짜 기준 30일(그리고 꼭 30일 전 날짜 하나)에만 영상이 있고, 받은 날은 브리프 날짜다", () => {
     for (const d of days) {
       const age = Math.round((Date.parse("2026-10-27T00:00:00Z") - Date.parse(`${d.date}T00:00:00Z`)) / 86400000);
-      if (age > 30) assert.equal(d.videos, undefined, d.date);
-      for (const x of d.videos ?? []) assert.equal(x.fetchedOn, d.date);
+      if (age > 30) assert.equal(videosOf(d.date), undefined, d.date);
+      for (const x of videosOf(d.date) ?? []) assert.equal(x.fetchedOn, d.date);
     }
     assert.equal(v.stale, "2026-09-27");
     assert.equal(briefTabs(days.find((d) => d.date === v.stale)!, "2026-10-27").tabs.includes(VIDEO_TAB), false, "끝 날짜를 오늘로 보면 숨는다");
   });
 
   test("날짜마다 묶음이 섞이고, 0개 묶음·한 묶음만·영상 없는 날짜, 썸네일 실패 영상이 있으며, 썸네일은 외부를 부르지 않는다", () => {
-    const of = (date: string | null) => days.find((d) => d.date === date)!;
-    assert.ok(new Set(of(v.dates[0]!).videos!.map((x) => x.bundle)).size === 4);
-    assert.ok(!of(v.zeroBundleDate).videos!.some((x) => x.bundle === "us"));
-    assert.deepEqual([...new Set(of(v.oneBundleDate).videos!.map((x) => x.bundle))], ["kr"]);
-    assert.equal(of(v.noVideoDate).videos, undefined);
+    assert.ok(new Set(videosOf(v.dates[0]!)!.map((x) => x.bundle)).size === 4);
+    assert.ok(!videosOf(v.zeroBundleDate)!.some((x) => x.bundle === "us"));
+    assert.deepEqual([...new Set(videosOf(v.oneBundleDate)!.map((x) => x.bundle))], ["kr"]);
+    assert.equal(videosOf(v.noVideoDate), undefined);
     assert.equal(all.find((x) => x.id === v.broken!.id)!.thumb, BROKEN_THUMB);
     for (const x of all) assert.ok(x.thumb === BROKEN_THUMB || x.thumb.startsWith("data:image/svg+xml,"), x.thumb);
     assert.ok(all.every((x) => x.title.includes("예시") || x.title.includes("Example") || /fictional|made-up|imaginary|가짜|가상/i.test(x.title)), "지어낸 제목");
@@ -350,24 +357,84 @@ describe("4.7-6 지어낸 데이터의 영상", () => {
     const b = generateFixtures({ end: "2026-10-27", days: 7, videos: true });
     assert.equal(a.info.videos, null);
     for (const [name, content] of a.files) assert.ok(!content.includes('"videos"'), name);
-    assert.deepEqual([...a.files.keys()], [...b.files.keys()], "파일 목록은 같다");
+    assert.deepEqual([...a.files.keys()], [...b.files.keys()].filter((k) => !/site-data\/videos-/.test(k)), "영상 파일 밖의 파일 목록은 같다");
   });
 });
 
-describe("4.6-3 영상을 더한 5년치", () => {
-  test("30일 × 하루 16개 영상(추천 이유 150자, 요약 350자, 관련 이슈 2개)을 더해도 브리프 첫 화면 gzip 300KB 이하다", async () => {
-    // 6단계 측정 조건(1,826일, 하루 42건, 이슈·대상 15,000개, 용어 5,000개, 일정 15,000개, 지표 12개 × 5년)에 영상 30일 × 16개
+describe("4.3-2 영상을 더한 5년치", () => {
+  test("5년 × 하루 16개 영상과 관련 영상 300개가 몰린 이슈에서 영상 화면의 처음 받는 데이터가 각각 gzip 300KB 이하이고, 영상 파일은 2,000개 이하다", { timeout: 600_000 }, async () => {
+    // 6단계 측정 조건(1,826일, 하루 42건, 이슈·대상 15,000개, 용어 5,000개, 일정 15,000개, 지표 12개 × 5년)에 영상 5년 × 16개
     const work = tempDir("tidwyn-site7y-");
     const dataDir = path.join(work, "data");
     const out = path.join(work, "out");
-    writeFixtures(dataDir, { end: "2026-10-31", days: 1826, top: 6, short: 8, issues: 15000, contiguous: true, entities: 15000, terms: 5000, schedules: 15000, indicators: 5, indicatorsAll: true, videosFull: true });
+    const fx = writeFixtures(dataDir, { end: "2026-10-31", days: 1826, top: 6, short: 8, issues: 15000, contiguous: true, entities: 15000, terms: 5000, schedules: 15000, indicators: 5, indicatorsAll: true, videosFull: true });
     const res = await buildSite({ dataDir, outDir: out });
-    console.log(`5년치 결과물 ${res.files.length}개, ${(res.bytes / 1024 / 1024).toFixed(1)}MB`);
-    const latest = (JSON.parse(fs.readFileSync(path.join(out, "site-data", "list-2026-10.json"), "utf8")) as MonthList).days.at(-1)!;
-    assert.equal(latest.videos!.length, 16);
-    assert.ok(latest.videos!.every((x) => x.reason.length === 150));
+    const latest = JSON.parse(fs.readFileSync(path.join(out, "site-data", "videos-2026-10-31.json"), "utf8")) as DayVideos;
+    assert.equal(latest.videos.length, 16);
+    assert.ok(latest.videos.every((x) => x.reason.length === 150));
     const size = measureOutput(out);
     assert.ok(size.firstScreen.gzip <= FIRST_SCREEN_BUDGET, `브리프 첫 화면 gzip ${size.firstScreen.gzip}B`);
-    console.log(`# 4.6-3 결과물 ${res.files.length}개, 전체 ${(res.bytes / 1024 / 1024).toFixed(2)}MB, 브리프 첫 화면 gzip ${(size.firstScreen.gzip / 1024).toFixed(1)}KB`);
+    const { screens, files } = measureVideoScreens(out);
+    assert.equal(screens.length, 3, "영상 탭, 이슈 본문, 관련 영상을 모두 잰다");
+    assert.ok(screens[1]!.name.includes("관련 영상 300개"), screens[1]!.name);
+    for (const sc of screens) assert.ok(sc.gzip <= FIRST_SCREEN_BUDGET, `${sc.name} gzip ${sc.gzip}B`);
+    assert.ok(files <= 2000, `영상 파일 ${files}개`);
+    // 측정이 영상 파일을 실제로 재는지: 관련 영상 화면의 파일이 5개이고 크기가 0이 아니다
+    assert.equal(screens[2]!.files.length, 5);
+    assert.ok(screens[2]!.gzip > 0);
+    assert.equal(fx.info.videos!.pile, 1);
+    console.log(`# 4.3-2 결과물 ${res.files.length}개, 전체 ${(res.bytes / 1024 / 1024).toFixed(2)}MB, 영상 파일 ${files}개, 브리프 첫 화면 gzip ${(size.firstScreen.gzip / 1024).toFixed(1)}KB, ${screens.map((sc) => `${sc.name} gzip ${(sc.gzip / 1024).toFixed(1)}KB`).join(", ")}`);
+  });
+});
+
+describe("4.3-1 영상 본문 분리", () => {
+  const fx = generateFixtures({ end: "2026-10-27", days: 40, contiguous: true, videos: true });
+  const texts = [...fx.files].filter(([k]) => /site-data\/(?:list|issue)-/.test(k));
+  const vids = [...fx.files].filter(([k]) => /site-data\/videos-/.test(k)).flatMap(([, c]) => (JSON.parse(c) as DayVideos).videos);
+
+  test("달 목록과 이슈 묶음에 영상 제목·추천 이유·요약이 없고 videos 키가 없다", () => {
+    assert.ok(vids.length > 0 && texts.length > 0);
+    for (const [name, content] of texts) {
+      assert.ok(!content.includes('"videos"'), name);
+      for (const v of vids) {
+        assert.ok(!content.includes(v.title), `${name}: 제목`);
+        assert.ok(!content.includes(v.reason), `${name}: 추천 이유`);
+        if (v.videoSummary) assert.ok(!content.includes(v.videoSummary), `${name}: 요약`);
+      }
+    }
+  });
+
+  test("영상 파일은 site-data/ 아래에 있고 그 폴더에 noindex 규칙이 있다", () => {
+    const cfg = vercelConfig() as { headers: { source: string; headers: { key: string; value: string }[] }[] };
+    const rule = cfg.headers.find((h) => h.source.includes("site-data"))!;
+    assert.deepEqual(rule.headers, [{ key: "X-Robots-Tag", value: "noindex" }]);
+    assert.ok(new RegExp(`^${rule.source}$`).test(`/site-data/${siteFiles.videoDay("2026-10-27")}`));
+    assert.equal(siteFiles.videoDay("2026-10-27"), "videos-2026-10-27.json");
+  });
+});
+
+describe("4.3-6 영상 필드가 없는 달 목록", () => {
+  test("옛 화면이 새 달 파일을 읽는 것과 같은 모양이고, 앱 로직은 오류 없이 영상 탭을 뺀다", () => {
+    const { tabs, videoCount } = briefTabs(day(), TODAY);
+    assert.deepEqual(tabs, [ALL_TAB, "한국", "세계"]);
+    assert.equal(videoCount, 0);
+    assert.equal(visibleVideoCount(undefined, TODAY), 0);
+    assert.deepEqual(issueVideoRows(undefined, TODAY).rows, []);
+  });
+});
+
+describe("4.3-5 관련 영상 위치와 날짜 파일", () => {
+  const ref = (id: string, date: string) => ({ id, date, fetchedOn: TODAY });
+  const file = (date: string, ids: string[]): DayVideos => ({ date, videos: ids.map((id) => video("kr", TODAY, { id })) });
+
+  test("받은 날짜 파일로 순서대로 줄을 만들고, 아직 없는 날짜에서 멈추며, 파일에 없는 영상은 건너뛴다", () => {
+    const refs = [ref("a", "2026-10-29"), ref("gone", "2026-10-29"), ref("b", "2026-09-02"), ref("c", "2026-10-29"), ref("d", "2026-08-01")];
+    assert.deepEqual(refDates(refs), ["2026-10-29", "2026-09-02", "2026-08-01"]);
+    const files = new Map([["2026-10-29", file("2026-10-29", ["a", "c"])]]);
+    assert.deepEqual(issueVideosFrom(refs, files).map((v) => v.id), ["a"], "뒤 날짜가 앞서 받아져도 순서가 바뀌지 않는다");
+    files.set("2026-08-01", file("2026-08-01", ["d"]));
+    assert.deepEqual(issueVideosFrom(refs, files).map((v) => v.id), ["a"]);
+    files.set("2026-09-02", file("2026-09-02", ["b"]));
+    assert.deepEqual(issueVideosFrom(refs, files).map((v) => `${v.date} ${v.id}`), ["2026-10-29 a", "2026-09-02 b", "2026-10-29 c", "2026-08-01 d"]);
   });
 });
