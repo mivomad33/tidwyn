@@ -211,7 +211,7 @@ describe("4.7-4 마이그레이션과 백업", () => {
       assert.equal(schemaVersion(old), from);
       old.close();
       const db = openDb(file);
-      assert.equal(schemaVersion(db), 9);
+      assert.equal(schemaVersion(db), 10);
       assert.equal(JSON.stringify(loadBrief(db, DATE)), before);
       assert.deepEqual(allCorrections(db), []);
       db.close();

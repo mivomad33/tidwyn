@@ -12,19 +12,24 @@ export const APP_FILE = "app.html";
 /** `/<이름>/<번호>` 모양의 앱 전용 주소 */
 const APP_ID_ROUTES = ["terms", "schedules"];
 const APP_ID_RE = new RegExp(`^(?:${APP_ID_ROUTES.join("|")})/\\d+$`);
+/** 영상별 페이지 `/videos/<날짜>/<영상 ID>`(9.7단계 4.4-1). 날짜로 읽을 데이터 파일을 안다 */
+export const VIDEO_DATE_PATTERN = "\\d{4}-\\d{2}-\\d{2}";
+export const VIDEO_ID_PATTERN = "[A-Za-z0-9_-]{1,32}";
+const APP_VIDEO_RE = new RegExp(`^videos/${VIDEO_DATE_PATTERN}/${VIDEO_ID_PATTERN}$`);
+const APP_VIDEO_SOURCE = `/videos/:date(${VIDEO_DATE_PATTERN})/:id(${VIDEO_ID_PATTERN})`;
 
 export function vercelConfig(): object {
   return {
     cleanUrls: true,
     trailingSlash: false,
-    rewrites: ["/search", ...APP_ID_ROUTES.map((r) => `/${r}/:id(\\d+)`)].map((source) => ({ source, destination: "/app" })),
+    rewrites: ["/search", ...APP_ID_ROUTES.map((r) => `/${r}/:id(\\d+)`), APP_VIDEO_SOURCE].map((source) => ({ source, destination: "/app" })),
     headers: NOINDEX_DIRS.map((d) => ({ source: `/${d}/(.*)`, headers: [{ key: "X-Robots-Tag", value: "noindex" }] })),
   };
 }
 
 /** 앱 전용 주소: 숫자 모양이면 파일 없이 앱이 처리한다(없는 번호는 앱이 없는 페이지를 보인다, 4.3-3의 예외) */
 function isAppOnly(rel: string): boolean {
-  return rel === "search" || APP_ID_RE.test(rel);
+  return rel === "search" || APP_ID_RE.test(rel) || APP_VIDEO_RE.test(rel);
 }
 
 export type StaticResolution = { kind: "file"; path: string } | { kind: "notFound"; path: string };

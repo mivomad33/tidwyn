@@ -636,6 +636,7 @@ export function generateFixtures(opts: FixtureOptions = {}): Fixture {
   for (const [name, content] of sched.files) files.set(`site-data/${name}`, content);
   for (const [name, content] of ind?.files ?? []) files.set(`site-data/${name}`, content);
   for (const [date, videos] of vids?.byDate ?? []) files.set(`site-data/${siteFiles.videoDay(date)}`, json({ date, videos }));
+  for (const [date, videoSections] of vids?.sectionsByDate ?? []) files.set(`site-data/${siteFiles.videoSections(date)}`, json({ date, videoSections }));
   files.set("search-records.json", json([...newsRecords, ...issueRecords, ...entityRecords, ...termRecords]));
   const most = entityDetails.reduce<EntityDetail | null>((m, e) => (!m || e.count > m.count ? e : m), null);
   return {

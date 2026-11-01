@@ -1,5 +1,5 @@
 // 여러 화면이 함께 쓰는 컴포넌트(시안 A의 머리 줄, 칩, 분류 줄, 대기·오류 상태, 4.5단계 읽음 표시)
-import { useCallback, useEffect, useRef, useState, type CSSProperties, type ReactNode, type RefObject } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode, type RefObject } from "react";
 import { MAJORS } from "../../../src/categories.ts";
 import { pageTitle } from "../lib/format.ts";
 import { MENU, SKIP_LABEL } from "../lib/menu.ts";
@@ -174,14 +174,32 @@ export function BackLink({ to, label }: { to: string; label: string }) {
   );
 }
 
+let carryMainFocus = false;
+
+/** 본문 영역. 대기와 정상 화면이 서로 다른 main이어도 main에 있던 포커스를 새 main으로 넘긴다(앱 안 이동, 다시 시도) */
+export function Main({ className, children }: { className: string; children: ReactNode }) {
+  const ref = useRef<HTMLElement>(null);
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (carryMainFocus) el?.focus({ preventScroll: true });
+    carryMainFocus = false;
+    return () => {
+      carryMainFocus = document.activeElement === el;
+    };
+  }, []);
+  return (
+    <main ref={ref} id="main" tabIndex={-1} className={className}>
+      {children}
+    </main>
+  );
+}
+
 /** 머리 줄 + 본문 + 바닥글. 대기·오류·빈 상태 화면과 단순한 화면이 쓴다 */
 export function Layout({ left, center, children }: { left?: ReactNode; center?: ReactNode; children: ReactNode }) {
   return (
     <>
       <TopBar left={left} center={center} />
-      <main id="main" tabIndex={-1} className="page">
-        {children}
-      </main>
+      <Main className="page">{children}</Main>
       <Footer />
     </>
   );
@@ -216,7 +234,15 @@ export function ErrorState({ onRetry, message = "데이터를 불러오지 못�
   return (
     <div className="state error" role="alert">
       <p>{message}</p>
-      <button type="button" className="retry" onClick={onRetry}>
+      <button
+        type="button"
+        className="retry"
+        onClick={() => {
+          // 버튼이 사라져도 포커스가 문서 처음으로 돌아가지 않게 본문에 둔다
+          document.getElementById("main")?.focus({ preventScroll: true });
+          onRetry();
+        }}
+      >
         다시 시도
       </button>
     </div>

@@ -47,6 +47,7 @@ import {
   type ListSection,
   type ListStory,
   type MonthDetail,
+  type DaySections,
   type DayVideos,
   type MonthList,
   type SearchRecord,
@@ -303,6 +304,7 @@ export function buildSiteData(db: DatabaseSync, indicatorDefs: readonly Indicato
   for (const [month, list] of lists) out.set(file(siteFiles.list(month)), JSON.stringify(list));
   for (const [month, detail] of details) out.set(file(siteFiles.detail(month)), JSON.stringify(detail));
   for (const [date, list] of videos.byDate) out.set(file(siteFiles.videoDay(date)), JSON.stringify({ date, videos: list } satisfies DayVideos));
+  for (const [date, videoSections] of videos.sectionsByDate) out.set(file(siteFiles.videoSections(date)), JSON.stringify({ date, videoSections } satisfies DaySections));
 
   const live = liveIssues(db);
   out.set(file(siteFiles.issueList), JSON.stringify(buildIssueList(db, live)));

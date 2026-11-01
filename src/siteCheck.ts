@@ -17,7 +17,7 @@ const RUN_FILE_RES = [
   /^\d{4}-\d{2}-\d{2}\.(?:json|candidates\.json|candidates\.md|issues\.md|links\.json|refs\.md|refs\.json|schedules\.md|schedules\.json)$/,
   /^merges\.(?:json|candidates\.md)$/,
   /^indicators\.(?:candidates-\d+\.md|judge-\d+\.json)$/,
-  /^videos\.(?:candidates\.json|candidates\.md|details\.md|pick\.json|check\.json|notes\.json|notes\.tmp\.json)$/,
+  /^videos\.(?:candidates\.json|candidates\.md|details\.md|pick\.json|check\.json|notes\.json|notes\.tmp\.json|sections\.json|sections\.tmp\.json)$/,
 ];
 /** 데이터 폴더의 작업 폴더 이름. 결과물 안에 이런 폴더가 있으면 데이터 폴더가 섞인 것이다 */
 const DATA_DIRS = new Set(["runs", "work", "snapshots", "backup", "site-input"]);
@@ -61,7 +61,7 @@ export function checkOutput(outDir: string, home: string | null, secrets: readon
 // ---- 공개 페이지 검사(9.5단계 4.8-1) ----
 
 /** HTML에 들어가면 안 되는 영상 데이터(R7): 영상 파일 이름, 영상 필드, 영상·썸네일 주소 */
-const VIDEO_IN_HTML_RES = [/\bvideos(?:-[\w-]+)?\.json\b/, /"(?:thumb|fetchedOn|videoSummary)"\s*:/, /youtube\.com\/watch|youtu\.be\/|ytimg\.com/];
+const VIDEO_IN_HTML_RES = [/\b(?:videos|video-sections)(?:-[\w-]+)?\.json\b/, /"(?:thumb|fetchedOn|videoSummary|videoSections)"\s*:/, /youtube\.com\/watch|youtu\.be\/|ytimg\.com/];
 /** 뉴스 출처 목록. 출처가 YouTube일 수 있어 영상 검사에서 뺀다 */
 const SOURCE_LIST_RE = /<div class="src">[\s\S]*?<\/div>/g;
 

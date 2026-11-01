@@ -64,6 +64,17 @@ describe("2단계 4.6-1 스킬 문서의 파일 형식 예시", () => {
   });
 });
 
+describe("9.7단계 4.5-1 영상 구간 정리 절차", () => {
+  test("순서와 글 규칙, 포기 절차, 금지 줄이 적혀 있다", () => {
+    const at = (s: string) => SKILL.indexOf(s);
+    assert.ok(at("3. 영상 내용을 확인한다") < at("5. 구간 재료를 받는다"));
+    assert.ok(at("5. 구간 재료를 받는다") < at("6. 구간 정리를 쓴다"));
+    assert.ok(at("6. 구간 정리를 쓴다") < at("7. 검사한다"));
+    assert.ok(at("7. 검사한다") < at("9. 적용한다"));
+    for (const text of ["챕터 제목을 번역하지 않고", "영상을 보지 않고도 그 구간의 내용 대부분", "인용은 15단어 미만", "`null`(구간 포기)", "구간 시각은 `video-sections`만", "챕터 제목·구간 글은 대화창", "구간 시각 파일"]) assert.ok(SKILL.includes(text), text);
+  });
+});
+
 describe("3단계 4.5-1 스킬 문서의 명령과 실행 순서", () => {
   test("문서에 적힌 `node src/cli.ts <명령>`이 모두 실제 명령이다", () => {
     const names = [...SKILL.matchAll(/node src\/cli\.ts ([a-z][a-z-]*)/g)].map((m) => m[1]!);

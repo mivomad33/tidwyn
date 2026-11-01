@@ -1,9 +1,9 @@
 import fs from "node:fs";
 import type { CheckVideo } from "./videoPick.ts";
-import { videoWorkFile } from "./videoPick.ts";
+import { videoWorkFile, type VIDEO_WORK_NAMES } from "./videoPick.ts";
 import type { VideoBundle } from "./siteTypes.ts";
 
-// 8단계 4.1: Gemini API로 영상 내용 메모를 받는다. YouTube 주소만 보내고 영상 파일을 받지 않는다(T1).
+// 8단계 4.1: Gemini API로 영상 내용 메모를 받는다. YouTube 주소로 받고 영상 파일을 받지 않는다(T1).
 // 메모는 판단 재료이고 작업 파일로만 둔다(T6). 응답 본문은 실행 기록에 옮기지 않고 정해진 이유로만 남긴다(4.1-4, 4.4-4).
 
 /** 모델 ID(T5). 바꿀 때는 아래 가격도 공식 가격표로 함께 고친다 */
@@ -133,12 +133,12 @@ export const STOP_LABELS: Record<GeminiStop, string> = {
   unknown: "Gemini 오류 반복",
 };
 /** 영상별 실패의 이유 */
-export type NoteFailure = "볼 수 없음" | "시간 초과" | "일시 오류 계속" | "빈 응답" | "안전 차단" | "형식 오류" | "영상 토큰 없음" | "분류 밖 오류";
+export type GeminiFailure = "볼 수 없음" | "시간 초과" | "일시 오류 계속" | "빈 응답" | "안전 차단" | "형식 오류" | "영상 토큰 없음" | "분류 밖 오류";
 
 type Classified =
   | { kind: "stop"; stop: GeminiStop }
   | { kind: "retry"; rate: boolean; waitMs: number | null }
-  | { kind: "video"; reason: NoteFailure }
+  | { kind: "video"; reason: GeminiFailure }
   | { kind: "unknown" };
 
 interface ErrorBody {
@@ -211,23 +211,29 @@ export function estimateUsd(t: TokenUse): number {
   return (t.input * PRICE_INPUT + t.output * PRICE_OUTPUT) / 1_000_000;
 }
 
-interface OkBody {
+export interface OkBody {
   candidates?: { finishReason?: string; content?: { parts?: { text?: unknown }[] } }[];
   promptFeedback?: { blockReason?: string };
   usageMetadata?: Usage;
 }
 
-/** 200 응답에서 메모를 꺼낸다 */
-export function readNote(b: OkBody | null): { note: VideoNote } | { reason: NoteFailure } {
+/** 200 응답의 JSON 본문을 꺼낸다. 차단, 빈 응답, 영상을 실제로 보지 않은 답은 실패다(4.1-4) */
+export function readVideoJson(b: OkBody | null): { data: unknown } | { reason: GeminiFailure } {
   if (b === null) return { reason: "형식 오류" };
   const cand = b.candidates?.[0];
   if (b.promptFeedback?.blockReason !== undefined || /SAFETY|PROHIBITED|BLOCKLIST|RECITATION/.test(cand?.finishReason ?? "")) return { reason: "안전 차단" };
   const text = (cand?.content?.parts ?? []).map((p) => (typeof p.text === "string" ? p.text : "")).join("");
   if (text.trim() === "") return { reason: "빈 응답" };
-  // 영상을 실제로 보지 않은 답을 메모로 쓰지 않는다(4.1-4)
   const video = (b.usageMetadata?.promptTokensDetails ?? []).filter((d) => d.modality === "VIDEO").reduce((n, d) => n + count(d.tokenCount), 0);
   if (video === 0) return { reason: "영상 토큰 없음" };
-  const note = checkNote(parseJson(text));
+  return { data: parseJson(text) };
+}
+
+/** 200 응답에서 메모를 꺼낸다 */
+export function readNote(b: OkBody | null): { note: VideoNote } | { reason: GeminiFailure } {
+  const got = readVideoJson(b);
+  if ("reason" in got) return got;
+  const note = checkNote(got.data);
   return note === null ? { reason: "형식 오류" } : { note };
 }
 
@@ -242,54 +248,87 @@ export interface NotedVideo {
   note: VideoNote;
 }
 
-/** 메모 파일(`work/videos.notes.json`). finished가 끝남 표시다(4.1-6) */
-export interface NotesFile {
-  target: string;
-  finished: boolean;
-  /** 확인 후보 수 */
-  total: number;
-  videos: NotedVideo[];
-  failures: { n: number; reason: NoteFailure }[];
+/** 호출의 사용량과 멈춘 이유. 메모 파일과 구간 시각 파일이 같이 쓴다 */
+export interface GeminiLedger {
+  failures: { n: number; reason: GeminiFailure }[];
   usage: TokenUse;
   stop: GeminiStop | null;
   timeLimit: boolean;
   costCap: boolean;
 }
 
+/** 메모 파일(`work/videos.notes.json`). finished가 끝남 표시다(4.1-6) */
+export interface NotesFile extends GeminiLedger {
+  target: string;
+  finished: boolean;
+  /** 확인 후보 수 */
+  total: number;
+  videos: NotedVideo[];
+}
+
 export function emptyNotes(target: string, total: number): NotesFile {
-  return { target, finished: false, total, videos: [], failures: [], usage: { input: 0, output: 0 }, stop: null, timeLimit: false, costCap: false };
+  return { ...emptyLedger(target, total), videos: [] };
 }
 
-/** 임시 파일을 거쳐 쓴다. 쓰는 중에 끊겨도 받은 메모가 깨지지 않아 다시 부르지 않는다 */
-export function writeNotes(dataDir: string, f: NotesFile): void {
-  const tmp = videoWorkFile(dataDir, "notesTmp");
+type VideoWorkKind = keyof typeof VIDEO_WORK_NAMES;
+
+/** 메모와 구간 시각 파일의 빈 기록 */
+export function emptyLedger(target: string, total: number): GeminiLedger & { target: string; finished: boolean; total: number } {
+  return { target, finished: false, total, failures: [], usage: { input: 0, output: 0 }, stop: null, timeLimit: false, costCap: false };
+}
+
+/** 임시 파일을 거쳐 쓴다. 쓰는 중에 끊겨도 받은 것이 깨지지 않아 다시 부르지 않는다 */
+export function writeWork(dataDir: string, kind: VideoWorkKind, tmpKind: VideoWorkKind, f: object): void {
+  const tmp = videoWorkFile(dataDir, tmpKind);
   fs.writeFileSync(tmp, JSON.stringify(f, null, 2) + "\n");
-  fs.renameSync(tmp, videoWorkFile(dataDir, "notes"));
+  fs.renameSync(tmp, videoWorkFile(dataDir, kind));
 }
 
-/** 메모 파일을 읽는다. 없거나 깨졌거나 대상 날짜가 다르면 null */
-export function readNotes(dataDir: string, target: string): NotesFile | null {
-  const file = videoWorkFile(dataDir, "notes");
+/** Gemini 작업 파일을 읽는다. 없거나 깨졌거나 대상 날짜가 다르면 null */
+export function readWork<F extends { target: string; videos: unknown[]; failures: unknown[] }>(dataDir: string, kind: VideoWorkKind, target: string): F | null {
+  const file = videoWorkFile(dataDir, kind);
   if (!fs.existsSync(file)) return null;
-  const f = parseJson(fs.readFileSync(file, "utf8")) as NotesFile | null;
+  const f = parseJson(fs.readFileSync(file, "utf8")) as F | null;
   return f !== null && typeof f === "object" && f.target === target && Array.isArray(f.videos) && Array.isArray(f.failures) ? f : null;
 }
 
-export function notCalled(f: NotesFile): number {
+export function writeNotes(dataDir: string, f: NotesFile): void {
+  writeWork(dataDir, "notes", "notesTmp", f);
+}
+
+export function readNotes(dataDir: string, target: string): NotesFile | null {
+  return readWork<NotesFile>(dataDir, "notes", target);
+}
+
+export function notCalled(f: { total: number; videos: unknown[]; failures: unknown[] }): number {
   return Math.max(0, f.total - f.videos.length - f.failures.length);
 }
 
 // ---- 호출 ----
 
-export interface RunNotesOptions {
-  videos: CheckVideo[];
-  notes: NotesFile;
-  /** 메모나 실패가 늘 때마다 부른다(끊겨도 이어 가게 파일에 쓴다) */
+export interface GeminiRunBase {
+  /** 받은 것이나 실패가 늘 때마다 부른다(끊겨도 이어 가게 파일에 쓴다) */
   save: () => void;
   http: GeminiHttp;
   key: string;
   clock: GeminiClock;
   limits: GeminiLimits;
+}
+
+export interface RunNotesOptions extends GeminiRunBase {
+  videos: CheckVideo[];
+  notes: NotesFile;
+}
+
+interface RunVideosOptions<V extends { n: number }, R> extends GeminiRunBase {
+  videos: V[];
+  ledger: GeminiLedger;
+  url: string;
+  body: (v: V) => object;
+  read: (b: OkBody | null, v: V) => R | { reason: GeminiFailure };
+  got: (v: V, value: R) => void;
+  /** 토큰으로 계산한 예상 달러(비용 상한에 쓴다) */
+  usd: (t: TokenUse) => number;
 }
 
 class Aborted extends Error {}
@@ -318,35 +357,30 @@ function sleep(clock: GeminiClock, ms: number, signal: AbortSignal): Promise<voi
   });
 }
 
-/** 확인 후보마다 메모를 받는다. 8분에 닿으면 진행 중 호출도 끊는다. 끝남 표시는 부르는 쪽이 둔다(프로세스가 끊기면 표시가 없다) */
-export async function runNotes(o: RunNotesOptions): Promise<void> {
-  const { notes, limits, clock } = o;
+/** 영상마다 Gemini를 부른다. 8분에 닿으면 진행 중 호출도 끊는다. 끝남 표시는 부르는 쪽이 둔다(프로세스가 끊기면 표시가 없다) */
+export async function runVideos<V extends { n: number }, R extends object>(o: RunVideosOptions<V, R>): Promise<void> {
+  const { ledger, limits, clock } = o;
   const all = new AbortController();
   const cancelAll = clock.after(limits.totalMs, () => {
-    notes.timeLimit = true;
+    ledger.timeLimit = true;
     all.abort();
   });
   const queue = [...o.videos];
   let unknownRun = 0;
-  const halted = () => all.signal.aborted || notes.stop !== null || notes.costCap;
-  const fail = (v: CheckVideo, reason: NoteFailure) => {
+  const halted = () => all.signal.aborted || ledger.stop !== null || ledger.costCap;
+  const fail = (v: V, reason: GeminiFailure) => {
     if (reason !== "분류 밖 오류") unknownRun = 0;
-    notes.failures.push({ n: v.n, reason });
+    ledger.failures.push({ n: v.n, reason });
     o.save();
   };
 
-  const callOnce = async (v: CheckVideo): Promise<GeminiResponse | "aborted" | "timeout" | "network"> => {
+  const callOnce = async (v: V): Promise<GeminiResponse | "aborted" | "timeout" | "network"> => {
     const ctl = new AbortController();
     const cancel = clock.after(limits.perVideoMs, () => ctl.abort());
     const stop = () => ctl.abort();
     all.signal.addEventListener("abort", stop, { once: true });
-    const body = {
-      store: false,
-      contents: [{ parts: [{ file_data: { file_uri: `https://www.youtube.com/watch?v=${v.videoId}` } }, { text: prompt(v.title) }] }],
-      generationConfig: { responseMimeType: "application/json", responseSchema: NOTE_SCHEMA },
-    };
     try {
-      return await untilAbort(o.http(GEMINI_URL, { "content-type": "application/json", "x-goog-api-key": o.key }, JSON.stringify(body), ctl.signal), ctl.signal);
+      return await untilAbort(o.http(o.url, { "content-type": "application/json", "x-goog-api-key": o.key }, JSON.stringify(o.body(v)), ctl.signal), ctl.signal);
     } catch {
       if (all.signal.aborted) return "aborted";
       return ctl.signal.aborted ? "timeout" : "network";
@@ -356,19 +390,19 @@ export async function runNotes(o: RunNotesOptions): Promise<void> {
     }
   };
 
-  const one = async (v: CheckVideo): Promise<void> => {
+  const one = async (v: V): Promise<void> => {
     for (let attempt = 0; ; attempt++) {
       const r = await callOnce(v);
       if (r === "aborted" || r === "timeout") return fail(v, "시간 초과");
       let c: Classified = { kind: "retry", rate: false, waitMs: null };
       if (r !== "network") {
         const b = parseJson(r.body) as OkBody | null;
-        addUsage(notes.usage, b?.usageMetadata);
+        addUsage(ledger.usage, b?.usageMetadata);
         if (r.status === 200) {
-          const got = readNote(b);
-          if ("reason" in got) return fail(v, got.reason);
+          const got = o.read(b, v);
+          if ("reason" in got) return fail(v, got.reason as GeminiFailure);
           unknownRun = 0;
-          notes.videos.push({ n: v.n, videoId: v.videoId, title: v.title, channel: v.channel, bundle: v.bundle, note: got.note });
+          o.got(v, got);
           o.save();
           return;
         }
@@ -376,16 +410,16 @@ export async function runNotes(o: RunNotesOptions): Promise<void> {
       }
       if (c.kind === "stop") {
         // 영상의 문제가 아니므로 실패로 세지 않고 "부르지 않은 영상"으로 둔다
-        notes.stop ??= c.stop;
+        ledger.stop ??= c.stop;
         return o.save();
       }
       if (c.kind === "video") return fail(v, c.reason);
       if (c.kind === "unknown") {
-        if (++unknownRun >= 3) notes.stop ??= "unknown";
+        if (++unknownRun >= 3) ledger.stop ??= "unknown";
         return fail(v, "분류 밖 오류");
       }
       if (attempt >= limits.retries) {
-        if (c.rate) notes.stop ??= "limit";
+        if (c.rate) ledger.stop ??= "limit";
         return fail(v, "일시 오류 계속");
       }
       await sleep(clock, Math.min(c.waitMs ?? limits.backoffMs * 2 ** attempt, MAX_RETRY_WAIT_MS), all.signal);
@@ -396,8 +430,8 @@ export async function runNotes(o: RunNotesOptions): Promise<void> {
   const worker = async (): Promise<void> => {
     for (;;) {
       if (halted() || queue.length === 0) return;
-      if (estimateUsd(notes.usage) >= limits.costCapUsd) {
-        notes.costCap = true;
+      if (o.usd(ledger.usage) >= limits.costCapUsd) {
+        ledger.costCap = true;
         return;
       }
       await one(queue.shift()!);
@@ -409,4 +443,23 @@ export async function runNotes(o: RunNotesOptions): Promise<void> {
   } finally {
     cancelAll();
   }
+}
+
+/** 유튜브 주소와 프롬프트로 만든 요청 본문(T1, T6). 설정을 더하지 않는다 */
+export function videoRequest(videoId: string, text: string, responseSchema: object): object {
+  return { store: false, contents: [{ parts: [{ file_data: { file_uri: `https://www.youtube.com/watch?v=${videoId}` } }, { text }] }], generationConfig: { responseMimeType: "application/json", responseSchema } };
+}
+
+/** 확인 후보마다 메모를 받는다 */
+export function runNotes(o: RunNotesOptions): Promise<void> {
+  const { notes } = o;
+  return runVideos({
+    ...o,
+    ledger: notes,
+    url: GEMINI_URL,
+    body: (v) => videoRequest(v.videoId, prompt(v.title), NOTE_SCHEMA),
+    read: readNote,
+    got: (v, r: { note: VideoNote }) => notes.videos.push({ n: v.n, videoId: v.videoId, title: v.title, channel: v.channel, bundle: v.bundle, note: r.note }),
+    usd: estimateUsd,
+  });
 }

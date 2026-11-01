@@ -100,6 +100,8 @@ export interface VideoRefreshState {
   /** 이상으로 보고 적용하지 않은 호출 수와 그 호출이 물은 영상 수 */
   suspectCalls: number;
   suspectVideos: number;
+  /** 챕터가 바뀌어 구간 정리를 지운 영상 기록 수(9.7단계 C6) */
+  sectionsRemoved: number;
   /** 응답에 있지만 읽을 수 없어 그대로 둔 영상 수 */
   unreadable: number;
   /** 상한에 닿아 멈췄다 */
@@ -143,6 +145,9 @@ export interface VideoPickState {
   withIssues?: number;
   /** 요약을 붙인 영상 수(8단계 4.5-2) */
   withSummary?: number;
+  /** 구간 정리를 붙인 영상 수와 구간을 포기한 영상 수(9.7단계 4.3-1) */
+  withSections?: number;
+  sectionsGivenUp?: number;
   /** 적용 뒤 지운 영상 작업 파일 수 */
   cleaned?: number;
   reason?: string;
@@ -153,6 +158,23 @@ export interface VideoPickState {
  * 영상 내용 확인 결과(8단계 4.1). 영상 ID·제목·메모는 쓰지 않고 수만 쓴다(4.4-4). attempts는 확인 후보 검사를 통과하지 못한 횟수,
  * rejected는 고쳐서 다시 검사할 차례, alreadyDone은 고르기 끝남이라 부르지 않은 것이다
  */
+/** 9.7단계 구간 시각 받기(`video-sections`). 수와 정해진 이유만 남긴다 */
+export interface VideoSectionsState {
+  status: "done" | "alreadyDone" | "stopped" | "failed";
+  target: string | null;
+  targets?: number;
+  received?: number;
+  failures?: Record<string, number>;
+  notCalled?: number;
+  stop?: string;
+  timeLimit?: boolean;
+  costCap?: boolean;
+  input?: number;
+  output?: number;
+  usd?: number;
+  reason?: string;
+}
+
 export interface VideoNotesState {
   status: "rejected" | "done" | "alreadyDone";
   target: string | null;
@@ -228,6 +250,7 @@ export interface RunState {
   videoFetch?: VideoFetchState;
   /** 8단계: 영상 내용 확인. 앞 단계 실행 기록에는 없다 */
   videoNotes?: VideoNotesState;
+  videoSections?: VideoSectionsState;
   videoPick?: VideoPickState;
   /** 지난 날짜 이미지 채우기(3단계). 1·1.5·2단계 실행 기록에는 없다 */
   images?: ImagesResult;

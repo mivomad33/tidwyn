@@ -102,7 +102,7 @@ describe("사이트 빌드", () => {
     const css = files.filter((f) => f.endsWith(".css")).map((f) => fs.readFileSync(path.join(outA, f), "utf8")).join("");
     assert.doesNotMatch(css, /@import|@font-face|url\(https?:/, "외부 글꼴을 부르지 않는다");
     const vercel = readJson<{ rewrites: { source: string }[] }>(path.join(outA, "vercel.json"));
-    assert.equal(vercel.rewrites.length, 3);
+    assert.equal(vercel.rewrites.length, 4);
   });
 
   test("같은 입력이면 같은 결과물이다(4.1-2)", async () => {

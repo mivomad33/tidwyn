@@ -15,12 +15,12 @@ export function RecoverLinks({ Link, noSearch = false }: { Link: LinkLike; noSea
   );
 }
 
-export function NotFoundView({ Link, requested, noSearch = false }: { Link: LinkLike; requested?: string; noSearch?: boolean }) {
+export function NotFoundView({ Link, requested, noSearch = false, heading = "이 주소에는 페이지가 없다", message }: { Link: LinkLike; requested?: string; noSearch?: boolean; heading?: string; message?: string }) {
   return h(
     "div",
     { className: "plain nf" },
-    h("h1", { className: "page-title" }, "이 주소에는 페이지가 없다"),
-    h("p", { className: "p" }, `주소가 바뀌었거나 잘못 입력했을 수 있다. 지난 뉴스는 ${noSearch ? "날짜 목록" : "검색"}에서 찾을 수 있다.`),
+    h("h1", { className: "page-title" }, heading),
+    h("p", { className: "p" }, message ?? `주소가 바뀌었거나 잘못 입력했을 수 있다. 지난 뉴스는 ${noSearch ? "날짜 목록" : "검색"}에서 찾을 수 있다.`),
     requested ? h("p", { className: "req" }, "404 · 요청한 주소 ", h("span", null, requested)) : null,
     h(RecoverLinks, { Link, noSearch }),
   );

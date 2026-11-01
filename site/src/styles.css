@@ -1885,6 +1885,7 @@ ul.isrc {
 .vsum {
   grid-column: 1 / -1;
   grid-row: 4;
+  scroll-margin-block: var(--bar-clear) calc(64px + env(safe-area-inset-bottom));
 }
 
 .vsumbtn {
@@ -1906,6 +1907,138 @@ ul.isrc {
   background: var(--chip);
   border-radius: 8px;
   padding: 8px 10px;
+}
+
+/* 9.7단계 '구간별로 보기'는 '요약 보기'와 한 줄에 놓는다. 영상 줄 높이가 늘지 않고 누를 곳은 44px 높이다 */
+.vsumbar {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 16px;
+}
+
+.vseclink {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 2px;
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 600;
+  white-space: pre;
+}
+
+.vpagethumb {
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  margin-bottom: 12px;
+}
+
+.vpage .page-title a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+
+.vpage .why {
+  margin-top: 10px;
+}
+
+.vpagesum {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.vsecs {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.vsecrow {
+  position: relative;
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr);
+  column-gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.vsectime {
+  display: inline-flex;
+  align-self: start;
+  align-items: flex-start;
+  min-height: 44px;
+  padding-top: 11px;
+  color: var(--accent);
+  font-size: 14px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* 줄 전체가 시각 링크다. 눈이 가는 제목을 눌러도 그 장면으로 간다. 구간 글은 선택할 수 있게 위에 둔다 */
+.vsectime::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.vsecrow:active {
+  background: var(--chip);
+}
+
+@media (hover: hover) {
+  .vsecrow:hover .vsectitle {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+}
+
+.vsecbody {
+  padding-block: 10px;
+  min-width: 0;
+}
+
+.vsectitle {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+/* 시각 링크가 덮는 줄 위로 올려 글을 선택하고 복사할 수 있게 한다 */
+.vsecgist,
+.vsecpoints {
+  position: relative;
+  z-index: 1;
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.vsecgist {
+  margin: 4px 0 0;
+}
+
+.vsecpoints {
+  margin: 6px 0 0;
+  padding-left: 18px;
+  list-style-type: disc;
+}
+
+.vsecpoints li + li {
+  margin-top: 4px;
+}
+
+.vsecnote {
+  margin: 0 0 4px;
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--muted);
 }
 
 .vsrc {
@@ -2031,6 +2164,7 @@ ul.isrc {
 
 /* 소개: 메일 상자. 상자 전체가 링크다 */
 .about h2.h, .plain h2.h { margin-top: 30px; font-size: 14px; font-weight: 700; color: var(--fg); }
+.vpage h2.h { font-size: 15px; }
 .mailbar { display: block; margin: 8px 0 16px; padding: 12px; background: var(--chip); border-radius: 10px; }
 .mailbar span { display: block; }
 .mailbar .lbl { margin-bottom: 4px; font-size: 14px; line-height: 1.5; color: var(--fg); }
@@ -2058,7 +2192,13 @@ ul.isrc {
 }
 
 /* 좁은 폭(확대 200% 포함)에서만 날짜를 둘째 줄로 내린다. 375 이상은 그대로다 */
+@media (max-width: 767.98px) {
+  .vsecrow { grid-template-columns: minmax(0, 1fr); }
+  .vsecbody { padding-top: 4px; }
+}
+
 @media (max-width: 339.98px) {
+
   .bar-row { flex-wrap: wrap; row-gap: 0; }
   .bar-center { order: 3; flex-basis: 100%; }
   /* 머리글이 두 줄이라 앵커 이동 때 가리지 않게 올린다 */

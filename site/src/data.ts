@@ -22,13 +22,18 @@ function emit(): void {
   for (const l of listeners) l();
 }
 
+/** 응답이 끝내 오지 않아도 대기에 머물지 않고 오류와 다시 시도로 넘어간다 */
+const FETCH_TIMEOUT_MS = 20_000;
+
 export function loadJson<T>(url: string): Promise<T> {
   const done = entries.get(url);
   if (done?.status === "ok") return Promise.resolve(done.data as T);
   const running = pending.get(url);
   if (running) return running as Promise<T>;
   entries.set(url, { status: "loading" });
-  const p = fetch(url)
+  const abort = new AbortController();
+  const timer = setTimeout(() => abort.abort(), FETCH_TIMEOUT_MS);
+  const p = fetch(url, { signal: abort.signal })
     .then((res) => {
       if (!res.ok) throw new HttpError(res.status);
       return res.json() as Promise<unknown>;
@@ -44,6 +49,7 @@ export function loadJson<T>(url: string): Promise<T> {
       },
     )
     .finally(() => {
+      clearTimeout(timer);
       pending.delete(url);
       emit();
     });

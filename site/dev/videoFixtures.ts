@@ -7,7 +7,7 @@
 // 9.6단계: full은 모든 브리프 날짜에 붙이고 받은 날은 최근 7일 안이며, 관련 영상이 300개 몰린 이슈를 둔다(4.3-2).
 // archive는 30일보다 앞선 브리프 날짜에도 영상을 붙이고 받은 날을 최근으로 두며(새로 받은 기록), 여러 달에 걸쳐 관련 영상이 7개인 이슈를 둔다.
 import { addDays } from "./random.ts";
-import { VIDEO_BUNDLES, type IssueVideo, type SiteVideo, type VideoBundle } from "../../src/siteTypes.ts";
+import { VIDEO_BUNDLES, type IssueVideo, type SiteVideo, type VideoBundle, type VideoSection } from "../../src/siteTypes.ts";
 
 export interface VideoFixtureInfo {
   /** 영상이 있는 브리프 날짜(최근 순, 30일 지난 날짜 포함) */
@@ -34,10 +34,15 @@ export interface VideoFixtureInfo {
   pastDate: string | null;
   /** 9.6단계 archive: 관련 영상이 여러 달에 걸쳐 7개인 이슈 */
   spread: number | null;
+  /** 9.7단계: 가장 최근 날짜의 구간 8개·3개 영상과 구간 없는 영상, 한 시간 넘는 구간 영상(날짜 포함), 끝 날짜에 30일 지난 구간 영상 */
+  sections: { date: string; eight: string; three: string; none: string } | null;
+  sectionsHour: { date: string; id: string } | null;
+  sectionsStale: { date: string; id: string } | null;
 }
 
 export interface VideoFixtures {
   byDate: Map<string, SiteVideo[]>;
+  sectionsByDate: Map<string, Record<string, VideoSection[]>>;
   byIssue: Map<number, IssueVideo[]>;
   info: VideoFixtureInfo;
 }
@@ -104,10 +109,22 @@ function fixtureSummary(serial: number, length: number): string {
   return `${body.join("")}.`;
 }
 
+/** 지어낸 구간 정리. full은 8구간에 상한 길이이고 영상마다 글이 달라 크기 측정이 압축에 속지 않는다(9.7단계 4.4-6) */
+function fixtureSections(serial: number, count: number, seconds: number, full: boolean): VideoSection[] {
+  return Array.from({ length: count }, (_, i) => ({
+    start: Math.floor((i * seconds) / count),
+    title: fixtureSummary(serial * 100 + i * 4, full ? 30 : 14),
+    gist: fixtureSummary(serial * 100 + i * 4 + 1, full ? 80 : 46),
+    // full은 요지와 합쳐 상한 500자다
+    points: Array.from({ length: full ? 5 : 3 }, (_, j) => fixtureSummary(serial * 1000 + i * 10 + j, full ? 84 : 90)),
+  }));
+}
+
 export function fixtureVideos(opts: { end: string; dates: string[]; issues: number[]; merged: { id: number; into: number }; full?: boolean; archive?: boolean }): VideoFixtures {
   const byDate = new Map<string, SiteVideo[]>();
+  const sectionsByDate = new Map<string, Record<string, VideoSection[]>>();
   const links: { video: SiteVideo; date: string; issues: number[] }[] = [];
-  const info: VideoFixtureInfo = { dates: [], noVideoDate: null, oneBundleDate: null, zeroBundleDate: null, broken: null, stale: null, absorbed: null, many: null, one: null, pile: null, pastDate: null, spread: null };
+  const info: VideoFixtureInfo = { dates: [], noVideoDate: null, oneBundleDate: null, zeroBundleDate: null, broken: null, stale: null, absorbed: null, many: null, one: null, pile: null, pastDate: null, sections: null, sectionsHour: null, sectionsStale: null, spread: null };
   const recent = [...opts.dates].filter((d) => d <= opts.end && (opts.full || opts.archive || daysBetween(d, opts.end) <= 30)).sort().reverse();
   let serial = 0;
   for (const [k, date] of recent.entries()) {
@@ -145,6 +162,15 @@ export function fixtureVideos(opts: { end: string; dates: string[]; issues: numb
         // 요약: full은 모두 350자, 보통은 둘에 하나만 있고 둘째 영상은 긴 요약이다
         if (opts.full) video.videoSummary = fixtureSummary(serial, SUMMARY_MAX);
         else if (serial % 2 === 0) video.videoSummary = fixtureSummary(serial, serial === 2 ? SUMMARY_MAX : 180);
+        // 구간: full은 모두 8개, 보통은 넷에 하나(여덟에 하나와 70분 넘는 영상은 8개, 나머지는 3개)와 지난 날짜의 첫 영상이다
+        const staleFirst = age >= 30 && !refreshed && day.length === 0;
+        const sections = opts.full ? fixtureSections(serial, 8, video.seconds, true) : serial % 4 === 0 || staleFirst ? fixtureSections(serial, serial % 8 === 0 || video.seconds >= 4200 ? 8 : 3, video.seconds, false) : null;
+        if (sections) {
+          video.hasSections = true;
+          sectionsByDate.set(date, { ...sectionsByDate.get(date), [video.id]: sections });
+          if (!opts.full && sections.at(-1)!.start >= 3600) info.sectionsHour ??= { date, id: video.id };
+          if (staleFirst) info.sectionsStale ??= { date, id: video.id };
+        }
         if (!opts.full && k === 0 && bundle === "kr" && n === 1) {
           video.thumb = BROKEN_THUMB;
           info.broken = { date, id: video.id };
@@ -155,6 +181,13 @@ export function fixtureVideos(opts: { end: string; dates: string[]; issues: numb
         const issues = opts.full ? [pickIssue(0), pickIssue(1)] : serial % 3 === 0 ? [] : serial % 3 === 1 ? [pickIssue(0)] : [pickIssue(0), pickIssue(1)];
         links.push({ video, date, issues: [...new Set(issues)] });
       }
+    }
+    if (k === 0 && !opts.full) {
+      const count = (x: SiteVideo) => sectionsByDate.get(date)?.[x.id]?.length;
+      const eight = day.find((x) => count(x) === 8);
+      const three = day.find((x) => count(x) === 3);
+      const none = day.find((x) => !x.hasSections);
+      if (eight && three && none) info.sections = { date, eight: eight.id, three: three.id, none: none.id };
     }
     if (day.length) {
       byDate.set(date, day);
@@ -219,5 +252,5 @@ export function fixtureVideos(opts: { end: string; dates: string[]; issues: numb
     }
   }
   for (const list of byIssue.values()) list.sort((a, b) => (a.date !== b.date ? (a.date < b.date ? 1 : -1) : 0));
-  return { byDate, byIssue, info };
+  return { byDate, sectionsByDate, byIssue, info };
 }

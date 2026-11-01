@@ -78,6 +78,17 @@ export function videoUrl(id: string): string {
   return `https://www.youtube.com/watch?v=${encodeURIComponent(id)}`;
 }
 
+/** 구간 시작 시각으로 여는 YouTube 주소(9.7단계 4.4-3) */
+export function videoAtUrl(id: string, seconds: number): string {
+  return `${videoUrl(id)}&t=${seconds}s`;
+}
+
+/** 영상별 페이지에 보일 영상: 구간 정리가 있고 30일이 지나지 않은 것. 없으면 null(4.4-4) */
+export function sectionVideo(file: DayVideos, id: string, today: string): SiteVideo | null {
+  const v = file.videos.find((x) => x.id === id);
+  return v?.hasSections && isVideoVisible(v, today) ? v : null;
+}
+
 /** 썸네일 위 길이: "44:12", 한 시간이 넘으면 "1:05:03" */
 export function durationClock(seconds: number): string {
   const s = Math.max(0, Math.round(seconds));

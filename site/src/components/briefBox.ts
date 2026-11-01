@@ -8,16 +8,13 @@ import { indicatorPath, indicatorsPath } from "../lib/routes.ts";
 import type { DayList } from "../lib/types.ts";
 import { ChangeText } from "./indicatorView.ts";
 import { WeekAllLink, WeekRows } from "./scheduleView.ts";
+import { MoreMark } from "./moreMark.ts";
 import type { LinkLike } from "./termView.ts";
 
 export const BOX_PANEL_ID = "brief-box-panel";
 
 function tabId(tab: BoxTab): string {
   return `brief-box-tab-${tab}`;
-}
-
-function arrow() {
-  return h("span", { "aria-hidden": true }, " ›");
 }
 
 export interface BriefBoxProps {
@@ -105,7 +102,7 @@ export function BriefBox({ day, tab, collapsed, onTab, onToggle, today, Link }: 
               );
             }),
           ),
-          h("p", { key: "foot", className: "box-foot" }, `${boxValuesDate(day.date)} · `, h(Link, { to: indicatorsPath() }, "지표 전체", arrow())),
+          h("p", { key: "foot", className: "box-foot" }, `${boxValuesDate(day.date)} · `, h(Link, { to: indicatorsPath() }, "지표 전체", MoreMark())),
         ];
 
   return h(

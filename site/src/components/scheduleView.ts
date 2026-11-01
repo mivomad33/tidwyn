@@ -7,11 +7,8 @@ import { categoryVar } from "../lib/theme.ts";
 import { issuePath, schedulePath, schedulesPath } from "../lib/routes.ts";
 import { SCHEDULE_TAB_LABEL, chipDue, isUpcoming, issueRowDate, issueScheduleRows, nameLink, outcomeParts, scheduleDomId, weekRowDate } from "../lib/schedules.ts";
 import type { ScheduleChip, ScheduleItem, ScheduleLine, ScheduleOutcomeView, WeekSchedules } from "../lib/types.ts";
+import { MoreMark } from "./moreMark.ts";
 import type { LinkLike } from "./termView.ts";
-
-function arrow() {
-  return h("span", { "aria-hidden": true }, " ›");
-}
 
 /** 결과 문구. Link를 주면 갈 곳이 있는 문구는 링크이고, 없으면(줄 전체가 링크인 곳) 글자만 보인다. 결과 기다림은 그리지 않는다 */
 export function OutcomeBadges({ outcome, today, Link }: { outcome: ScheduleOutcomeView; today: string; Link: LinkLike | null }) {
@@ -22,7 +19,7 @@ export function OutcomeBadges({ outcome, today, Link }: { outcome: ScheduleOutco
     { className: "res-row" },
     ...parts.map((p, i) => {
       const className = p.ok ? "res ok" : "res";
-      return Link && p.to ? h(Link, { key: i, to: p.to, className }, p.text, arrow()) : h("span", { key: i, className }, p.text);
+      return Link && p.to ? h(Link, { key: i, to: p.to, className }, p.text, MoreMark()) : h("span", { key: i, className }, p.text);
     }),
   );
 }
@@ -78,7 +75,7 @@ export function WeekRows({ week, today, Link }: { week: WeekSchedules; today: st
 
 /** 일정 탭 아래 줄의 '일정 전체 ›'(기억한 보기와 관계없이 목록으로) */
 export function WeekAllLink({ Link }: { Link: LinkLike }) {
-  return h(Link, { to: schedulesPath({ list: true }) }, "일정 전체", arrow());
+  return h(Link, { to: schedulesPath({ list: true }) }, "일정 전체", MoreMark());
 }
 
 function IssueScheduleRow({ line, today, Link }: { line: ScheduleLine; today: string; Link: LinkLike }) {
@@ -108,6 +105,6 @@ export function IssueSchedules({ lines, today, Link }: { lines: ScheduleLine[] |
     null,
     h("h2", { className: "h" }, "일정"),
     h("ul", { className: "evlist" }, ...[...rows.upcoming, ...rows.past].map((line) => h(IssueScheduleRow, { key: line.id, line, today, Link }))),
-    rows.more ? h("p", { className: "ev-more" }, h(Link, { to: schedulesPath(), className: "text-link" }, "일정 전체", arrow())) : null,
+    rows.more ? h("p", { className: "ev-more" }, h(Link, { to: schedulesPath(), className: "text-link" }, "일정 전체", MoreMark())) : null,
   );
 }

@@ -1,6 +1,6 @@
 import type { DatabaseSync } from "node:sqlite";
 import { addDays } from "./kst.ts";
-import { VIDEO_BUNDLES, VIDEO_KEEP_DAYS, type VideoBundle } from "./siteTypes.ts";
+import { VIDEO_BUNDLES, VIDEO_KEEP_DAYS, type SectionSource, type VideoBundle, type VideoSection } from "./siteTypes.ts";
 
 // 7단계 4.1: 영상 기록, 영상-이슈 연결, 날짜별 영상 고르기 끝남. 영상 기록은 YouTube 데이터라 새로 받지 못한 채 받은 날부터 30일이 지나면 지운다(V1, 9.6단계 L4).
 
@@ -46,6 +46,9 @@ export interface VideoRecord {
   position: number;
   /** 관련 이슈 식별자(고른 순서) */
   issues: number[];
+  /** 구간 정리와 시각 출처(9.7단계 C7). 구간이 없는 영상에는 키가 없다 */
+  sections?: VideoSection[];
+  sectionsSource?: SectionSource;
 }
 
 interface VideoRow {
@@ -62,6 +65,8 @@ interface VideoRow {
   published_at: string;
   reason: string;
   video_summary: string | null;
+  video_sections: string | null;
+  video_sections_source: SectionSource | null;
   position: number;
 }
 
@@ -84,6 +89,7 @@ function toRecord(db: DatabaseSync, r: VideoRow): VideoRecord {
     summary: r.video_summary,
     position: r.position,
     issues,
+    ...(r.video_sections !== null && r.video_sections_source !== null ? { sections: JSON.parse(r.video_sections) as VideoSection[], sectionsSource: r.video_sections_source } : {}),
   };
 }
 
@@ -126,11 +132,11 @@ export function applyVideoPick(db: DatabaseSync, date: string, fetchedOn: string
   try {
     db.prepare("DELETE FROM videos WHERE brief_date = ?").run(date);
     const put = db.prepare(
-      "INSERT INTO videos (video_id, bundle, sources, brief_date, fetched_on, title, channel, seconds, thumb, published_at, reason, video_summary, position) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      "INSERT INTO videos (video_id, bundle, sources, brief_date, fetched_on, title, channel, seconds, thumb, published_at, reason, video_summary, position, video_sections, video_sections_source) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
     );
     const link = db.prepare("INSERT INTO video_issues (video, issue_id, position) VALUES (?, ?, ?)");
     for (const v of videos) {
-      const r = put.run(v.videoId, v.bundle, JSON.stringify(v.sources), date, fetchedOn, v.title, v.channel, v.seconds, v.thumb, v.publishedAt, v.reason, v.summary ?? null, v.position);
+      const r = put.run(v.videoId, v.bundle, JSON.stringify(v.sources), date, fetchedOn, v.title, v.channel, v.seconds, v.thumb, v.publishedAt, v.reason, v.summary ?? null, v.position, v.sections ? JSON.stringify(v.sections) : null, v.sections ? (v.sectionsSource ?? null) : null);
       const id = Number(r.lastInsertRowid);
       v.issues.forEach((issue, i) => link.run(id, issue, i + 1));
     }

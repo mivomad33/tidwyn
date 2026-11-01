@@ -313,8 +313,8 @@ describe("사이트 데이터 주소와 호스팅 설정", () => {
     const cfg = vercelConfig() as { cleanUrls: boolean; trailingSlash: boolean; rewrites: { source: string; destination: string }[]; headers: { source: string; headers: { key: string; value: string }[] }[] };
     assert.equal(cfg.cleanUrls, true);
     assert.equal(cfg.trailingSlash, false);
-    assert.deepEqual(cfg.rewrites.map((r) => r.destination), ["/app", "/app", "/app"]);
-    assert.deepEqual(cfg.rewrites.map((r) => r.source), ["/search", "/terms/:id(\\d+)", "/schedules/:id(\\d+)"]);
+    assert.deepEqual(cfg.rewrites.map((r) => r.destination), ["/app", "/app", "/app", "/app"]);
+    assert.deepEqual(cfg.rewrites.map((r) => r.source), ["/search", "/terms/:id(\\d+)", "/schedules/:id(\\d+)", "/videos/:date(\\d{4}-\\d{2}-\\d{2})/:id([A-Za-z0-9_-]{1,32})"]);
     assert.equal(cfg.headers.length, 2);
     for (const rule of cfg.headers) {
       assert.deepEqual(rule.headers, [{ key: "X-Robots-Tag", value: "noindex" }]);

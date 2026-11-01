@@ -82,9 +82,9 @@ test.describe("8단계 4.6-2 '요약 보기'", () => {
     const btn = buttons(page).first();
     await btn.focus();
     await page.keyboard.press("Enter");
-    await expect(btn).toHaveText("요약 접기");
+    await expect(btn).toHaveText("요약 접기 ▴");
     await page.keyboard.press("Space");
-    await expect(btn).toHaveText("요약 보기");
+    await expect(btn).toHaveText("요약 보기 ▾");
   });
 
   test("칩을 바꾸면 남은 줄도 닫히고, 새로 고치면 닫혀 있다", async ({ page }) => {
@@ -107,7 +107,7 @@ test.describe("8단계 4.6-2 '요약 보기'", () => {
     await page.goto(`/issues/${many.id}`);
     const btn = buttons(page).first();
     await btn.click();
-    await expect(btn).toHaveText("요약 접기");
+    await expect(btn).toHaveText("요약 접기 ▴");
     await expect(page.locator("main .vsumtext:visible")).toHaveCount(1);
     await expectNoHorizontalScroll(page, "이슈 관련 영상 요약 375px");
   });

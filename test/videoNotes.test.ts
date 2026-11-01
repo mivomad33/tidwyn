@@ -512,7 +512,7 @@ describe("8단계 4.3 최종 고르기와 저장", () => {
     old.prepare("INSERT INTO videos (video_id, bundle, sources, brief_date, fetched_on, title, channel, seconds, thumb, published_at, reason, position) VALUES ('OldVid00001','kr','[]',?,?,'옛 제목','옛 채널',100,'t','p','옛 이유',1)").run(TARGET, TODAY);
     old.close();
     const db = openDb(file7);
-    assert.equal(schemaVersion(db), 9);
+    assert.equal(schemaVersion(db), 10);
     assert.deepEqual(allVideos(db).map((v) => [v.videoId, v.summary]), [["OldVid00001", null]]);
     const v: NewVideo = { videoId: "NewVid00001", bundle: "kr", sources: [], title: "t", channel: "c", seconds: 1, thumb: "t", publishedAt: "p", reason: "r", summary: SUMMARY, position: 1, issues: [] };
     applyVideoPick(db, TARGET, TODAY, [v]);
@@ -526,7 +526,7 @@ describe("8단계 4.3 최종 고르기와 저장", () => {
     addBrief(v4, TARGET);
     v4.close();
     const db4 = openDb(file4);
-    assert.equal(schemaVersion(db4), 9);
+    assert.equal(schemaVersion(db4), 10);
     assert.equal(allVideos(db4).length, 0);
     assert.equal((db4.prepare("SELECT COUNT(*) AS n FROM briefs").get() as { n: number }).n, 1);
     db4.close();

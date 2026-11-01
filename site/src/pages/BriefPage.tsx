@@ -1,7 +1,7 @@
 // 날짜별 브리프와 펼친 뉴스 카드(4.2). 4.5단계: 읽음 버튼, 펼침·글 누름·링크로 읽음, '안 읽은 것만' 거르기. 5단계: 카드의 일정 칩. 6단계: 브리프 위 '이번 주 일정 | 지표' 상자. 7단계: 섹션 탭 끝의 '영상' 탭(4.7-1)
 import { useEffect, useMemo, useReducer, useRef, useState, type ReactNode } from "react";
 import { kstDate } from "../../../src/kst.ts";
-import { ALL_MAJORS, CategoryLine, Layout as Shell, ChipFilter, Empty, ErrorState, Footer, Loading, NewsTitle, ReadCheck, ReadToggle, SectionChip, ToggleChip, TopBar, useFullTitle, VideoLoading, VIDEO_LOAD_ERROR } from "../components/common.tsx";
+import { ALL_MAJORS, CategoryLine, Layout as Shell, Main, ChipFilter, Empty, ErrorState, Footer, Loading, NewsTitle, ReadCheck, ReadToggle, SectionChip, ToggleChip, TopBar, useFullTitle, VideoLoading, VIDEO_LOAD_ERROR } from "../components/common.tsx";
 import { BriefBox } from "../components/briefBox.ts";
 import { FixMark, FixNotes } from "../components/correctionView.ts";
 import { ScheduleChips } from "../components/scheduleView.ts";
@@ -100,7 +100,7 @@ function tabViewOf(day: DayList, today: string, section: BriefTab) {
 }
 
 /** 영상 탭 본문. 고른 칩의 묶음이 없는 날짜면 '전체'로 본다 */
-function VideoTabBody({ res, count, today, picked, onPick, onRetry }: { res: Resource<DayVideos>; count: number; today: string; picked: VideoChip | null; onPick: (c: VideoChip | null) => void; onRetry: () => void }) {
+function VideoTabBody({ date, res, count, today, picked, onPick, onRetry }: { date: string; res: Resource<DayVideos>; count: number; today: string; picked: VideoChip | null; onPick: (c: VideoChip | null) => void; onRetry: () => void }) {
   if (res.status === "error") return <ErrorState message={VIDEO_LOAD_ERROR} onRetry={onRetry} />;
   if (res.status !== "ok") return <VideoLoading rows={count} />;
   const videos = visibleVideos(res.data.videos, today);
@@ -117,7 +117,7 @@ function VideoTabBody({ res, count, today, picked, onPick, onRetry }: { res: Res
       />
       <h2 className="sr-only">추천 영상</h2>
       <div className="vbox">
-        <VideoList videos={filterVideos(videos, chip)} mode="brief" Link={Link} resetKey={String(chip)} />
+        <VideoList videos={filterVideos(videos, chip)} mode="brief" Link={Link} date={date} resetKey={String(chip)} />
         <VideoSource />
       </div>
     </>
@@ -253,7 +253,7 @@ export function BriefPage({ route }: { route: Route }) {
   return (
     <>
       <TopBar center={center} />
-      <main id="main" tabIndex={-1} className="page has-tabs">
+      <Main className="page has-tabs">
         <h1 className="sr-only">{monthDayWeekday(date)} 브리프</h1>
         <div className="headline">
           {day.headline}
@@ -267,7 +267,7 @@ export function BriefPage({ route }: { route: Route }) {
         </div>
         <TopBox day={day} />
         {onVideos ? (
-          <VideoTabBody res={videoRes} count={videoCount} today={today} picked={videoChip.date === date ? videoChip.chip : null} onPick={(c) => setVideoChip({ date, chip: c })} onRetry={() => retry([videoUrl])} />
+          <VideoTabBody date={date} res={videoRes} count={videoCount} today={today} picked={videoChip.date === date ? videoChip.chip : null} onPick={(c) => setVideoChip({ date, chip: c })} onRetry={() => retry([videoUrl])} />
         ) : (
           <>
         <ChipFilter
@@ -321,7 +321,7 @@ export function BriefPage({ route }: { route: Route }) {
         {sv.section?.unverified && view.major === null && <p className="flow note">확인되지 않은 내용: {sv.section.unverified}</p>}
           </>
         )}
-      </main>
+      </Main>
       <Footer />
       <nav className="tabs" aria-label="섹션">
         {tabs.map((s) => (

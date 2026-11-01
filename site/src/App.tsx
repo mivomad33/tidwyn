@@ -14,6 +14,7 @@ import { NotFoundPage } from "./pages/NotFoundPage.tsx";
 import { PrivacyPage } from "./pages/PrivacyPage.tsx";
 import { SchedulesPage } from "./pages/SchedulesPage.tsx";
 import { SearchPage } from "./pages/SearchPage.tsx";
+import { VideoPage } from "./pages/VideoPage.tsx";
 import { lastNavigation, useLocation } from "./router.tsx";
 
 export function App() {
@@ -58,6 +59,8 @@ export function App() {
       return <IndicatorsPage />;
     case "indicator":
       return <IndicatorPage key={route.id} id={route.id} />;
+    case "video":
+      return <VideoPage key={`${route.date}/${route.id}`} date={route.date} id={route.id} />;
     case "search":
       return <SearchPage q={route.q} />;
     case "about":

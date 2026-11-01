@@ -11,7 +11,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { gzipSync } from "node:zlib";
-import { ENTITY_FILTERS, VIDEO_DAY_FILE_RE, entityChunkOf, siteFiles, type EntityChunk, type IssueChunk, type IssueVideoRef, type ScheduleIndex, type TermIndex } from "../src/siteTypes.ts";
+import { ENTITY_FILTERS, VIDEO_DAY_FILE_RE, VIDEO_SECTIONS_FILE_RE, entityChunkOf, siteFiles, type EntityChunk, type IssueChunk, type IssueVideoRef, type ScheduleIndex, type TermIndex } from "../src/siteTypes.ts";
 import { listFilesRecursive } from "./build.ts";
 import { firstLoadMonths } from "./src/lib/schedules.ts";
 import { initialTermGroups } from "./src/lib/terms.ts";
@@ -102,7 +102,8 @@ export function measureVideoScreens(outDir: string): { screens: ScreenData[]; fi
   const names = fs.readdirSync(data);
   const dayFiles = names.filter((n) => VIDEO_DAY_FILE_RE.test(n));
   if (dayFiles.length === 0) return { screens: [], files: 0 };
-  const biggest = dayFiles.map((n) => ({ n, size: fs.statSync(path.join(data, n)).size })).sort((a, b) => b.size - a.size || a.n.localeCompare(b.n))[0]!;
+  const biggestOf = (files: string[]) => files.map((n) => ({ n, size: fs.statSync(path.join(data, n)).size })).sort((a, b) => b.size - a.size || a.n.localeCompare(b.n))[0];
+  const biggest = biggestOf(dayFiles)!;
   const screens = [screen(outDir, "영상 탭", [`site-data/${biggest.n}`])];
   let pile: { chunk: string; id: string; refs: IssueVideoRef[] } | null = null;
   for (const name of names.filter((n) => /^issue-\d+\.json$/.test(n))) {
@@ -116,7 +117,11 @@ export function measureVideoScreens(outDir: string): { screens: ScreenData[]; fi
     screens.push(screen(outDir, `이슈 페이지 본문(이슈 ${pile.id}, 관련 영상 ${pile.refs.length}개)`, [`site-data/${siteFiles.issueList}`, `site-data/${pile.chunk}`]));
     screens.push(screen(outDir, "관련 영상", refDates(pile.refs.slice(0, ISSUE_VIDEO_FIRST)).map((d) => `site-data/${siteFiles.videoDay(d)}`)));
   }
-  return { screens, files: dayFiles.length };
+  // 9.7단계 영상별 페이지는 그 날짜의 영상 파일과 구간 파일을 받는다(C12)
+  const sectionFiles = names.filter((n) => VIDEO_SECTIONS_FILE_RE.test(n));
+  const pageFile = biggestOf(sectionFiles);
+  if (pageFile) screens.push(screen(outDir, "영상 페이지", [`site-data/${pageFile.n.replace("video-sections-", "videos-")}`, `site-data/${pageFile.n}`]));
+  return { screens, files: dayFiles.length + sectionFiles.length };
 }
 
 function printScreen(sc: ScreenData): void {

@@ -4,7 +4,7 @@ import path from "node:path";
 import { after, describe, test } from "node:test";
 import { createElement as h } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
-import { siteFiles, videoGroupsOf, type DayList, type DayVideos, type IssueChunk, type IssueVideo, type MonthList, type SiteVideo, type VideoBundle } from "../src/siteTypes.ts";
+import { siteFiles, videoGroupsOf, type DayList, type DaySections, type DayVideos, type IssueChunk, type IssueVideo, type MonthList, type SiteVideo, type VideoBundle } from "../src/siteTypes.ts";
 import { buildSite } from "../site/build.ts";
 import { generateFixtures, writeFixtures } from "../site/dev/fixtures.ts";
 import { BROKEN_THUMB } from "../site/dev/videoFixtures.ts";
@@ -140,7 +140,7 @@ describe("4.7-1 브리프의 '영상' 탭", () => {
 
   test("8단계 4.6-2 요약이 있는 줄에만 영상 링크 밖의 '요약 보기'가 있고, 닫힌 영역과 aria로 이어진다", () => {
     const html = renderToStaticMarkup(h(VideoRow, { video: video("kr", TODAY, { videoSummary: "지어낸 영상 요약이다." }), mode: "brief", Link }));
-    const m = /<\/a>.*<button type="button" class="vsumbtn" aria-expanded="false" aria-controls="([^"]+)">요약 보기<\/button><p id="([^"]+)" class="vsumtext" hidden="">지어낸 영상 요약이다\.<\/p>/.exec(html);
+    const m = /<\/a>.*<button type="button" class="vsumbtn" aria-expanded="false" aria-controls="([^"]+)">요약 보기<span aria-hidden="true"> ▾<\/span><\/button><p id="([^"]+)" class="vsumtext" hidden="">지어낸 영상 요약이다\.<\/p>/.exec(html);
     assert.ok(m, html);
     assert.equal(m[1], m[2]);
     assert.ok(!renderToStaticMarkup(h(VideoRow, { video: video("kr", TODAY), mode: "brief", Link })).includes("vsum"));
@@ -167,7 +167,7 @@ describe("4.7-1 브리프의 '영상' 탭", () => {
     const html = renderToStaticMarkup(h(VideoSource));
     assert.equal(
       html,
-      `<p class="vsrc">영상 정보: YouTube · <a href="${YOUTUBE_TERMS_URL}" class="text-link" target="_blank" rel="noopener noreferrer">YouTube 이용약관<span class="sr-only"> (새 탭)</span></a> · 추천 이유와 요약은 Tidwyn이 썼습니다.</p>`,
+      `<p class="vsrc">영상 정보: YouTube · <a href="${YOUTUBE_TERMS_URL}" class="text-link" target="_blank" rel="noopener noreferrer">YouTube 이용약관<span class="sr-only"> (새 탭)</span></a> · 추천 이유, 요약, 구간 정리는 Tidwyn이 썼습니다.</p>`,
     );
   });
 });
@@ -255,7 +255,7 @@ describe("4.7-4 개인정보 처리방침과 바닥글", () => {
       "제3자 광고를 싣지 않는다",
       "바뀐 날짜: 2026년 11월 1일",
       "브라우저 설정에서",
-      "추천 이유와 요약은 Tidwyn이 쓴 글",
+      "추천 이유, 요약, 구간 정리는 Tidwyn이 쓴 글",
       "Google의 Gemini API",
       "틀릴 수 있다",
       "방문자 정보는 보내지 않는다",
@@ -299,7 +299,7 @@ describe("4.7-5 사이트 소개의 '추천 영상'", () => {
   test("고르는 방법, YouTube API Services와 30일, 이용약관 링크와 동의 문구, 처리방침 링크가 있다", () => {
     const html = renderToStaticMarkup(h(AboutVideos, { Link }));
     assert.match(html, /^<h2 class="h">추천 영상<\/h2>/);
-    for (const text of ["인기 차트", "주제 검색", "Claude가 제목과 설명으로 후보를 추린다", "Gemini API로 확인", "틀릴 수 있다", "방문자 정보는 보내지 않는다", "매일 브리프를 만들 때", "추천 이유와 요약은 Tidwyn이 쓴 글", "YouTube API Services", "주기적으로 새로 받는다", "30일이 지나도록 새로 받지 못하면", CONSENT_TEXT]) assert.ok(html.includes(text), text);
+    for (const text of ["인기 차트", "주제 검색", "Claude가 제목과 설명으로 후보를 추린다", "Gemini API로 확인", "틀릴 수 있다", "방문자 정보는 보내지 않는다", "매일 브리프를 만들 때", "추천 이유, 요약, 구간 정리는 Tidwyn이 쓴 글", "YouTube API Services", "주기적으로 새로 받는다", "30일이 지나도록 새로 받지 못하면", CONSENT_TEXT]) assert.ok(html.includes(text), text);
     assert.ok(html.includes(`<a href="${YOUTUBE_TERMS_URL}" class="text-link" target="_blank" rel="noopener noreferrer">`));
     assert.ok(html.includes('<a href="/privacy" class="text-link">개인정보 처리방침</a>'));
     assert.match(fs.readFileSync(path.join(import.meta.dirname, "..", "site", "src", "components", "aboutView.ts"), "utf8"), /h\(AboutVideos, \{ Link \}\)/);
@@ -357,12 +357,12 @@ describe("4.7-6 지어낸 데이터의 영상", () => {
     const b = generateFixtures({ end: "2026-10-27", days: 7, videos: true });
     assert.equal(a.info.videos, null);
     for (const [name, content] of a.files) assert.ok(!content.includes('"videos"'), name);
-    assert.deepEqual([...a.files.keys()], [...b.files.keys()].filter((k) => !/site-data\/videos-/.test(k)), "영상 파일 밖의 파일 목록은 같다");
+    assert.deepEqual([...a.files.keys()], [...b.files.keys()].filter((k) => !/site-data\/video(s|-sections)-/.test(k)), "영상 파일 밖의 파일 목록은 같다");
   });
 });
 
 describe("4.3-2 영상을 더한 5년치", () => {
-  test("5년 × 하루 16개 영상과 관련 영상 300개가 몰린 이슈에서 영상 화면의 처음 받는 데이터가 각각 gzip 300KB 이하이고, 영상 파일은 2,000개 이하다", { timeout: 600_000 }, async () => {
+  test("5년 × 하루 16개 영상과 관련 영상 300개가 몰린 이슈에서 영상 화면의 처음 받는 데이터가 각각 gzip 300KB 이하이고, 영상 파일과 구간 파일은 합쳐 4,000개 이하다", { timeout: 600_000 }, async () => {
     // 6단계 측정 조건(1,826일, 하루 42건, 이슈·대상 15,000개, 용어 5,000개, 일정 15,000개, 지표 12개 × 5년)에 영상 5년 × 16개
     const work = tempDir("tidwyn-site7y-");
     const dataDir = path.join(work, "data");
@@ -372,13 +372,19 @@ describe("4.3-2 영상을 더한 5년치", () => {
     const latest = JSON.parse(fs.readFileSync(path.join(out, "site-data", "videos-2026-10-31.json"), "utf8")) as DayVideos;
     assert.equal(latest.videos.length, 16);
     assert.ok(latest.videos.every((x) => x.reason.length === 150));
+    const sections = JSON.parse(fs.readFileSync(path.join(out, "site-data", "video-sections-2026-10-31.json"), "utf8")) as DaySections;
+    const lists = Object.values(sections.videoSections);
+    assert.equal(lists.length, 16);
+    assert.ok(lists.every((l) => l.length === 8 && l.every((s) => [...s.title].length === 30 && [...s.gist, ...s.points.join("")].length === 500 && s.points.length === 5)));
+    assert.equal(new Set(lists.flat().flatMap((s) => s.points)).size, 640, "영상마다 글이 달라야 압축에 속지 않는다");
     const size = measureOutput(out);
     assert.ok(size.firstScreen.gzip <= FIRST_SCREEN_BUDGET, `브리프 첫 화면 gzip ${size.firstScreen.gzip}B`);
     const { screens, files } = measureVideoScreens(out);
-    assert.equal(screens.length, 3, "영상 탭, 이슈 본문, 관련 영상을 모두 잰다");
+    assert.equal(screens.length, 4, "영상 탭, 이슈 본문, 관련 영상, 영상 페이지를 모두 잰다");
     assert.ok(screens[1]!.name.includes("관련 영상 300개"), screens[1]!.name);
+    assert.equal(screens.at(-1)!.name, "영상 페이지");
     for (const sc of screens) assert.ok(sc.gzip <= FIRST_SCREEN_BUDGET, `${sc.name} gzip ${sc.gzip}B`);
-    assert.ok(files <= 2000, `영상 파일 ${files}개`);
+    assert.ok(files <= 4000, `영상 파일과 구간 파일 ${files}개`);
     // 측정이 영상 파일을 실제로 재는지: 관련 영상 화면의 파일이 5개이고 크기가 0이 아니다
     assert.equal(screens[2]!.files.length, 5);
     assert.ok(screens[2]!.gzip > 0);

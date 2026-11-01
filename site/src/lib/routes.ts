@@ -1,6 +1,9 @@
 // 주소 해석(4.2-1, 4.3, P4). 화면(DOM) 없이 테스트한다.
 import { parseEntityFilter } from "./entities.ts";
 import type { EntityFilter, SiteIssueList } from "./types.ts";
+import { VIDEO_DATE_PATTERN, VIDEO_ID_PATTERN } from "../../hosting.ts";
+
+const VIDEO_ROUTE_RE = new RegExp(`^/videos/(${VIDEO_DATE_PATTERN})/(${VIDEO_ID_PATTERN})$`);
 
 export type Route =
   | { name: "latest" }
@@ -18,6 +21,8 @@ export type Route =
   /** 6단계 지표 페이지와 지표 하나의 페이지. 목록에 없는 식별자는 화면이 없는 페이지로 보인다 */
   | { name: "indicators" }
   | { name: "indicator"; id: string }
+  /** 9.7단계 영상별 페이지. 모양만 본다. 틀린 날짜와 없는 영상은 화면이 없는 영상 안내로 보인다 */
+  | { name: "video"; date: string; id: string }
   | { name: "about" }
   /** 7단계 개인정보 처리방침(V6) */
   | { name: "privacy" }
@@ -66,6 +71,8 @@ export function parseRoute(pathname: string, search = ""): Route {
   if (term) return { name: "terms", id: Number(term[1]) };
   const schedule = /^\/schedules\/(0|[1-9]\d{0,15})$/.exec(p);
   if (schedule) return { name: "schedules", id: Number(schedule[1]), list: true };
+  const video = VIDEO_ROUTE_RE.exec(p);
+  if (video) return { name: "video", date: video[1]!, id: video[2]! };
   const date = /^\/(\d{4}-\d{2}-\d{2})$/.exec(p);
   if (date && isValidDate(date[1]!)) return { name: "brief", date: date[1]! };
   return { name: "notFound" };
@@ -128,6 +135,11 @@ export const VIDEO_HASH = "videos";
 /** 그 날짜 브리프의 영상 탭(이슈 페이지의 "M월 D일 추천") */
 export function briefVideosPath(date: string): string {
   return `/${date}#${VIDEO_HASH}`;
+}
+
+/** 9.7단계 영상별 페이지 */
+export function videoPath(date: string, id: string): string {
+  return `/videos/${date}/${encodeURIComponent(id)}`;
 }
 
 /** 7단계 개인정보 처리방침 */

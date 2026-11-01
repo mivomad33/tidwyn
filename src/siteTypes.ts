@@ -7,6 +7,8 @@ import type { Confidence, Major, SectionName } from "./categories.ts";
 export const SITE_DATA_VERSION = 1;
 /** 날짜별 영상 파일 이름(siteFiles.videoDay) */
 export const VIDEO_DAY_FILE_RE = /^videos-\d{4}-\d{2}-\d{2}\.json$/;
+/** 날짜별 구간 파일 이름(siteFiles.videoSections) */
+export const VIDEO_SECTIONS_FILE_RE = /^video-sections-\d{4}-\d{2}-\d{2}\.json$/;
 export const SITE_DATA_DIR = "site-data";
 /** 이슈 상세는 식별자를 이 크기로 묶은 파일에 둔다(파일 수 한도, 4.1-3) */
 export const ISSUE_CHUNK_SIZE = 100;
@@ -16,6 +18,7 @@ export const siteFiles = {
   list: (month: string) => `list-${month}.json`,
   /** 9.6단계: 브리프 날짜 하나의 영상(영상 탭이나 관련 영상을 열 때만 받는다) */
   videoDay: (date: string) => `videos-${date}.json`,
+  videoSections: (date: string) => `video-sections-${date}.json`,
   detail: (month: string) => `detail-${month}.json`,
   issueList: "issue-list.json",
   issueChunk: (chunk: number) => `issue-${chunk}.json`,
@@ -584,6 +587,19 @@ export const VIDEO_KEEP_DAYS = 30;
 export type VideoBundle = (typeof VIDEO_BUNDLES)[number];
 
 /** 7단계: 사이트에 싣는 영상 하나. 제목·채널·길이·썸네일은 YouTube가 준 그대로다(V8). 설명·통계는 싣지 않는다 */
+/** 9.7단계: 영상 구간 하나. 시각은 재료에서 온 값이고 글은 Tidwyn이 쓴다(C4) */
+export interface VideoSection {
+  /** 시작 시각(초) */
+  start: number;
+  title: string;
+  /** 그 구간의 핵심 한 줄 */
+  gist: string;
+  /** 완결된 짧은 문장 3~5개(C11) */
+  points: string[];
+}
+/** 구간 시각의 출처: 제작자 챕터 / Gemini(C6) */
+export type SectionSource = "chapter" | "gemini";
+
 export interface SiteVideo {
   /** YouTube 영상 ID. 주소는 https://www.youtube.com/watch?v=<id> */
   id: string;
@@ -598,6 +614,8 @@ export interface SiteVideo {
   reason: string;
   /** 8단계: Tidwyn(Claude)이 영상 내용 메모로 쓴 요약. 없으면 항목이 없다. 이슈의 summary와 구별되는 이름이다(공개 전 점검이 찾는다) */
   videoSummary?: string;
+  /** 9.7단계: 구간 정리가 있는 영상의 표시. 본문은 구간 파일에 있고(C12) 없는 영상에는 키가 없다(C3) */
+  hasSections?: true;
   /** 받은 날(KST, YYYY-MM-DD). 화면이 이 날부터 30일이 지나면 숨긴다(V14) */
   fetchedOn: string;
 }
@@ -615,6 +633,12 @@ export interface VideoGroup {
 
 /** 9.6단계: 이슈 묶음의 관련 영상 위치 */
 export type IssueVideoRef = Pick<IssueVideo, "id" | "date" | "fetchedOn">;
+
+/** 9.7단계: `video-sections-<날짜>.json`. 영상 ID → 구간(C12) */
+export interface DaySections {
+  date: string;
+  videoSections: Record<string, VideoSection[]>;
+}
 
 /** 9.6단계: `videos-<날짜>.json` */
 export interface DayVideos {

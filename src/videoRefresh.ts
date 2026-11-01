@@ -1,6 +1,7 @@
 import type { DatabaseSync } from "node:sqlite";
+import { parseChapters } from "./chapters.ts";
 import { addDays } from "./kst.ts";
-import { VIDEO_KEEP_DAYS } from "./siteTypes.ts";
+import { VIDEO_KEEP_DAYS, type VideoSection } from "./siteTypes.ts";
 import type { VideoRefreshState } from "./run.ts";
 import { DETAILS_BATCH, LimitReached, YoutubeError, detailsUrl, toRawVideo, type RawVideo, type VideoItem, type YoutubeClient } from "./youtube.ts";
 
@@ -26,7 +27,7 @@ export function dueVideoIds(db: DatabaseSync, today: string): string[] {
 
 export type RefreshReport = Omit<VideoRefreshState, "status" | "targets" | "units" | "rewrite">;
 
-const EMPTY_REPORT: RefreshReport = { changed: 0, removed: 0, suspectCalls: 0, suspectVideos: 0, unreadable: 0, limited: false, keyProblem: false, quota: false, failure: null };
+const EMPTY_REPORT: RefreshReport = { changed: 0, removed: 0, suspectCalls: 0, suspectVideos: 0, unreadable: 0, sectionsRemoved: 0, limited: false, keyProblem: false, quota: false, failure: null };
 
 /** 실행 기록에 남기는 결과. 호출하지 않은 경우(대상 없음, 멈춤, 키 없음)에도 쓴다 */
 export function refreshState(status: VideoRefreshState["status"], targets: number, r: Partial<RefreshReport> = {}, units = 0): VideoRefreshState {
@@ -66,19 +67,37 @@ function readCall(body: unknown, ids: string[]): CallResult {
   return { fresh, missing: [...asked].filter((id) => !answered.has(id)), unreadable };
 }
 
-function applyCall(db: DatabaseSync, call: CallResult, today: string): void {
+/** 챕터 출처 구간 중 시각이 설명의 챕터에 없는 행(C6). 3.8 Flash로 찾은 시각과 Tidwyn이 쓴 글은 그대로 둔다(L7) */
+function staleSections(db: DatabaseSync, v: RawVideo): number[] {
+  const rows = db.prepare("SELECT id, video_sections FROM videos WHERE video_id = ? AND video_sections_source = 'chapter'").all(v.videoId) as { id: number; video_sections: string }[];
+  if (rows.length === 0) return [];
+  const times = new Set(parseChapters(v.description, v.seconds).map((c) => c.start));
+  return rows.filter((r) => (JSON.parse(r.video_sections) as VideoSection[]).some((s) => !times.has(s.start))).map((r) => r.id);
+}
+
+/** 적용하고 구간을 지운 영상 기록 수를 돌려준다 */
+function applyCall(db: DatabaseSync, call: CallResult, today: string): number {
   const put = db.prepare("UPDATE videos SET title = ?, channel = ?, seconds = ?, thumb = ?, published_at = ?, fetched_on = ? WHERE video_id = ?");
   // 이슈 연결은 외래 키로 함께 지워진다
   const drop = db.prepare("DELETE FROM videos WHERE video_id = ?");
+  const clear = db.prepare("UPDATE videos SET video_sections = NULL, video_sections_source = NULL WHERE id = ?");
+  let cleared = 0;
   db.exec("BEGIN IMMEDIATE");
   try {
-    for (const v of call.fresh) put.run(v.title, v.channel, v.seconds, v.thumb, v.publishedAt, today, v.videoId);
+    for (const v of call.fresh) {
+      put.run(v.title, v.channel, v.seconds, v.thumb, v.publishedAt, today, v.videoId);
+      for (const id of staleSections(db, v)) {
+        clear.run(id);
+        cleared++;
+      }
+    }
     for (const id of call.missing) drop.run(id);
     db.exec("COMMIT");
   } catch (e) {
     db.exec("ROLLBACK");
     throw e;
   }
+  return cleared;
 }
 
 /**
@@ -97,7 +116,7 @@ export async function refreshVideos(db: DatabaseSync, client: YoutubeClient, ids
         report.suspectVideos += batch.length;
         continue;
       }
-      applyCall(db, call, today);
+      report.sectionsRemoved += applyCall(db, call, today);
       report.changed += call.fresh.length;
       report.removed += call.missing.length;
       report.unreadable += call.unreadable;
