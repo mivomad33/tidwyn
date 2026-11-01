@@ -1,5 +1,5 @@
 {
-  "formatVersion": 5,
+  "formatVersion": 6,
   "schedules": [
     {
       "id": 1,
@@ -226,7 +226,7 @@
       "name": "올레시키 지역 휴전 종료",
       "due": "2026-11-01",
       "major": "국제",
-      "outcome": null,
+      "outcome": "result",
       "postponedTo": null,
       "mergedInto": null,
       "deleted": false,
@@ -237,7 +237,7 @@
       "name": "바이낸스 단계적 출금 재개",
       "due": "2026-11-01",
       "major": "IT·AI",
-      "outcome": null,
+      "outcome": "result",
       "postponedTo": null,
       "mergedInto": null,
       "deleted": false,
@@ -248,6 +248,72 @@
       "name": "바이낸스 갱신된 준비금 증명 공개",
       "due": "2026-11-02",
       "major": "IT·AI",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 24,
+      "name": "2026 프로야구 한국시리즈 1차전",
+      "due": "2026-11-03",
+      "major": "문화·스포츠",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 25,
+      "name": "한-튀르키예 정상회담",
+      "due": "2026-11-03",
+      "major": "정치",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 26,
+      "name": "이재명 대통령 예산안 시정연설",
+      "due": "2026-11-02",
+      "major": "정치",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 27,
+      "name": "2027년 예산안 국회 처리 법정 시한",
+      "due": "2026-12-02",
+      "major": "정치",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 28,
+      "name": "OPEC+ 전체 회의 2027년 쿼터 논의",
+      "due": "2026-11-29",
+      "major": "경제",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 29,
+      "name": "독일 Z세대 시위 2차 집회",
+      "due": "2026-11-14",
+      "major": "국제",
       "outcome": null,
       "postponedTo": null,
       "mergedInto": null,
@@ -439,6 +505,66 @@
     {
       "story": "2026-10-31/한국-5",
       "schedule": 20,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-01/IT·AI-1",
+      "schedule": 22,
+      "role": "result"
+    },
+    {
+      "story": "2026-11-01/세계-1",
+      "schedule": 6,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-01/세계-2",
+      "schedule": 29,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-01/세계-3",
+      "schedule": 6,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-01/세계-4",
+      "schedule": 28,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-01/세계-5",
+      "schedule": 21,
+      "role": "result"
+    },
+    {
+      "story": "2026-11-01/한국-3",
+      "schedule": 10,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-01/한국-4",
+      "schedule": 6,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-01/한국-6",
+      "schedule": 26,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-01/한국-6",
+      "schedule": 27,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-01/한국-s1",
+      "schedule": 24,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-01/한국-s3",
+      "schedule": 25,
       "role": "basis"
     }
   ],

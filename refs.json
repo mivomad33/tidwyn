@@ -1,5 +1,5 @@
 {
-  "formatVersion": 5,
+  "formatVersion": 6,
   "entities": [
     {
       "id": 1,
@@ -2751,6 +2751,180 @@
       "describedOn": "2026-11-01",
       "describedStory": "2026-10-31/세계-4",
       "mergedInto": null
+    },
+    {
+      "id": 224,
+      "kind": "기관",
+      "name": "조선중앙통신",
+      "aliases": [
+        "KCNA"
+      ],
+      "description": "북한의 관영 통신사",
+      "describedOn": "2026-11-02",
+      "describedStory": "2026-11-01/한국-2",
+      "mergedInto": null
+    },
+    {
+      "id": 225,
+      "kind": "기관",
+      "name": "한국거래소",
+      "aliases": [
+        "KRX",
+        "거래소"
+      ],
+      "description": "한국의 증권·파생상품 시장을 운영하는 기관",
+      "describedOn": "2026-11-02",
+      "describedStory": "2026-11-01/한국-1",
+      "mergedInto": null
+    },
+    {
+      "id": 226,
+      "kind": "기관",
+      "name": "CXMT",
+      "aliases": [
+        "창신메모리",
+        "ChangXin Memory Technologies"
+      ],
+      "description": "중국의 D램 제조 업체",
+      "describedOn": "2026-11-02",
+      "describedStory": "2026-11-01/IT·AI-4",
+      "mergedInto": null
+    },
+    {
+      "id": 227,
+      "kind": "기관",
+      "name": "딥시크",
+      "aliases": [
+        "DeepSeek"
+      ],
+      "description": "중국의 인공지능 모델 개발사",
+      "describedOn": "2026-11-02",
+      "describedStory": "2026-11-01/IT·AI-3",
+      "mergedInto": null
+    },
+    {
+      "id": 228,
+      "kind": "기관",
+      "name": "OPEC+",
+      "aliases": [
+        "오펙플러스",
+        "석유수출국기구 플러스"
+      ],
+      "description": "석유수출국기구와 러시아 등 산유국의 협의체",
+      "describedOn": "2026-11-02",
+      "describedStory": "2026-11-01/세계-4",
+      "mergedInto": null
+    },
+    {
+      "id": 229,
+      "kind": "인물",
+      "name": "알렉산더 도브린트",
+      "aliases": [
+        "도브린트",
+        "Alexander Dobrindt"
+      ],
+      "description": "독일 내무장관",
+      "describedOn": "2026-11-02",
+      "describedStory": "2026-11-01/세계-2",
+      "mergedInto": null
+    },
+    {
+      "id": 230,
+      "kind": "인물",
+      "name": "샤론 글리슨",
+      "aliases": [
+        "Sharon Gleason"
+      ],
+      "description": "미국 알래스카 연방지방법원 판사",
+      "describedOn": "2026-11-02",
+      "describedStory": "2026-11-01/세계-3",
+      "mergedInto": null
+    },
+    {
+      "id": 231,
+      "kind": "인물",
+      "name": "헤일리 스티븐스",
+      "aliases": [
+        "Haley Stevens"
+      ],
+      "description": "미국 민주당 정치인, 미시간주 상원 경선 출마자",
+      "describedOn": "2026-11-02",
+      "describedStory": "2026-11-01/세계-3",
+      "mergedInto": null
+    },
+    {
+      "id": 232,
+      "kind": "인물",
+      "name": "레제프 타이이프 에르도안",
+      "aliases": [
+        "에르도안",
+        "Recep Tayyip Erdogan"
+      ],
+      "description": "튀르키예 대통령",
+      "describedOn": "2026-11-02",
+      "describedStory": "2026-11-01/한국-s3",
+      "mergedInto": null
+    },
+    {
+      "id": 233,
+      "kind": "인물",
+      "name": "일리아나 요토바",
+      "aliases": [
+        "요토바",
+        "Iliana Iotova"
+      ],
+      "description": "불가리아 대통령 권한대행",
+      "describedOn": "2026-11-02",
+      "describedStory": "2026-11-01/세계-s3",
+      "mergedInto": null
+    },
+    {
+      "id": 234,
+      "kind": "기관",
+      "name": "트레이더트레이터",
+      "aliases": [
+        "TraderTraitor"
+      ],
+      "description": "미국 FBI가 북한 해킹 활동에 붙인 조직 이름",
+      "describedOn": "2026-11-02",
+      "describedStory": "2026-11-01/IT·AI-1",
+      "mergedInto": null
+    },
+    {
+      "id": 235,
+      "kind": "기관",
+      "name": "삼성 라이온즈",
+      "aliases": [
+        "Samsung Lions"
+      ],
+      "description": "대구를 연고로 하는 한국 프로야구 구단",
+      "describedOn": "2026-11-02",
+      "describedStory": "2026-11-01/한국-s1",
+      "mergedInto": null
+    },
+    {
+      "id": 236,
+      "kind": "기관",
+      "name": "kt 위즈",
+      "aliases": [
+        "kt wiz"
+      ],
+      "description": "수원을 연고로 하는 한국 프로야구 구단",
+      "describedOn": "2026-11-02",
+      "describedStory": "2026-11-01/한국-s1",
+      "mergedInto": null
+    },
+    {
+      "id": 237,
+      "kind": "기관",
+      "name": "KIA 타이거즈",
+      "aliases": [
+        "Kia Tigers"
+      ],
+      "description": "광주를 연고로 하는 한국 프로야구 구단",
+      "describedOn": "2026-11-02",
+      "describedStory": "2026-11-01/한국-s1",
+      "mergedInto": null
     }
   ],
   "terms": [
@@ -3747,6 +3921,46 @@
         "NAND"
       ],
       "description": "전원이 꺼져도 데이터가 남는 메모리 반도체다. 저장장치에 널리 쓰인다.",
+      "mergedInto": null
+    },
+    {
+      "id": 120,
+      "name": "집속탄",
+      "aliases": [
+        "집속탄두",
+        "확산탄",
+        "cluster munition"
+      ],
+      "description": "큰 탄두 안에 작은 폭탄을 여러 개 담아 공중에서 흩뿌리는 무기다. 한 발로 넓은 지역을 때릴 수 있고, 불발탄이 남아 민간인 피해가 크다는 지적을 받는다.",
+      "mergedInto": null
+    },
+    {
+      "id": 121,
+      "name": "주가순자산비율",
+      "aliases": [
+        "PBR",
+        "Price-to-Book Ratio"
+      ],
+      "description": "회사의 시가총액을 순자산과 견준 값이다. 1보다 낮으면 시장이 회사를 장부 가치보다 낮게 평가한다는 뜻이다.",
+      "mergedInto": null
+    },
+    {
+      "id": 122,
+      "name": "엔지니어링 샘플",
+      "aliases": [
+        "ES",
+        "engineering sample"
+      ],
+      "description": "반도체를 양산하기 전에 설계와 공정을 시험하려고 만든 초기 시제품이다. 실제 판매용 제품과 성능이나 수율이 다를 수 있다.",
+      "mergedInto": null
+    },
+    {
+      "id": 123,
+      "name": "4F²",
+      "aliases": [
+        "4F 스퀘어"
+      ],
+      "description": "D램 메모리 셀 하나가 차지하는 면적을 나타내는 구조다. 트랜지스터를 세로로 세워 지금 쓰이는 6F²보다 셀을 약 3분의 1 작게 만든다.",
       "mergedInto": null
     }
   ],
@@ -5390,6 +5604,250 @@
     {
       "story": "2026-10-31/한국-s5",
       "entity": 204
+    },
+    {
+      "story": "2026-11-01/IT·AI-1",
+      "entity": 12
+    },
+    {
+      "story": "2026-11-01/IT·AI-1",
+      "entity": 41
+    },
+    {
+      "story": "2026-11-01/IT·AI-1",
+      "entity": 149
+    },
+    {
+      "story": "2026-11-01/IT·AI-1",
+      "entity": 234
+    },
+    {
+      "story": "2026-11-01/IT·AI-2",
+      "entity": 50
+    },
+    {
+      "story": "2026-11-01/IT·AI-2",
+      "entity": 113
+    },
+    {
+      "story": "2026-11-01/IT·AI-3",
+      "entity": 50
+    },
+    {
+      "story": "2026-11-01/IT·AI-3",
+      "entity": 227
+    },
+    {
+      "story": "2026-11-01/IT·AI-4",
+      "entity": 63
+    },
+    {
+      "story": "2026-11-01/IT·AI-4",
+      "entity": 64
+    },
+    {
+      "story": "2026-11-01/IT·AI-4",
+      "entity": 226
+    },
+    {
+      "story": "2026-11-01/IT·AI-5",
+      "entity": 57
+    },
+    {
+      "story": "2026-11-01/IT·AI-5",
+      "entity": 60
+    },
+    {
+      "story": "2026-11-01/IT·AI-s3",
+      "entity": 12
+    },
+    {
+      "story": "2026-11-01/IT·AI-s3",
+      "entity": 219
+    },
+    {
+      "story": "2026-11-01/세계-1",
+      "entity": 25
+    },
+    {
+      "story": "2026-11-01/세계-1",
+      "entity": 40
+    },
+    {
+      "story": "2026-11-01/세계-1",
+      "entity": 42
+    },
+    {
+      "story": "2026-11-01/세계-1",
+      "entity": 107
+    },
+    {
+      "story": "2026-11-01/세계-1",
+      "entity": 185
+    },
+    {
+      "story": "2026-11-01/세계-1",
+      "entity": 217
+    },
+    {
+      "story": "2026-11-01/세계-2",
+      "entity": 130
+    },
+    {
+      "story": "2026-11-01/세계-2",
+      "entity": 218
+    },
+    {
+      "story": "2026-11-01/세계-2",
+      "entity": 229
+    },
+    {
+      "story": "2026-11-01/세계-3",
+      "entity": 38
+    },
+    {
+      "story": "2026-11-01/세계-3",
+      "entity": 40
+    },
+    {
+      "story": "2026-11-01/세계-3",
+      "entity": 230
+    },
+    {
+      "story": "2026-11-01/세계-3",
+      "entity": 231
+    },
+    {
+      "story": "2026-11-01/세계-4",
+      "entity": 30
+    },
+    {
+      "story": "2026-11-01/세계-4",
+      "entity": 228
+    },
+    {
+      "story": "2026-11-01/세계-5",
+      "entity": 29
+    },
+    {
+      "story": "2026-11-01/세계-5",
+      "entity": 30
+    },
+    {
+      "story": "2026-11-01/세계-5",
+      "entity": 31
+    },
+    {
+      "story": "2026-11-01/세계-5",
+      "entity": 175
+    },
+    {
+      "story": "2026-11-01/세계-s1",
+      "entity": 108
+    },
+    {
+      "story": "2026-11-01/세계-s2",
+      "entity": 24
+    },
+    {
+      "story": "2026-11-01/세계-s2",
+      "entity": 28
+    },
+    {
+      "story": "2026-11-01/세계-s3",
+      "entity": 233
+    },
+    {
+      "story": "2026-11-01/한국-1",
+      "entity": 2
+    },
+    {
+      "story": "2026-11-01/한국-1",
+      "entity": 84
+    },
+    {
+      "story": "2026-11-01/한국-1",
+      "entity": 225
+    },
+    {
+      "story": "2026-11-01/한국-2",
+      "entity": 12
+    },
+    {
+      "story": "2026-11-01/한국-2",
+      "entity": 224
+    },
+    {
+      "story": "2026-11-01/한국-3",
+      "entity": 12
+    },
+    {
+      "story": "2026-11-01/한국-3",
+      "entity": 40
+    },
+    {
+      "story": "2026-11-01/한국-3",
+      "entity": 41
+    },
+    {
+      "story": "2026-11-01/한국-3",
+      "entity": 181
+    },
+    {
+      "story": "2026-11-01/한국-4",
+      "entity": 63
+    },
+    {
+      "story": "2026-11-01/한국-4",
+      "entity": 64
+    },
+    {
+      "story": "2026-11-01/한국-5",
+      "entity": 225
+    },
+    {
+      "story": "2026-11-01/한국-6",
+      "entity": 7
+    },
+    {
+      "story": "2026-11-01/한국-6",
+      "entity": 8
+    },
+    {
+      "story": "2026-11-01/한국-6",
+      "entity": 84
+    },
+    {
+      "story": "2026-11-01/한국-s1",
+      "entity": 235
+    },
+    {
+      "story": "2026-11-01/한국-s1",
+      "entity": 236
+    },
+    {
+      "story": "2026-11-01/한국-s1",
+      "entity": 237
+    },
+    {
+      "story": "2026-11-01/한국-s2",
+      "entity": 199
+    },
+    {
+      "story": "2026-11-01/한국-s2",
+      "entity": 201
+    },
+    {
+      "story": "2026-11-01/한국-s3",
+      "entity": 84
+    },
+    {
+      "story": "2026-11-01/한국-s3",
+      "entity": 221
+    },
+    {
+      "story": "2026-11-01/한국-s3",
+      "entity": 232
     }
   ],
   "termLinks": [
@@ -6177,6 +6635,46 @@
       "story": "2026-10-31/한국-6",
       "term": 114,
       "surface": "보완수사 요구"
+    },
+    {
+      "story": "2026-11-01/IT·AI-3",
+      "term": 34,
+      "surface": "에이전트"
+    },
+    {
+      "story": "2026-11-01/IT·AI-4",
+      "term": 122,
+      "surface": "엔지니어링 샘플"
+    },
+    {
+      "story": "2026-11-01/IT·AI-4",
+      "term": 123,
+      "surface": "4F²"
+    },
+    {
+      "story": "2026-11-01/세계-1",
+      "term": 89,
+      "surface": "기뢰"
+    },
+    {
+      "story": "2026-11-01/한국-2",
+      "term": 120,
+      "surface": "집속탄"
+    },
+    {
+      "story": "2026-11-01/한국-4",
+      "term": 37,
+      "surface": "사이드카"
+    },
+    {
+      "story": "2026-11-01/한국-5",
+      "term": 121,
+      "surface": "주가순자산비율"
+    },
+    {
+      "story": "2026-11-01/한국-6",
+      "term": 7,
+      "surface": "국정조사"
     }
   ],
   "merges": [],
