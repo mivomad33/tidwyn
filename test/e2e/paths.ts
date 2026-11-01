@@ -19,3 +19,9 @@ export const E2E_INDICATOR_INFO_FILE = path.join(E2E_ROOT, "indicator-info.json"
 /** 9.6단계: 30일보다 앞선 브리프 날짜에 새로 받은 영상이 있는 지어낸 데이터(stage96.spec.ts가 사이트 데이터 요청을 이 폴더의 파일로 바꿔 준다) */
 export const E2E_VIDEO_DATA_DIR = path.join(E2E_ROOT, "video-data");
 export const E2E_VIDEO_INFO_FILE = path.join(E2E_ROOT, "video-info.json");
+/** 9.8단계: 빌더가 있는 지어낸 데이터. 정적 HTML과 검색 색인까지 봐야 해서 따로 빌드해 다른 포트로 띄운다(위 사이트의 데이터와 기준 이미지를 그대로 두기 위해서다) */
+export const E2E_BUILDER_DATA_DIR = path.join(E2E_ROOT, "builder-data");
+export const E2E_BUILDER_OUT_DIR = path.join(E2E_ROOT, "builder-out");
+export const E2E_BUILDER_INFO_FILE = path.join(E2E_ROOT, "builder-info.json");
+export const E2E_BUILDER_PORT = 4320;
+export const E2E_BUILDER_BASE_URL = `http://127.0.0.1:${E2E_BUILDER_PORT}`;

@@ -1,6 +1,8 @@
 // 브리프 화면의 섹션·카테고리 거르기와 `#<뉴스 키>` 처리(4.2-2, 4.2-4). 4.5단계: 세 섹션을 한 목록으로 보는 '전체' 탭. 7단계: 섹션 탭 끝의 '영상' 탭
 import { SECTIONS } from "../../../src/categories.ts";
-import { VIDEO_HASH } from "./routes.ts";
+import { isBuilderItemKey } from "../../../src/builderTypes.ts";
+import { BUILDER_TAB } from "./builder.ts";
+import { BUILDER_HASH, VIDEO_HASH } from "./routes.ts";
 import { VIDEO_TAB, visibleVideoCount } from "./videos.ts";
 import type { DayList, ListSection, ListStory, Major, MonthList, SectionName, SourceLike } from "./types.ts";
 
@@ -10,7 +12,9 @@ export const SECTION_ORDER: readonly SectionName[] = SECTIONS;
 export const ALL_TAB = "전체";
 /** 7단계: 영상 탭(그 날짜에 보이는 영상이 있을 때만 탭이 있다) */
 export { VIDEO_TAB };
-export type BriefTab = SectionName | typeof ALL_TAB | typeof VIDEO_TAB;
+/** 9.8단계: 빌더 탭(그 날짜에 빌더 기록이 있을 때만 탭이 있다, B12) */
+export { BUILDER_TAB };
+export type BriefTab = SectionName | typeof ALL_TAB | typeof VIDEO_TAB | typeof BUILDER_TAB;
 /** 처음 들어왔을 때(고른 탭 기록이 없을 때)의 탭 */
 export const DEFAULT_TAB: BriefTab = "한국";
 /** 마지막으로 고른 탭을 기억하는 로컬 스토리지 키(읽은 기록 지우기 대상이 아니다, 정의는 browserKeys.ts) */
@@ -18,7 +22,7 @@ export { BRIEF_TAB_KEY } from "./browserKeys.ts";
 
 /** 기억한 탭 값을 읽는다. 없거나 모르는 값이면 기본 탭 */
 export function parseBriefTab(raw: string | null): BriefTab {
-  return raw === ALL_TAB || raw === VIDEO_TAB || SECTION_ORDER.includes(raw as SectionName) ? (raw as BriefTab) : DEFAULT_TAB;
+  return raw === ALL_TAB || raw === VIDEO_TAB || raw === BUILDER_TAB || SECTION_ORDER.includes(raw as SectionName) ? (raw as BriefTab) : DEFAULT_TAB;
 }
 
 export interface SectionView {
@@ -92,8 +96,10 @@ export function stateForHash(day: DayList, key: string | null, current: BriefVie
   // 7단계: `#videos`(이슈 페이지의 "M월 D일 추천")는 영상 탭으로 연다. 영상 탭은 섹션처럼 날짜마다 바꾸지 않고 두며,
   // 그 날짜에 보이는 영상이 없으면 화면이 첫 섹션 탭을 보인다(방문자의 오늘 날짜로 정하므로 여기서는 알 수 없다)
   if (key === VIDEO_HASH) return { ...current, section: VIDEO_TAB, expanded: null };
+  // 9.8단계: `#builder`와 `#builder-<순서>`는 빌더 탭으로 연다. 기록이 없는 날짜면 화면이 첫 섹션 탭을 보인다
+  if (key === BUILDER_HASH || isBuilderItemKey(key)) return { ...current, section: BUILDER_TAB, expanded: null };
   const sections = daySections(day);
-  const keep = current.section === ALL_TAB || current.section === VIDEO_TAB || sections.includes(current.section);
+  const keep = current.section === ALL_TAB || current.section === VIDEO_TAB || current.section === BUILDER_TAB || sections.includes(current.section);
   const base = keep ? current : { ...current, section: sections[0]! };
   const target = findStoryTarget(day, key);
   if (!target) return { ...base, expanded: null };
@@ -114,13 +120,14 @@ export function storyImage(sources: SourceLike[]): string | null {
 }
 
 /**
- * 7단계: 그 날짜의 섹션 탭(전체 → 섹션들 → 보이는 영상이 있으면 '영상')과 보이는 영상 수(받은 지 30일 안).
+ * 7단계: 그 날짜의 섹션 탭(전체 → 섹션들 → 보이는 영상이 있으면 '영상' → 빌더 기록이 있으면 '빌더')과 보이는 영상 수(받은 지 30일 안).
  * 영상 파일을 받기 전에 정한다. today는 방문자 브라우저의 오늘(KST)이다(V14)
  */
 export function briefTabs(day: DayList, today: string): { tabs: BriefTab[]; videoCount: number } {
   const videoCount = visibleVideoCount(day.videoGroups, today);
   const tabs: BriefTab[] = [ALL_TAB, ...daySections(day)];
   if (videoCount) tabs.push(VIDEO_TAB);
+  if (day.builder) tabs.push(BUILDER_TAB);
   return { tabs, videoCount };
 }
 

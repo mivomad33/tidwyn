@@ -6,7 +6,7 @@ import path from "node:path";
 import { buildSite } from "../../site/build.ts";
 import { writeFixtures } from "../../site/dev/fixtures.ts";
 import type { E2eInfo } from "./info.ts";
-import { E2E_DATA_DIR, E2E_INDICATOR_DATA_DIR, E2E_INDICATOR_INFO_FILE, E2E_INFO_FILE, E2E_OUT_DIR, E2E_ROOT, E2E_SCHEDULE_DATA_DIR, E2E_SCHEDULE_INFO_FILE, E2E_VIDEO_DATA_DIR, E2E_VIDEO_INFO_FILE } from "./paths.ts";
+import { E2E_BUILDER_DATA_DIR, E2E_BUILDER_INFO_FILE, E2E_BUILDER_OUT_DIR, E2E_DATA_DIR, E2E_INDICATOR_DATA_DIR, E2E_INDICATOR_INFO_FILE, E2E_INFO_FILE, E2E_OUT_DIR, E2E_ROOT, E2E_SCHEDULE_DATA_DIR, E2E_SCHEDULE_INFO_FILE, E2E_VIDEO_DATA_DIR, E2E_VIDEO_INFO_FILE } from "./paths.ts";
 import type { DayList, EntityChunk, EntityListPage, EntityNewsChunk, IssueChunk, MonthDetail, MonthList, SiteIssueList, StoryDetail, TermGroupFile, TermIndex } from "../../src/siteTypes.ts";
 
 /** 고정 날짜(같은 데이터로 매번 같은 결과가 나오게) */
@@ -110,6 +110,11 @@ async function main(): Promise<void> {
   const av = vfx.info.videos;
   if (!av?.pastDate || !av.stale || av.spread === null) throw new Error("지난 달 영상 날짜, 30일 지난 날짜, 여러 달 관련 영상 이슈가 지어낸 데이터에 없다");
   fs.writeFileSync(E2E_VIDEO_INFO_FILE, JSON.stringify(av, null, 2) + "\n");
+
+  // 9.8단계: 빌더가 있는 사이트를 따로 빌드한다
+  const bfx = writeFixtures(E2E_BUILDER_DATA_DIR, { end: END, days: 14, contiguous: true, schedules: 12, videos: true, builder: true });
+  await buildSite({ dataDir: E2E_BUILDER_DATA_DIR, outDir: E2E_BUILDER_OUT_DIR });
+  fs.writeFileSync(E2E_BUILDER_INFO_FILE, JSON.stringify(bfx.info.builder, null, 2) + "\n");
   console.log(`E2E 준비 완료: ${E2E_OUT_DIR}`);
 }
 

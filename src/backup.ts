@@ -18,6 +18,7 @@ import {
 } from "./issues.ts";
 import type { Category } from "./brief.ts";
 import type { Major } from "./categories.ts";
+import { buildBuilderBackup, hasBuilderData, restoreBuilderBackup, type BuilderBackup } from "./builderStore.ts";
 import { listScheduleMerges, type ScheduleMergeRow } from "./scheduleMerge.ts";
 import { allSchedules, hasScheduleData, markScheduled, scheduledDates, storiesOfSchedule, type ScheduleOutcome, type ScheduleRole } from "./schedules.ts";
 import { allCorrections, hasCorrections, type StoredCorrection } from "./corrections.ts";
@@ -36,14 +37,16 @@ import { getFirstCollectionDate, loadBrief, recordFirstCollectionDate, saveBrief
 // 형식 5(6단계 4.4-1): 지표 값(백업하지 않는 코스피·코스닥 빼고, 지표마다 출처 표시와 함께), 이슈-지표 연결과 판단 여부,
 // 합치기마다의 지표 기록을 indicators.json에 둔다. 지표 데이터가 없으면 이 파일을 쓰지 않는다.
 // 형식 6(9.5단계 4.7-4): 뉴스 정정 기록을 corrections.json에 둔다. 정정이 없으면 이 파일을 쓰지 않는다.
+// 형식 7(9.8단계 4.5-1): 빌더 항목, 숫자 행, 소스 시각 등을 builder.json에 둔다. 빌더 데이터가 없으면 이 파일을 쓰지 않는다.
+// 후보 글, 재료, 문서 원문, 실패 이유는 넣지 않는다.
 
-export const BACKUP_FORMAT_VERSION = 6;
+export const BACKUP_FORMAT_VERSION = 7;
 /**
  * 복원할 수 있는 형식 버전. 형식 1 백업은 이슈 없이, 형식 1·2 백업은 대상·용어 없이 모든 날짜가 뽑기 안 함으로,
  * 형식 1·2·3 백업은 일정 없이 모든 날짜가 일정 뽑기 안 함으로, 형식 1~4 백업은 지표 값 없이 모든 이슈가 지표 판단 안 함으로,
- * 형식 1~5 백업은 정정 기록 없이 복원된다
+ * 형식 1~5 백업은 정정 기록 없이, 형식 1~6 백업은 빌더 기록 없이 복원된다
  */
-const READABLE_VERSIONS = [1, 2, 3, 4, 5, 6];
+const READABLE_VERSIONS = [1, 2, 3, 4, 5, 6, 7];
 export const BACKUP_DIR = "backup";
 export const DATA_REF = "refs/heads/data";
 const META_FILE = "meta.json";
@@ -52,6 +55,7 @@ const REFS_FILE = "refs.json";
 const SCHEDULES_FILE = "schedules.json";
 const INDICATORS_FILE = "indicators.json";
 const CORRECTIONS_FILE = "corrections.json";
+const BUILDER_FILE = "builder.json";
 const MONTH_RE = /^\d{4}-\d{2}\.json$/;
 
 interface MetaFile {
@@ -90,7 +94,7 @@ interface RefsFile {
 }
 
 function isBackupFile(name: string): boolean {
-  return name === META_FILE || name === ISSUES_FILE || name === REFS_FILE || name === SCHEDULES_FILE || name === INDICATORS_FILE || name === CORRECTIONS_FILE || MONTH_RE.test(name);
+  return name === META_FILE || name === ISSUES_FILE || name === REFS_FILE || name === SCHEDULES_FILE || name === INDICATORS_FILE || name === CORRECTIONS_FILE || name === BUILDER_FILE || MONTH_RE.test(name);
 }
 
 function buildRefsFile(db: DatabaseSync): RefsFile {
@@ -264,6 +268,7 @@ export function buildBackup(db: DatabaseSync): Map<string, string> {
   if (hasScheduleData(db)) files.set(SCHEDULES_FILE, toJson(buildSchedulesFile(db)));
   if (hasIndicatorData(db)) files.set(INDICATORS_FILE, toJson(buildIndicatorsBackup(db, BACKUP_FORMAT_VERSION)));
   if (hasCorrections(db)) files.set(CORRECTIONS_FILE, toJson({ formatVersion: BACKUP_FORMAT_VERSION, corrections: allCorrections(db) } satisfies CorrectionsFile));
+  if (hasBuilderData(db)) files.set(BUILDER_FILE, toJson(buildBuilderBackup(db, BACKUP_FORMAT_VERSION)));
   const extracted = extractedDates(db);
   const scheduled = scheduledDates(db);
   const byMonth = new Map<string, StoredBrief[]>();
@@ -395,6 +400,9 @@ export function restoreBackup(files: Map<string, string>, outPath: string, force
   const correctionsText = files.get(CORRECTIONS_FILE);
   const corrections = correctionsText === undefined ? null : (JSON.parse(correctionsText) as CorrectionsFile);
   if (corrections !== null) checkVersion(CORRECTIONS_FILE, corrections);
+  const builderText = files.get(BUILDER_FILE);
+  const builder = builderText === undefined ? null : (JSON.parse(builderText) as BuilderBackup);
+  if (builder !== null) checkVersion(BUILDER_FILE, builder);
   const tmp = `${outPath}.restoring`;
   fs.rmSync(tmp, { force: true });
   const db = openDb(tmp);
@@ -409,7 +417,7 @@ export function restoreBackup(files: Map<string, string>, outPath: string, force
     }
     if (meta.firstLinkedOn !== undefined) setMeta(db, FIRST_LINKED_KEY, meta.firstLinkedOn);
     if (meta.mergeCheckedOn !== undefined) setMeta(db, MERGE_CHECKED_KEY, meta.mergeCheckedOn);
-    if (issues !== null || refs !== null || schedules !== null || indicators !== null || corrections !== null || months.some((m) => m.extracted !== undefined || m.scheduled !== undefined)) {
+    if (issues !== null || refs !== null || schedules !== null || indicators !== null || corrections !== null || builder !== null || months.some((m) => m.extracted !== undefined || m.scheduled !== undefined)) {
       db.exec("BEGIN");
       try {
         if (issues !== null) restoreIssues(db, issues);
@@ -417,6 +425,7 @@ export function restoreBackup(files: Map<string, string>, outPath: string, force
         if (schedules !== null) restoreSchedules(db, schedules);
         if (indicators !== null) restoreIndicatorsBackup(db, indicators);
         if (corrections !== null) restoreCorrections(db, corrections);
+        if (builder !== null) restoreBuilderBackup(db, builder);
         for (const m of months) for (const d of m.extracted ?? []) markExtracted(db, d);
         for (const m of months) for (const d of m.scheduled ?? []) markScheduled(db, d);
         db.exec("COMMIT");

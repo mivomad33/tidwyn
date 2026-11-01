@@ -11,6 +11,7 @@ import { commitsAhead, describeFindings, precheck } from "./precheck.ts";
 import type { DeployResult, PostDeployCheck, PushResult, SiteResult } from "./run.ts";
 import { ROBOTS_FILE, SITEMAP_FILE, SITE_URL, monthDay } from "./publicSite.ts";
 import { checkBuiltSite, titleText } from "./siteCheck.ts";
+import { buildBuilderSiteData } from "./builderSite.ts";
 import { buildSearchRecords, buildSiteData } from "./siteData.ts";
 import { allVideos } from "./videoStore.ts";
 import { storedDates } from "./store.ts";
@@ -144,8 +145,9 @@ export function buildSite(input: BuildInput): SiteResult {
   try {
     const db = openExistingDb(input.dbPath);
     try {
-      const files = buildSiteData(db);
-      const records = buildSearchRecords(db);
+      const builder = buildBuilderSiteData(db);
+      const files = buildSiteData(db, undefined, builder);
+      const records = buildSearchRecords(db, builder.months);
       dates = storedDates(db).length;
       issues = allIssues(db).filter((i) => i.mergedInto === null).length;
       entities = allEntities(db).filter((e) => isLive(e) && e.count > 0).length;

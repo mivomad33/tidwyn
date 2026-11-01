@@ -1,4 +1,5 @@
 import type { DatabaseSync } from "node:sqlite";
+import { builderScheduleIds, clearReminder, itemsOfSchedule, linkItemSchedule, reminderOf, setReminder, unlinkItemSchedule, unlinkScheduleItems, type ReminderRecord } from "./builderStore.ts";
 import { addDays } from "./kst.ts";
 import { fullKey, getIssue, inTransaction, storyByFullKey } from "./issues.ts";
 import { similarPairs, type SimilarPair } from "./merge.ts";
@@ -57,11 +58,12 @@ function postponeRelated(db: DatabaseSync, a: Schedule, b: Schedule): boolean {
 }
 
 /**
- * 비슷한 일정 쌍(4.3-1): 예정일이 가깝고 이름의 두 글자 묶음이 겹치는 쌍. 흡수·지운 것, 근거가 없는 것,
+ * 비슷한 일정 쌍(4.3-1): 예정일이 가깝고 이름의 두 글자 묶음이 겹치는 쌍. 흡수·지운 것, 근거도 빌더 항목도 없는 것,
  * "합치지 않음" 쌍, 연기 관계인 쌍은 뺀다. 예정일이 가까운 것끼리만 비교하도록 달마다(그 달과 다음 달) 나눠 찾는다.
  */
 export function scheduleMergeCandidates(db: DatabaseSync): SimilarPair<Schedule>[] {
-  const live = allSchedules(db).filter((s) => isLiveSchedule(s) && storiesOfSchedule(db, s.id, "basis").length > 0);
+  const builderOnly = builderScheduleIds(db);
+  const live = allSchedules(db).filter((s) => isLiveSchedule(s) && (builderOnly.has(s.id) || storiesOfSchedule(db, s.id, "basis").length > 0));
   const byMonth = new Map<string, Schedule[]>();
   for (const s of live) {
     const m = monthOfDue(s.due);
@@ -105,12 +107,14 @@ function outcomeLine(db: DatabaseSync, s: Schedule): string {
 function describeForMerge(db: DatabaseSync, s: Schedule): string[] {
   const basis = storiesOfSchedule(db, s.id, "basis").reverse();
   const issues = relatedIssuesOfSchedule(db, s.id).map((i) => getIssue(db, i)?.name ?? "");
+  const items = itemsOfSchedule(db, s.id).length;
   return [
     `- 일정 ${s.id}: ${s.name} (${dueText(s.due)}, ${s.major})`,
     `  - 관련 이슈: ${issues.length > 0 ? issues.join(", ") : "없음"}`,
     `  - 결과: ${outcomeLine(db, s)}`,
     `  - 근거 뉴스 ${basis.length}건(최근 ${Math.min(PAIR_STORIES, basis.length)}건):`,
     ...basis.slice(0, PAIR_STORIES).map((x) => `    - ${x.date} ${x.title}`),
+    ...(items > 0 ? [`  - 빌더 항목 ${items}건`] : []),
   ];
 }
 
@@ -206,6 +210,14 @@ export interface ScheduleMergeRecord {
   added: { story: string; role: ScheduleRole }[];
   /** 흡수된 것을 연기 대상으로 가리키다 남는 것을 가리키게 된 일정 */
   repointed: number[];
+  /** 흡수된 것에 이어져 있던 빌더 항목(옛 기록과 항목이 없는 합치기에는 칸이 없다) */
+  itemsAbsorbed?: number[];
+  /** 그중 합치기로 남는 것에 새로 이어진 항목 */
+  itemsAdded?: number[];
+  /** 흡수된 것에서 남는 것으로 옮긴 다시 알림 기록 */
+  reminderMoved?: ReminderRecord;
+  /** 남는 것에도 기록이 있어 옮기지 않고 지운 흡수된 것의 기록 */
+  reminderDropped?: ReminderRecord;
 }
 
 export interface ScheduleMergeRow {
@@ -238,6 +250,38 @@ function snapshot(db: DatabaseSync, id: number): ScheduleSnapshot {
 
 const linkKey = (l: { story: string; role: ScheduleRole }) => `${l.story}|${l.role}`;
 
+/** 빌더 항목 연결과 다시 알림 기록을 남는 일정으로 옮긴다. 옮긴 것이 없으면 빈 값이라 기록의 모양이 그대로다 */
+function moveItems(db: DatabaseSync, absorbed: number, survivor: number): Pick<ScheduleMergeRecord, "itemsAbsorbed" | "itemsAdded" | "reminderMoved" | "reminderDropped"> {
+  const items = itemsOfSchedule(db, absorbed);
+  const out: ReturnType<typeof moveItems> = {};
+  if (items.length > 0) {
+    const itemsAdded = items.filter((id) => linkItemSchedule(db, id, survivor));
+    unlinkScheduleItems(db, absorbed);
+    out.itemsAbsorbed = items;
+    out.itemsAdded = itemsAdded;
+  }
+  const reminder = reminderOf(db, absorbed);
+  if (reminder !== null) {
+    clearReminder(db, absorbed);
+    if (reminderOf(db, survivor) === null) {
+      setReminder(db, survivor, reminder.state, reminder.on);
+      out.reminderMoved = reminder;
+    } else out.reminderDropped = reminder;
+  }
+  return out;
+}
+
+/** 합치기의 빌더 연결을 되돌린다 */
+function restoreItems(db: DatabaseSync, r: ScheduleMergeRecord, absorbed: number, survivor: number): void {
+  for (const id of r.itemsAbsorbed ?? []) linkItemSchedule(db, id, absorbed);
+  for (const id of r.itemsAdded ?? []) unlinkItemSchedule(db, id, survivor);
+  if (r.reminderMoved !== undefined) {
+    clearReminder(db, survivor);
+    setReminder(db, absorbed, r.reminderMoved.state, r.reminderMoved.on);
+  }
+  if (r.reminderDropped !== undefined) setReminder(db, absorbed, r.reminderDropped.state, r.reminderDropped.on);
+}
+
 function mergeOne(db: DatabaseSync, m: ScheduleMergeEntry, today: string): number {
   const before = { survivor: snapshot(db, m.survivor), absorbed: snapshot(db, m.absorbed) };
   const added: ScheduleMergeRecord["added"] = [];
@@ -248,6 +292,7 @@ function mergeOne(db: DatabaseSync, m: ScheduleMergeEntry, today: string): numbe
     added.push(l);
   }
   unlinkAllSchedule(db, m.absorbed);
+  const builder = moveItems(db, m.absorbed, m.survivor);
   const s = before.survivor;
   const a = before.absorbed;
   const due = m.due ?? (isMonthDue(s.due) && isDayDue(a.due) && monthOfDue(a.due) === s.due ? a.due : s.due);
@@ -257,7 +302,7 @@ function mergeOne(db: DatabaseSync, m: ScheduleMergeEntry, today: string): numbe
   updateSchedule(db, m.absorbed, { mergedInto: m.survivor });
   const repointed = (db.prepare("SELECT id FROM schedules WHERE postponed_to = ? AND id <> ?").all(m.absorbed, m.survivor) as { id: number }[]).map((r) => r.id);
   for (const id of repointed) updateSchedule(db, id, { postponedTo: m.survivor });
-  const record: ScheduleMergeRecord = { before, after, added, repointed };
+  const record: ScheduleMergeRecord = { before, after, added, repointed, ...builder };
   const r = db.prepare("INSERT INTO schedule_merges (merged_on, survivor, absorbed, reason, record) VALUES (?, ?, ?, ?, ?)").run(today, m.survivor, m.absorbed, m.reason, JSON.stringify(record));
   return Number(r.lastInsertRowid);
 }
@@ -303,6 +348,7 @@ export function unmergeSchedule(db: DatabaseSync, mergeId: number, today: string
       const story = storyByFullKey(db, l.story);
       if (story) unlinkSchedule(db, story.id, m.survivor, l.role);
     }
+    restoreItems(db, m.record, m.absorbed, m.survivor);
     const cur = getSchedule(db, m.survivor)!;
     const change: Parameters<typeof updateSchedule>[2] = {};
     if (cur.due === after.due) change.due = before.survivor.due;
@@ -354,7 +400,7 @@ export function deleteSchedule(db: DatabaseSync, id: number, today: string): Sch
   return inTransaction(db, () => {
     let links = 0;
     for (const x of ids) {
-      links += unlinkAllSchedule(db, x);
+      links += unlinkAllSchedule(db, x) + unlinkScheduleItems(db, x);
       updateSchedule(db, x, { deleted: true, deletedOn: today });
     }
     const pointing = all.filter((x) => !ids.includes(x.id) && isLiveSchedule(x) && x.outcome === "postponed" && x.postponedTo !== null && ids.includes(resolveSchedule(db, x.postponedTo))).map((x) => x.id);

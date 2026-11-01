@@ -51,11 +51,16 @@ export type FetchText = (url: string) => Promise<FetchResult>;
 const USER_AGENT = "tidwyn/1.5 (personal RSS reader)";
 const TIMEOUT_MS = 20_000;
 
-/** 피드 하나를 받는다. 시간 제한을 넘기면 예외 */
-export const fetchText: FetchText = async (url) => {
-  const res = await fetch(url, { headers: { "user-agent": USER_AGENT }, signal: AbortSignal.timeout(TIMEOUT_MS) });
-  return { status: res.status, text: await res.text() };
-};
+/** 주소 하나를 글로 받는 함수를 만든다. 시간 제한을 넘기면 예외 */
+export function makeFetchText(userAgent: string, timeoutMs: number): FetchText {
+  return async (url) => {
+    const res = await fetch(url, { headers: { "user-agent": userAgent }, signal: AbortSignal.timeout(timeoutMs) });
+    return { status: res.status, text: await res.text() };
+  };
+}
+
+/** 피드 하나를 받는다 */
+export const fetchText = makeFetchText(USER_AGENT, TIMEOUT_MS);
 
 // 피드 주소 목록(명세서 6장 준비물). 구글 뉴스는 도메인마다 날짜 범위로 좁혀 검색한다.
 const GOOGLE_DOMAINS: { group: string; domain: string; korean: boolean; topics: string[] }[] = [
@@ -132,11 +137,11 @@ export function decodeXmlText(raw: string): string {
   });
 }
 
-function stripTags(html: string): string {
+export function stripTags(html: string): string {
   return html.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
 }
 
-function tag(item: string, name: string): string | undefined {
+export function tag(item: string, name: string): string | undefined {
   const m = new RegExp(`<${name}(?:\\s[^>]*)?>([\\s\\S]*?)</${name}>`, "i").exec(item);
   return m ? decodeXmlText(m[1]!).trim() : undefined;
 }
@@ -151,7 +156,7 @@ export interface RawItem {
   imageUrl?: string;
 }
 
-function attr(tagText: string, name: string): string | undefined {
+export function attr(tagText: string, name: string): string | undefined {
   const m = new RegExp(`\\s${name}\\s*=\\s*(?:"([^"]*)"|'([^']*)')`, "i").exec(tagText);
   const v = m ? (m[1] ?? m[2]) : undefined;
   return v === undefined ? undefined : decodeXmlText(v).trim();

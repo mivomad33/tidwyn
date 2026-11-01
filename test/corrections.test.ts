@@ -211,7 +211,7 @@ describe("4.7-4 마이그레이션과 백업", () => {
       assert.equal(schemaVersion(old), from);
       old.close();
       const db = openDb(file);
-      assert.equal(schemaVersion(db), 10);
+      assert.equal(schemaVersion(db), 11);
       assert.equal(JSON.stringify(loadBrief(db, DATE)), before);
       assert.deepEqual(allCorrections(db), []);
       db.close();
@@ -226,7 +226,7 @@ describe("4.7-4 마이그레이션과 백업", () => {
     db.close();
     assert.ok(files.has("corrections.json"));
     assert.ok(BACKUP_NAME_RE.test("corrections.json"));
-    assert.equal(JSON.parse(files.get("meta.json")!).formatVersion, 6);
+    assert.equal(JSON.parse(files.get("meta.json")!).formatVersion, 7);
     const out = path.join(tempDir(), "restored.db");
     restoreBackup(files, out);
     const back = openDb(out);

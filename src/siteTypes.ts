@@ -1,4 +1,5 @@
 import type { Category, Source } from "./brief.ts";
+import type { BuilderDue, BuilderField, BuilderItemSource, BuilderStatus } from "./builderTypes.ts";
 import type { Confidence, Major, SectionName } from "./categories.ts";
 
 // 사이트 데이터 형식(3단계 4.1). DB에서 만들고(siteData.ts) 사이트 화면(site/)이 읽는다.
@@ -9,6 +10,8 @@ export const SITE_DATA_VERSION = 1;
 export const VIDEO_DAY_FILE_RE = /^videos-\d{4}-\d{2}-\d{2}\.json$/;
 /** 날짜별 구간 파일 이름(siteFiles.videoSections) */
 export const VIDEO_SECTIONS_FILE_RE = /^video-sections-\d{4}-\d{2}-\d{2}\.json$/;
+/** 달별 빌더 항목 파일 이름(siteFiles.builderItems) */
+export const BUILDER_ITEMS_FILE_RE = /^builder-items-\d{4}-\d{2}\.json$/;
 export const SITE_DATA_DIR = "site-data";
 /** 이슈 상세는 식별자를 이 크기로 묶은 파일에 둔다(파일 수 한도, 4.1-3) */
 export const ISSUE_CHUNK_SIZE = 100;
@@ -16,6 +19,8 @@ export const ISSUE_CHUNK_SIZE = 100;
 export const siteFiles = {
   dates: "dates.json",
   list: (month: string) => `list-${month}.json`,
+  /** 9.8단계: 달 하나의 빌더 항목(빌더 탭이나 검색 결과를 열 때만 받는다). `builder.json`은 백업 이름이라 쓰지 않는다 */
+  builderItems: (month: string) => `builder-items-${month}.json`,
   /** 9.6단계: 브리프 날짜 하나의 영상(영상 탭이나 관련 영상을 열 때만 받는다) */
   videoDay: (date: string) => `videos-${date}.json`,
   videoSections: (date: string) => `video-sections-${date}.json`,
@@ -76,6 +81,11 @@ export function entityRecordUrl(chunk: number): string {
 
 export function termRecordUrl(group: number): string {
   return `/terms/group/${group}`;
+}
+
+/** 빌더 항목은 달 하나에 레코드 하나다(meta kind "builder", month). 항목별 페이지가 없어 주소는 레코드를 가리는 값일 뿐이다 */
+export function builderRecordUrl(month: string): string {
+  return `/builder/month/${month}`;
 }
 
 /** 용어 사전의 첫 자음 묶음. 된소리는 예사소리 묶음에 넣고, 한글이 아닌 첫 글자(영문·숫자 등)는 마지막 묶음이다 */
@@ -263,10 +273,12 @@ export interface ScheduleItem extends ScheduleLine {
   issue: IssueRef | null;
   /** 관련 이슈: 근거 뉴스와 결과 뉴스의 주 이슈(흡수된 이슈는 남는 이슈), 식별자 순 */
   issues: IssueRef[];
-  /** 알려진 날: 처음 근거 뉴스의 날짜 */
+  /** 알려진 날: 처음 근거 뉴스의 날짜와 처음 이어진 빌더 항목의 날짜 중 이른 쪽 */
   knownOn: string;
   /** 처음 근거 뉴스. 없으면 null */
   first: { date: string; key: string } | null;
+  /** 처음 이어진 빌더 항목(브리프 날짜와 `builder-N` 키). 이어진 항목이 없으면 칸이 없다 */
+  builder?: { date: string; key: string };
 }
 
 /** `schedule-index.json`: 일정 화면이 처음 받는 색인. 일정이 없어도 있다 */
@@ -316,6 +328,55 @@ export interface SiteDates {
   months: string[];
   /** 4.5단계: 날짜마다 그날 뉴스 수(모든 섹션의 주요 뉴스 + 짧은 소식). `dates`와 같은 순서 */
   storyCounts: number[];
+}
+
+/** 9.8단계: 그 날짜의 빌더 항목 수와 상태. 빌더 항목은 뉴스가 아니라 뉴스 수에 세지 않는다 */
+export interface DayBuilder {
+  count: number;
+  status: BuilderStatus;
+}
+
+/** 빌더 항목의 공개 칸. 중복을 막는 키, 숫자 행, 후보 재료는 넣지 않는다 */
+export interface SiteBuilderItem {
+  /** `builder-<순서>`. 정정, 읽음, 주소의 `#`가 쓴다 */
+  key: string;
+  field: BuilderField;
+  title: string;
+  whatChanged: string;
+  who: string;
+  action: string;
+  why: string;
+  due: BuilderDue | null;
+  /** 확정 기한이 이어진 일정. 없으면 null(날짜만 보인다) */
+  schedule: number | null;
+  /** 관련 이슈(흡수된 이슈는 남는 이슈). 없으면 null */
+  issue: IssueRef | null;
+  sources: BuilderItemSource[];
+  /** 다시 알림이면 원래 항목의 자리. 아니면 null */
+  reminderOf: { date: string; key: string } | null;
+  /** 정정 기록(최신순). 정정이 없으면 항목을 뺀다 */
+  corrections?: StoryCorrection[];
+}
+
+/** `builder-items-YYYY-MM.json`: 날짜 → 항목. 항목이 있는 날짜만 있다 */
+export interface BuilderMonth {
+  month: string;
+  days: Record<string, SiteBuilderItem[]>;
+}
+
+/** 빌더 항목의 검색 대상 글(검색 레코드와 화면이 걸린 항목을 되찾는 글이 같다) */
+export function builderItemText(x: Pick<SiteBuilderItem, "title" | "whatChanged" | "who" | "action" | "why">): string {
+  return [x.title, x.whatChanged, x.who, x.action, x.why].join("\n");
+}
+
+/** 검색 레코드: 달 하나에 레코드 하나(파일 수 한도, 9.8단계 4.6-5). 걸린 달에서 항목을 되찾는 일은 화면이 한다 */
+export function builderSearchRecords(months: readonly BuilderMonth[]): SearchRecord[] {
+  return months.map((m) => ({
+    url: builderRecordUrl(m.month),
+    content: Object.values(m.days).flat().map(builderItemText).join("\n"),
+    language: "ko",
+    meta: { kind: "builder", month: m.month },
+  }));
 }
 
 /** 하루의 뉴스 수(모든 섹션의 주요 뉴스 + 짧은 소식) */
@@ -372,6 +433,8 @@ export interface DayList {
   indicators?: IndicatorChip[];
   /** 9.6단계: 그 브리프 날짜의 영상을 받은 날별로 센 것(영상 파일을 받기 전에 '영상 N' 탭을 정한다). 영상 본문은 `videos-<날짜>.json`에 있다. 없으면 항목을 뺀다 */
   videoGroups?: VideoGroup[];
+  /** 9.8단계: 빌더 기록이 있는 날짜의 항목 수와 상태(항목 파일을 받기 전에 '빌더 N' 탭과 빈 상태를 정한다). 기록이 없는 날은 항목을 뺀다 */
+  builder?: DayBuilder;
 }
 
 /** `list-YYYY-MM.json` */

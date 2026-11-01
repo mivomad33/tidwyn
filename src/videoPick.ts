@@ -3,8 +3,8 @@ import path from "node:path";
 import type { DatabaseSync } from "node:sqlite";
 import { parseChapters, type Chapter } from "./chapters.ts";
 import { getIssue } from "./issues.ts";
-import { EMAIL_RE } from "./precheck.ts";
-import { WORK_DIR } from "./run.ts";
+import { hasEmail } from "./precheck.ts";
+import { WORK_DIR, removeWorkFiles } from "./run.ts";
 import { VIDEO_BUNDLES, type SectionSource, type VideoBundle, type VideoSection } from "./siteTypes.ts";
 import { Checker, type Violation } from "./validate.ts";
 import { BUNDLE_MAX, MAX_VIDEO_ISSUES, isBundle, type IssueCandidate, type NewVideo } from "./videoStore.ts";
@@ -57,15 +57,7 @@ export function videoWorkFile(dataDir: string, kind: keyof typeof VIDEO_WORK_NAM
 
 /** 작업 폴더의 영상 작업 파일을 지운다. 지운 수 */
 export function removeVideoWorkFiles(dataDir: string): number {
-  let n = 0;
-  for (const name of VIDEO_WORK_FILES) {
-    const f = path.join(dataDir, WORK_DIR, name);
-    if (fs.existsSync(f)) {
-      fs.rmSync(f, { force: true });
-      n++;
-    }
-  }
-  return n;
+  return removeWorkFiles(dataDir, VIDEO_WORK_FILES);
 }
 
 export interface Candidate {
@@ -210,12 +202,13 @@ export function writeCandidateFiles(dataDir: string, f: CandidateFile): { json: 
   return { json, md, pick };
 }
 
-export function readJsonFile(file: string, label: string): { ok: true; data: unknown } | { ok: false; reason: string } {
+/** `hideParseError`: 파싱 오류에는 파일 글 일부가 들어가므로, 소스 글이 든 파일은 이유에 붙이지 않는다(실행 기록에 남는다) */
+export function readJsonFile(file: string, label: string, o: { hideParseError?: boolean } = {}): { ok: true; data: unknown } | { ok: false; reason: string } {
   if (!fs.existsSync(file)) return { ok: false, reason: `${label}이 없다: ${file}` };
   try {
     return { ok: true, data: JSON.parse(fs.readFileSync(file, "utf8")) };
   } catch (e) {
-    return { ok: false, reason: `${label}이 올바른 JSON이 아니다: ${(e as Error).message}` };
+    return { ok: false, reason: `${label}이 올바른 JSON이 아니다${o.hideParseError ? "" : `: ${(e as Error).message}`}` };
   }
 }
 
@@ -229,12 +222,10 @@ export function readCandidateFile(dataDir: string): { ok: true; file: CandidateF
   return { ok: true, file: f };
 }
 
-const EMAIL_TEST = new RegExp(EMAIL_RE.source);
-
 /** 사이트에 실리는 글에 주소와 메일 주소가 없는지 본다 */
 function checkContact(c: Checker, where: string, text: string, prefix = ""): void {
   if (hasAddress(text)) c.add(where, `${prefix}주소(http, www.)를 넣지 않는다`);
-  if (EMAIL_TEST.test(text)) c.add(where, `${prefix}메일 주소 모양을 넣지 않는다`);
+  if (hasEmail(text)) c.add(where, `${prefix}메일 주소 모양을 넣지 않는다`);
 }
 
 /** 요약 검사(8단계 4.3-1): 메모가 있는 영상은 요약이 있어야 하고, 없는 영상에는 요약이 있으면 안 된다(내용을 보지 않은 글을 막는다) */

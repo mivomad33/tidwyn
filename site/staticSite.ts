@@ -9,9 +9,11 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { indicatorDef } from "../src/indicators.ts";
 import { ROBOTS_FILE, pageFile } from "../src/publicSite.ts";
 import {
+  BUILDER_ITEMS_FILE_RE,
   SITE_DATA_DIR,
   TERM_GROUPS,
   siteFiles,
+  type BuilderMonth,
   type DayList,
   type EntityChunk,
   type EntityDetail,
@@ -29,6 +31,7 @@ import {
   type ScheduleIndex,
   type ScheduleItem,
   type ScheduleMonth,
+  type SiteBuilderItem,
   type SiteDates,
   type SiteIssueList,
   type StoryDetail,
@@ -40,6 +43,7 @@ import { RSS_FILE, buildRss, buildSitemaps, robotsTxt, type RssDay, type Sitemap
 import { articleLd, metaDescription, pageLd, renderHead, type HeadInfo } from "./head.ts";
 import { APP_FILE, NOT_FOUND_FILE } from "./hosting.ts";
 import { AboutView, ReadMarksText } from "./src/components/aboutView.ts";
+import { BuilderBody, BuilderEndNote, BuilderFieldLine, BuilderIntro, BuilderReminder, BuilderZero } from "./src/components/builderView.ts";
 import { FixMark, FixNotes } from "./src/components/correctionView.ts";
 import { FredNotice, SourceNote } from "./src/components/indicatorView.ts";
 import { NOT_FOUND_LABEL, NotFoundView, RecoverLinks } from "./src/components/notFoundView.ts";
@@ -47,13 +51,14 @@ import { FooterView, PrivacyView } from "./src/components/policyView.ts";
 import { ReportLink } from "./src/components/reportLink.ts";
 import { EntityChips, IssueEntityChips, type LinkLike } from "./src/components/termView.ts";
 import { orderSources } from "./src/lib/brief.ts";
+import { BUILDER_TAB } from "./src/lib/builder.ts";
 import { joinEntityPages } from "./src/lib/entities.ts";
 import { briefTitle, entityLabel, fullKoreanDate, groupDatesByMonth, issueLabel, latestTitle, monthDay, monthDayWeekday, monthLabel, pageTitle, shortDate } from "./src/lib/format.ts";
 import { groupCards, readingDateText, readingValueText } from "./src/lib/indicators.ts";
 import { MENU, SKIP_LABEL } from "./src/lib/menu.ts";
 import { PRIVACY_TITLE, PRIVACY_UPDATED, SITE_URL, shortReportHref, storyReportHref } from "./src/lib/policy.ts";
-import { adjacentDates, briefPath, entityPath, indicatorPath, issuePath, privacyPath } from "./src/lib/routes.ts";
-import { chipDue, nameLink } from "./src/lib/schedules.ts";
+import { BUILDER_HASH, adjacentDates, briefPath, entityPath, indicatorPath, issuePath, privacyPath } from "./src/lib/routes.ts";
+import { SCHEDULE_META, chipDue, nameLink } from "./src/lib/schedules.ts";
 import { categoryVar } from "./src/lib/theme.ts";
 
 // ---- 사이트 데이터 읽기 ----
@@ -62,6 +67,8 @@ interface SiteInput {
   dates: SiteDates;
   days: Map<string, DayList>;
   details: Map<string, Record<string, StoryDetail>>;
+  /** 9.8단계: 날짜 → 빌더 항목 */
+  builder: Map<string, SiteBuilderItem[]>;
   issues: IssueDetail[];
   issueMerged: SiteIssueList["merged"];
   entities: EntityDetail[];
@@ -85,6 +92,8 @@ function loadInput(dataDir: string): SiteInput {
   for (const list of matching<MonthList>(/^list-\d{4}-\d{2}\.json$/)) for (const d of list.days) days.set(d.date, d);
   const details = new Map<string, Record<string, StoryDetail>>();
   for (const m of matching<MonthDetail>(/^detail-\d{4}-\d{2}\.json$/)) for (const [date, stories] of Object.entries(m.days)) details.set(date, stories);
+  const builder = new Map<string, SiteBuilderItem[]>();
+  for (const m of matching<BuilderMonth>(BUILDER_ITEMS_FILE_RE)) for (const [date, items] of Object.entries(m.days)) builder.set(date, items);
 
   const issueList = read<SiteIssueList>(siteFiles.issueList, { issues: [], merged: {} });
   const issueById = new Map<number, IssueDetail>();
@@ -110,7 +119,7 @@ function loadInput(dataDir: string): SiteInput {
   const scheduleIndex = read<ScheduleIndex>(siteFiles.scheduleIndex, { total: 0, months: [], majors: [] });
   const scheduleMonths = scheduleIndex.months.map((m) => read<ScheduleMonth>(siteFiles.scheduleMonth(m.month), { month: m.month, items: [] }));
   const indicators = read<IndicatorList>(siteFiles.indicatorList, { asOf: null, indicators: [] });
-  return { dates, days, details, issues, issueMerged: issueList.merged, entities, entityMerged, terms, termGroups, scheduleMonths, indicators };
+  return { dates, days, details, builder, issues, issueMerged: issueList.merged, entities, entityMerged, terms, termGroups, scheduleMonths, indicators };
 }
 
 function latest(values: readonly (string | null | undefined)[]): string | null {
@@ -232,13 +241,27 @@ function ShortStory({ story }: { story: ListStory }) {
   );
 }
 
+/** 빌더 절(B6). 앱의 빌더 탭과 같은 칸이고 탭 대신 구역이다. 기록이 없는 날은 그리지 않는다(B12) */
+function BuilderSection({ day, items }: { day: DayList; items: SiteBuilderItem[] }) {
+  const builder = day.builder;
+  if (!builder) return null;
+  return h(
+    "section",
+    { className: "brief-section" },
+    h("h2", { className: "h list-h", id: BUILDER_HASH }, BUILDER_TAB),
+    h(BuilderIntro, { Link: A }),
+    items.length === 0 ? h(BuilderZero, { status: builder.status }) : h("ul", { className: "list" }, items.map((x) => h("li", { key: x.key, id: x.key, className: "item" }, h(BuilderFieldLine, { item: x }), h("h3", { className: "title" }, x.title), h(BuilderReminder, { item: x, Link: A }), h("div", { className: "detail" }, h(BuilderBody, { item: x, date: day.date, Link: A }))))),
+    h(BuilderEndNote, { builder }),
+  );
+}
+
 function DateNav({ date, prev, next }: { date: string; prev: string | null; next: string | null }) {
   const arrow = (to: string | null, glyph: string, label: string) =>
     to ? h("a", { href: briefPath(to), className: "arrow", "aria-label": `${label} ${monthDay(to)}` }, glyph) : h("span", { className: "arrow off", "aria-hidden": true }, glyph);
   return h("span", { className: "datebtn" }, arrow(prev, "‹", "이전 날짜"), h("a", { href: "/dates", className: "date-link", "aria-label": `${monthDayWeekday(date)}, 날짜 목록 보기` }, monthDayWeekday(date)), arrow(next, "›", "다음 날짜"));
 }
 
-function BriefBody({ day, details, prev, next }: { day: DayList; details: Record<string, StoryDetail>; prev: string | null; next: string | null }) {
+function BriefBody({ day, details, builder, prev, next }: { day: DayList; details: Record<string, StoryDetail>; builder: SiteBuilderItem[]; prev: string | null; next: string | null }) {
   const date = day.date;
   const sectionId = (i: number) => `section-${i + 1}`;
   return h(
@@ -246,7 +269,7 @@ function BriefBody({ day, details, prev, next }: { day: DayList; details: Record
     { className: "static-brief" },
     h("h1", { className: "page-title pad" }, `${monthDayWeekday(day.date)} 브리프`),
     h("div", { className: "headline" }, day.headline, day.keywords.length > 0 ? h("div", { className: "kw", "aria-label": "키워드" }, day.keywords.map((k) => h("span", { key: k }, k))) : null),
-    day.sections.length > 1 ? h("nav", { className: "rel static-jump", "aria-label": "구역으로 가기" }, day.sections.map((sec, i) => h("a", { key: sec.name, href: `#${sectionId(i)}` }, sec.name))) : null,
+    day.sections.length > 1 ? h("nav", { className: "rel static-jump", "aria-label": "구역으로 가기" }, day.sections.map((sec, i) => h("a", { key: sec.name, href: `#${sectionId(i)}` }, sec.name)), day.builder ? h("a", { href: `#${BUILDER_HASH}` }, BUILDER_TAB) : null) : null,
     day.sections.map((sec, i) => {
       const tops = sec.stories.filter((s) => s.kind === "top");
       const shorts = sec.stories.filter((s) => s.kind === "short");
@@ -260,6 +283,7 @@ function BriefBody({ day, details, prev, next }: { day: DayList; details: Record
         sec.unverified ? h("p", { className: "flow note" }, `확인되지 않은 내용: ${sec.unverified}`) : null,
       );
     }),
+    h(BuilderSection, { day, items: builder }),
     h("nav", { className: "static-more", "aria-label": "다른 날짜" }, prev ? h("a", { href: briefPath(prev) }, `‹ ${monthDay(prev)}`) : h("span"), next ? h("a", { href: briefPath(next) }, `${monthDay(next)} ›`) : null),
   );
 }
@@ -392,7 +416,7 @@ function SchedulesBody({ months }: { months: ScheduleMonth[] }) {
     "div",
     { className: "iss" },
     h("h1", { className: "name" }, "일정"),
-    h("p", { className: "meta" }, "뉴스에서 모은 예정 일정 · 날짜는 현지 기준"),
+    h("p", { className: "meta" }, SCHEDULE_META),
     months.length === 0 ? h(Empty, null, "아직 일정이 없다.") : null,
     months.map((m) => h("section", { key: m.month }, h("h2", { className: "h" }, monthLabel(m.month)), h("ul", { className: "evlist" }, m.items.map((i) => h(ScheduleRow, { key: i.id, item: i }))))),
   );
@@ -457,7 +481,7 @@ function buildPages(input: SiteInput): StaticPage[] {
   const fixesOf = (news: { date: string; key: string }[]) => news.map((n) => fixOn.get(`${n.date}/${n.key}`));
 
   const dates = input.dates.dates;
-  const briefMods = new Map(dates.map((d) => [d, latest([d, ...(input.days.get(d)?.sections ?? []).flatMap((s) => s.stories.map((x) => x.corrections?.[0]?.on))])]));
+  const briefMods = new Map(dates.map((d) => [d, latest([d, ...(input.days.get(d)?.sections ?? []).flatMap((s) => s.stories.map((x) => x.corrections?.[0]?.on)), ...(input.builder.get(d) ?? []).map((x) => x.corrections?.[0]?.on)])]));
   const brief = (pathname: string, date: string, title: string, website: boolean) => {
     const day = input.days.get(date);
     if (!day) return;
@@ -472,7 +496,7 @@ function buildPages(input: SiteInput): StaticPage[] {
       lastmod: modified,
       ogType: website ? "website" : "article",
       ld: (d) => (website ? pageLd("WebSite", { path: pathname, name: "Tidwyn", description: d }) : articleLd({ path: pathname, headline, description: d, published: date, modified })),
-      body: h(Shell, { center: h(DateNav, { date, prev, next }) }, h(BriefBody, { day, details: input.details.get(date) ?? {}, prev, next })),
+      body: h(Shell, { center: h(DateNav, { date, prev, next }) }, h(BriefBody, { day, details: input.details.get(date) ?? {}, builder: input.builder.get(date) ?? [], prev, next })),
     });
   };
   const home = input.dates.latestDate;
@@ -518,7 +542,7 @@ function buildPages(input: SiteInput): StaticPage[] {
   }
 
   list({ path: "/terms", label: "용어 사전", description: "뉴스에 나온 어려운 말을 쉬운 말로 풀어 쓴 용어 사전", lastmod: latest(input.termGroups.flatMap((g) => g.terms.map((t) => t.first?.date))), body: h(TermsBody, { input }) });
-  list({ path: "/schedules", label: "일정", description: "뉴스에서 모은 앞으로의 일정과 지난 일정", lastmod: latest(input.scheduleMonths.flatMap((m) => m.items.map((i) => i.knownOn))), body: h(SchedulesBody, { months: input.scheduleMonths }) });
+  list({ path: "/schedules", label: "일정", description: "뉴스와 공식 문서에서 모은 앞으로의 일정과 지난 일정", lastmod: latest(input.scheduleMonths.flatMap((m) => m.items.map((i) => i.knownOn))), body: h(SchedulesBody, { months: input.scheduleMonths }) });
 
   const indicatorMod = (c: IndicatorCard) => (showsValue(c) ? c.last!.date : null);
   list({ path: "/indicators", label: "지표", description: "환율, 금리, 물가, 유가 같은 주요 지표의 최근 값과 출처", lastmod: latest(input.indicators.indicators.map(indicatorMod)), body: h(IndicatorsBody, { indicators: input.indicators }) });
@@ -586,7 +610,7 @@ export function writeStaticSite(outDir: string): void {
   write(ROBOTS_FILE, robotsTxt());
   const rssDays: RssDay[] = input.dates.dates.flatMap((date) => {
     const day = input.days.get(date);
-    return day ? [{ date, titles: day.sections.flatMap((s) => s.stories.filter((x) => x.kind === "top").map((x) => x.title)) }] : [];
+    return day ? [{ date, titles: [...day.sections.flatMap((s) => s.stories.filter((x) => x.kind === "top").map((x) => x.title)), ...(input.builder.get(date) ?? []).map((x) => `빌더: ${x.title}`)] }] : [];
   });
   write(RSS_FILE, buildRss(rssDays));
 }

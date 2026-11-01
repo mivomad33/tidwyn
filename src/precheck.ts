@@ -45,6 +45,8 @@ export type FindingKind =
   | "허용 목록 밖 메일 주소"
   | "백업 파일 이름"
   | "실행 기록·작업 파일"
+  | "빌더 작업 파일"
+  | "빌더 원문 파일"
   | "지운 이름 키 파일"
   | "키 값이 들어 있음"
   | "Google API 키 모양"
@@ -84,7 +86,7 @@ const SECRET_PATTERNS: { kind: FindingKind; re: RegExp }[] = [
 ];
 
 /** 백업 파일 이름(backup.ts의 월별 JSON, issues.json, refs.json, schedules.json, indicators.json, corrections.json, meta.json). 결과물 검사도 쓴다 */
-export const BACKUP_NAME_RE = /^(?:\d{4}-\d{2}\.json|issues\.json|refs\.json|schedules\.json|indicators\.json|corrections\.json|meta\.json)$/;
+export const BACKUP_NAME_RE = /^(?:\d{4}-\d{2}\.json|issues\.json|refs\.json|schedules\.json|indicators\.json|corrections\.json|builder\.json|meta\.json)$/;
 /** 영상 기록의 표시(영상 기록·사이트 영상 항목과 8단계 영상 요약 이름). 백업에는 영상 데이터를 넣지 않는다(7단계 4.4-2) */
 const VIDEO_RECORD_RE = /"(?:videoId|video_id|videos|videoSummary|video_summary|videoSections|video_sections)"\s*:/;
 
@@ -107,7 +109,11 @@ export function videoBackupFindings(where: string, file: string, content: Buffer
   if (!isBackupPath(file) || isBinary(content)) return [];
   return VIDEO_RECORD_RE.test(content.toString("utf8")) ? [{ where, kind: "백업 파일에 영상 기록" }] : [];
 }
-export const EMAIL_RE = /[A-Za-z0-9._%+-]+@([A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,})/g;
+const EMAIL_RE = /[A-Za-z0-9._%+-]+@([A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,})/g;
+/** `g`가 없어 `test`를 반복해도 위치가 남지 않는다 */
+const EMAIL_TEST = new RegExp(EMAIL_RE.source);
+/** 공개 글과 정정 사유에 넣지 않는 주소 모양 */
+export const ADDRESS_RE = /https?:\/\/|www\.|\b[a-z0-9-]+\.(?:com|net|org|kr|io|co|ai|dev|app)\b/i;
 
 function emailAllowed(email: string, domain: string): boolean {
   const e = email.toLowerCase();
@@ -143,6 +149,16 @@ export function scanText(text: string, home: string | null, secrets: readonly st
   return hits;
 }
 
+/** 메일 주소 모양이 있는지(허용 목록과 상관없다) */
+export function hasEmail(text: string): boolean {
+  return EMAIL_TEST.test(text);
+}
+
+/** 메일 주소 모양이 있거나 공개 검사에 걸리는지 */
+export function failsPublicScan(text: string, home: string | null, secrets: readonly string[] = []): boolean {
+  return hasEmail(text) || scanText(text, home, secrets).size > 0;
+}
+
 /** 홈 폴더 값. 너무 짧은 값(`/` 등)은 모든 경로에 걸리므로 쓰지 않는다 */
 export function homeValue(home: string | undefined): string | null {
   if (home === undefined) return null;
@@ -161,7 +177,11 @@ export function isBinary(content: Buffer): boolean {
   return content.subarray(0, 8000).includes(0);
 }
 
-/** 이름으로 찾는 것: SQLite 파일, 실행 전 사본, .env 파일, 지운 이름 키 파일(4단계 E15) */
+/** 빌더 작업 파일과 원문 파일(9.8단계 4.5-3). 후보 글과 문서 원문은 공개 저장소와 결과물에 들어가지 않는다 */
+const BUILDER_WORK_RE = /^builder\.(?:candidates\.json|candidates\.md|items\.json)$/;
+const BUILDER_RAW_RE = /^\d{4}-\d{2}-\d{2}-[0-9a-f]{8}\.md\.gz$/;
+
+/** 이름으로 찾는 것: SQLite 파일, 실행 전 사본, .env 파일, 지운 이름 키 파일(4단계 E15), 빌더 작업·원문 파일 */
 export function nameKinds(file: string): FindingKind[] {
   const base = path.posix.basename(file.replaceAll("\\", "/"));
   const kinds: FindingKind[] = [];
@@ -169,6 +189,8 @@ export function nameKinds(file: string): FindingKind[] {
   else if (/\.(?:db|db-journal|db-wal|db-shm|sqlite|sqlite3)$/i.test(base)) kinds.push("SQLite 파일");
   if (/^\.env(?:\..+)?$/i.test(base)) kinds.push(".env 파일");
   if (base === NAME_KEY_FILE) kinds.push("지운 이름 키 파일");
+  if (BUILDER_WORK_RE.test(base)) kinds.push("빌더 작업 파일");
+  if (BUILDER_RAW_RE.test(base) || file.replaceAll("\\", "/").split("/").slice(0, -1).includes("builder-raw")) kinds.push("빌더 원문 파일");
   return kinds;
 }
 

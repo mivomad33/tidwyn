@@ -1,9 +1,10 @@
-// 사이트 소개 본문(4.3-4, P9, P10). 4.5단계: 읽은 기록. 5단계: 일정 안내. 6단계: 지표 안내, FRED 고지. 7단계: '추천 영상' 절. 9.5단계: '오류 정정과 연락' 절.
+// 사이트 소개 본문(4.3-4, P9, P10). 4.5단계: 읽은 기록. 5단계: 일정 안내. 6단계: 지표 안내, FRED 고지. 7단계: '추천 영상' 절. 9.5단계: '오류 정정과 연락' 절. 9.8단계: '빌더 탭' 절.
 // 앱과 정적 HTML이 같은 문구를 쓴다: 링크 컴포넌트와 읽은 기록 절은 부르는 쪽이 넘긴다(정적 HTML에는 지우기 버튼이 없다).
 import { createElement as h, type ReactNode } from "react";
 import { FRED_AGREEMENT } from "../lib/indicators.ts";
 import { CONTACT_MAIL, REPO_URL, mailHref } from "../lib/policy.ts";
 import { RSS_PATH } from "../lib/routes.ts";
+import { AboutBuilder } from "./builderView.ts";
 import { FredNotice } from "./indicatorView.ts";
 import type { LinkLike } from "./termView.ts";
 import { AboutVideos, ExternalLink } from "./videoView.ts";
@@ -42,7 +43,7 @@ export function AboutView({ Link, readMarks }: { Link: LinkLike; readMarks: Reac
     P("AI가 매일 한국·세계·IT·AI 뉴스를 모아 쉬운 말로 바꿔 쓴 요약이다. 뉴스는 이어지는 이슈로 묶어, 한 이야기가 어떻게 흘러왔는지 볼 수 있다."),
     P("AI가 쓴 글이라 틀리거나 빠진 내용이 있을 수 있다. 중요한 내용은 각 뉴스의 출처(원문)에서 확인해 주세요."),
     P("인물·기관·국가의 한 줄 설명과 용어 설명도 AI가 쓴 글이라 틀릴 수 있다."),
-    P("일정도 AI가 뉴스에서 뽑은 것이라 틀리거나 바뀌었을 수 있다. 날짜는 그 일이 열리는 곳의 현지 날짜다."),
+    P("일정도 AI가 뉴스와 공식 문서에서 뽑은 것이라 틀리거나 바뀌었을 수 있다. 날짜는 그 일이 열리는 곳의 현지 날짜다."),
     P("지표는 공식 출처(한국은행 ECOS, FRED)에서 받은 값이지만 늦게 반영되거나 출처가 나중에 고칠 수 있다. 날짜는 출처 기준이다(한국 지표는 한국 날짜, 미국 지표는 미국 날짜)."),
     h(CorrectionsSection),
     h("h2", { className: "h" }, "구독"),
@@ -52,6 +53,7 @@ export function AboutView({ Link, readMarks }: { Link: LinkLike; readMarks: Reac
     h(FredNotice),
     P(FRED_AGREEMENT),
     h(AboutVideos, { Link }),
+    h(AboutBuilder),
     h("h2", { className: "h" }, "저작권"),
     P("원문 기사의 저작권은 각 매체에 있다. 이 사이트는 원문 링크와 원문 이미지 주소만 연결하고 기사를 옮겨 싣지 않는다."),
     P("브리프와 이슈 글의 저작권은 만든 사람(mivomad33)에게 있고, 다시 쓰거나 퍼 가는 것을 허락하지 않는다. 사이트의 코드는 MIT 라이선스다."),

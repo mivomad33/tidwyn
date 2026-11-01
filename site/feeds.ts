@@ -64,7 +64,7 @@ export function buildSitemaps(entries: readonly SitemapEntry[], maxUrls = SITEMA
 
 export interface RssDay {
   date: string;
-  /** 주요 뉴스 제목 */
+  /** 항목에 보이는 제목 */
   titles: string[];
 }
 

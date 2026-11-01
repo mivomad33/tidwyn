@@ -333,6 +333,98 @@ export const MIGRATIONS: Migration[] = [
       db.exec("ALTER TABLE videos ADD COLUMN video_sections TEXT; ALTER TABLE videos ADD COLUMN video_sections_source TEXT");
     },
   },
+  {
+    // 9.8단계: 빌더 항목과 실린 키, 항목-일정 연결, 날짜별 상태, 숫자 행(바뀐 날만 저장, 추가·제거 날짜), 문서 해시,
+    // 소스별 받은 시각과 연속 실패 일수, 미적용 변경과 낸 횟수, 낸 키, 다시 알림 기록, 항목 정정. 기존 표는 그대로다.
+    // AUTOINCREMENT라 항목 번호를 다시 쓰지 않는다. 숫자 행은 지우지 않고 removed_on으로 끝을 남긴다.
+    version: 11,
+    up: (db) => {
+      db.exec(`
+        CREATE TABLE builder_items (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          target_date TEXT NOT NULL,
+          position INTEGER NOT NULL,
+          field TEXT NOT NULL,
+          title TEXT NOT NULL,
+          what_changed TEXT NOT NULL,
+          who TEXT NOT NULL,
+          action TEXT NOT NULL,
+          why TEXT NOT NULL,
+          due_date TEXT,
+          due_state TEXT CHECK (due_state IN ('confirmed', 'tentative')),
+          sources TEXT NOT NULL,
+          issue_id INTEGER REFERENCES issues(id),
+          reminder_of INTEGER REFERENCES builder_items(id),
+          UNIQUE (target_date, position)
+        );
+        CREATE TABLE builder_item_keys (
+          item_id INTEGER NOT NULL REFERENCES builder_items(id) ON DELETE CASCADE,
+          key TEXT NOT NULL,
+          PRIMARY KEY (item_id, key)
+        );
+        CREATE INDEX builder_item_keys_key ON builder_item_keys(key);
+        CREATE TABLE builder_item_schedules (
+          item_id INTEGER NOT NULL REFERENCES builder_items(id) ON DELETE CASCADE,
+          schedule_id INTEGER NOT NULL REFERENCES schedules(id),
+          PRIMARY KEY (item_id, schedule_id)
+        );
+        CREATE INDEX builder_item_schedules_schedule ON builder_item_schedules(schedule_id);
+        CREATE TABLE builder_dates (
+          target_date TEXT PRIMARY KEY,
+          status TEXT NOT NULL CHECK (status IN ('checked', 'partial', 'failed'))
+        );
+        CREATE TABLE builder_rows (
+          doc TEXT NOT NULL,
+          hash TEXT NOT NULL,
+          added_on TEXT NOT NULL,
+          removed_on TEXT,
+          path TEXT NOT NULL,
+          header TEXT NOT NULL,
+          row TEXT NOT NULL,
+          PRIMARY KEY (doc, hash, added_on)
+        );
+        CREATE TABLE builder_docs (
+          doc TEXT PRIMARY KEY,
+          hash TEXT NOT NULL,
+          stored_on TEXT NOT NULL
+        );
+        CREATE TABLE builder_sources (
+          source TEXT PRIMARY KEY,
+          fetched_at TEXT,
+          fail_days INTEGER NOT NULL DEFAULT 0,
+          fail_on TEXT
+        );
+        CREATE TABLE builder_pending (
+          key TEXT PRIMARY KEY,
+          kind TEXT NOT NULL CHECK (kind IN ('number', 'tentative', 'deprecation')),
+          doc TEXT NOT NULL,
+          changed_on TEXT NOT NULL,
+          side TEXT NOT NULL CHECK (side IN ('added', 'removed')),
+          hash TEXT NOT NULL,
+          due TEXT,
+          before TEXT NOT NULL,
+          emits INTEGER NOT NULL DEFAULT 0
+        );
+        CREATE TABLE builder_emitted (
+          key TEXT PRIMARY KEY,
+          emitted_on TEXT NOT NULL
+        );
+        CREATE TABLE builder_reminders (
+          schedule_id INTEGER PRIMARY KEY REFERENCES schedules(id),
+          state TEXT NOT NULL CHECK (state IN ('sent', 'skip')),
+          on_date TEXT NOT NULL
+        );
+        CREATE TABLE builder_corrections (
+          id INTEGER PRIMARY KEY,
+          item_id INTEGER NOT NULL REFERENCES builder_items(id) ON DELETE CASCADE,
+          corrected_on TEXT NOT NULL,
+          reason TEXT NOT NULL,
+          fields TEXT NOT NULL
+        );
+        CREATE INDEX builder_corrections_item ON builder_corrections(item_id);
+      `);
+    },
+  },
 ];
 
 export function schemaVersion(db: DatabaseSync): number {

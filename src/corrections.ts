@@ -1,6 +1,10 @@
 import type { DatabaseSync } from "node:sqlite";
-import { scanText } from "./precheck.ts";
-import { fullKey, storyByFullKey, storyKey, type StoryRef } from "./issues.ts";
+import { ITEM_LABELS, checkConfirmedRange, checkItemText, isDueFormat, type ItemTextField } from "./builderCheck.ts";
+import { recomputeReminder } from "./builderSchedule.ts";
+import { builderItemByKey, isBuilderItemKey, isBuilderSchedule, itemsOfSchedule, type BuilderItem } from "./builderStore.ts";
+import { ADDRESS_RE, scanText } from "./precheck.ts";
+import { getSchedule, isLiveSchedule, updateSchedule } from "./schedules.ts";
+import { fullKey, inTransaction, storyByFullKey, storyKey, type StoryRef } from "./issues.ts";
 import { Checker, checkQuotes, type Obj, type Violation } from "./validate.ts";
 
 // 뉴스 정정(9.5단계 4.7). 운영자가 저장된 뉴스 글을 고치고 날짜와 사유를 남긴다. 고치기 전 글은 DB에 두지 않는다(백업 이력에 남는다).
@@ -35,7 +39,7 @@ const LABELS: Record<CorrectionField, string> = {
 
 /** 사유에 쓰면 안 되는 모양. 공개 이력에서 지울 수 없으므로 제보자를 찾을 수 있는 값을 막는다 */
 const REASON_BANS: { why: string; re: RegExp }[] = [
-  { why: "주소", re: /https?:\/\/|www\.|\b[a-z0-9-]+\.(?:com|net|org|kr|io|co|ai|dev|app)\b/i },
+  { why: "주소", re: ADDRESS_RE },
   { why: "전화번호 모양", re: /(?<!\d)(?:\+?\d{1,3}[-.\s]?)?\d{2,4}[-.\s]\d{3,4}[-.\s]\d{4}(?!\d)|(?<!\d)01\d{8,9}(?!\d)/ },
 ];
 
@@ -162,6 +166,109 @@ export function allCorrections(db: DatabaseSync): StoredCorrection[] {
       ORDER BY se.target_date, se.position, st.kind DESC, st.position, c.id`)
     .all() as unknown as { corrected_on: string; reason: string; fields: string; target_date: string; name: string; kind: "top" | "short"; position: number }[];
   return rows.map((r) => ({ story: fullKey({ date: r.target_date, key: storyKey(r.name, r.kind, r.position) }), on: r.corrected_on, reason: r.reason, fields: JSON.parse(r.fields) as CorrectionField[] }));
+}
+
+// ---- 빌더 항목 정정(9.8단계 4.5-2, B8) ----
+
+export const BUILDER_CORRECTION_FIELDS = ["title", "whatChanged", "who", "action", "why", "dueDate"] as const;
+export type BuilderCorrectionField = (typeof BUILDER_CORRECTION_FIELDS)[number];
+
+const BUILDER_COLUMNS: Record<BuilderCorrectionField, string> = { title: "title", whatChanged: "what_changed", who: "who", action: "action", why: "why", dueDate: "due_date" };
+
+export interface BuilderCorrectionInput {
+  date: string;
+  key: string;
+  reason: string;
+  fields: Partial<Record<BuilderCorrectionField, string>>;
+}
+
+export type BuilderCorrectionCheck = { ok: true; input: BuilderCorrectionInput; item: BuilderItem; changed: BuilderCorrectionField[] } | { ok: false; violations: Violation[] };
+
+/** 정정 파일이 빌더 항목을 가리키는지 */
+export function isBuilderCorrection(raw: unknown): boolean {
+  return typeof raw === "object" && raw !== null && isBuilderItemKey((raw as Obj).key);
+}
+
+/** 빌더 항목 정정 파일을 검사한다. 출처와 확정 여부는 고칠 수 없다 */
+export function checkBuilderCorrection(db: DatabaseSync, raw: unknown, today: string, home: string | null, secrets: readonly string[] = []): BuilderCorrectionCheck {
+  const c = new Checker();
+  const o = c.obj(raw, "정정 파일");
+  if (o === null) return { ok: false, violations: c.violations };
+  c.keys(o, ["date", "key", "reason", "fields"], "정정 파일");
+  const date = c.text(o, "date", "날짜", "정정 파일");
+  const key = c.text(o, "key", "항목 키", "정정 파일");
+  const reason = c.text(o, "reason", "사유", "정정 파일");
+  if (reason !== "") checkReason(c, reason, home, secrets);
+  const fieldsObj = c.obj(o.fields, "고칠 항목");
+  const item = date !== "" && key !== "" ? builderItemByKey(db, date, key) : null;
+  if (date !== "" && key !== "" && item === null) c.add("빌더 항목", `${date} ${key} 항목이 없다`);
+  if (fieldsObj === null || item === null) return { ok: false, violations: c.violations };
+  const names = Object.keys(fieldsObj);
+  if (names.length === 0) c.add("고칠 항목", "하나 이상이어야 한다");
+  const fields: BuilderCorrectionInput["fields"] = {};
+  const changed: BuilderCorrectionField[] = [];
+  for (const name of names) {
+    if (!(BUILDER_CORRECTION_FIELDS as readonly string[]).includes(name)) {
+      c.add("고칠 항목", `"${name}"은(는) 고칠 수 없다(고칠 수 있는 항목: ${BUILDER_CORRECTION_FIELDS.join(", ")})`);
+      continue;
+    }
+    if (name === "dueDate") {
+      const value = fieldsObj.dueDate;
+      if (item.due === null) c.add("기한", "기한이 없는 항목이다");
+      else if (!isDueFormat(value)) c.add("기한", `"${String(value)}"은(는) YYYY-MM-DD나 YYYY-MM이어야 한다`);
+      else {
+        if (item.due.state === "confirmed") {
+          if (value.length === 7) c.add("기한", "확정 기한은 일 단위여야 한다");
+          else checkConfirmedRange(c, "기한", value, today);
+        }
+        fields.dueDate = value;
+        if (value !== item.due.date) changed.push("dueDate");
+      }
+      continue;
+    }
+    const field = name as ItemTextField;
+    const value = c.text(fieldsObj, field, ITEM_LABELS[field], "고칠 항목");
+    if (value === "") continue;
+    checkItemText(c, ITEM_LABELS[field], field, value, home, secrets);
+    fields[field] = value;
+    if (value !== item[field]) changed.push(field);
+  }
+  if (c.violations.length > 0) return { ok: false, violations: c.violations };
+  return { ok: true, input: { date, key, reason, fields }, item, changed };
+}
+
+export interface BuilderCorrectionResult {
+  /** 예정일을 함께 고친 빌더 일정 */
+  moved: number[];
+  /** 뉴스 근거가 있어 그대로 둔 일정 */
+  newsKept: number[];
+  /** 같은 일정에 이어진 다른 항목의 식별자 */
+  others: number[];
+}
+
+/** 검사를 통과한 빌더 정정을 한 트랜잭션으로 적용한다. 기한이 바뀌면 이어진 빌더 일정의 예정일과 다시 알림을 고친다 */
+export function applyBuilderCorrection(db: DatabaseSync, checked: Extract<BuilderCorrectionCheck, { ok: true }>, today: string): BuilderCorrectionResult {
+  const { item, changed, input } = checked;
+  const out: BuilderCorrectionResult = { moved: [], newsKept: [], others: [] };
+  return inTransaction(db, () => {
+    for (const field of changed) db.prepare(`UPDATE builder_items SET ${BUILDER_COLUMNS[field]} = ? WHERE id = ?`).run(input.fields[field]!, item.id);
+    db.prepare("INSERT INTO builder_corrections (item_id, corrected_on, reason, fields) VALUES (?, ?, ?, ?)").run(item.id, today, input.reason, JSON.stringify(changed));
+    if (changed.includes("dueDate")) {
+      for (const id of item.schedules) {
+        const s = getSchedule(db, id);
+        if (s === null || !isLiveSchedule(s)) continue;
+        if (!isBuilderSchedule(db, id)) {
+          out.newsKept.push(id);
+          continue;
+        }
+        updateSchedule(db, id, { due: input.fields.dueDate! });
+        recomputeReminder(db, id, today);
+        out.moved.push(id);
+        out.others.push(...itemsOfSchedule(db, id).filter((x) => x !== item.id));
+      }
+    }
+    return out;
+  });
 }
 
 export function hasCorrections(db: DatabaseSync): boolean {

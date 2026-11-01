@@ -26,3 +26,8 @@ This license covers the source code only. The brief and issue texts (the
 backup data on the `data` branch and the content of https://tidwyn.vercel.app)
 are Copyright (c) 2026 mivomad33, all rights reserved, and may not be reused
 without permission. Original articles and images belong to their publishers.
+
+The number rows in the public backup (`builder.json` on the `data` branch) are
+copied from vendor documents, and their rights belong to each vendor. Rows from
+the Gemini documentation follow CC BY 4.0. Source attribution for builder items
+is on the about page of the site (https://tidwyn.vercel.app/about).

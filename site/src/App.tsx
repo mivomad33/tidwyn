@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
-import { focusTargetId, parseRoute, selfScrolls } from "./lib/routes.ts";
+import { focusTargetId, hashKey, parseRoute, selfScrolls } from "./lib/routes.ts";
 import { AboutPage } from "./pages/AboutPage.tsx";
-import { BriefPage } from "./pages/BriefPage.tsx";
+import { BriefPage, storyDomId } from "./pages/BriefPage.tsx";
 import { DatesPage } from "./pages/DatesPage.tsx";
 import { EntitiesPage } from "./pages/EntitiesPage.tsx";
 import { EntityPage } from "./pages/EntityPage.tsx";
@@ -34,6 +34,10 @@ export function App() {
     if (nav.quiet || nav.kind === "pop") return;
     if (selfScrolls(parseRoute(loc.pathname, loc.search))) return;
     if (!loc.hash) window.scrollTo({ top: 0 });
+    // 화면의 효과가 먼저 돌아 `#` 대상에 초점을 두었으면 그 초점을 뺏지 않는다
+    const key = hashKey(loc.hash);
+    const active = document.activeElement?.id;
+    if (loc.hash && (active === loc.hash.slice(1) || (key && active === storyDomId(key)))) return;
     document.getElementById(focusTargetId(parseRoute(loc.pathname, loc.search)))?.focus({ preventScroll: true });
   }, [loc.pathname, loc.search, loc.hash]);
 

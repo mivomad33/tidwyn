@@ -5,7 +5,7 @@ import path from "node:path";
 import type { DatabaseSync } from "node:sqlite";
 import { parseArgs as parseNodeArgs } from "node:util";
 import { BACKUP_DIR, backupMessage, commitBackup, exportBackup, readBackupDir, readBackupRef, restoreBackup } from "./backup.ts";
-import { CORRECTION_GUIDE, applyCorrection, checkCorrection, issuesOfStory } from "./corrections.ts";
+import { CORRECTION_GUIDE, applyBuilderCorrection, applyCorrection, checkBuilderCorrection, checkCorrection, isBuilderCorrection, issuesOfStory } from "./corrections.ts";
 import { openDb, openExistingDb } from "./db.ts";
 import { gitTry } from "./git.ts";
 import { collectCandidates, describeFeedReport, feedSpecs, fetchText as realFetch, renderCandidatesMarkdown, type FetchText } from "./feeds.ts";
@@ -39,6 +39,11 @@ import { applyJudgeFile, checkJudgeFile, judgeBatches, judgeWorkFile, readJudgeF
 import { unjudgedIssues } from "./indicatorStore.ts";
 import { readKeys, secretValues, maskSecrets } from "./keys.ts";
 import { DEFAULT_GEMINI_LIMITS, STOP_LABELS, emptyNotes, estimateUsd, fetchGemini, notCalled, readNotes, realClock, runNotes, writeNotes, type GeminiClock, type GeminiHttp, type GeminiLimits, type NotesFile } from "./gemini.ts";
+import { applyBuilderPlan, checkBuilderFile, markBuilderFailed } from "./builderCheck.ts";
+import { builderFetchText, fetchBuilder, type BuilderFetchReport } from "./builderFetch.ts";
+import type { BuilderOff } from "./builderSources.ts";
+import { getBuilderItem, isBuilderDone } from "./builderStore.ts";
+import { buildWorkData, builderWorkFile, readBuilderWork, removeBuilderWorkFiles, writeBuilderWork, type BuilderWorkData } from "./builderWork.ts";
 import { buildCandidateFile, checkCheckFile, checkPickFile, readCandidateFile, readJsonFile, removeVideoWorkFiles, restoreCandidateLists, videoWorkFile, writeCandidateFiles } from "./videoPick.ts";
 import { purgeDataDir, purgeTestDirs, type VideoPurgeResult } from "./videoPurge.ts";
 import { SECTION_LIMITS, VIDEO_SECTIONS_STOPPED, emptySections, readSections, runSections, sectionMaterials, sectionTargets, sectionsUsd, writeSections, type SectionsFile } from "./videoSections.ts";
@@ -78,6 +83,7 @@ import {
   workFile,
   writeRun,
   type BackupResult,
+  type BuilderFetchState,
   type DeployResult,
   type ExtractResult,
   type ImagesResult,
@@ -94,7 +100,6 @@ import {
   type VideoRefreshState,
   type VideoNotesState,
   type VideoSectionsState,
-  type VideoPickState,
 } from "./run.ts";
 import { DB_FILE, ENV_DATA_DIR, checkRunCondition, describeSettings, parseArgs, resolveSettings, type Settings } from "./settings.ts";
 import { pruneSnapshots, takeSnapshot } from "./snapshot.ts";
@@ -145,6 +150,13 @@ export interface Context {
   youtubeRefreshUnits?: number;
   /** 새로 받기를 멈춘 상태인지(L1). 없으면 VIDEO_REFRESH_STOPPED. 테스트가 바꿔 넣는다 */
   videoRefreshStopped?: boolean;
+  /** 빌더 소스 요청(9.8단계 4.1). 없으면 fetch */
+  builderHttp?: FetchText;
+  /** 빌더 명령 전체 시간 상한의 시계와 상한(밀리초). 테스트가 바꿔 넣는다 */
+  builderClock?: () => number;
+  builderDeadlineMs?: number;
+  /** 끌 빌더 소스와 공급사. 없으면 코드의 기본값 */
+  builderOff?: BuilderOff;
   /** Gemini 요청(8단계 4.1). 없으면 fetch */
   geminiHttp?: GeminiHttp;
   /** Gemini 시간 제한의 시계. 테스트가 가짜로 바꾼다 */
@@ -186,7 +198,7 @@ const USAGE = `명령:
   summary --run <파일>           실행 끝 출력
   render --date <날짜> | --all [--run <파일>]   DB에서 마크다운 다시 만들기(--all: 모든 브리프와 이슈 마크다운)
   restore [--repo <저장소> | --from <폴더>] [--out <DB 경로>] [--force]   백업에서 DB 복원
-  correct --file <JSON>          뉴스 하나의 글 정정(사용자가 직접 실행, /brief는 실행하지 않음)
+  correct --file <JSON>          뉴스나 빌더 항목 하나의 글 정정(사용자가 직접 실행, /brief는 실행하지 않음)
 이슈(2단계):
   issues --run <파일> --date <날짜>       연결할 뉴스와 후보 이슈 목록(work/<날짜>.issues.md)
   issue-search [--run <파일>] --q <낱말>  이름·별칭·요약으로 이슈 찾기
@@ -222,7 +234,11 @@ const USAGE = `명령:
   video-notes --run <파일>                확인 후보 검사 → Gemini로 영상 내용 메모(work/videos.notes.json)
   video-sections --run <파일>             고른 영상 중 챕터가 없는 영상의 구간 시각 받기(work/videos.sections.json)
   video-check --run <파일>                고르기 파일(work/videos.pick.json) 검사
-  video-apply --run <파일>                검사 → 한 번에 적용 → 고르기 끝남 → 영상 작업 파일 지우기(실패하면 실행 기록에 남기고 파일을 남긴다)`;
+  video-apply --run <파일>                검사 → 한 번에 적용 → 고르기 끝남 → 영상 작업 파일 지우기(실패하면 실행 기록에 남기고 파일을 남긴다)
+  builder-fetch --run <파일>              가장 늦은 브리프 날짜의 빌더 소스 받기·거르기 → 후보 목록(work/builder.candidates.md). 끝난 날짜면 부르지 않는다
+  builder-check --run <파일>              빌더 항목 파일(work/builder.items.json) 검사
+  builder-apply --run <파일>              검사 → 한 번에 적용 → 빌더 작업 파일 지우기(실패하면 실행 기록에 남기고 파일을 남긴다)
+  builder-fail --run <파일>               그 날짜를 받지 못함으로 저장하고 빌더 작업 파일을 지운다(저장된 항목과 받은 시각은 그대로 둔다)`;
 
 function opts(argv: string[], options: Record<string, { type: "string" | "boolean" }>) {
   return parseNodeArgs({ args: argv, options, allowPositionals: false, strict: true }).values as Record<string, string | boolean | undefined>;
@@ -282,6 +298,7 @@ function cmdStart(argv: string[], ctx: Context): number {
   let mergeLine: string;
   let unjudged: number;
   let videoPlanned: { date: string | null; done: boolean };
+  let builderPlanned: { date: string | null; done: boolean };
   try {
     const plan = planTargets(db, now, s.startDate);
     if (plan.firstDateToRecord !== null) recordFirstCollectionDate(db, plan.firstDateToRecord);
@@ -294,6 +311,7 @@ function cmdStart(argv: string[], ctx: Context): number {
     unjudged = unjudgedIssues(db).length;
     const planned = plan.dates.at(-1) ?? videoTargetDate(db);
     videoPlanned = { date: planned, done: planned !== null && isPicked(db, planned) };
+    builderPlanned = { date: planned, done: planned !== null && isBuilderDone(db, planned) };
     mergeLine = due.due ? `이번 실행 끝에 한다(마지막 점검 ${due.checkedOn})` : due.nextOn === null ? "아직 연결한 이슈가 없다" : `다음 점검 ${due.nextOn}`;
   } finally {
     db.close();
@@ -320,6 +338,7 @@ function cmdStart(argv: string[], ctx: Context): number {
     push: null,
     unjudgedAtStart: unjudged,
     videoPlanned,
+    builderPlanned,
   };
   writeRun(runFile, state);
   ctx.out(
@@ -336,6 +355,7 @@ function cmdStart(argv: string[], ctx: Context): number {
       `- 지표 판단 안 한 이슈: ${unjudged}개`,
       keyLine(ctx),
       videoPlanned.date === null ? "- 영상: 브리프가 없어 받을 날짜가 없다" : `- 영상: ${videoPlanned.date} ${videoPlanned.done ? "이미 끝남" : "받기 할 것"}`,
+      builderPlanned.date === null ? "- 빌더: 브리프가 없어 받을 날짜가 없다" : `- 빌더: ${builderPlanned.date} ${builderPlanned.done ? "이미 끝남" : "받기 할 것"}`,
     ].join("\n"),
   );
   return EXIT.ok;
@@ -555,6 +575,7 @@ function cmdSummary(argv: string[], ctx: Context): number {
   lines.push(...scheduleSummaryLines(s));
   lines.push(...indicatorSummaryLines(s));
   lines.push(...videoSummaryLines(s));
+  lines.push(...builderSummaryLines(s));
   lines.push(...videoBacklogLines(s, ctx));
   lines.push(...imageSummaryLines(s, saved));
   lines.push(`- 백업: ${describeBackup(s.backup)}`);
@@ -1220,6 +1241,7 @@ function cmdCorrect(argv: string[], ctx: Context): number {
   if ("exit" in prep) return prep.exit;
   const db = openExistingDb(prep.s.dbPath);
   try {
+    if (isBuilderCorrection(raw)) return correctBuilder(db, raw, prep.snapshot, ctx);
     const checked = checkCorrection(db, raw, homeOf(ctx), secretsOf(ctx));
     if (!checked.ok) {
       ctx.out(`고치지 않음:\n${formatViolations(checked.violations)}`);
@@ -1246,6 +1268,34 @@ function cmdCorrect(argv: string[], ctx: Context): number {
   } finally {
     db.close();
   }
+}
+
+/** 빌더 항목 정정(9.8단계 4.5-2). 항목은 마크다운이 없어 다시 렌더링하지 않는다 */
+function correctBuilder(db: DatabaseSync, raw: unknown, snapshot: string | null, ctx: Context): number {
+  const today = kstDate(ctx.now());
+  const checked = checkBuilderCorrection(db, raw, today, homeOf(ctx), secretsOf(ctx));
+  if (!checked.ok) {
+    ctx.out(`고치지 않음:\n${formatViolations(checked.violations)}`);
+    return EXIT.failed;
+  }
+  const { date, key } = checked.input;
+  if (checked.changed.length === 0) {
+    ctx.out(`바뀐 것이 없다(${date} ${key}). 이미 적용한 정정이면 다시 하지 않아도 된다.`);
+    return EXIT.ok;
+  }
+  const r = applyBuilderCorrection(db, checked, today);
+  const others = r.others.map((id) => getBuilderItem(db, id)).filter((x) => x !== null).map((x) => `${x.date} ${x.key}`);
+  ctx.out(
+    [
+      `고침: ${date} ${key} (${checked.changed.join(", ")}).`,
+      `- 실행 전 사본: ${snapshot}`,
+      ...(r.moved.length > 0 ? [`- 예정일을 함께 고친 빌더 일정: ${r.moved.join(", ")}`] : []),
+      ...(r.newsKept.length > 0 ? [`- 뉴스 근거가 있어 그대로 둔 일정: ${r.newsKept.join(", ")}`] : []),
+      ...(others.length > 0 ? [`- 같은 일정에 이어진 다른 항목: ${others.join(", ")}`] : []),
+      "- 백업과 사이트 배포는 다음 /brief 실행이 한다. 바로 올리려면 docs/operations.md의 손으로 하는 배포를 쓴다.",
+    ].join("\n"),
+  );
+  return EXIT.ok;
 }
 
 /** 대상·용어 지우기(4.3-4, E13). 사용자가 직접 실행한다 */
@@ -2139,6 +2189,30 @@ function pickCounts(videos: { bundle: VideoBundle; issues: number[] }[]): string
   return `${describeBundles(countByBundle(videos))}, 관련 이슈를 붙인 영상 ${videos.filter((x) => x.issues.length > 0).length}개`;
 }
 
+interface ApplyFailure {
+  attempts: number;
+  reason: string;
+  violations?: Violation[];
+}
+
+/**
+ * 적용 명령의 실패 처리: 기록하고 알린다. `fail`은 실패 횟수를 하나 올리고,
+ * `exhausted`는 고쳐서 다시 검사할 횟수를 다 썼으면 횟수를 올리지 않고 실패로 끝낸다(남았으면 null).
+ */
+function applyFailure(ctx: Context, attempts: number, what: string, after: string, record: (f: ApplyFailure) => void) {
+  const report = (n: number, reason: string, violations?: Violation[]): number => {
+    const f: ApplyFailure = { attempts: n, reason };
+    if (violations) f.violations = violations;
+    record(f);
+    ctx.out(`${what} 적용하지 않음(${n}/${PICK_MAX_ATTEMPTS}번째 실패): ${reason}${violations ? `\n${formatViolations(violations)}` : ""}\n${after}`);
+    return EXIT.failed;
+  };
+  return {
+    fail: (reason: string, violations?: Violation[]) => report(attempts + 1, reason, violations),
+    exhausted: () => (attempts >= PICK_MAX_ATTEMPTS ? report(attempts, `고쳐서 다시 검사를 ${PICK_MAX_ATTEMPTS - 1}번 했는데도 위반이 남아 더 적용하지 않는다`) : null),
+  };
+}
+
 /** 검사 → 한 번에 적용 → 고르기 끝남 → 작업 파일 지우기(4.3-3~5). 실패하면 아무것도 적용하지 않고 파일을 남긴다 */
 function cmdVideoApply(argv: string[], ctx: Context): number {
   const v = opts(argv, { run: { type: "string" } });
@@ -2157,15 +2231,9 @@ function cmdVideoApply(argv: string[], ctx: Context): number {
       ctx.out(`영상: ${target} 이미 고르기 끝남. 바꾼 것이 없다.`);
       return EXIT.ok;
     }
-    const fail = (reason: string, violations?: Violation[], count = true): number => {
-      const n = count ? attempts + 1 : attempts;
-      const st: VideoPickState = { status: "failed", target, attempts: n, reason };
-      if (violations) st.violations = violations;
-      updateRun(runFile, (s) => (s.videoPick = st));
-      ctx.out(`영상 고르기를 적용하지 않음(${n}/${PICK_MAX_ATTEMPTS}번째 실패): ${reason}${violations ? `\n${formatViolations(violations)}` : ""}\n대상 날짜는 고르기 끝남이 되지 않아 다음 실행이 다시 받는다. 작업 파일은 남긴다.`);
-      return EXIT.failed;
-    };
-    if (attempts >= PICK_MAX_ATTEMPTS) return fail(`고쳐서 다시 검사를 ${PICK_MAX_ATTEMPTS - 1}번 했는데도 위반이 남아 더 적용하지 않는다`, undefined, false);
+    const { fail, exhausted } = applyFailure(ctx, attempts, "영상 고르기를", "대상 날짜는 고르기 끝남이 되지 않아 다음 실행이 다시 받는다. 작업 파일은 남긴다.", (f) => updateRun(runFile, (s) => (s.videoPick = { status: "failed", target, ...f })));
+    const stopped = exhausted();
+    if (stopped !== null) return stopped;
     const r = readPick(state);
     if (!r.ok) return fail(r.reason);
     if (r.file.targetDate !== target) return fail(`후보 목록의 날짜(${r.file.targetDate})가 대상 날짜(${target ?? "없음"})와 다르다(video-fetch를 다시 한다)`);
@@ -2175,6 +2243,198 @@ function cmdVideoApply(argv: string[], ctx: Context): number {
     const cleaned = removeVideoWorkFiles(state.dataDir);
     updateRun(runFile, (s) => (s.videoPick = { status: "applied", target, attempts, picked: countByBundle(c.videos), withIssues: c.videos.filter((x) => x.issues.length > 0).length, withSummary: c.videos.filter((x) => (x.summary ?? null) !== null).length, withSections: c.videos.filter((x) => x.sections).length, sectionsGivenUp: c.videos.filter((x) => !x.sections && r.materials.has(x.videoId)).length, cleaned }));
     ctx.out(`영상 고르기 적용함(${target}): ${pickCounts(c.videos)}. 고르기 끝남으로 두었다. 영상 작업 파일 ${cleaned}개를 지웠다.`);
+    return EXIT.ok;
+  } finally {
+    db.close();
+  }
+}
+
+const BUILDER_STATUS_NAMES = { checked: "확인함", partial: "일부만 확인", failed: "받지 못함" } as const;
+
+function builderFetchLines(r: BuilderFetchState): string[] {
+  if (r.status === "noBrief") return ["- 빌더 받기: 브리프가 없어 받지 않았다"];
+  if (r.status === "alreadyDone") return [`- 빌더 받기: ${r.target} 이미 끝남`];
+  if (r.status === "crashed") return [`- 빌더 받기: 중간에 멈췄다(${r.reason ?? "이유 없음"})`];
+  const lines = [`- 빌더 받기(${r.target}): ${BUILDER_STATUS_NAMES[r.status]}, 후보 ${r.candidates ?? 0}건, 분량 상한으로 잘림 ${r.cut ?? 0}건, 다시 알림 ${r.reminders ?? 0}건`];
+  for (const s of r.sources ?? []) {
+    if (s.status === "off") lines.push(`  - ${s.label}: 꺼짐`);
+    else if (s.status === "failed") lines.push(`  - ${s.label}: 실패 ${s.failDays ?? 1}일째(${s.reason ?? "이유 없음"})`);
+    else lines.push(`  - ${s.label}: 성공, 후보 ${s.candidates ?? 0}건${s.clampedFrom === undefined ? "" : `, 기간을 ${s.clampedFrom}부터로 잘랐다`}`);
+  }
+  const docs = r.docs ?? [];
+  const sum = (k: "noNumber" | "tooLong" | "rejected") => docs.reduce((n, d) => n + d[k], 0);
+  if (docs.length > 0) lines.push(`  - 숫자 행: 추가 ${docs.reduce((n, d) => n + d.added, 0)}, 제거 ${docs.reduce((n, d) => n + d.removed, 0)}, 숫자 없는 행 ${sum("noNumber")}, 긴 행 ${sum("tooLong")}, 공개 검사로 뺀 행 ${sum("rejected")}`);
+  const dropped = [r.droppedByHost ? `호스트 밖 ${r.droppedByHost}` : "", r.droppedByKey ? `키 중복 ${r.droppedByKey}` : "", r.droppedByScan ? `공개 검사 ${r.droppedByScan}` : ""].filter((x) => x !== "");
+  if (dropped.length > 0) lines.push(`  - 뺀 후보: ${dropped.join(", ")}`);
+  for (const w of r.warnings ?? []) lines.push(`  - 경고: ${w}`);
+  return lines;
+}
+
+/** 실행 요약의 빌더 줄(4.1-3). 후보 글은 쓰지 않는다. 앞 단계 실행 기록에는 붙이지 않는다 */
+function builderSummaryLines(s: RunState): string[] {
+  if (s.builderPlanned === undefined && s.builderFetch === undefined && s.builderApply === undefined) return [];
+  const f = s.builderFetch;
+  const lines = f === undefined ? ["- 빌더 받기: 하지 않았다(다음 실행이 다시 받는다)"] : builderFetchLines(f);
+  const a = s.builderApply;
+  if (a === undefined) {
+    if (f !== undefined && ["checked", "partial", "failed"].includes(f.status)) lines.push("- 빌더 쓰기: 적용하지 않았다(다음 실행이 다시 받는다)");
+  } else if (a.status === "applied") {
+    lines.push(`- 빌더 쓰기: 항목 ${a.items ?? 0}건, 다시 알림 ${a.reminders ?? 0}건, 새 일정 ${a.newSchedules ?? 0}개, 일정에 이음 ${a.linked ?? 0}건, 연기 ${a.postponed ?? 0}개, 앞당김 ${a.moved ?? 0}개${a.attempts > 0 ? ` (고쳐서 다시 검사 ${a.attempts}번)` : ""}`);
+    if ((a.newsKept ?? []).length > 0) lines.push(`  - 종료일이 바뀌었지만 뉴스 근거가 있어 그대로 둔 일정: ${a.newsKept!.join(", ")}`);
+  } else if (a.status === "alreadyDone") lines.push(`- 빌더 쓰기: ${a.target} 이미 끝남`);
+  else if (a.status === "gaveUp") lines.push(`- 빌더 쓰기: 포기(${a.reason ?? "이유 없음"}). 받지 못함으로 두었다, 다음 실행이 다시 한다`);
+  else lines.push(`- 빌더 쓰기: 실패(${a.reason ?? "이유 없음"}, ${a.attempts}번째). 다음 실행이 다시 한다`);
+  return lines;
+}
+
+/** 빌더 받기(4.1). 끝난 날짜면 부르지 않고, 소스 실패는 실패로 끝내지 않는다(다시 알림은 쓴다). 멈추면 종료 코드 1이고 스킬이 builder-fail을 부른다 */
+async function cmdBuilderFetch(argv: string[], ctx: Context): Promise<number> {
+  const v = opts(argv, { run: { type: "string" } });
+  const runFile = need(v, "run");
+  const state = readRun(runFile);
+  const refused = indicatorCondition(state, ctx);
+  if (refused !== null) return refused;
+  const record = (r: BuilderFetchState) => updateRun(runFile, (s) => (s.builderFetch = r));
+  const secrets = secretsOf(ctx);
+  const db = openExistingDb(state.dbPath);
+  try {
+    const target = videoTargetDate(db);
+    if (target === null) {
+      record({ status: "noBrief", target });
+      ctx.out("빌더: 브리프가 없어 받지 않는다.");
+      return EXIT.ok;
+    }
+    const prev = state.builderFetch;
+    const fetchedInRun = prev?.target === target && (prev.status === "checked" || prev.status === "partial" || prev.status === "failed");
+    if (isBuilderDone(db, target)) {
+      if (!fetchedInRun) record({ status: "alreadyDone", target });
+      ctx.out(`빌더: ${target} 이미 끝남. 소스를 부르지 않는다.`);
+      return EXIT.ok;
+    }
+    const work = fetchedInRun ? readBuilderWork(state.dataDir) : null;
+    if (work?.ok && work.data.target === target) {
+      ctx.out(`빌더: 이 실행에서 이미 받았다. 다시 부르지 않는다. 후보 목록 ${builderWorkFile(state.dataDir, "list")}`);
+      return EXIT.ok;
+    }
+    let report: BuilderFetchReport;
+    try {
+      report = await fetchBuilder({ db, http: ctx.builderHttp ?? builderFetchText, now: ctx.now(), target, dataDir: state.dataDir, home: homeOf(ctx), secrets, off: ctx.builderOff, clock: ctx.builderClock, deadlineMs: ctx.builderDeadlineMs });
+    } catch (e) {
+      const reason = maskSecrets((e as Error).message, secrets);
+      removeBuilderWorkFiles(state.dataDir);
+      record({ status: "crashed", target, reason });
+      ctx.out(`빌더 받기 실패(${target}): ${reason}. 쓰기를 건너뛴다. 다음 실행이 다시 받는다.`);
+      return EXIT.failed;
+    }
+    const data = buildWorkData(db, report);
+    const paths = writeBuilderWork(state.dataDir, data);
+    const done: BuilderFetchState = {
+      status: report.status,
+      target,
+      sources: report.sources,
+      docs: report.docs,
+      warnings: report.warnings.map((w) => maskSecrets(w, secrets)),
+      candidates: data.candidates.filter((c) => !c.cut).length,
+      cut: data.candidates.filter((c) => c.cut).length,
+      reminders: data.reminders.length,
+      droppedByHost: report.droppedByHost,
+      droppedByKey: report.droppedByKey,
+      droppedByScan: report.droppedByScan,
+    };
+    record(done);
+    ctx.out(maskSecrets([`빌더 받기: 후보 목록 ${paths.md}`, `- 항목 파일을 쓸 곳: ${paths.items}`, ...builderFetchLines(done)].join("\n"), secrets));
+    return EXIT.ok;
+  } finally {
+    db.close();
+  }
+}
+
+function readBuilderItems(state: RunState): { ok: true; data: unknown; work: BuilderWorkData } | { ok: false; reason: string } {
+  const work = readBuilderWork(state.dataDir);
+  if (!work.ok) return { ok: false, reason: `${work.reason}(먼저 builder-fetch)` };
+  const r = readJsonFile(builderWorkFile(state.dataDir, "items"), "빌더 항목 파일", { hideParseError: true });
+  return r.ok ? { ...r, work: work.data } : r;
+}
+
+function cmdBuilderCheck(argv: string[], ctx: Context): number {
+  const v = opts(argv, { run: { type: "string" } });
+  const state = readRun(need(v, "run"));
+  const refused = indicatorCondition(state, ctx);
+  if (refused !== null) return refused;
+  const r = readBuilderItems(state);
+  if (!r.ok) {
+    ctx.out(`빌더 항목 검사 실패:\n- ${r.reason}`);
+    return EXIT.failed;
+  }
+  const db = openExistingDb(state.dbPath);
+  try {
+    const c = checkBuilderFile(db, r.data, r.work, { home: homeOf(ctx), secrets: secretsOf(ctx) });
+    if (!c.ok) {
+      ctx.out(`빌더 항목 검사 실패, 위반 ${c.violations.length}개:\n${formatViolations(c.violations)}`);
+      return EXIT.failed;
+    }
+    ctx.out(`빌더 항목 검사 통과: ${c.plan.items.length}건.`);
+    return EXIT.ok;
+  } finally {
+    db.close();
+  }
+}
+
+/** 검사 → 한 트랜잭션 적용 → 작업 파일 지우기(4.3-4). 실패하면 아무것도 적용하지 않고 파일을 남긴다 */
+function cmdBuilderApply(argv: string[], ctx: Context): number {
+  const v = opts(argv, { run: { type: "string" } });
+  const runFile = need(v, "run");
+  const state = readRun(runFile);
+  const refused = indicatorCondition(state, ctx);
+  if (refused !== null) return refused;
+  const prev = state.builderApply;
+  const attempts = prev?.status === "failed" ? prev.attempts : 0;
+  const db = openExistingDb(state.dbPath);
+  try {
+    const target = videoTargetDate(db);
+    if (target !== null && isBuilderDone(db, target)) {
+      if (prev?.status !== "applied" || prev.target !== target) updateRun(runFile, (s) => (s.builderApply = { status: "alreadyDone", target, attempts }));
+      ctx.out(`빌더: ${target} 이미 끝남. 바꾼 것이 없다.`);
+      return EXIT.ok;
+    }
+    const { fail, exhausted } = applyFailure(ctx, attempts, "빌더 항목을", "작업 파일은 남긴다. 더 고치지 못하면 builder-fail을 부른다.", (f) => updateRun(runFile, (s) => (s.builderApply = { status: "failed", target, ...f })));
+    const stopped = exhausted();
+    if (stopped !== null) return stopped;
+    const r = readBuilderItems(state);
+    if (!r.ok) return fail(r.reason);
+    if (r.work.target !== target) return fail(`후보 목록의 날짜(${r.work.target})가 대상 날짜(${target ?? "없음"})와 다르다(builder-fetch를 다시 한다)`);
+    const o = { home: homeOf(ctx), secrets: secretsOf(ctx) };
+    const c = checkBuilderFile(db, r.data, r.work, o);
+    if (!c.ok) return fail("빌더 항목 파일이 검사를 통과하지 못했다", c.violations);
+    const a = applyBuilderPlan(db, c.plan, r.work, o);
+    const cleaned = removeBuilderWorkFiles(state.dataDir);
+    updateRun(runFile, (s) => (s.builderApply = { status: "applied", target, attempts, items: a.items, reminders: a.reminders, newSchedules: a.newSchedules, linked: a.linked, postponed: a.postponed, moved: a.moved, newsKept: a.newsKept }));
+    ctx.out(`빌더 항목 적용함(${target}): 항목 ${a.items}건, 다시 알림 ${a.reminders}건, 새 일정 ${a.newSchedules}개. 상태 ${BUILDER_STATUS_NAMES[r.work.status]}. 빌더 작업 파일 ${cleaned}개를 지웠다.`);
+    return EXIT.ok;
+  } finally {
+    db.close();
+  }
+}
+
+/** 받기나 쓰기가 끝내 실패한 날짜를 받지 못함으로 저장한다(4.3-1). 시각과 저장된 항목은 그대로 두어 다음 실행이 다시 한다 */
+function cmdBuilderFail(argv: string[], ctx: Context): number {
+  const v = opts(argv, { run: { type: "string" } });
+  const runFile = need(v, "run");
+  const state = readRun(runFile);
+  const refused = indicatorCondition(state, ctx);
+  if (refused !== null) return refused;
+  const db = openExistingDb(state.dbPath);
+  try {
+    const target = videoTargetDate(db);
+    removeBuilderWorkFiles(state.dataDir);
+    if (target === null) {
+      ctx.out("빌더: 브리프가 없어 저장할 날짜가 없다.");
+      return EXIT.ok;
+    }
+    const marked = markBuilderFailed(db, target);
+    const prev = state.builderApply;
+    if (marked) updateRun(runFile, (s) => (s.builderApply = { status: "gaveUp", target, attempts: prev?.attempts ?? 0, reason: prev?.reason ?? "받기나 쓰기가 끝나지 못했다" }));
+    ctx.out(marked ? `빌더: ${target} 받지 못함으로 저장했다. 다음 실행이 다시 한다.` : `빌더: ${target} 이미 끝나 그대로 둔다.`);
     return EXIT.ok;
   } finally {
     db.close();
@@ -2426,6 +2686,9 @@ const COMMANDS: Record<string, (argv: string[], ctx: Context) => number> = {
   "indicator-check": cmdIndicatorCheck,
   "indicator-apply": cmdIndicatorApply,
   "video-check": cmdVideoCheck,
+  "builder-check": cmdBuilderCheck,
+  "builder-apply": cmdBuilderApply,
+  "builder-fail": cmdBuilderFail,
   "video-apply": cmdVideoApply,
   site: cmdSite,
   push: cmdPush,
@@ -2476,6 +2739,7 @@ const ASYNC_COMMANDS: Record<string, (argv: string[], ctx: Context) => Promise<n
   "indicator-fetch": cmdIndicatorFetch,
   "video-refresh": cmdVideoRefresh,
   "video-fetch": cmdVideoFetch,
+  "builder-fetch": cmdBuilderFetch,
   "video-notes": cmdVideoNotes,
   "video-sections": cmdVideoSections,
 };

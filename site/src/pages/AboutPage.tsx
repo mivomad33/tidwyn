@@ -9,7 +9,12 @@ export function AboutPage() {
   useTitle("사이트 소개");
   const { hash } = useLocation();
   useEffect(() => {
-    if (hash) document.getElementById(hash.slice(1))?.scrollIntoView({ block: "start" });
+    if (!hash) return;
+    const el = document.getElementById(hash.slice(1));
+    if (!el) return;
+    el.scrollIntoView({ block: "start" });
+    el.tabIndex = -1;
+    el.focus({ preventScroll: true });
   }, [hash]);
   return (
     <Layout left={<BackLink to="/" label="브리프" />}>

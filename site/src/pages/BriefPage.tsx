@@ -1,23 +1,26 @@
-// 날짜별 브리프와 펼친 뉴스 카드(4.2). 4.5단계: 읽음 버튼, 펼침·글 누름·링크로 읽음, '안 읽은 것만' 거르기. 5단계: 카드의 일정 칩. 6단계: 브리프 위 '이번 주 일정 | 지표' 상자. 7단계: 섹션 탭 끝의 '영상' 탭(4.7-1)
+// 날짜별 브리프와 펼친 뉴스 카드(4.2). 4.5단계: 읽음 버튼, 펼침·글 누름·링크로 읽음, '안 읽은 것만' 거르기. 5단계: 카드의 일정 칩. 6단계: 브리프 위 '이번 주 일정 | 지표' 상자. 7단계: 섹션 탭 끝의 '영상' 탭(4.7-1). 9.8단계: 그 뒤의 '빌더' 탭(4.6)
 import { useEffect, useMemo, useReducer, useRef, useState, type ReactNode } from "react";
+import { isBuilderItemKey } from "../../../src/builderTypes.ts";
 import { kstDate } from "../../../src/kst.ts";
 import { ALL_MAJORS, CategoryLine, Layout as Shell, Main, ChipFilter, Empty, ErrorState, Footer, Loading, NewsTitle, ReadCheck, ReadToggle, SectionChip, ToggleChip, TopBar, useFullTitle, VideoLoading, VIDEO_LOAD_ERROR } from "../components/common.tsx";
 import { BriefBox } from "../components/briefBox.ts";
+import { BuilderIntro, BuilderBody, BuilderEndNote, BuilderFieldLine, BuilderReminder, BuilderZero } from "../components/builderView.ts";
 import { FixMark, FixNotes } from "../components/correctionView.ts";
 import { ScheduleChips } from "../components/scheduleView.ts";
 import { VideoList, VideoSource } from "../components/videoView.ts";
 import { EntityChips, TermBox, TermChips, TermText } from "../components/termView.ts";
 import { retry, useResource, type Resource } from "../data.ts";
-import { ALL_TAB, BRIEF_TAB_KEY, VIDEO_TAB, briefTabs, currentTab, findDay, findStoryTarget, orderSources, parseBriefTab, sectionView, stateForHash, storyImage, type BriefTab, type BriefViewState } from "../lib/brief.ts";
+import { ALL_TAB, BRIEF_TAB_KEY, BUILDER_TAB, VIDEO_TAB, briefTabs, currentTab, findDay, findStoryTarget, orderSources, parseBriefTab, sectionView, stateForHash, storyImage, type BriefTab, type BriefViewState } from "../lib/brief.ts";
+import { builderTabLabel } from "../lib/builder.ts";
 import { briefTitle, latestTitle, monthDay, monthDayWeekday, pageTitle, shortDate } from "../lib/format.ts";
 import { dataUrl } from "../lib/paths.ts";
 import type { DayVideos } from "../../../src/siteTypes.ts";
 import { SITE_URL, shortReportHref, storyReportHref } from "../lib/policy.ts";
 import { placeTerms, storyBodyParts, termBoxPlace, toggleTerm } from "../lib/terms.ts";
 import { categoryVar } from "../lib/theme.ts";
-import { adjacentDates, briefPath, hashKey, issuePath, resolveBriefDate, VIDEO_HASH, type Route } from "../lib/routes.ts";
+import { adjacentDates, briefPath, BUILDER_HASH, hashKey, issuePath, resolveBriefDate, VIDEO_HASH, type Route } from "../lib/routes.ts";
 import { VIDEO_CHIPS, filterVideos, videoChips, videoTabLabel, visibleVideos, type VideoChip } from "../lib/videos.ts";
-import type { DayList, ListStory, MonthDetail, MonthList, SiteDates, StoryDetail } from "../lib/types.ts";
+import type { BuilderMonth, DayBuilder, DayList, ListStory, MonthDetail, MonthList, SiteBuilderItem, SiteDates, StoryDetail } from "../lib/types.ts";
 import { readStored, writeStored } from "../lib/storage.ts";
 import { markRead, readStore, useReadVersion } from "../readMarks.ts";
 import { ReportLink } from "../components/reportLink.ts";
@@ -124,6 +127,68 @@ function VideoTabBody({ date, res, count, today, picked, onPick, onRetry }: { da
   );
 }
 
+/** 빌더 항목 하나. 뉴스와 달리 칸을 늘 펼쳐 둔다. 읽음은 뉴스와 같은 기록을 쓴다 */
+function BuilderRow({ item, date }: { item: SiteBuilderItem; date: string }) {
+  return (
+    <li id={storyDomId(item.key)} tabIndex={-1} className="item">
+      <div className="item-row">
+        <div className="item-btn">
+          <BuilderFieldLine item={item} />
+          <h3 className="btitle">
+            <NewsTitle date={date} newsKey={item.key} className="title">
+              {item.title}
+            </NewsTitle>
+          </h3>
+          <BuilderReminder item={item} Link={Link} />
+        </div>
+        <ReadToggle date={date} newsKey={item.key} title={item.title} />
+      </div>
+      <div className="detail">
+        <BuilderBody item={item} date={date} Link={Link} />
+      </div>
+    </li>
+  );
+}
+
+/** 빌더 탭 본문. 항목이 없는 날은 파일을 받지 않고 상태 문구만 보인다(B11) */
+function BuilderTabBody({ date, builder, res, onRetry }: { date: string; builder: DayBuilder; res: Resource<BuilderMonth>; onRetry: () => void }) {
+  const head = (
+    <>
+      <h2 className="sr-only">빌더</h2>
+      <BuilderIntro Link={Link} />
+    </>
+  );
+  if (builder.count === 0) {
+    return (
+      <>
+        {head}
+        <BuilderZero status={builder.status} />
+      </>
+    );
+  }
+  if (res.status !== "ok") {
+    return (
+      <>
+        {head}
+        {res.status === "error" ? <ErrorState onRetry={onRetry} /> : <Loading />}
+      </>
+    );
+  }
+  const items = res.data.days[date] ?? [];
+  return (
+    <>
+      {head}
+      {items.length === 0 && <Empty>이 날짜의 항목을 찾지 못했다.</Empty>}
+      <ul className="list blist">
+        {items.map((x) => (
+          <BuilderRow key={x.key} item={x} date={date} />
+        ))}
+      </ul>
+      <BuilderEndNote builder={builder} />
+    </>
+  );
+}
+
 export function BriefPage({ route }: { route: Route }) {
   const loc = useLocation();
   const datesUrl = dataUrl.dates();
@@ -149,11 +214,16 @@ export function BriefPage({ route }: { route: Route }) {
   const tabView = day ? tabViewOf(day, today, stateForHash(day, key, view).section) : null;
   const videoUrl = date && tabView?.current === VIDEO_TAB ? dataUrl.videoDay(date) : null;
   const videoRes = useResource<DayVideos>(videoUrl);
+  // 9.8단계: 빌더 파일도 빌더 탭을 열 때만, 항목이 있는 날만 받는다(4.6-5)
+  const builderUrl = month && tabView?.current === BUILDER_TAB && day?.builder?.count ? dataUrl.builderItems(month) : null;
+  const builderRes = useResource<BuilderMonth>(builderUrl);
+  const hasBuilderItem = (k: string) => builderRes.status === "ok" && date !== null && (builderRes.data.days[date]?.some((x) => x.key === k) ?? false);
 
   // `#<뉴스 키>`로 화면이 열리면(카드 펼치기, 다른 목록의 링크, 직접 연 주소, 새로 고침, 뒤로 가기) 그 뉴스는 읽음이다(M1, 4.2-3)
+  const hashItem = key !== null && isBuilderItemKey(key) && hasBuilderItem(key);
   useEffect(() => {
-    if (day && date && key && findStoryTarget(day, key)) markRead(date, key);
-  }, [day, date, key]);
+    if (day && date && key && (findStoryTarget(day, key) || hashItem)) markRead(date, key);
+  }, [day, date, key, hashItem]);
 
   // '안 읽은 것만'(4.4). 읽었고 펼치지 않았고 `#` 대상이 아닌 뉴스를 숨긴다. 켤 때·섹션이나 날짜를 바꿀 때 이미 그런 뉴스는
   // 바로 숨기고(gone), 켠 동안 그렇게 된 뉴스는 잠깐 뒤 부드럽게 사라진 다음 gone에 든다(사용자 결정 2026-10-29).
@@ -172,21 +242,23 @@ export function BriefPage({ route }: { route: Route }) {
     if (!day || !key || !date) return;
     const token = `${date}#${key}`;
     if (scrolledFor.current === token || lastNavigation().quiet) return;
-    if (key === VIDEO_HASH) {
+    if (key === VIDEO_HASH || key === BUILDER_HASH) {
       scrolledFor.current = token;
       window.scrollTo({ top: 0 });
       return;
     }
-    const target = findStoryTarget(day, key);
-    if (!target) return;
-    if (target.kind === "top" && (view.expanded !== key || detailRes.status === "loading" || detailRes.status === "idle")) return;
-    if (view.section !== ALL_TAB && view.section !== target.section) return;
+    if (!hashItem) {
+      const target = findStoryTarget(day, key);
+      if (!target) return;
+      if (target.kind === "top" && (view.expanded !== key || detailRes.status === "loading" || detailRes.status === "idle")) return;
+      if (view.section !== ALL_TAB && view.section !== target.section) return;
+    }
     const el = document.getElementById(storyDomId(key));
     if (!el) return;
     scrolledFor.current = token;
     el.scrollIntoView({ block: "start" });
     el.focus({ preventScroll: true });
-  }, [day, key, date, view, detailRes.status]);
+  }, [day, key, date, view, detailRes.status, hashItem]);
 
   useFullTitle(route.name === "latest" ? latestTitle() : route.name === "brief" ? briefTitle(route.date, datesRes.status === "ok" ? datesRes.data.dates : [route.date]) : pageTitle());
 
@@ -210,6 +282,7 @@ export function BriefPage({ route }: { route: Route }) {
   const { tabs, videoCount, current } = tabView!;
   const all = current === ALL_TAB;
   const onVideos = current === VIDEO_TAB;
+  const onBuilder = current === BUILDER_TAB;
   const sv = sectionView(day, current, view.major);
   const hasStories = sv.top.length + sv.short.length > 0;
   const token = `${date}|${current}|${unread.round}`;
@@ -268,6 +341,8 @@ export function BriefPage({ route }: { route: Route }) {
         <TopBox day={day} />
         {onVideos ? (
           <VideoTabBody date={date} res={videoRes} count={videoCount} today={today} picked={videoChip.date === date ? videoChip.chip : null} onPick={(c) => setVideoChip({ date, chip: c })} onRetry={() => retry([videoUrl])} />
+        ) : onBuilder ? (
+          <BuilderTabBody date={date} builder={day.builder!} res={builderRes} onRetry={() => retry([builderUrl])} />
         ) : (
           <>
         <ChipFilter
@@ -326,7 +401,7 @@ export function BriefPage({ route }: { route: Route }) {
       <nav className="tabs" aria-label="섹션">
         {tabs.map((s) => (
           <button key={s} type="button" className={s === current ? "on" : ""} aria-pressed={s === current} onClick={() => chooseSection(s)}>
-            {s === VIDEO_TAB ? videoTabLabel(videoCount) : s}
+            {s === VIDEO_TAB ? videoTabLabel(videoCount) : s === BUILDER_TAB ? builderTabLabel(day.builder!.count) : s}
           </button>
         ))}
       </nav>

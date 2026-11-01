@@ -165,9 +165,13 @@ export function outcomeParts(outcome: ScheduleOutcomeView, today: string): Outco
   }
 }
 
-/** 이름을 누르면 갈 곳: 처음 근거 뉴스(그 날짜 브리프의 카드나 줄). 근거 뉴스가 없으면 null */
-export function nameLink(item: Pick<ScheduleItem, "first">): string | null {
-  return item.first ? briefPath(item.first.date, item.first.key) : null;
+/** 일정 화면 머리의 출처 문구(앱과 정적 HTML이 같다) */
+export const SCHEDULE_META = "뉴스와 공식 문서에서 모은 예정 일정 · 날짜는 현지 기준";
+
+/** 이름을 누르면 갈 곳: 처음 근거 뉴스(그 날짜 브리프의 카드나 줄). 근거 뉴스가 없으면 이어진 빌더 항목, 둘 다 없으면 null */
+export function nameLink(item: Pick<ScheduleItem, "first" | "builder">): string | null {
+  const to = item.first ?? item.builder;
+  return to ? briefPath(to.date, to.key) : null;
 }
 
 // ---- 이슈 페이지(4.7-5) ----

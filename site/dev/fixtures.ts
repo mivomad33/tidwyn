@@ -4,12 +4,14 @@
 //   [--schedules 0]   (5단계: 일정 수. 0이면 빈 일정 색인만 만든다)
 //   [--indicators 0] [--indicators-all]   (6단계: 지표 값의 햇수. 0이면 지표 파일을 만들지 않는다. --indicators-all은 12개 모두 공개·값 있음(크기 측정용))
 //   [--videos] [--videos-full] [--videos-archive]   (7단계: 끝 날짜까지 30일의 추천 영상. --videos-full은 모든 날짜에 16개·추천 이유 150자·요약 350자·관련 이슈 2개, 몰린 이슈 하나(크기 측정용). --videos-archive는 30일보다 앞선 날짜에도 새로 받은 영상을 붙인다)
+//   [--builder] [--builder-full]   (9.8단계: 날짜마다 빌더 화면 상태 하나. 0~9번째 최근 날짜가 4건, 1건, 긴 글, 0건 세 상태, 안내가 붙는 날, 다시 알림의 원래 항목이다. --builder-full은 모든 날짜에 칸별 상한 길이의 4건(크기 측정용))
 //   화면 확인·/browser-check에서는 영상이 30일이 지나 숨지 않게 `--end <오늘>`로 만든다
 // <폴더>/site-data/*.json과 <폴더>/search-records.json을 만든다. 같은 인자면 같은 결과다.
 import fs from "node:fs";
 import path from "node:path";
 import { CONFIDENCE_LEVELS, MINORS_BY_MAJOR, SECTIONS, type Major, type SectionName } from "../../src/categories.ts";
-import { ENTITY_FILTERS, ENTITY_FIRST_NEWS, byCount, dayStoryCount, entityChunkOf, issueEntityChips, entityRecordUrl, siteFiles, termRecordUrl, videoGroupsOf, type EntityKind } from "../../src/siteTypes.ts";
+import { ENTITY_FILTERS, ENTITY_FIRST_NEWS, builderSearchRecords, byCount, dayStoryCount, entityChunkOf, issueEntityChips, entityRecordUrl, siteFiles, termRecordUrl, videoGroupsOf, type EntityKind } from "../../src/siteTypes.ts";
+import { addBuilderSchedule, fixtureBuilder, type BuilderFixtureInfo } from "./builderFixtures.ts";
 import { addDays, rng } from "./random.ts";
 import { fixtureIndicators, type IndicatorFixtureInfo } from "./indicatorFixtures.ts";
 import { fixtureSchedules, type FixtureStory, type ScheduleFixtureInfo } from "./scheduleFixtures.ts";
@@ -74,6 +76,10 @@ export interface FixtureOptions {
   videosArchive?: boolean;
   /** 9.5단계: 끝 날짜의 첫 섹션에 정정 표시를 둔다(첫 주요 뉴스 2번, 둘째 주요 뉴스와 첫 짧은 소식 1번). 없으면 다른 파일은 그대로다 */
   corrections?: boolean;
+  /** 9.8단계: 최근 날짜부터 빌더 화면 상태를 하나씩 둔다. 없으면 빌더 항목을 만들지 않고 다른 파일은 그대로다 */
+  builder?: boolean;
+  /** 9.8단계: 모든 날짜에 칸별 상한 길이의 빌더 항목 4건을 둔다(크기 측정용) */
+  builderFull?: boolean;
 }
 
 /** 지어낸 정정 기록: 뉴스 키 끝 → 최신순 기록 */
@@ -112,6 +118,8 @@ export interface Fixture {
     indicators: IndicatorFixtureInfo | null;
     /** 7단계: 영상을 만들었을 때만 */
     videos: VideoFixtureInfo | null;
+    /** 9.8단계: 빌더를 만들었을 때만 */
+    builder: BuilderFixtureInfo | null;
   };
 }
 
@@ -514,6 +522,14 @@ export function generateFixtures(opts: FixtureOptions = {}): Fixture {
     if (v) day.videoGroups = videoGroupsOf(v);
   }
 
+  // 9.8단계: 빌더. 난수는 따로 두고, 빌더가 없으면 다른 파일을 바꾸지 않는다
+  const bld = opts.builder || opts.builderFull ? fixtureBuilder({ datesDesc: [...datesAsc].reverse(), end, issue: { id: activeIssues[0]!.id, name: activeIssues[0]!.name }, full: opts.builderFull }) : null;
+  if (bld) for (const l of lists.values()) for (const day of l.days) {
+    const b = bld.byDate.get(day.date);
+    if (b) day.builder = b;
+  }
+  if (bld?.schedule) addBuilderSchedule(sched.files, bld.schedule);
+
   const chunks = new Map<number, IssueChunk>();
   for (const i of activeIssues) {
     const related = activeIssues.filter((o) => o.id !== i.id && o.major === i.major).slice(0, 2).map((o) => ({ id: o.id, name: o.name }));
@@ -637,7 +653,8 @@ export function generateFixtures(opts: FixtureOptions = {}): Fixture {
   for (const [name, content] of ind?.files ?? []) files.set(`site-data/${name}`, content);
   for (const [date, videos] of vids?.byDate ?? []) files.set(`site-data/${siteFiles.videoDay(date)}`, json({ date, videos }));
   for (const [date, videoSections] of vids?.sectionsByDate ?? []) files.set(`site-data/${siteFiles.videoSections(date)}`, json({ date, videoSections }));
-  files.set("search-records.json", json([...newsRecords, ...issueRecords, ...entityRecords, ...termRecords]));
+  for (const m of bld?.months ?? []) files.set(`site-data/${siteFiles.builderItems(m.month)}`, json(m));
+  files.set("search-records.json", json([...newsRecords, ...issueRecords, ...entityRecords, ...termRecords, ...builderSearchRecords(bld?.months ?? [])]));
   const most = entityDetails.reduce<EntityDetail | null>((m, e) => (!m || e.count > m.count ? e : m), null);
   return {
     files,
@@ -650,6 +667,7 @@ export function generateFixtures(opts: FixtureOptions = {}): Fixture {
       schedules: sched.info,
       indicators: ind?.info ?? null,
       videos: vids?.info ?? null,
+      builder: bld?.info ?? null,
     },
   };
 }
@@ -673,7 +691,7 @@ if (import.meta.main) {
   };
   const out = get("--out");
   if (!out) {
-    console.error("사용법: node site/dev/fixtures.ts --out <폴더> [--end YYYY-MM-DD] [--days N] [--top N] [--short N] [--issues N] [--contiguous] [--entities N] [--terms N] [--hub] [--schedules N] [--indicators N] [--indicators-all] [--videos] [--videos-full] [--videos-archive] [--corrections]");
+    console.error("사용법: node site/dev/fixtures.ts --out <폴더> [--end YYYY-MM-DD] [--days N] [--top N] [--short N] [--issues N] [--contiguous] [--entities N] [--terms N] [--hub] [--schedules N] [--indicators N] [--indicators-all] [--videos] [--videos-full] [--videos-archive] [--corrections] [--builder] [--builder-full]");
     process.exit(1);
   }
   const num = (name: string) => (get(name) ? Number(get(name)) : undefined);
@@ -694,6 +712,8 @@ if (import.meta.main) {
     videosFull: args.includes("--videos-full"),
     videosArchive: args.includes("--videos-archive"),
     corrections: args.includes("--corrections"),
+    builder: args.includes("--builder"),
+    builderFull: args.includes("--builder-full"),
   });
   console.log(`가짜 사이트 데이터: ${out} (날짜 ${fx.dates.length}개, 파일 ${fx.files.size}개)`);
 }

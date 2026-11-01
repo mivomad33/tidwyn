@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import type { DocReport, SourceReport } from "./builderFetch.ts";
 import type { FeedFailure } from "./feeds.ts";
 import type { IndicatorFetchResult } from "./indicatorFetch.ts";
 import type { VideoBundle } from "./siteTypes.ts";
@@ -11,6 +12,19 @@ import type { Violation } from "./validate.ts";
 
 export const RUNS_DIR = "runs";
 export const WORK_DIR = "work";
+
+/** 작업 폴더에서 이름 목록의 파일을 지운다. 지운 수 */
+export function removeWorkFiles(dataDir: string, names: readonly string[]): number {
+  let n = 0;
+  for (const name of names) {
+    const f = path.join(dataDir, WORK_DIR, name);
+    if (fs.existsSync(f)) {
+      fs.rmSync(f, { force: true });
+      n++;
+    }
+  }
+  return n;
+}
 
 export type DateResult =
   | { status: "saved"; markdownPath: string | null; markdownError?: string; images?: number }
@@ -88,6 +102,38 @@ export type JudgeResult =
 export interface IndicatorJudgeState {
   files: { n: number; issues: number[] }[];
   results: Record<string, JudgeResult>;
+}
+
+/** 빌더 받기(9.8단계 4.1). 소스 글과 재료는 넣지 않는다. 실패 이유와 경고는 받기 명령이 정한 문구다 */
+export interface BuilderFetchState {
+  status: "noBrief" | "alreadyDone" | "checked" | "partial" | "failed" | "crashed";
+  target: string | null;
+  sources?: SourceReport[];
+  docs?: DocReport[];
+  warnings?: string[];
+  candidates?: number;
+  cut?: number;
+  reminders?: number;
+  droppedByHost?: number;
+  droppedByKey?: number;
+  droppedByScan?: number;
+  reason?: string;
+}
+
+/** 빌더 쓰기·적용(9.8단계 4.3). 글은 넣지 않고 수만 남긴다 */
+export interface BuilderApplyState {
+  status: "applied" | "alreadyDone" | "failed" | "gaveUp";
+  target: string | null;
+  attempts: number;
+  reason?: string;
+  violations?: Violation[];
+  items?: number;
+  reminders?: number;
+  newSchedules?: number;
+  linked?: number;
+  postponed?: number;
+  moved?: number;
+  newsKept?: number[];
 }
 
 /** 영상 기록 새로 받기(9.6단계 4.2-4). 수와 정해진 이유만 쓴다 */
@@ -252,6 +298,10 @@ export interface RunState {
   videoNotes?: VideoNotesState;
   videoSections?: VideoSectionsState;
   videoPick?: VideoPickState;
+  /** 9.8단계: start가 예정한 빌더 대상 날짜, 받기, 적용. 앞 단계 실행 기록에는 없다 */
+  builderPlanned?: { date: string | null; done: boolean };
+  builderFetch?: BuilderFetchState;
+  builderApply?: BuilderApplyState;
   /** 지난 날짜 이미지 채우기(3단계). 1·1.5·2단계 실행 기록에는 없다 */
   images?: ImagesResult;
   /** 사이트 빌드·배포·push(3단계). start가 null로 두고 각 명령이 채운다. 앞 단계 실행 기록에는 없다 */

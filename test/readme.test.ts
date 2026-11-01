@@ -42,6 +42,20 @@ describe("README", () => {
     assert.ok(ko.links.includes("README.en.md") && en.links.includes("README.md"));
   });
 
+  test("9.8단계 4.7-3 두 파일의 기능 설명과 라이선스 절, LICENSE가 빌더를 같은 뜻으로 다룬다", () => {
+    const koText = read("README.md");
+    const enText = read("README.en.md");
+    assert.match(koText, /^- \*\*빌더:\*\*.*'빌더' 탭/m);
+    assert.match(enText, /^- \*\*Builder:\*\*.*"Builder" tab/m);
+    assert.match(koText, /숫자 행은 공급사 문서에서 옮긴 것이며 권리는 각 공급사에 있습니다\. Gemini 문서의 행은 CC BY 4\.0을 따릅니다\. 빌더 항목의 출처 표기는 \[사이트 소개\]/);
+    assert.match(enText, /number rows in the public backup are copied from vendor documents, and their rights belong to each vendor\. Rows from the Gemini documentation follow CC BY 4\.0\. Source attribution for builder items is on the \[about page\]/);
+    const license = read("LICENSE").replace(/\s+/g, " ");
+    assert.ok(license.includes("copied from vendor documents, and their rights belong to each vendor. Rows from the Gemini documentation follow CC BY 4.0."));
+    assert.ok(license.includes("Source attribution for builder items is on the about page"));
+    const bulletLine = (text: string, label: string) => text.split("\n").findIndex((l) => l.startsWith(label));
+    assert.equal(bulletLine(koText, "- **빌더:**"), bulletLine(enText, "- **Builder:**"), "두 파일의 줄 위치가 같다");
+  });
+
   test("저장소 안 링크와 이미지가 실제 파일을 가리킨다", () => {
     for (const o of [ko, en]) {
       for (const l of [...o.links, ...o.images]) {

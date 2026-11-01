@@ -1,4 +1,5 @@
 import type { DatabaseSync } from "node:sqlite";
+import { firstItemDate } from "./builderStore.ts";
 import type { Major } from "./categories.ts";
 import { resolveIssue, storiesJoined, type StoryRef } from "./issues.ts";
 import { addDays } from "./kst.ts";
@@ -229,12 +230,14 @@ export function schedulesOfStory(db: DatabaseSync, storyId: number): { id: numbe
   }));
 }
 
-/** 알려진 날: 처음 근거 뉴스의 날짜. 근거가 없으면 null */
+/** 알려진 날: 처음 근거 뉴스의 날짜와 처음 이어진 빌더 항목의 날짜 중 이른 쪽. 둘 다 없으면 null */
 export function knownOn(db: DatabaseSync, scheduleId: number): string | null {
   const r = db
     .prepare("SELECT min(se.target_date) AS d FROM story_schedules ss JOIN stories st ON st.id = ss.story_id JOIN sections se ON se.id = st.section_id WHERE ss.schedule_id = ? AND ss.role = 'basis'")
     .get(scheduleId) as { d: string | null };
-  return r.d;
+  const item = firstItemDate(db, scheduleId);
+  if (r.d === null || item === null) return r.d ?? item;
+  return r.d < item ? r.d : item;
 }
 
 /** 관련 이슈: 근거 뉴스와 결과 뉴스의 주 이슈(흡수된 이슈는 남는 이슈로). 식별자 순 */
@@ -278,11 +281,11 @@ export type ScheduleStatus = "result" | "postponed" | "cancelled" | "pending" | 
 
 /**
  * 결과 상태를 계산한다. 결과 못 찾음은 결과가 없고 기다리는 기간의 끝이 기준일(DB의 가장 최근 저장 날짜)보다 앞인 것이다.
- * 기준일이 없으면(저장된 날짜가 없음) 결과 기다림이다.
+ * 기준일이 없으면(저장된 날짜가 없음) 결과 기다림이다. 빌더 일정은 뉴스 결과가 없는 것이 정상이라 결과 못 찾음이 아니다(B13).
  */
-export function scheduleStatus(s: { due: string; outcome: ScheduleOutcome | null }, refDate: string | null): ScheduleStatus {
+export function scheduleStatus(s: { due: string; outcome: ScheduleOutcome | null }, refDate: string | null, builderOnly: boolean): ScheduleStatus {
   if (s.outcome !== null) return s.outcome;
-  if (refDate !== null && waitEnd(s.due) < refDate) return "missing";
+  if (!builderOnly && refDate !== null && waitEnd(s.due) < refDate) return "missing";
   return "pending";
 }
 

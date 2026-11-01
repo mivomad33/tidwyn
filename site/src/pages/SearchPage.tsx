@@ -1,15 +1,15 @@
 // 검색(4.3-3, P6, 4단계 4.6-4). Pagefind가 고른 묶음 레코드(날짜·이슈·대상·용어 묶음)에서 맞는 것을 하나씩 되찾아
-// "인물·기관·국가", "용어", "이슈", "뉴스"로 나눠 보인다.
+// "인물·기관·국가", "용어", "이슈", "뉴스", "빌더"로 나눠 보인다.
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { BackLink, Empty, ErrorState, Layout, Loading, NewsTitle, ReadCheck, useFocusNewRow, useTitle } from "../components/common.tsx";
 import { loadJson } from "../data.ts";
 import { monthDayWeekday } from "../lib/format.ts";
 import { dataUrl } from "../lib/paths.ts";
 import { briefPath, entityPath, issuePath, searchPath, termPath } from "../lib/routes.ts";
-import { matchDayStories, matchEntities, matchIssues, matchTerms, monthOf, parseHit, queryTerms, type SearchHit } from "../lib/search.ts";
+import { matchBuilderItems, matchDayStories, matchEntities, matchIssues, matchTerms, monthOf, parseHit, queryTerms, type SearchHit } from "../lib/search.ts";
 import { excerpt } from "../lib/terms.ts";
 import { categoryVar } from "../lib/theme.ts";
-import type { EntityChunk, EntityDetail, IssueChunk, IssueDetail, ListStory, MonthDetail, MonthList, SiteIssueList, TermGroupFile, TermItem } from "../lib/types.ts";
+import type { BuilderMonth, EntityChunk, EntityDetail, IssueChunk, IssueDetail, ListStory, MonthDetail, MonthList, SiteBuilderItem, SiteIssueList, TermGroupFile, TermItem } from "../lib/types.ts";
 import { searchRecords, type PagefindResult } from "../pagefind.ts";
 import { Link, navigate } from "../router.tsx";
 
@@ -21,15 +21,21 @@ interface NewsResult {
   story: ListStory;
 }
 
+interface BuilderResult {
+  date: string;
+  item: SiteBuilderItem;
+}
+
 interface Found {
   news: NewsResult[];
+  builder: BuilderResult[];
   issues: IssueDetail[];
   entities: EntityDetail[];
   terms: TermItem[];
 }
 
 function joinFound(a: Found, b: Found): Found {
-  return { news: [...a.news, ...b.news], issues: [...a.issues, ...b.issues], entities: [...a.entities, ...b.entities], terms: [...a.terms, ...b.terms] };
+  return { news: [...a.news, ...b.news], builder: [...a.builder, ...b.builder], issues: [...a.issues, ...b.issues], entities: [...a.entities, ...b.entities], terms: [...a.terms, ...b.terms] };
 }
 
 async function resolveRecords(records: PagefindResult[], terms: string[]): Promise<Found> {
@@ -40,7 +46,8 @@ async function resolveRecords(records: PagefindResult[], terms: string[]): Promi
   const issueHits = hits.filter((h) => h.kind === "issues");
   const entityHits = hits.filter((h) => h.kind === "entities");
   const termHits = hits.filter((h) => h.kind === "terms");
-  const [newsParts, issueParts, entityParts, termParts] = await Promise.all([
+  const builderHits = hits.filter((h) => h.kind === "builder");
+  const [newsParts, issueParts, entityParts, termParts, builderParts] = await Promise.all([
     Promise.all(
       newsHits.map(async (h) => {
         const month = monthOf(h.date);
@@ -57,10 +64,11 @@ async function resolveRecords(records: PagefindResult[], terms: string[]): Promi
       : Promise.resolve([]),
     Promise.all(entityHits.map(async (h) => matchEntities(await loadJson<EntityChunk>(dataUrl.entityChunk(h.chunk)), terms))),
     Promise.all(termHits.map(async (h) => matchTerms(await loadJson<TermGroupFile>(dataUrl.termGroup(h.group)), terms))),
+    Promise.all(builderHits.map(async (h) => matchBuilderItems(await loadJson<BuilderMonth>(dataUrl.builderItems(h.month)), terms))),
   ]);
   for (const part of newsParts) news.push(...part);
   for (const part of issueParts) issues.push(...part);
-  return { news, issues, entities: entityParts.flat(), terms: termParts.flat() };
+  return { news, builder: builderParts.flat(), issues, entities: entityParts.flat(), terms: termParts.flat() };
 }
 
 type State =
@@ -69,7 +77,7 @@ type State =
   | { status: "error" }
   | { status: "ok"; records: PagefindResult[]; done: number; found: Found; more: "idle" | "loading" | "error" };
 
-function sortNews(news: NewsResult[]): NewsResult[] {
+function sortNews<T extends { date: string }>(news: T[]): T[] {
   return [...news].sort((a, b) => (a.date === b.date ? 0 : a.date < b.date ? 1 : -1));
 }
 
@@ -136,7 +144,7 @@ export function SearchPage({ q }: { q: string }) {
           찾기
         </button>
       </form>
-      {state.status === "idle" && q === "" && <p className="flow">뉴스(제목, 요약, 본문), 이슈(이름, 다른 이름, 요약), 인물·기관·국가(이름, 별칭, 한 줄 설명), 용어(이름, 별칭, 설명)를 찾는다.</p>}
+      {state.status === "idle" && q === "" && <p className="flow">뉴스(제목, 요약, 본문), 이슈(이름, 다른 이름, 요약), 인물·기관·국가(이름, 별칭, 한 줄 설명), 용어(이름, 별칭, 설명), 빌더 항목(제목, 내용)을 찾는다.</p>}
       {state.status === "loading" && <Loading label="찾는 중…" />}
       {state.status === "error" && <ErrorState message="검색 색인을 불러오지 못했다. 네트워크를 확인하고 다시 시도해 주세요." onRetry={() => setAttempt((n) => n + 1)} />}
       {state.status === "ok" && <Results state={state} q={q} onMore={loadMore} />}
@@ -147,7 +155,7 @@ export function SearchPage({ q }: { q: string }) {
 function Results({ state, q, onMore }: { state: Extract<State, { status: "ok" }>; q: string; onMore: () => void }) {
   const { found, records, done, more } = state;
   const hasMore = done < records.length;
-  const none = !found.issues.length && !found.news.length && !found.entities.length && !found.terms.length;
+  const none = !found.issues.length && !found.news.length && !found.entities.length && !found.terms.length && !found.builder.length;
   const moreFocus = useFocusNewRow<HTMLDivElement>("li.item", q);
   if (none && !hasMore) return <Empty>"{q}"에 맞는 결과가 없다.</Empty>;
   return (
@@ -221,6 +229,30 @@ function Results({ state, q, onMore }: { state: Extract<State, { status: "ok" }>
                       {n.story.title}
                     </NewsTitle>
                     <ReadCheck date={n.date} newsKey={n.story.key} />
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+      {found.builder.length > 0 && (
+        <section aria-labelledby="r-builder">
+          <h2 id="r-builder" className="h list-h">
+            빌더
+          </h2>
+          <ul className="list">
+            {sortNews(found.builder).map((n) => (
+              <li key={`${n.date}-${n.item.key}`} className="item">
+                <Link to={briefPath(n.date, n.item.key)} className="item-btn">
+                  <span className="cat muted-cat">
+                    {monthDayWeekday(n.date)} · {n.item.field}
+                  </span>
+                  <span className="nrow">
+                    <NewsTitle date={n.date} newsKey={n.item.key} className="title">
+                      {n.item.title}
+                    </NewsTitle>
+                    <ReadCheck date={n.date} newsKey={n.item.key} />
                   </span>
                 </Link>
               </li>

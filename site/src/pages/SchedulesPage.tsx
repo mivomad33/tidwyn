@@ -12,6 +12,7 @@ import { monthLabel } from "../lib/format.ts";
 import { dataUrl } from "../lib/paths.ts";
 import { schedulePath, schedulesPath } from "../lib/routes.ts";
 import {
+  SCHEDULE_META,
   SCHEDULE_TAB_LABEL,
   calendarCells,
   calendarRange,
@@ -99,7 +100,7 @@ export function SchedulesPage({ id, list }: { id: number | null; list: boolean }
           ))}
         </div>
       </div>
-      <p className="meta">뉴스에서 모은 예정 일정 · 날짜는 현지 기준</p>
+      <p className="meta">{SCHEDULE_META}</p>
     </div>
   );
   if (indexRes.status === "error" || target.status === "error") {

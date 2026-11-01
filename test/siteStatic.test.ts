@@ -647,11 +647,11 @@ describe("4.7-5 정정의 파생 반영", () => {
 });
 
 describe("4.10-1 파일 수 회귀 방지", () => {
-  test("365일, 이슈·대상 각 3,000개, 영상 365일치에서 결과물이 15,000개 이하다", { timeout: 300_000 }, async () => {
+  test("365일, 이슈·대상 각 3,000개, 영상·빌더 365일치에서 결과물이 15,000개 이하다", { timeout: 300_000 }, async () => {
     const work = tempDir("tidwyn-count-");
     const dataDir = path.join(work, "data");
     const out = path.join(work, "out");
-    const fx = generateFixtures({ days: 365, contiguous: true, issues: 3000, entities: 3000, videosFull: true });
+    const fx = generateFixtures({ days: 365, contiguous: true, issues: 3000, entities: 3000, videosFull: true, builderFull: true });
     for (const [rel, content] of fx.files) {
       fs.mkdirSync(path.dirname(path.join(dataDir, rel)), { recursive: true });
       fs.writeFileSync(path.join(dataDir, rel), content);

@@ -10,7 +10,7 @@ const TEXT_EXTENSIONS = new Set([".html", ".htm", ".js", ".mjs", ".cjs", ".css",
 /**
  * 실행 기록(`runs/<YYYYMMDD-HHMMSS>.json`), 작업 파일·후보 목록(`work/<날짜>.json`, `.candidates.*`, `.issues.md`, `.links.json`,
  * `.refs.md`, `.refs.json`, `.schedules.md`, `.schedules.json`, `merges.*`, 6단계 지표 판단 `indicators.candidates-<번호>.md`, `indicators.judge-<번호>.json`,
- * 7단계 영상 후보 목록·상세·고르기 파일 `videos.candidates.json`, `videos.candidates.md`, `videos.details.md`, `videos.pick.json`, 8단계 확인 후보·메모 파일 `videos.check.json`, `videos.notes.json`, `videos.notes.tmp.json`)
+ * 빌더 작업 파일과 원문 파일은 `nameKinds`가 잡는다. 7단계 영상 후보 목록·상세·고르기 파일 `videos.candidates.json`, `videos.candidates.md`, `videos.details.md`, `videos.pick.json`, 8단계 확인 후보·메모 파일 `videos.check.json`, `videos.notes.json`, `videos.notes.tmp.json`)
  */
 const RUN_FILE_RES = [
   /^\d{8}-\d{6}\.json$/,
@@ -20,7 +20,7 @@ const RUN_FILE_RES = [
   /^videos\.(?:candidates\.json|candidates\.md|details\.md|pick\.json|check\.json|notes\.json|notes\.tmp\.json|sections\.json|sections\.tmp\.json)$/,
 ];
 /** 데이터 폴더의 작업 폴더 이름. 결과물 안에 이런 폴더가 있으면 데이터 폴더가 섞인 것이다 */
-const DATA_DIRS = new Set(["runs", "work", "snapshots", "backup", "site-input"]);
+const DATA_DIRS = new Set(["runs", "work", "snapshots", "backup", "site-input", "builder-raw"]);
 
 export interface OutputCheck {
   findings: Finding[];
@@ -62,6 +62,11 @@ export function checkOutput(outDir: string, home: string | null, secrets: readon
 
 /** HTML에 들어가면 안 되는 영상 데이터(R7): 영상 파일 이름, 영상 필드, 영상·썸네일 주소 */
 const VIDEO_IN_HTML_RES = [/\b(?:videos|video-sections)(?:-[\w-]+)?\.json\b/, /"(?:thumb|fetchedOn|videoSummary|videoSections)"\s*:/, /youtube\.com\/watch|youtu\.be\/|ytimg\.com/];
+/** 글에 결과물 검사가 거부하는 영상 데이터가 있는지(빌더 항목은 저장 전에 막는다, 9.8단계 4.3-5) */
+export function hasVideoData(text: string): boolean {
+  return VIDEO_IN_HTML_RES.some((re) => re.test(text));
+}
+
 /** 뉴스 출처 목록. 출처가 YouTube일 수 있어 영상 검사에서 뺀다 */
 const SOURCE_LIST_RE = /<div class="src">[\s\S]*?<\/div>/g;
 
