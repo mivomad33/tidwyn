@@ -342,6 +342,7 @@ describe("정적 HTML", () => {
     assert.ok(xml.includes(`<loc>${SITE_URL}/${date}</loc><lastmod>${fixedOn}</lastmod>`));
     const older = b.dates.dates.at(-1)!;
     assert.ok(xml.includes(`<loc>${SITE_URL}/${older}</loc><lastmod>${older}</lastmod>`));
+    assert.deepEqual([...xml.matchAll(/<lastmod>([^<]*)</g)].map((m) => m[1]).filter((d) => !/^\d{4}-\d{2}-\d{2}$/.test(d!)), [], "lastmod는 일까지 있는 날짜다");
   });
 
   test("4.3-3 없는 페이지는 정적 HTML만으로 읽힌다. 비공개 지표와 없는 번호는 파일이 없어 404다", () => {

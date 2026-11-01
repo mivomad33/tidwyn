@@ -544,7 +544,8 @@ function buildPages(input: SiteInput): StaticPage[] {
   list({ path: "/terms", label: "용어 사전", description: "뉴스에 나온 어려운 말을 쉬운 말로 풀어 쓴 용어 사전", lastmod: latest(input.termGroups.flatMap((g) => g.terms.map((t) => t.first?.date))), body: h(TermsBody, { input }) });
   list({ path: "/schedules", label: "일정", description: "뉴스와 공식 문서에서 모은 앞으로의 일정과 지난 일정", lastmod: latest(input.scheduleMonths.flatMap((m) => m.items.map((i) => i.knownOn))), body: h(SchedulesBody, { months: input.scheduleMonths }) });
 
-  const indicatorMod = (c: IndicatorCard) => (showsValue(c) ? c.last!.date : null);
+  // 월간 지표의 날짜는 `YYYY-MM`이라 그달 1일로 둔다. 네이버 사이트맵 제출은 일까지 있는 날짜만 받는다
+  const indicatorMod = (c: IndicatorCard) => (showsValue(c) ? c.last!.date.padEnd(10, "-01") : null);
   list({ path: "/indicators", label: "지표", description: "환율, 금리, 물가, 유가 같은 주요 지표의 최근 값과 출처", lastmod: latest(input.indicators.indicators.map(indicatorMod)), body: h(IndicatorsBody, { indicators: input.indicators }) });
   for (const card of input.indicators.indicators) {
     const pathname = indicatorPath(card.id);
