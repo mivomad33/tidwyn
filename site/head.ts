@@ -10,8 +10,11 @@ export const DEFAULT_DESCRIPTION = "AI가 매일 모아 쉬운 말로 바꿔 쓴
 const IMAGE_ALT = `${SITE_NAME}. ${DEFAULT_DESCRIPTION}`;
 export const DESCRIPTION_MAX = 160;
 
-/** 검색엔진 소유 확인 메타 태그를 더하는 곳(`/register-search`가 이 목록에 값을 넣는다). 모든 페이지의 head에 들어간다 */
-export const OWNER_VERIFICATION_META: readonly { name: string; content: string }[] = [];
+/** 검색엔진 소유 확인 메타 태그를 더하는 곳(`/register-search`가 이 목록에 값을 넣는다). 콘솔이 보는 첫 화면의 head에만 들어간다 */
+export const OWNER_VERIFICATION_META: readonly { name: string; content: string }[] = [
+  { name: "google-site-verification", content: "mhxcHCnGlus8pgaYc_t7hBGoj3cvPOkED1D6dSxu30M" },
+  { name: "naver-site-verification", content: "a965901c5524764d04b2bc758a6714fff417c561" },
+];
 
 export interface HeadInfo {
   title: string;
@@ -79,7 +82,7 @@ export function renderHead(info: HeadInfo): string {
     meta("property", "og:image:alt", IMAGE_ALT),
     meta("name", "twitter:card", "summary_large_image"),
     meta("name", "twitter:image:alt", IMAGE_ALT),
-    ...OWNER_VERIFICATION_META.map((m) => meta("name", m.name, m.content)),
+    ...(info.canonical === "/" ? OWNER_VERIFICATION_META.map((m) => meta("name", m.name, m.content)) : []),
     ...(info.jsonLd ?? []).map(jsonLdScript),
   ];
   return lines.filter(Boolean).join("\n    ");

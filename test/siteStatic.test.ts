@@ -7,7 +7,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { buildSite, listFilesRecursive } from "../site/build.ts";
 import { generateFixtures, writeFixtures, type Fixture } from "../site/dev/fixtures.ts";
 import { buildRss, buildSitemaps, robotsTxt, xmlEscape } from "../site/feeds.ts";
-import { SHARE_IMAGE, esc, metaDescription } from "../site/head.ts";
+import { OWNER_VERIFICATION_META, SHARE_IMAGE, esc, metaDescription, renderHead } from "../site/head.ts";
 import { resolveStatic, vercelConfig } from "../site/hosting.ts";
 import { AboutView, ReadMarksText } from "../site/src/components/aboutView.ts";
 import { briefTitle, latestTitle } from "../site/src/lib/format.ts";
@@ -586,6 +586,14 @@ describe("4.8-1 결과물 검사", () => {
     const restore = edit(out, "robots.txt", (s) => `${s}#DaumWebMasterTool:abcdef:gaga\n`);
     assert.deepEqual(kinds(out), [], "다음 소유 확인 주석 줄은 걸리지 않는다");
     restore();
+  });
+
+  test("소유 확인 메타 태그는 첫 화면에만 들어간다", () => {
+    const head = (canonical: string) => renderHead({ title: "t", description: "d", canonical });
+    for (const m of OWNER_VERIFICATION_META) {
+      assert.ok(head("/").includes(`<meta name="${m.name}" content="${m.content}" />`));
+      assert.ok(!head("/dates").includes(m.name));
+    }
   });
 
   test("4.6-3 공개 메일이 든 결과물은 통과하고 다른 주소는 실패하며, HTML도 기존 검사를 받는다", async () => {

@@ -12,7 +12,7 @@ export const SITEMAP_MAX_URLS = 50_000;
 export const SITEMAP_MAX_BYTES = 50 * 1024 * 1024;
 
 /** 다음 소유 확인 주석 줄(`#DaumWebMasterTool:...`)을 더하는 곳(`/register-search`) */
-export const ROBOTS_EXTRA_LINES: readonly string[] = [];
+export const ROBOTS_EXTRA_LINES: readonly string[] = ["#DaumWebMasterTool:6858bf7d901b5b67c5157115cacf41bb3e86f6c00eaf8006afd732633d55a906:y9pY72z5HH+w9gPPOcRKdg=="];
 
 export function robotsTxt(extra: readonly string[] = ROBOTS_EXTRA_LINES): string {
   return ["User-agent: *", "Allow: /", `Disallow: ${ROBOTS_DISALLOW}`, "", `Sitemap: ${absoluteUrl(`/${SITEMAP_FILE}`)}`, ...extra, ""].join("\n");
