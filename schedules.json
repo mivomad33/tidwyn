@@ -1,5 +1,5 @@
 {
-  "formatVersion": 6,
+  "formatVersion": 8,
   "schedules": [
     {
       "id": 1,
@@ -281,7 +281,7 @@
       "name": "이재명 대통령 예산안 시정연설",
       "due": "2026-11-02",
       "major": "정치",
-      "outcome": null,
+      "outcome": "result",
       "postponedTo": null,
       "mergedInto": null,
       "deleted": false,
@@ -314,6 +314,39 @@
       "name": "독일 Z세대 시위 2차 집회",
       "due": "2026-11-14",
       "major": "국제",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 30,
+      "name": "메타 새 사업 약관 시행",
+      "due": "2026-11-20",
+      "major": "IT·AI",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 31,
+      "name": "OpenAI GPT-5 mini·nano·pro 지원 종료",
+      "due": "2026-12-11",
+      "major": "IT·AI",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 32,
+      "name": "OpenAI GPT-4.1·GPT-4o 지원 종료",
+      "due": "2027-01-14",
+      "major": "IT·AI",
       "outcome": null,
       "postponedTo": null,
       "mergedInto": null,
@@ -564,6 +597,31 @@
     },
     {
       "story": "2026-11-01/한국-s3",
+      "schedule": 25,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-02/IT·AI-s1",
+      "schedule": 30,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-02/세계-2",
+      "schedule": 6,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-02/한국-1",
+      "schedule": 26,
+      "role": "result"
+    },
+    {
+      "story": "2026-11-02/한국-1",
+      "schedule": 27,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-02/한국-s2",
       "schedule": 25,
       "role": "basis"
     }

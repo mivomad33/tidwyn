@@ -1,5 +1,5 @@
 {
-  "formatVersion": 6,
+  "formatVersion": 8,
   "month": "2026-11",
   "briefs": [
     {
@@ -853,12 +853,723 @@
       },
       "collectedAt": "2026-11-02T06:19:05+09:00",
       "late": false
+    },
+    {
+      "brief": {
+        "targetDate": "2026-11-02",
+        "headline": "이재명 대통령이 821조 원 예산안을 국회에 설명했고, 미국과 이란의 협상 기대에 국제유가가 7% 넘게 떨어졌다.",
+        "keywords": [
+          "2027년 예산안",
+          "미래대응기금",
+          "미국 이란 협상",
+          "바이낸스 해킹",
+          "미국 중간선거"
+        ],
+        "sections": [
+          {
+            "name": "한국",
+            "flow": "내년 예산안을 둘러싼 여야 대립이 본격화했고, 대통령 전용기 탑승자 정보 노출과 현대차 생산 차질이 함께 불거졌다.",
+            "topStories": [
+              {
+                "rank": 1,
+                "title": "이재명 대통령이 시정연설에서 821조 원 예산안을 설명했고 여야는 미래대응기금을 두고 맞섰다",
+                "summary": "대통령이 역대 최대 규모인 2027년도 예산안의 국회 통과를 요청했고, 국민의힘은 규탄 팻말과 침묵으로 맞섰다.",
+                "whyItMatters": "나라 살림의 규모와 방향을 정하는 심사가 시작됐고, 162조 원 규모 새 기금이 가장 큰 쟁점으로 떠올랐다.",
+                "background": "정부는 지난 9월 총지출 820조 9천억 원의 2027년 예산안을 의결했다. 올해 본예산보다 93조 원, 12.8% 늘어난 규모다. 시정연설은 대통령이나 총리가 국회에서 예산안을 설명하고 협조를 구하는 절차다. 미래대응기금은 세수 증가분을 모아 투자와 재정 안정에 쓰겠다며 새로 만드는 기금이다.",
+                "keyFacts": [
+                  "예산안 총지출은 820조 9천억 원으로 역대 최대다.",
+                  "대통령은 연설에서 성장을 36번 언급했고 반도체 등 3대 미래 분야 투자를 강조했다.",
+                  "국방 예산은 8.2% 늘려 전작권 전환에 필요한 전력과 핵추진잠수함 확보에 쓰겠다고 밝혔다.",
+                  "미래대응기금 162조 원 가운데 45조 4천억 원은 투자에, 12조 5천억 원은 신규 국채 축소에 쓴다는 계획이다.",
+                  "국민의힘은 기금이 국회 통제를 받지 않는다고 비판했고, 민주당은 법정 시한 안에 처리하겠다고 했다."
+                ],
+                "outlook": "국회 예산 심사에서 미래대응기금의 규모와 국회 통제 범위가 어떻게 조정되는지 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "경제",
+                  "minor": "거시·정책"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261102086800001",
+                    "publishedAt": "2026-11-02",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/11/02/PYH2026110209930001300_P2.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261102084000001",
+                    "publishedAt": "2026-11-02",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/11/02/PYH2026110209370001300_P2.jpg"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261102080400001",
+                    "publishedAt": "2026-11-02",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/11/02/PYH2026110206620001300_P2.jpg"
+                  },
+                  {
+                    "name": "한국일보",
+                    "url": "https://www.hankookilbo.com/news/article/A2026110215480003979",
+                    "publishedAt": "2026-11-02"
+                  },
+                  {
+                    "name": "서울경제",
+                    "url": "https://www.sedaily.com/article/20109279",
+                    "publishedAt": "2026-11-02",
+                    "publishedAtEstimated": true
+                  }
+                ]
+              },
+              {
+                "rank": 2,
+                "title": "대통령 부부 등 전용기 탑승자 168명의 여권 정보가 인터넷에 노출됐다",
+                "summary": "지난 6월 유럽 순방 때 공군 1호기 탑승자로 추정되는 명단이 보안 관련 유료 사이트에 다섯 달가량 올라 있었다.",
+                "whyItMatters": "대통령과 국무위원의 신원 정보가 오랫동안 방치된 것으로 전해져 정부의 정보 관리 체계가 도마에 올랐다.",
+                "background": "여권번호와 생년월일은 다른 정보와 합치면 신원 도용에 쓰일 수 있다. 보도에 따르면 이 파일은 순방 출발 전인 6월 2일부터 게시돼 있었고, 유료 회원은 내려받을 수 있었다. 해당 사이트가 파일의 악성코드 여부를 검사해 주는 곳이어서 검사 과정에서 올라갔다는 추정도 나온다.",
+                "keyFacts": [
+                  "노출 인원은 대통령 부부와 국무위원, 청와대 직원 등 168명으로 보도됐다.",
+                  "노출 항목은 한글·영문 이름, 소속과 직책, 생년월일, 여권번호, 발급일과 만료일이다.",
+                  "파일 이름은 대한민국과 벨기에 사이의 탑승객 명단으로 되어 있었다.",
+                  "지금은 열람이 차단됐고, 정부는 사안을 엄중히 인식한다고 밝혔다.",
+                  "외교부는 경위를 다각적으로 조사한다는 입장이다."
+                ],
+                "outlook": "파일이 어떤 경로로 올라갔는지와 책임 소재에 대한 조사 결과를 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "정치",
+                  "minor": "행정부"
+                },
+                "sources": [
+                  {
+                    "name": "한국경제",
+                    "url": "https://www.hankyung.com/article/2026110213747",
+                    "publishedAt": "2026-11-02",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261102174452001",
+                    "publishedAt": "2026-11-03",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/06/09/PYH2026060919870001300_P2.jpg"
+                  },
+                  {
+                    "name": "아시아투데이",
+                    "url": "https://www.asiatoday.co.kr/kn/view.php?key=20261103010000804",
+                    "publishedAt": "2026-11-03"
+                  }
+                ]
+              },
+              {
+                "rank": 3,
+                "title": "코스피가 기관 매수에 2.24% 올라 5,859로 마쳤고 환율은 약 2주 만에 최고로 올랐다",
+                "summary": "미국 기술주 약세에도 코스피는 장중 상승으로 돌아서 2%대 반등했지만, 원/달러 환율은 1,340원대로 올랐다.",
+                "whyItMatters": "주가는 반등했어도 환율과 국채 금리가 함께 올라 시장의 불안이 다 풀린 것은 아니라는 신호다.",
+                "background": "지난주 미국 증시에서는 AI 관련 기술주를 중심으로 매도세가 강했다. 코스피는 삼성전자와 SK하이닉스의 비중이 커서 반도체주 움직임에 크게 흔들린다. 환율이 오르면 원화 가치가 떨어져 수입 물가에 부담이 된다.",
+                "keyFacts": [
+                  "코스피는 128.34포인트(2.24%) 오른 5,859.08로 마감했다.",
+                  "코스닥은 9.98포인트(1.38%) 오른 734.36으로 마감했다.",
+                  "원/달러 환율은 9.5원 오른 1,343.8원(15시 30분 기준)이었다.",
+                  "국고채 금리는 일제히 올라 3년물이 장중 연 3.743%까지 갔다."
+                ],
+                "outlook": "미국 기술주 흐름과 유가 하락이 환율과 금리를 얼마나 진정시키는지 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "경제",
+                  "minor": "금융·증시"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261102130700008",
+                    "publishedAt": "2026-11-02",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/11/02/PYH2026110218420001300_P2.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261102136800002",
+                    "publishedAt": "2026-11-02",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/11/02/PYH2026110218610001300_P2.jpg"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261102130100002",
+                    "publishedAt": "2026-11-02",
+                    "imageUrl": "https://img.yna.co.kr/etc/inner/KR/2026/11/02/AKR20261102130100002_01_i_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 4,
+                "title": "선관위 특검이 공명선거 활동비 의혹으로 중앙선관위 위원장실 등을 압수수색했다",
+                "summary": "이태한 특별검사팀이 국고손실 등의 혐의로 중앙선거관리위원회 위원장실 등을 압수수색했다.",
+                "whyItMatters": "지난달 한 차례 기각됐던 활동비 수사가 강제수사로 이어져 선거 관리 기구의 책임 문제가 커지고 있다.",
+                "background": "특검은 6·3 지방선거의 투표용지 부족 사태 등을 수사 중이다. 지난달 보도에 따르면 2014년부터 위원장에게 월 290만 원, 비상임위원에게 월 215만 원이 활동비로 지급됐다. 법원은 지난달 14일 관련 영장을 기각했고, 특검은 재청구 방침을 밝혔다.",
+                "keyFacts": [
+                  "대상은 중앙선관위 위원장실 등이다.",
+                  "혐의는 국고손실 등이다.",
+                  "특검은 지난달 21일 다른 혐의로 노태악 전 위원장 자택과 중앙선관위를 압수수색했다."
+                ],
+                "outlook": "확보한 자료를 바탕으로 전·현직 위원을 불러 조사하는지 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "정치",
+                  "minor": "사법·검찰"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261102063151004",
+                    "publishedAt": "2026-11-02",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/10/21/PYH2026102111620001300_P2.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261102063100004",
+                    "publishedAt": "2026-11-02",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/10/21/PYH2026102111620001300_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 5,
+                "title": "현대차 울산 제네시스 라인이 노사 갈등으로 멈췄고 10월 판매는 6.3% 줄었다",
+                "summary": "신차 테스트 차량 투입을 둘러싼 갈등으로 생산이 중단됐고, 월간 판매 감소도 이어졌다.",
+                "whyItMatters": "판매 부진 속에 고급차 생산까지 끊기면 실적 부담이 더 커질 수 있다.",
+                "background": "현대차는 파업에 따른 생산 차질과 판매 부진으로 3분기 매출이 6년여 만에 뒷걸음질했다. 8월에는 노조가 10년 만에 전면 파업에 들어갔다. 내수에서는 기아가 현대차를 앞섰다.",
+                "keyFacts": [
+                  "제네시스 라인은 2일 가동이 중단됐고 중단이 계속될 것으로 보도됐다.",
+                  "10월 글로벌 판매량은 1년 전보다 6.3% 줄었다.",
+                  "월별 판매 감소는 13개월째 이어졌다.",
+                  "완성차 5개사의 10월 판매는 합쳐서 1.6% 늘었다."
+                ],
+                "outlook": "노조가 라인 재개 여부를 어떻게 정하고 회사와 신차 투입에 합의하는지 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "경제",
+                  "minor": "산업·기업"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261102116052057",
+                    "publishedAt": "2026-11-02",
+                    "imageUrl": "https://img.yna.co.kr/photo/cms/2020/10/05/16/PCM20201005000216990_P2.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261102135300003",
+                    "publishedAt": "2026-11-02",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/10/21/PYH2026102101650001300_P2.jpg"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261102158000003",
+                    "publishedAt": "2026-11-02",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/08/27/PYH2026082703380001300_P2.jpg"
+                  }
+                ]
+              }
+            ],
+            "shortNews": [
+              {
+                "summary": "북한이 한미 합동연습 아이언메이스를 비난하며 핵 억제력을 강화하겠다고 밝혔다.",
+                "category": {
+                  "major": "정치",
+                  "minor": "북한"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261102006600504",
+                    "publishedAt": "2026-11-02",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/10/27/PYH2026102723780001300_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "국빈 방한한 에르도안 튀르키예 대통령과 이재명 대통령의 정상회담이 3일 열린다.",
+                "category": {
+                  "major": "정치",
+                  "minor": "행정부"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261102160600001",
+                    "publishedAt": "2026-11-03",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2025/11/25/PYH2025112500460001300_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "대법원이 삼성전자 상대 불공정 행위로 브로드컴에 부과된 약 186억 원 과징금을 확정했다.",
+                "category": {
+                  "major": "사회",
+                  "minor": "법·재판"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261102166400004",
+                    "publishedAt": "2026-11-02",
+                    "imageUrl": "https://img.yna.co.kr/etc/inner/KR/2026/11/02/AKR20261102166400004_01_i_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "하이브가 지난 9월 전·현직 직원의 여권·카드번호 등이 유출된 사실을 밝히고 사과했다.",
+                "category": {
+                  "major": "사회",
+                  "minor": "사건·사고"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261102138300005",
+                    "publishedAt": "2026-11-02",
+                    "imageUrl": "https://img.yna.co.kr/photo/cms/2026/05/13/21/PCM20260513000021990_P2.jpg"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "세계",
+            "flow": "이란이 협상 여지를 내비치며 유가가 급락했고, 미국은 중간선거 전날을 맞았으며 유럽과 우크라이나에서는 정치·전쟁 불안이 이어졌다.",
+            "topStories": [
+              {
+                "rank": 1,
+                "title": "이란이 협상 여지를 내비치자 국제유가가 7% 넘게 떨어져 WTI가 96달러대로 내려왔다",
+                "summary": "이란 대통령이 최고지도자가 대화를 통한 해결 권한을 정부에 줬다고 밝히면서 전쟁 완화 기대가 커졌다.",
+                "whyItMatters": "유가는 물가와 금리, 항공·운송 비용에 바로 영향을 주고, 호르무즈 해협 재개방 여부는 세계 에너지 공급을 좌우한다.",
+                "background": "미국과 이란은 카타르 중재로 간접 협상을 이어 왔다. 미국은 이란에 해상 봉쇄를 하고 있고, 이란은 호르무즈 해협 통행을 막아 왔다. 그동안 WTI는 배럴당 100달러를 넘는 고유가가 이어졌다. 다만 협상이 실패하면 다시 100달러를 넘을 수 있다는 분석도 있다.",
+                "keyFacts": [
+                  "2일 브렌트유는 7.6% 내린 104.77달러, WTI는 7.4% 내린 96.46달러로 마감했다.",
+                  "페제시키안 이란 대통령은 최고지도자가 협상 권한을 더 줬다고 말했다.",
+                  "이란은 미국이 해상 봉쇄 해제 등 요구를 받아들이면 이틀 안에 호르무즈를 열겠다고 밝혔다.",
+                  "이란 외무장관은 아직 합의가 나오지 않았다고 말했다.",
+                  "이란 해군은 호르무즈 동부에서 경로를 벗어난 유조선이 기뢰에 부딪혀 불이 났다고 밝혔다."
+                ],
+                "outlook": "카타르 대표단의 테헤란 방문과 잠정 합의안이 실제 협상으로 이어지는지 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "국제",
+                  "minor": "중동"
+                },
+                "sources": [
+                  {
+                    "name": "Quartz",
+                    "url": "https://qz.com/oil-prices-sink-us-iran-talks-war-fears-110226",
+                    "publishedAt": "2026-11-02",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261103007851072",
+                    "publishedAt": "2026-11-03",
+                    "imageUrl": "https://img.yna.co.kr/photo/etc/epa/2026/11/01/PEP20261101210901009_P2.jpg"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261102165800079",
+                    "publishedAt": "2026-11-02",
+                    "imageUrl": "https://img.yna.co.kr/etc/inner/KR/2026/11/02/AKR20261102165800079_01_i_P2.jpg"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261102175400079",
+                    "publishedAt": "2026-11-02",
+                    "imageUrl": "https://img.yna.co.kr/etc/inner/KR/2026/11/02/AKR20261102175400079_01_i_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 2,
+                "title": "미국 중간선거가 3일로 다가왔고 선거 비용은 약 120억 달러로 역대 최고가 예상된다",
+                "summary": "트럼프 대통령이 막판 유세를 벌이는 가운데 여론조사는 민주당 우세를 가리키지만 정확성에는 의문이 남아 있다.",
+                "whyItMatters": "상·하원 다수당이 바뀌면 트럼프 행정부의 입법과 대외 정책에 제동이 걸릴 수 있어 세계 경제와 한미 관계에도 영향을 준다.",
+                "background": "중간선거는 대통령 임기 중간에 치르는 의회 선거다. 공화당은 상·하원 다수를 지키려 하고 민주당은 탈환을 노린다. BBC는 막판 결정 유권자와 표본 문제로 여론조사 결과를 장담할 수 없다고 짚었다.",
+                "keyFacts": [
+                  "이번 선거 비용은 약 120억 달러로 추정돼 역대 가장 비쌀 전망이다.",
+                  "여론조사는 민주당의 강세를 예측해 왔다.",
+                  "트럼프 대통령은 아이오와와 캔자스 유세에 나섰다."
+                ],
+                "outlook": "상원 접전지 개표 결과와 하원 다수당 향방을 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "국제",
+                  "minor": "미국"
+                },
+                "sources": [
+                  {
+                    "name": "BBC",
+                    "url": "https://www.bbc.co.uk/news/articles/cqkgk64z7p58o",
+                    "publishedAt": "2026-11-03",
+                    "imageUrl": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/7007/live/c8ea35c0-d6f5-11f1-b441-2b33b063138f.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "BBC",
+                    "url": "https://www.bbc.co.uk/news/articles/cmg47p3edv4do",
+                    "publishedAt": "2026-11-02",
+                    "imageUrl": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/731d/live/ec723e90-d694-11f1-a701-fddedf244c16.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 3,
+                "title": "러시아 폭격으로 우크라이나 남부 구호 시설에서 26명이 숨졌다고 키이우가 밝혔다",
+                "summary": "헤르손 지역의 엿새 휴전이 끝난 직후 남부 마을에 대형 항공폭탄이 떨어졌다.",
+                "whyItMatters": "전쟁 중 가장 길었던 휴전이 끝나자마자 민간 시설이 공격받아 전쟁이 다시 격화될 수 있음을 보여 준다.",
+                "background": "우크라이나 헤르손 지역에서는 국지 휴전이 엿새 동안 유지됐다. BBC는 이 휴전이 전쟁의 큰 흐름을 바꾸지는 못했다고 전했다. 휴전이 끝나며 전투가 재개됐다.",
+                "keyFacts": [
+                  "우크라이나 쪽은 사망자가 26명이라고 밝혔다.",
+                  "관계자들은 3,000kg급 항공폭탄이 적어도 9발 떨어졌다고 말했다.",
+                  "젤렌스키 대통령은 이번 공격을 끔찍하다고 비난했다."
+                ],
+                "outlook": "휴전 재개 논의가 이어지는지, 러시아의 공세가 넓어지는지 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "국제",
+                  "minor": "유럽·러시아"
+                },
+                "sources": [
+                  {
+                    "name": "BBC",
+                    "url": "https://www.bbc.co.uk/news/articles/cjy56dndlyz0o",
+                    "publishedAt": "2026-11-03",
+                    "imageUrl": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/ee1e/live/8480acc0-d6eb-11f1-a741-236ee91c2e25.png",
+                    "primary": true
+                  },
+                  {
+                    "name": "BBC",
+                    "url": "https://www.bbc.co.uk/news/articles/ckg5jlyp66jzo",
+                    "publishedAt": "2026-11-03",
+                    "imageUrl": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/e5be/live/174cc760-d6d2-11f1-a701-fddedf244c16.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 4,
+                "title": "벨기에 드 웨버 총리가 예산 협상 결렬로 사퇴서를 냈고 국왕은 결정을 미뤘다",
+                "summary": "다섯 당 연립정부가 2027년 예산에 합의하지 못하자 총리가 필리프 국왕에게 사퇴를 제안했다.",
+                "whyItMatters": "유럽연합과 나토 본부가 있는 나라의 정부가 재정 문제로 흔들리면 유럽의 재정 불안이 다시 부각될 수 있다.",
+                "background": "벨기에는 큰 재정 적자와 국가부채를 안고 있어 2029년까지 100억 유로 절감을 추진해 왔다. 프랑스어권 자유당 계열 MR은 추가 증세에 강하게 반대한다. 지난해에도 비슷한 교착이 있었으나 11월에 합의했다.",
+                "keyFacts": [
+                  "드 웨버 총리는 2일 국왕에게 사퇴서를 냈다.",
+                  "국왕은 연립 지도자들과 협의하며 결정을 미뤘다.",
+                  "사퇴가 수락되면 정부는 제한된 권한의 임시 정부로 남는다."
+                ],
+                "outlook": "금요일로 보도된 국왕과의 재회동에서 연립이 다시 합의하는지 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "국제",
+                  "minor": "유럽·러시아"
+                },
+                "sources": [
+                  {
+                    "name": "France 24",
+                    "url": "https://www.france24.com/en/live-news/20261102-belgian-pm-offers-to-quit-over-budget-impasse",
+                    "publishedAt": "2026-11-02",
+                    "primary": true
+                  },
+                  {
+                    "name": "ABC News",
+                    "url": "https://abcnews.com/International/wireStory/belgian-prime-minister-quits-after-budget-talks-fail-137764313",
+                    "publishedAt": "2026-11-02",
+                    "publishedAtEstimated": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261103001300098",
+                    "publishedAt": "2026-11-03",
+                    "imageUrl": "https://img.yna.co.kr/etc/inner/KR/2026/11/03/AKR20261103001300098_01_i_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 5,
+                "title": "미국 플로리다 주택가 도로에 제트기가 추락해 탑승자 9명이 모두 숨졌다",
+                "summary": "개인용 제트기가 일요일 플로리다에서 추락했고, 미 당국은 탑승자 전원이 사망했다고 밝혔다.",
+                "whyItMatters": "주택가 도로에 항공기가 떨어진 사고여서 소형 제트기의 안전 관리가 다시 주목받고 있다.",
+                "background": "개인용 제트기 사고는 조종사 숙련도와 기체 상태, 날씨 등을 함께 조사한다. 관제 교신 음성에는 승무원이 추락한다고 외치는 대목이 담겼다.",
+                "keyFacts": [
+                  "탑승자 9명 전원이 숨졌다.",
+                  "일부 보도는 부조종사가 20세였다고 전했다.",
+                  "BBC는 교신 음성과 비행 자료로 마지막 순간을 분석했다."
+                ],
+                "outlook": "미국 조사 당국이 내놓을 추락 원인 조사 결과를 본다.",
+                "confidence": "보도에 따르면",
+                "category": {
+                  "major": "사회",
+                  "minor": "사건·사고"
+                },
+                "sources": [
+                  {
+                    "name": "BBC",
+                    "url": "https://www.bbc.co.uk/news/articles/cm369yy7lw73o",
+                    "publishedAt": "2026-11-03",
+                    "imageUrl": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/6fc4/live/ff862190-d6f8-11f1-b983-c357054e4d1e.jpg",
+                    "primary": true
+                  }
+                ]
+              }
+            ],
+            "shortNews": [
+              {
+                "summary": "스페인 고속열차 추돌 사고 사망자 69명의 신원이 대부분 확인됐고 3명이 확인 중이다.",
+                "category": {
+                  "major": "사회",
+                  "minor": "사건·사고"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261102128100009",
+                    "publishedAt": "2026-11-02",
+                    "imageUrl": "https://img.yna.co.kr/photo/etc/af/2026/10/30/PAF20261030238101009_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "트럼프 대통령이 르완다와 남아프리카공화국을 미국 무역 협정에서 빼기로 했다.",
+                "category": {
+                  "major": "경제",
+                  "minor": "무역·통상"
+                },
+                "sources": [
+                  {
+                    "name": "BBC",
+                    "url": "https://www.bbc.co.uk/news/articles/c9j346xg0mkvo",
+                    "publishedAt": "2026-11-03",
+                    "imageUrl": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/e727/live/e5cde5c0-d6ef-11f1-ae42-99a80c72db9e.jpg"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "IT·AI",
+            "flow": "바이낸스 해킹의 여파가 국내 규제로 번졌고, 앤트로픽은 상장 서류로 막대한 컴퓨팅 약정을 공개했으며 유럽에서는 생활 기기 해킹이 이어졌다.",
+            "topStories": [
+              {
+                "rank": 1,
+                "title": "바이낸스 출금 재개 뒤 약 36억 달러가 순유출됐고 금융위는 국내 거래소를 소집했다",
+                "summary": "63억 달러 해킹 뒤 출금이 열리자 이용자 자금이 빠져나갔고, 한국 금융당국도 대응에 나섰다.",
+                "whyItMatters": "세계 최대 거래소의 사고가 이용자 신뢰와 각국 규제에 함께 영향을 주고, 북한 자금줄 문제로도 이어진다.",
+                "background": "지난주 바이낸스에서 약 63억 달러가 빠져나가 역대 최대 가상자산 탈취로 기록됐다. 기존 최대였던 2025년 바이비트 사건의 네 배가 넘는다. 초기 조사에서는 엔지니어 노트북이 침해되어 내부 서비스 접근에 쓰인 것으로 나타났다. FBI는 북한 연계 해킹 조직 트레이더트레이터를 배후로 지목했다.",
+                "keyFacts": [
+                  "바이낸스는 1일 비트코인과 이더리움부터 단계적으로 출금을 재개했다.",
+                  "CNBC는 순유출액이 36억 4천만 달러라고 전했다.",
+                  "바이낸스는 피해액의 약 95%를 메웠고 고객이 손실을 지지 않게 한다고 밝혔다.",
+                  "금융위원회는 국내 거래소에 준비금 추가 적립을 당부하고 신속한 출금 제한 방안을 검토한다.",
+                  "해커들은 탈취 자금의 2차 세탁에 들어간 것으로 보도됐다."
+                ],
+                "outlook": "자금이 어디까지 동결되는지, 금융위의 출금 제한 방안이 어떤 형태로 나오는지 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "보안"
+                },
+                "sources": [
+                  {
+                    "name": "CNBC",
+                    "url": "https://www.cnbc.com/2026/11/02/binance-outflow-hack-bitcoin.html",
+                    "publishedAt": "2026-11-02",
+                    "primary": true
+                  },
+                  {
+                    "name": "BBC",
+                    "url": "https://www.bbc.co.uk/news/articles/cwj34gdmnly4o",
+                    "publishedAt": "2026-11-02",
+                    "imageUrl": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/3a7f/live/ad865b20-d64f-11f1-a701-fddedf244c16.jpg"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261102134651002",
+                    "publishedAt": "2026-11-02",
+                    "imageUrl": "https://img.yna.co.kr/photo/cms/2018/11/26/84/PCM20181126000184990_P2.jpg"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261103006200091",
+                    "publishedAt": "2026-11-03",
+                    "imageUrl": "https://img.yna.co.kr/photo/reuters/2026/10/30/PRU20261030239601009_P2.jpg"
+                  }
+                ],
+                "devCheckpoint": "거래소·핀테크 개발자는 개발자 노트북에서 내부 출금 시스템으로 이어지는 권한 경로를 점검한다."
+              },
+              {
+                "rank": 2,
+                "title": "앤트로픽이 수정 상장 서류에서 분기 매출 170억 달러와 8,954억 달러 구매 약정을 공개했다",
+                "summary": "상장을 앞둔 앤트로픽의 3분기 매출은 크게 늘었지만 컴퓨팅 비용 증가로 영업손실로 돌아섰다.",
+                "whyItMatters": "AI 기업의 성장 속도와 함께 그 성장을 떠받치는 컴퓨팅 비용의 규모가 공시로 드러나 시장 평가의 기준이 된다.",
+                "background": "앤트로픽은 나스닥 상장을 위해 증권신고서(S-1)를 냈고, 2일 3분기 실적을 더한 수정본을 냈다. 2분기에는 9억 7,400만 달러 영업이익을 냈다. 순손실 숫자는 전환사채 평가 손실 같은 비현금 항목의 영향이 커서 보도마다 기준이 다르다.",
+                "keyFacts": [
+                  "3분기 매출은 약 170억 달러로 1년 전보다 크게 늘었다.",
+                  "3분기 영업손실은 5억 6,700만 달러였다.",
+                  "컴퓨팅 비용은 전 분기보다 약 50억 달러 늘었다.",
+                  "9월 말 기준 구매 약정과 임대 계약은 약 8,954억 달러다.",
+                  "일본 투자자에게서 최대 35억 달러를 조달할 계획으로 보도됐다."
+                ],
+                "outlook": "공모 규모와 가격 범위, 이달 안 상장 일정이 어떻게 정해지는지 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "AI 산업·기업"
+                },
+                "sources": [
+                  {
+                    "name": "CNBC",
+                    "url": "https://www.cnbc.com/2026/11/02/anthropic-ant-s-1-quarter-financials.html",
+                    "publishedAt": "2026-11-02",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261103004400091",
+                    "publishedAt": "2026-11-03",
+                    "imageUrl": "https://img.yna.co.kr/photo/reuters/2026/10/29/PRU20261029082801009_P2.jpg"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261102171900073",
+                    "publishedAt": "2026-11-02",
+                    "imageUrl": "https://img.yna.co.kr/etc/inner/KR/2026/11/02/AKR20261102171900073_01_i_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 3,
+                "title": "유럽 7개국 슈퍼마켓 냉장고가 사이버 공격을 받아 음식이 대량 폐기됐다",
+                "summary": "지난달 프랑스에서 벌어진 냉장고 해킹이 벨기에, 룩셈부르크, 스웨덴 등으로 번졌다.",
+                "whyItMatters": "인터넷에 연결된 일상 설비가 실제 물건 피해로 이어질 수 있음을 보여 준다.",
+                "background": "지난달 프랑스에서는 수백 개 매장의 냉장·냉동 설비가 원격으로 조작돼 음식이 상하고 일부 매장에서 불이 났다. 당시 공격은 덴마크 업체가 만든 인터넷 연결 냉장 시스템을 노린 것으로 보였고, 일부 설비는 기본 비밀번호로 운영된 것으로 전해졌다.",
+                "keyFacts": [
+                  "BBC는 유럽 7개국의 매장 수십 곳이 공격받았다고 전했다.",
+                  "일부 냉동고 온도는 최고 50도까지 오른 것으로 보도됐다.",
+                  "매장들은 많은 양의 음식을 버려야 했다."
+                ],
+                "outlook": "공격 주체가 밝혀지는지, 제조사가 낡은 설비를 어떻게 처리하는지 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "보안"
+                },
+                "sources": [
+                  {
+                    "name": "BBC",
+                    "url": "https://www.bbc.co.uk/news/articles/cq1kd1nee80eo",
+                    "publishedAt": "2026-11-03",
+                    "imageUrl": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/31c7/live/152ec730-d6c3-11f1-93e1-3b657b665bcf.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261102167151098",
+                    "publishedAt": "2026-11-02",
+                    "imageUrl": "https://img.yna.co.kr/photo/etc/af/2026/10/13/PAF20261013010301009_P2.jpg"
+                  }
+                ],
+                "devCheckpoint": "인터넷에 노출된 IoT 관리 화면과 기본 비밀번호를 점검한다."
+              },
+              {
+                "rank": 4,
+                "title": "우크라이나와 러시아의 재난 경보 앱이 해킹돼 가짜 핵 경보가 나갔다",
+                "summary": "양국 모두 공습 경보 앱이 공격받았다고 밝혔고, 우크라이나 이용자 다수는 내용을 믿지 않았다.",
+                "whyItMatters": "전쟁 중 시민이 믿고 쓰는 경보 체계가 뚫리면 공포를 부르거나 진짜 경보의 신뢰를 떨어뜨릴 수 있다.",
+                "background": "우크라이나와 러시아에서는 공습 경보를 앱으로 받는 시민이 많다. 2023년에도 러시아 라디오와 방송이 해킹돼 가짜 경보가 나간 적이 있다.",
+                "keyFacts": [
+                  "양국이 모두 앱 공격 피해를 인정했다.",
+                  "BBC는 불안은 있었지만 큰 혼란은 없었다고 전했다.",
+                  "공격 주체는 아직 밝혀지지 않았다."
+                ],
+                "outlook": "공격 주체와 침투 경로가 드러나는지 본다.",
+                "confidence": "보도에 따르면",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "보안"
+                },
+                "sources": [
+                  {
+                    "name": "BBC",
+                    "url": "https://www.bbc.co.uk/news/articles/cwx28mngxz8do",
+                    "publishedAt": "2026-11-03",
+                    "imageUrl": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/b47a/live/2a240410-d6c9-11f1-ac20-7783925c811f.jpg",
+                    "primary": true
+                  }
+                ]
+              },
+              {
+                "rank": 5,
+                "title": "삼성SDS가 구미에 60MW급 AI 데이터센터를 착공했다",
+                "summary": "옛 삼성전자 구미 1캠퍼스 부지에 짓는 데이터센터로 2029년 가동이 목표다.",
+                "whyItMatters": "생성형 AI 수요가 늘면서 수도권 밖에도 대형 컴퓨팅 시설을 짓는 흐름을 보여 준다.",
+                "background": "AI 서비스는 전력과 냉각이 많이 드는 데이터센터가 필요해 기업들이 설비를 앞다퉈 늘리고 있다. 삼성SDS는 생성형 AI와 클라우드 수요에 대응한다고 밝혔다.",
+                "keyFacts": [
+                  "규모는 60MW급이다.",
+                  "2일 경북 구미시 공단동에서 기공식이 열렸다.",
+                  "2029년 가동을 목표로 한다."
+                ],
+                "outlook": "전력 확보와 공사 일정이 계획대로 진행되는지 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "AI 산업·기업"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261102107951053",
+                    "publishedAt": "2026-11-02",
+                    "imageUrl": "https://img.yna.co.kr/etc/inner/KR/2026/11/02/AKR20261102107951053_04_i_P2.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261102107900053",
+                    "publishedAt": "2026-11-02",
+                    "imageUrl": "https://img.yna.co.kr/etc/inner/KR/2026/11/02/AKR20261102107900053_03_i_P2.jpg"
+                  }
+                ]
+              }
+            ],
+            "shortNews": [
+              {
+                "summary": "메타가 뉴스 사이트 수집 논란을 부른 새 사업 약관의 시행을 11월 20일로 늦췄다.",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "플랫폼·인터넷"
+                },
+                "sources": [
+                  {
+                    "name": "Nieman Lab",
+                    "url": "https://www.niemanlab.org/2026/10/meta-delays-rollout-of-terms-that-would-allow-broad-scraping-of-news-sites-legal-experts-are-still-skeptical/",
+                    "publishedAt": "2026-10-30",
+                    "publishedAtEstimated": true
+                  }
+                ]
+              }
+            ],
+            "unverified": "애플의 새 CEO 체제 첫 실적은 2일 미국 장 마감 뒤 나올 예정이었으나 조사 시점에 결과를 확인하지 못했다."
+          }
+        ]
+      },
+      "collectedAt": "2026-11-03T08:08:08+09:00",
+      "late": false
     }
   ],
   "extracted": [
-    "2026-11-01"
+    "2026-11-01",
+    "2026-11-02"
   ],
   "scheduled": [
-    "2026-11-01"
+    "2026-11-01",
+    "2026-11-02"
   ]
 }

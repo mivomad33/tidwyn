@@ -1,5 +1,5 @@
 {
-  "formatVersion": 6,
+  "formatVersion": 8,
   "entities": [
     {
       "id": 1,
@@ -2925,6 +2925,105 @@
       "describedOn": "2026-11-02",
       "describedStory": "2026-11-01/한국-s1",
       "mergedInto": null
+    },
+    {
+      "id": 238,
+      "kind": "국가",
+      "name": "벨기에",
+      "aliases": [
+        "Belgium"
+      ],
+      "description": "서유럽의 나라",
+      "describedOn": "2026-11-03",
+      "describedStory": "2026-11-02/세계-4",
+      "mergedInto": null
+    },
+    {
+      "id": 239,
+      "kind": "인물",
+      "name": "바르트 드 웨버",
+      "aliases": [
+        "드 웨버",
+        "Bart De Wever"
+      ],
+      "description": "벨기에 총리",
+      "describedOn": "2026-11-03",
+      "describedStory": "2026-11-02/세계-4",
+      "mergedInto": null
+    },
+    {
+      "id": 240,
+      "kind": "인물",
+      "name": "필리프 국왕",
+      "aliases": [
+        "King Philippe"
+      ],
+      "description": "벨기에 국왕",
+      "describedOn": "2026-11-03",
+      "describedStory": "2026-11-02/세계-4",
+      "mergedInto": null
+    },
+    {
+      "id": 241,
+      "kind": "인물",
+      "name": "마수드 페제시키안",
+      "aliases": [
+        "페제시키안",
+        "Masoud Pezeshkian"
+      ],
+      "description": "이란 대통령",
+      "describedOn": "2026-11-03",
+      "describedStory": "2026-11-02/세계-1",
+      "mergedInto": null
+    },
+    {
+      "id": 242,
+      "kind": "기관",
+      "name": "삼성SDS",
+      "aliases": [
+        "Samsung SDS"
+      ],
+      "description": "삼성 계열의 IT 서비스 기업",
+      "describedOn": "2026-11-03",
+      "describedStory": "2026-11-02/IT·AI-5",
+      "mergedInto": null
+    },
+    {
+      "id": 243,
+      "kind": "기관",
+      "name": "하이브",
+      "aliases": [
+        "HYBE"
+      ],
+      "description": "한국의 가요 기획사",
+      "describedOn": "2026-11-03",
+      "describedStory": "2026-11-02/한국-s4",
+      "mergedInto": null
+    },
+    {
+      "id": 244,
+      "kind": "기관",
+      "name": "대한민국 외교부",
+      "aliases": [
+        "외교부"
+      ],
+      "description": "대한민국의 외교 정책을 맡는 중앙행정기관",
+      "describedOn": "2026-11-03",
+      "describedStory": "2026-11-02/한국-2",
+      "mergedInto": null
+    },
+    {
+      "id": 245,
+      "kind": "국가",
+      "name": "남아프리카공화국",
+      "aliases": [
+        "남아공",
+        "South Africa"
+      ],
+      "description": "아프리카 남단의 나라",
+      "describedOn": "2026-11-03",
+      "describedStory": "2026-11-02/세계-s2",
+      "mergedInto": null
     }
   ],
   "terms": [
@@ -3961,6 +4060,27 @@
         "4F 스퀘어"
       ],
       "description": "D램 메모리 셀 하나가 차지하는 면적을 나타내는 구조다. 트랜지스터를 세로로 세워 지금 쓰이는 6F²보다 셀을 약 3분의 1 작게 만든다.",
+      "mergedInto": null
+    },
+    {
+      "id": 124,
+      "name": "시정연설",
+      "aliases": [],
+      "description": "대통령이나 총리가 국회에서 나라 운영 방향과 예산안을 설명하는 연설이다. 예산안 심사를 앞두고 협조를 구하는 자리이기도 하다.",
+      "mergedInto": null
+    },
+    {
+      "id": 125,
+      "name": "미래대응기금",
+      "aliases": [],
+      "description": "정부가 2027년 예산안에서 새로 만들겠다고 한 기금이다. 세수 증가분을 모아 투자와 재정 안정에 쓴다는 구상이다.",
+      "mergedInto": null
+    },
+    {
+      "id": 126,
+      "name": "순유출",
+      "aliases": [],
+      "description": "빠져나간 돈에서 들어온 돈을 뺀 금액이 양수인 상태다. 들고 난 돈을 합쳐 실제로 얼마가 빠졌는지 보여 준다.",
       "mergedInto": null
     }
   ],
@@ -5848,6 +5968,182 @@
     {
       "story": "2026-11-01/한국-s3",
       "entity": 232
+    },
+    {
+      "story": "2026-11-02/IT·AI-1",
+      "entity": 41
+    },
+    {
+      "story": "2026-11-02/IT·AI-1",
+      "entity": 149
+    },
+    {
+      "story": "2026-11-02/IT·AI-1",
+      "entity": 202
+    },
+    {
+      "story": "2026-11-02/IT·AI-1",
+      "entity": 234
+    },
+    {
+      "story": "2026-11-02/IT·AI-2",
+      "entity": 50
+    },
+    {
+      "story": "2026-11-02/IT·AI-2",
+      "entity": 52
+    },
+    {
+      "story": "2026-11-02/IT·AI-4",
+      "entity": 29
+    },
+    {
+      "story": "2026-11-02/IT·AI-4",
+      "entity": 30
+    },
+    {
+      "story": "2026-11-02/IT·AI-5",
+      "entity": 242
+    },
+    {
+      "story": "2026-11-02/IT·AI-s1",
+      "entity": 56
+    },
+    {
+      "story": "2026-11-02/세계-1",
+      "entity": 42
+    },
+    {
+      "story": "2026-11-02/세계-1",
+      "entity": 107
+    },
+    {
+      "story": "2026-11-02/세계-1",
+      "entity": 217
+    },
+    {
+      "story": "2026-11-02/세계-1",
+      "entity": 241
+    },
+    {
+      "story": "2026-11-02/세계-2",
+      "entity": 40
+    },
+    {
+      "story": "2026-11-02/세계-2",
+      "entity": 42
+    },
+    {
+      "story": "2026-11-02/세계-3",
+      "entity": 29
+    },
+    {
+      "story": "2026-11-02/세계-3",
+      "entity": 30
+    },
+    {
+      "story": "2026-11-02/세계-3",
+      "entity": 101
+    },
+    {
+      "story": "2026-11-02/세계-4",
+      "entity": 238
+    },
+    {
+      "story": "2026-11-02/세계-4",
+      "entity": 239
+    },
+    {
+      "story": "2026-11-02/세계-4",
+      "entity": 240
+    },
+    {
+      "story": "2026-11-02/세계-s1",
+      "entity": 89
+    },
+    {
+      "story": "2026-11-02/세계-s2",
+      "entity": 40
+    },
+    {
+      "story": "2026-11-02/세계-s2",
+      "entity": 144
+    },
+    {
+      "story": "2026-11-02/세계-s2",
+      "entity": 245
+    },
+    {
+      "story": "2026-11-02/한국-1",
+      "entity": 8
+    },
+    {
+      "story": "2026-11-02/한국-1",
+      "entity": 9
+    },
+    {
+      "story": "2026-11-02/한국-1",
+      "entity": 72
+    },
+    {
+      "story": "2026-11-02/한국-1",
+      "entity": 84
+    },
+    {
+      "story": "2026-11-02/한국-2",
+      "entity": 84
+    },
+    {
+      "story": "2026-11-02/한국-2",
+      "entity": 244
+    },
+    {
+      "story": "2026-11-02/한국-3",
+      "entity": 63
+    },
+    {
+      "story": "2026-11-02/한국-3",
+      "entity": 64
+    },
+    {
+      "story": "2026-11-02/한국-4",
+      "entity": 70
+    },
+    {
+      "story": "2026-11-02/한국-4",
+      "entity": 71
+    },
+    {
+      "story": "2026-11-02/한국-5",
+      "entity": 134
+    },
+    {
+      "story": "2026-11-02/한국-s1",
+      "entity": 12
+    },
+    {
+      "story": "2026-11-02/한국-s2",
+      "entity": 84
+    },
+    {
+      "story": "2026-11-02/한국-s2",
+      "entity": 232
+    },
+    {
+      "story": "2026-11-02/한국-s3",
+      "entity": 4
+    },
+    {
+      "story": "2026-11-02/한국-s3",
+      "entity": 54
+    },
+    {
+      "story": "2026-11-02/한국-s3",
+      "entity": 64
+    },
+    {
+      "story": "2026-11-02/한국-s4",
+      "entity": 243
     }
   ],
   "termLinks": [
@@ -6675,6 +6971,61 @@
       "story": "2026-11-01/한국-6",
       "term": 7,
       "surface": "국정조사"
+    },
+    {
+      "story": "2026-11-02/IT·AI-1",
+      "term": 126,
+      "surface": "순유출"
+    },
+    {
+      "story": "2026-11-02/IT·AI-2",
+      "term": 27,
+      "surface": "S-1"
+    },
+    {
+      "story": "2026-11-02/IT·AI-2",
+      "term": 29,
+      "surface": "영업손실"
+    },
+    {
+      "story": "2026-11-02/세계-1",
+      "term": 89,
+      "surface": "기뢰"
+    },
+    {
+      "story": "2026-11-02/세계-3",
+      "term": 19,
+      "surface": "휴전"
+    },
+    {
+      "story": "2026-11-02/세계-4",
+      "term": 17,
+      "surface": "연립정부"
+    },
+    {
+      "story": "2026-11-02/한국-1",
+      "term": 49,
+      "surface": "전작권"
+    },
+    {
+      "story": "2026-11-02/한국-1",
+      "term": 124,
+      "surface": "시정연설"
+    },
+    {
+      "story": "2026-11-02/한국-1",
+      "term": 125,
+      "surface": "미래대응기금"
+    },
+    {
+      "story": "2026-11-02/한국-4",
+      "term": 15,
+      "surface": "압수수색"
+    },
+    {
+      "story": "2026-11-02/한국-4",
+      "term": 42,
+      "surface": "특별검사"
     }
   ],
   "merges": [],
