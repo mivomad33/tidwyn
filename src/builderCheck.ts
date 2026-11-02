@@ -38,7 +38,7 @@ export const ITEM_LIMITS = { title: 60, whatChanged: 300, who: 100, action: 150,
 export type ItemTextField = keyof typeof ITEM_LIMITS;
 export const ITEM_LABELS: Record<ItemTextField, string> = { title: "제목", whatChanged: "무엇이 바뀌었나", who: "누가 영향받나", action: "지금 할 일", why: "고른 이유" };
 /** 재료를 이만큼 이어서 옮기면 복사다 */
-const COPY_WORDS = 12;
+export const COPY_WORDS = 12;
 
 /** 패키지 범위(`@scope/name`)가 아닌 `@계정` 모양 */
 const ACCOUNT_RE = /(?<![\w./-])@[A-Za-z0-9][\w-]*(?![\w-])(?!\/[\w.-])/;
@@ -48,18 +48,22 @@ const BLANK_PHRASES = new Set(["없음", "해당없음", "na", "tbd", "todo", "�
 const charCount = (s: string) => [...s].length;
 const squeeze = (s: string) => s.toLowerCase().replace(/[\p{P}\p{S}\s]+/gu, "");
 
-/** 글 칸 하나의 검사(상한, 빈 틀, 인용, 주소, 메일, `@계정`, 결과물 검사 거부 글, 공개 검사). 정정도 쓴다 */
-export function checkItemText(c: Checker, where: string, field: ItemTextField, text: string, home: string | null, secrets: readonly string[]): void {
-  const max = ITEM_LIMITS[field];
+/** 빌더 글 칸 공통 검사(상한, 빈 틀, 인용, 주소, 메일, `@계정`, 결과물 검사 거부 글, 공개 검사). 새 종류와 정정도 쓴다 */
+export function checkPublicText(c: Checker, where: string, text: string, max: number, home: string | null, secrets: readonly string[], noneAllowed = false): void {
   if (charCount(text) > max) c.add(where, `${charCount(text)}자다(${max}자 이하여야 한다)`);
   const blank = squeeze(text);
-  if (BLANK_PHRASES.has(blank) && !(field === "action" && blank === "없음")) c.add(where, "빈 틀 문구다");
+  if (BLANK_PHRASES.has(blank) && !(noneAllowed && blank === "없음")) c.add(where, "빈 틀 문구다");
   checkQuotes(c, text, where);
   if (ADDRESS_RE.test(text)) c.add(where, "주소를 넣지 않는다");
   if (hasEmail(text)) c.add(where, "메일 주소를 넣지 않는다");
   if (ACCOUNT_RE.test(text)) c.add(where, "`@계정` 모양을 넣지 않는다(패키지 범위는 된다)");
   if (hasVideoData(text)) c.add(where, "결과물 검사가 거부하는 글이다");
   for (const kind of scanText(text, home, secrets).keys()) c.add(where, kind);
+}
+
+/** 도구 변화 글 칸 하나의 검사. 정정도 쓴다 */
+export function checkItemText(c: Checker, where: string, field: ItemTextField, text: string, home: string | null, secrets: readonly string[]): void {
+  checkPublicText(c, where, text, ITEM_LIMITS[field], home, secrets, field === "action");
 }
 
 /** 기한 날짜 형식(일 단위나 달 단위). 맞으면 true */
@@ -81,7 +85,7 @@ function words(text: string): string[] {
     .filter((w) => w !== "");
 }
 
-function copyGrams(texts: string[]): Set<string> {
+export function copyGrams(texts: string[]): Set<string> {
   const out = new Set<string>();
   for (const t of texts) {
     const w = words(t);
@@ -90,7 +94,7 @@ function copyGrams(texts: string[]): Set<string> {
   return out;
 }
 
-function copied(text: string, grams: Set<string>): boolean {
+export function copied(text: string, grams: Set<string>): boolean {
   const w = words(text);
   for (let i = 0; i + COPY_WORDS <= w.length; i++) if (grams.has(w.slice(i, i + COPY_WORDS).join(" "))) return true;
   return false;
@@ -308,8 +312,9 @@ function finishRun(db: DatabaseSync, work: BuilderWorkData, chosen: Set<string>,
 /**
  * 검사를 통과한 항목을 한 트랜잭션으로 저장한다(4.3-4). 끝난 날짜면 아무것도 하지 않는다.
  * 파일의 상태가 받지 못함이면 항목과 상태만 저장하고 시각과 미적용 변경은 그대로 둔다(4.3-5).
+ * also는 같은 트랜잭션에서 함께 저장할 일이다(9.9단계 4.3-4).
  */
-export function applyBuilderPlan(db: DatabaseSync, plan: BuilderPlan, work: BuilderWorkData, o: CheckOptions): BuilderApplied {
+export function applyBuilderPlan(db: DatabaseSync, plan: BuilderPlan, work: BuilderWorkData, o: CheckOptions, also?: () => void): BuilderApplied {
   if (isBuilderDone(db, plan.target)) return emptyApplied("nothing");
   const secrets = o.secrets ?? [];
   const out = emptyApplied("applied");
@@ -339,6 +344,7 @@ export function applyBuilderPlan(db: DatabaseSync, plan: BuilderPlan, work: Buil
     if (work.status !== "failed") {
       finishRun(db, work, chosen, (k) => !failsPublicScan(k, o.home, secrets));
     }
+    also?.();
     return out;
   });
 }

@@ -178,7 +178,7 @@ export function isBinary(content: Buffer): boolean {
 }
 
 /** 빌더 작업 파일과 원문 파일(9.8단계 4.5-3). 후보 글과 문서 원문은 공개 저장소와 결과물에 들어가지 않는다 */
-const BUILDER_WORK_RE = /^builder\.(?:candidates\.json|candidates\.md|items\.json)$/;
+const BUILDER_WORK_RE = /^builder\.(?:candidates\.json|candidates\.md|items\.json|discover\.json|discover\.md|discover\.items\.json)$/;
 const BUILDER_RAW_RE = /^\d{4}-\d{2}-\d{2}-[0-9a-f]{8}\.md\.gz$/;
 
 /** 이름으로 찾는 것: SQLite 파일, 실행 전 사본, .env 파일, 지운 이름 키 파일(4단계 E15), 빌더 작업·원문 파일 */

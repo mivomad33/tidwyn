@@ -1,5 +1,5 @@
 import type { Category, Source } from "./brief.ts";
-import type { BuilderDue, BuilderField, BuilderItemSource, BuilderStatus } from "./builderTypes.ts";
+import { DISCOVER_KINDS, DISCOVER_LABELS, type BuilderDue, type BuilderField, type BuilderItemSource, type BuilderStatus, type DiscoverKind, type KindStatus, type ReleaseInfo } from "./builderTypes.ts";
 import type { Confidence, Major, SectionName } from "./categories.ts";
 
 // 사이트 데이터 형식(3단계 4.1). DB에서 만들고(siteData.ts) 사이트 화면(site/)이 읽는다.
@@ -330,10 +330,33 @@ export interface SiteDates {
   storyCounts: number[];
 }
 
+/** 9.9단계: 새 종류 하나의 그날 항목 수와 상태 */
+export interface DayKind {
+  count: number;
+  status: KindStatus;
+}
+
 /** 9.8단계: 그 날짜의 빌더 항목 수와 상태. 빌더 항목은 뉴스가 아니라 뉴스 수에 세지 않는다 */
 export interface DayBuilder {
+  /** 탭 건수: 세 종류의 합(N4) */
   count: number;
-  status: BuilderStatus;
+  /** 도구 변화 상태(B11). 도구 변화 기록이 없고 새 종류만 있는 날은 null */
+  status: BuilderStatus | null;
+  /** 9.9단계: 묶음을 보일 새 종류. 상태가 없거나(9.9 이전 날짜) 꺼졌고 항목이 없으면 칸이 없다 */
+  product?: DayKind;
+  repo?: DayKind;
+}
+
+/** 그날의 빌더 요약. 보일 것이 없으면(기록이 없거나 꺼짐만 있는 날) null이라 탭이 없다(4.5-1) */
+export function dayBuilderOf(tools: { count: number; status: BuilderStatus | null }, kinds: Partial<Record<DiscoverKind, { count: number; status: KindStatus | null }>>): DayBuilder | null {
+  const out: DayBuilder = { count: tools.count, status: tools.status };
+  for (const kind of DISCOVER_KINDS) {
+    const k = kinds[kind];
+    if (!k || (k.count === 0 && (k.status === null || k.status === "off"))) continue;
+    out[kind] = { count: k.count, status: k.status ?? "checked" };
+    out.count += k.count;
+  }
+  return out.status === null && out.count === 0 && !out.product && !out.repo ? null : out;
 }
 
 /** 빌더 항목의 공개 칸. 중복을 막는 키, 숫자 행, 후보 재료는 넣지 않는다 */
@@ -358,10 +381,39 @@ export interface SiteBuilderItem {
   corrections?: StoryCorrection[];
 }
 
+/** 뜨는 저장소의 칸(N5). 후보 값 그대로다 */
+export interface SiteRepoFacts {
+  /** 라이선스 이름. 없거나 판별되지 않으면 그렇게 쓴 글자다 */
+  license: string;
+  pushedOn: string | null;
+  release: ReleaseInfo | null;
+  stars: number | null;
+  growth: number | null;
+}
+
+/** 새 제품·뜨는 저장소 항목의 공개 칸(N5). 중복을 막는 키와 후보 재료는 넣지 않는다 */
+export interface SiteDiscoveryItem {
+  /** `product-<순서>`, `repo-<순서>`. 정정, 읽음, 주소의 `#`가 쓴다 */
+  key: string;
+  kind: DiscoverKind;
+  name: string;
+  url: string;
+  purpose: string;
+  difference: string;
+  reason: string;
+  issue: IssueRef | null;
+  /** 뜨는 저장소만 */
+  repo?: SiteRepoFacts;
+  /** 정정 기록(최신순). 정정이 없으면 항목을 뺀다 */
+  corrections?: StoryCorrection[];
+}
+
 /** `builder-items-YYYY-MM.json`: 날짜 → 항목. 항목이 있는 날짜만 있다 */
 export interface BuilderMonth {
   month: string;
   days: Record<string, SiteBuilderItem[]>;
+  /** 9.9단계: 날짜 → 새 제품·뜨는 저장소 항목(종류, 순서 순). 항목이 없는 달은 칸이 없다 */
+  discoveries?: Record<string, SiteDiscoveryItem[]>;
 }
 
 /** 빌더 항목의 검색 대상 글(검색 레코드와 화면이 걸린 항목을 되찾는 글이 같다) */
@@ -369,11 +421,22 @@ export function builderItemText(x: Pick<SiteBuilderItem, "title" | "whatChanged"
   return [x.title, x.whatChanged, x.who, x.action, x.why].join("\n");
 }
 
+/** 저장소 라이선스의 화면 글자. 검색도 화면과 같은 글자로 찾는다 */
+export function repoLicenseText(repo: { license: string }): string {
+  if (repo.license === "없음") return "표시 없음";
+  return repo.license === "판별되지 않음" ? "파일은 있으나 종류가 판별되지 않음" : repo.license;
+}
+
+/** 새 제품·뜨는 저장소 항목의 검색 대상 글 */
+export function discoveryItemText(x: Pick<SiteDiscoveryItem, "kind" | "name" | "purpose" | "difference" | "reason" | "repo">): string {
+  return [DISCOVER_LABELS[x.kind], x.name, x.purpose, x.difference, x.reason, x.repo ? repoLicenseText(x.repo) : ""].join("\n");
+}
+
 /** 검색 레코드: 달 하나에 레코드 하나(파일 수 한도, 9.8단계 4.6-5). 걸린 달에서 항목을 되찾는 일은 화면이 한다 */
 export function builderSearchRecords(months: readonly BuilderMonth[]): SearchRecord[] {
   return months.map((m) => ({
     url: builderRecordUrl(m.month),
-    content: Object.values(m.days).flat().map(builderItemText).join("\n"),
+    content: [...Object.values(m.days).flat().map(builderItemText), ...Object.values(m.discoveries ?? {}).flat().map(discoveryItemText)].join("\n"),
     language: "ko",
     meta: { kind: "builder", month: m.month },
   }));

@@ -44,18 +44,26 @@ export interface FeedReport {
 export interface FetchResult {
   status: number;
   text: string;
+  /** 응답 헤더(이름은 소문자). 한도를 읽는 소스만 쓴다 */
+  headers?: Record<string, string>;
 }
 
-export type FetchText = (url: string) => Promise<FetchResult>;
+export interface FetchInit {
+  method?: "GET" | "POST";
+  headers?: Record<string, string>;
+  body?: string;
+}
+
+export type FetchText = (url: string, init?: FetchInit) => Promise<FetchResult>;
 
 const USER_AGENT = "tidwyn/1.5 (personal RSS reader)";
 const TIMEOUT_MS = 20_000;
 
 /** 주소 하나를 글로 받는 함수를 만든다. 시간 제한을 넘기면 예외 */
 export function makeFetchText(userAgent: string, timeoutMs: number): FetchText {
-  return async (url) => {
-    const res = await fetch(url, { headers: { "user-agent": userAgent }, signal: AbortSignal.timeout(timeoutMs) });
-    return { status: res.status, text: await res.text() };
+  return async (url, init) => {
+    const res = await fetch(url, { ...init, headers: { "user-agent": userAgent, ...init?.headers }, signal: AbortSignal.timeout(timeoutMs) });
+    return { status: res.status, text: await res.text(), headers: Object.fromEntries(res.headers) };
   };
 }
 

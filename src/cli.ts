@@ -5,13 +5,13 @@ import path from "node:path";
 import type { DatabaseSync } from "node:sqlite";
 import { parseArgs as parseNodeArgs } from "node:util";
 import { BACKUP_DIR, backupMessage, commitBackup, exportBackup, readBackupDir, readBackupRef, restoreBackup } from "./backup.ts";
-import { CORRECTION_GUIDE, applyBuilderCorrection, applyCorrection, checkBuilderCorrection, checkCorrection, isBuilderCorrection, issuesOfStory } from "./corrections.ts";
+import { CORRECTION_GUIDE, applyBuilderCorrection, applyCorrection, applyDiscoveryCorrection, checkBuilderCorrection, checkCorrection, checkDiscoveryCorrection, isBuilderCorrection, isDiscoveryCorrection, issuesOfStory } from "./corrections.ts";
 import { openDb, openExistingDb } from "./db.ts";
 import { gitTry } from "./git.ts";
 import { collectCandidates, describeFeedReport, feedSpecs, fetchText as realFetch, renderCandidatesMarkdown, type FetchText } from "./feeds.ts";
 import { attachImages, dropImages, fillImages, readCandidateImages } from "./images.ts";
 import { issueIndexPath, renderAll, writeBriefMarkdown } from "./issueMarkdown.ts";
-import { linkableDates, unlinkedCount, unlinkedStories } from "./issues.ts";
+import { inTransaction, linkableDates, unlinkedCount, unlinkedStories } from "./issues.ts";
 import { isValidDate, kstDate, kstIso, kstStamp } from "./kst.ts";
 import { applyLinkPlan, checkLinkFile, renderLinkWork, renderSearch } from "./links.ts";
 import { markdownPath, writeMarkdown } from "./markdown.ts";
@@ -40,10 +40,17 @@ import { unjudgedIssues } from "./indicatorStore.ts";
 import { readKeys, secretValues, maskSecrets } from "./keys.ts";
 import { DEFAULT_GEMINI_LIMITS, STOP_LABELS, emptyNotes, estimateUsd, fetchGemini, notCalled, readNotes, realClock, runNotes, writeNotes, type GeminiClock, type GeminiHttp, type GeminiLimits, type NotesFile } from "./gemini.ts";
 import { applyBuilderPlan, checkBuilderFile, markBuilderFailed } from "./builderCheck.ts";
-import { builderFetchText, fetchBuilder, type BuilderFetchReport } from "./builderFetch.ts";
-import type { BuilderOff } from "./builderSources.ts";
+import { emptyReport, fetchDiscoveries, offKinds, type KindReport } from "./builderDiscover.ts";
+import { BUILDER_DEADLINE_MS, builderFetchText, fetchBuilder, rateRemainingOf } from "./builderFetch.ts";
+import { DEFAULT_OFF, GITHUB_API, REPO_SOURCE, isOff, type BuilderOff } from "./builderSources.ts";
+import { DISCOVER_LABELS } from "./builderTypes.ts";
 import { getBuilderItem, isBuilderDone } from "./builderStore.ts";
+import { applyDiscoveries, judgeDiscoveries, judgedViolations, kindFailDays, writeTargets, type DiscoverJudgment } from "./discoverCheck.ts";
+import { WRITE_MAX_ROUNDS, WRITE_TIMEOUT_MS, claudeRunner, runWriter, type ClaudeRunner } from "./discoverWrite.ts";
 import { buildWorkData, builderWorkFile, readBuilderWork, removeBuilderWorkFiles, writeBuilderWork, type BuilderWorkData } from "./builderWork.ts";
+import { DISCOVER_KINDS, discoveriesOfDate, isKindDone, undoneKinds, type DiscoverKind } from "./discoverStore.ts";
+import { readDiscoverItems, readDiscoverWork, removeDiscoverWorkFiles, writeDiscoverWork } from "./discoverWork.ts";
+import { runSnapshot } from "./repoSnapshot.ts";
 import { buildCandidateFile, checkCheckFile, checkPickFile, readCandidateFile, readJsonFile, removeVideoWorkFiles, restoreCandidateLists, videoWorkFile, writeCandidateFiles } from "./videoPick.ts";
 import { purgeDataDir, purgeTestDirs, type VideoPurgeResult } from "./videoPurge.ts";
 import { SECTION_LIMITS, VIDEO_SECTIONS_STOPPED, emptySections, readSections, runSections, sectionMaterials, sectionTargets, sectionsUsd, writeSections, type SectionsFile } from "./videoSections.ts";
@@ -84,6 +91,8 @@ import {
   writeRun,
   type BackupResult,
   type BuilderFetchState,
+  type BuilderKindsState,
+  type BuilderWriteState,
   type DeployResult,
   type ExtractResult,
   type ImagesResult,
@@ -92,6 +101,7 @@ import {
   type MergeStepResult,
   type PushResult,
   type RefMergeDone,
+  type RepoSnapshotState,
   type RunState,
   type ScheduleMergeDone,
   type ScheduleResult,
@@ -155,8 +165,14 @@ export interface Context {
   /** 빌더 명령 전체 시간 상한의 시계와 상한(밀리초). 테스트가 바꿔 넣는다 */
   builderClock?: () => number;
   builderDeadlineMs?: number;
+  /** 스냅샷 명령의 기다림과 시간 상한(9.9단계 4.1-1). 테스트가 바꿔 넣는다 */
+  builderSleep?: (ms: number) => Promise<void>;
+  snapshotDeadlineMs?: number;
   /** 끌 빌더 소스와 공급사. 없으면 코드의 기본값 */
   builderOff?: BuilderOff;
+  /** 새 종류 쓰기 프로세스(9.9단계 N11). 없으면 claude를 실제로 부른다. 테스트가 가짜로 바꾼다 */
+  claudeRun?: ClaudeRunner;
+  claudeTimeoutMs?: number;
   /** Gemini 요청(8단계 4.1). 없으면 fetch */
   geminiHttp?: GeminiHttp;
   /** Gemini 시간 제한의 시계. 테스트가 가짜로 바꾼다 */
@@ -235,10 +251,12 @@ const USAGE = `명령:
   video-sections --run <파일>             고른 영상 중 챕터가 없는 영상의 구간 시각 받기(work/videos.sections.json)
   video-check --run <파일>                고르기 파일(work/videos.pick.json) 검사
   video-apply --run <파일>                검사 → 한 번에 적용 → 고르기 끝남 → 영상 작업 파일 지우기(실패하면 실행 기록에 남기고 파일을 남긴다)
-  builder-fetch --run <파일>              가장 늦은 브리프 날짜의 빌더 소스 받기·거르기 → 후보 목록(work/builder.candidates.md). 끝난 날짜면 부르지 않는다
-  builder-check --run <파일>              빌더 항목 파일(work/builder.items.json) 검사
-  builder-apply --run <파일>              검사 → 한 번에 적용 → 빌더 작업 파일 지우기(실패하면 실행 기록에 남기고 파일을 남긴다)
-  builder-fail --run <파일>               그 날짜를 받지 못함으로 저장하고 빌더 작업 파일을 지운다(저장된 항목과 받은 시각은 그대로 둔다)`;
+  builder-snapshot --run <파일>           가장 늦은 브리프 날짜의 저장소 별 수 스냅샷 받기(한 번에 9분까지, 끝나지 않으면 다시 부르면 이어 받는다). 시험 모드나 꺼짐이면 돌지 않는다
+  builder-fetch --run <파일>              가장 늦은 브리프 날짜의 빌더 소스 받기·거르기 → 후보 목록(work/builder.candidates.md), 뒤이어 새 제품·뜨는 저장소 후보(work/builder.discover.json). 도구 변화가 끝난 날은 끝나지 않은 새 종류만 받고, 다 끝난 날짜면 부르지 않는다
+  builder-write --run <파일>              새 제품·뜨는 저장소 항목을 경로가 막힌 별도 Claude 프로세스로 쓰기. 쓰기 대상이 없으면 부르지 않고, 항목 파일에 위반이 있으면 고치게 한다(처음 포함 3번까지). 출력에 글은 없다
+  builder-check --run <파일>              빌더 항목 파일(work/builder.items.json)과 새 종류 항목 파일 검사. 새 종류는 칸 이름과 위반 종류만 쓴다
+  builder-apply --run <파일>              검사 → 한 번에 적용 → 빌더 작업 파일 지우기. 위반이 있으면 적용하지 않고 파일을 남기고, 마지막(3번째)에는 통과한 종류만 적용하고 실패로 끝난다
+  builder-fail --run <파일>               끝나지 않은 도구 변화와 새 종류를 받지 못함으로 저장하고 작업 파일을 지운다(저장된 항목과 받은 시각은 그대로 둔다)`;
 
 function opts(argv: string[], options: Record<string, { type: "string" | "boolean" }>) {
   return parseNodeArgs({ args: argv, options, allowPositionals: false, strict: true }).values as Record<string, string | boolean | undefined>;
@@ -1235,6 +1253,7 @@ function cmdCorrect(argv: string[], ctx: Context): number {
   const db = openExistingDb(prep.s.dbPath);
   try {
     if (isBuilderCorrection(raw)) return correctBuilder(db, raw, prep.snapshot, ctx);
+    if (isDiscoveryCorrection(raw)) return correctDiscovery(db, raw, prep.snapshot, ctx);
     const checked = checkCorrection(db, raw, homeOf(ctx), secretsOf(ctx));
     if (!checked.ok) {
       ctx.out(`고치지 않음:\n${formatViolations(checked.violations)}`);
@@ -1288,6 +1307,23 @@ function correctBuilder(db: DatabaseSync, raw: unknown, snapshot: string | null,
       "- 백업과 사이트 배포는 다음 /brief 실행이 한다. 바로 올리려면 docs/operations.md의 손으로 하는 배포를 쓴다.",
     ].join("\n"),
   );
+  return EXIT.ok;
+}
+
+/** 새 제품·뜨는 저장소 항목 정정(9.9단계 4.4-2) */
+function correctDiscovery(db: DatabaseSync, raw: unknown, snapshot: string | null, ctx: Context): number {
+  const checked = checkDiscoveryCorrection(db, raw, homeOf(ctx), secretsOf(ctx));
+  if (!checked.ok) {
+    ctx.out(`고치지 않음:\n${formatViolations(checked.violations)}`);
+    return EXIT.failed;
+  }
+  const { date, key } = checked.input;
+  if (checked.changed.length === 0) {
+    ctx.out(`바뀐 것이 없다(${date} ${key}). 이미 적용한 정정이면 다시 하지 않아도 된다.`);
+    return EXIT.ok;
+  }
+  applyDiscoveryCorrection(db, checked, kstDate(ctx.now()));
+  ctx.out([`고침: ${date} ${key} (${checked.changed.join(", ")}).`, `- 실행 전 사본: ${snapshot}`, "- 백업과 사이트 배포는 다음 /brief 실행이 한다. 바로 올리려면 docs/operations.md의 손으로 하는 배포를 쓴다."].join("\n"));
   return EXIT.ok;
 }
 
@@ -1599,7 +1635,7 @@ function secretsOf(ctx: Context): string[] {
 function keyLine(ctx: Context): string {
   const k = readKeys(ctx.env, keyDirOf(ctx));
   const has = (v: string | null) => (v === null ? "없음" : "있음");
-  return `- 키: ECOS ${has(k.ECOS_API_KEY)}, FRED ${has(k.FRED_API_KEY)}, YouTube ${has(k.YOUTUBE_API_KEY)}, Gemini ${has(k.GEMINI_API_KEY)}`;
+  return `- 키: ECOS ${has(k.ECOS_API_KEY)}, FRED ${has(k.FRED_API_KEY)}, YouTube ${has(k.YOUTUBE_API_KEY)}, Gemini ${has(k.GEMINI_API_KEY)}, Product Hunt ${has(k.PRODUCT_HUNT_TOKEN)}`;
 }
 
 /** 판단할 이슈를 파일로 나눠 후보 목록을 쓴다(4.3-2). 나눈 결과를 실행 기록에 남긴다 */
@@ -2244,9 +2280,15 @@ function cmdVideoApply(argv: string[], ctx: Context): number {
 
 const BUILDER_STATUS_NAMES = { checked: "확인함", partial: "일부만 확인", failed: "받지 못함" } as const;
 
+/** 뺀 후보 수의 문구 */
+function droppedParts(r: Pick<BuilderFetchState, "droppedByHost" | "droppedByKey" | "droppedByScan">): string[] {
+  return [r.droppedByHost ? `호스트 밖 ${r.droppedByHost}` : "", r.droppedByKey ? `키 중복 ${r.droppedByKey}` : "", r.droppedByScan ? `공개 검사 ${r.droppedByScan}` : ""].filter((x) => x !== "");
+}
+
 function builderFetchLines(r: BuilderFetchState): string[] {
   if (r.status === "noBrief") return ["- 빌더 받기: 브리프가 없어 받지 않았다"];
   if (r.status === "alreadyDone") return [`- 빌더 받기: ${r.target} 이미 끝남`];
+  if (r.status === "kindsOnly") return [`- 빌더 받기: ${r.target} 도구 변화는 이미 끝남, 새 종류만 받았다`];
   if (r.status === "crashed") return [`- 빌더 받기: 중간에 멈췄다(${r.reason ?? "이유 없음"})`];
   const lines = [`- 빌더 받기(${r.target}): ${BUILDER_STATUS_NAMES[r.status]}, 후보 ${r.candidates ?? 0}건, 분량 상한으로 잘림 ${r.cut ?? 0}건, 다시 알림 ${r.reminders ?? 0}건`];
   for (const s of r.sources ?? []) {
@@ -2257,7 +2299,7 @@ function builderFetchLines(r: BuilderFetchState): string[] {
   const docs = r.docs ?? [];
   const sum = (k: "noNumber" | "tooLong" | "rejected") => docs.reduce((n, d) => n + d[k], 0);
   if (docs.length > 0) lines.push(`  - 숫자 행: 추가 ${docs.reduce((n, d) => n + d.added, 0)}, 제거 ${docs.reduce((n, d) => n + d.removed, 0)}, 숫자 없는 행 ${sum("noNumber")}, 긴 행 ${sum("tooLong")}, 공개 검사로 뺀 행 ${sum("rejected")}`);
-  const dropped = [r.droppedByHost ? `호스트 밖 ${r.droppedByHost}` : "", r.droppedByKey ? `키 중복 ${r.droppedByKey}` : "", r.droppedByScan ? `공개 검사 ${r.droppedByScan}` : ""].filter((x) => x !== "");
+  const dropped = droppedParts(r);
   if (dropped.length > 0) lines.push(`  - 뺀 후보: ${dropped.join(", ")}`);
   for (const w of r.warnings ?? []) lines.push(`  - 경고: ${w}`);
   return lines;
@@ -2277,7 +2319,114 @@ function builderSummaryLines(s: RunState): string[] {
   } else if (a.status === "alreadyDone") lines.push(`- 빌더 쓰기: ${a.target} 이미 끝남`);
   else if (a.status === "gaveUp") lines.push(`- 빌더 쓰기: 포기(${a.reason ?? "이유 없음"}). 받지 못함으로 두었다, 다음 실행이 다시 한다`);
   else lines.push(`- 빌더 쓰기: 실패(${a.reason ?? "이유 없음"}, ${a.attempts}번째). 다음 실행이 다시 한다`);
-  return lines;
+  return [...(s.repoSnapshot === undefined ? [] : [repoSnapshotLine(s.repoSnapshot)]), ...lines, ...kindLines(s)];
+}
+
+const KIND_STATUS_NAMES = { checked: "확인함", failed: "받지 못함", off: "꺼짐", baseline: "기준값 쌓는 중", done: "이미 끝남" } as const;
+
+function kindLine(kind: DiscoverKind, r: KindReport): string[] {
+  const label = DISCOVER_LABELS[kind];
+  const name = KIND_STATUS_NAMES[r.status];
+  if (r.status === "off" || r.status === "done" || r.status === "baseline") return [`- ${label}: ${name}`];
+  if (r.status === "failed") return [`- ${label}: ${name}${r.failDays === undefined ? "" : ` ${r.failDays}일째`}(${r.reason ?? "이유 없음"})`];
+  const dropped = droppedParts(r);
+  return [`- ${label}: ${name}, 후보 ${r.candidates}건${r.details === undefined ? "" : `, 상세 대상 ${r.details}건`}${r.items === undefined ? "" : `, 항목 ${r.items}건`}${dropped.length > 0 ? `, 뺀 후보 ${dropped.join(", ")}` : ""}`, ...r.warnings.map((w) => `  - 경고: ${w}`)];
+}
+
+/** 새 종류의 상태 줄. 이름과 글은 쓰지 않는다 */
+function kindLines(s: Pick<RunState, "builderKinds" | "builderWrite">): string[] {
+  const k = s.builderKinds;
+  const w = s.builderWrite;
+  return [
+    ...(k === undefined ? [] : [...kindLine("product", k.product), ...kindLine("repo", k.repo)]),
+    ...(w === undefined ? [] : [writeLine(w)]),
+    ...excludedLines(k?.excluded ?? [], k?.excludedOther ?? 0),
+  ];
+}
+
+function writeLine(w: BuilderWriteState): string {
+  const kinds = w.kinds.map((k) => DISCOVER_LABELS[k]).join(", ");
+  if (w.status === "nothing") return "- 새 종류 쓰기: 쓰기 대상이 없어 부르지 않았다";
+  return `- 새 종류 쓰기(${kinds}): 프로세스 ${w.rounds}번${w.status === "failed" ? `, 실패(${w.reason ?? "이유 없음"})` : ""}`;
+}
+
+/** 재료에 요구가 들어 뺀 후보(4.3-3). 키만 쓰고 나머지는 수만 센다 */
+function excludedLines(keys: string[], other: number): string[] {
+  return [...(keys.length > 0 ? [`- 재료에 요구가 들어 뺀 후보: ${keys.join(", ")}`] : []), ...(other > 0 ? [`- 후보 키가 아니어서 알리지 않은 제외 값: ${other}개`] : [])];
+}
+
+function judgmentLines(j: DiscoverJudgment): string[] {
+  const out: string[] = [];
+  for (const kind of DISCOVER_KINDS) {
+    const d = j.kinds[kind];
+    if (d.state === "violated") out.push(`새 종류 검사 실패(${DISCOVER_LABELS[kind]}), 위반 ${d.violations.length}개:`, formatViolations(d.violations));
+    else if (d.state === "final") out.push(`새 종류 검사 통과(${DISCOVER_LABELS[kind]}): ${d.items.length}건, 상태 ${KIND_STATUS_NAMES[d.status]}.`);
+  }
+  return [...out, ...excludedLines(j.excludedKeys, j.excludedOther)];
+}
+
+/** 이 실행에서 꺼진 새 종류 */
+const kindsOff = (state: RunState, ctx: Context) => offKinds(ctx.builderOff, readKeys(ctx.env, keyDirOf(ctx)).PRODUCT_HUNT_TOKEN, state.mode === "test");
+
+/** 대상 날짜의 새 종류 후보 원본. 없거나 다른 날짜면 null(받기가 멈춘 것이다) */
+function discoverDataOf(state: RunState, target: string) {
+  const r = readDiscoverWork(state.dataDir);
+  return r.ok && r.data.target === target ? r.data : null;
+}
+
+/** 판정을 저장한 뒤의 종류별 보고. 이름과 글은 넣지 않는다 */
+function kindsAfter(prev: BuilderKindsState | undefined, db: DatabaseSync, target: string, j: DiscoverJudgment): BuilderKindsState {
+  const one = (kind: DiscoverKind): KindReport => {
+    const base = prev?.target === target ? prev[kind] : emptyReport("done");
+    const d = j.kinds[kind];
+    if (d.state !== "final") return base;
+    const reason = base.status === "failed" ? base.reason : d.reason;
+    return { ...base, status: d.status, items: discoveriesOfDate(db, target, kind).length, failDays: kindFailDays(db, kind), ...(reason === undefined ? {} : { reason }) };
+  };
+  return { target, product: one("product"), repo: one("repo"), excluded: j.excludedKeys, excludedOther: j.excludedOther };
+}
+
+function repoSnapshotLine(r: RepoSnapshotState): string {
+  if (r.status === "noBrief") return "- 저장소 스냅샷: 브리프가 없어 받지 않았다";
+  if (r.status === "off") return "- 저장소 스냅샷: 꺼짐";
+  const done = r.finished ? "끝남 예" : `끝남 아니오(${r.reason ?? "이유 없음"})`;
+  return `- 저장소 스냅샷(${r.target}): ${done}, 저장소 ${r.repos}개, 검색 ${r.calls}회, 걸린 시간 ${Math.round(r.elapsedMs / 1000)}초`;
+}
+
+/** 저장소 별 수 스냅샷(9.9단계 4.1-1). 끝나지 않아도 종료 코드는 0이고 출력의 끝남을 보고 스킬이 다시 부른다 */
+async function cmdBuilderSnapshot(argv: string[], ctx: Context): Promise<number> {
+  const v = opts(argv, { run: { type: "string" } });
+  const runFile = need(v, "run");
+  const state = readRun(runFile);
+  const refused = indicatorCondition(state, ctx);
+  if (refused !== null) return refused;
+  const record = (r: RepoSnapshotState) => {
+    updateRun(runFile, (s) => (s.repoSnapshot = r));
+    ctx.out(repoSnapshotLine(r).replace(/^- /, ""));
+  };
+  const empty = { finished: false, repos: 0, calls: 0, elapsedMs: 0 };
+  const db = openExistingDb(state.dbPath);
+  try {
+    const target = videoTargetDate(db);
+    if (isOff(REPO_SOURCE, ctx.builderOff ?? DEFAULT_OFF) || state.mode === "test") {
+      record({ status: "off", target, ...empty });
+      return EXIT.ok;
+    }
+    if (target === null) {
+      record({ status: "noBrief", target, ...empty });
+      return EXIT.ok;
+    }
+    try {
+      const r = await runSnapshot({ db, http: ctx.builderHttp ?? builderFetchText, target, clock: ctx.builderClock, sleep: ctx.builderSleep, deadlineMs: ctx.snapshotDeadlineMs });
+      record({ status: r.status, target, finished: r.status === "complete", repos: r.repos, calls: r.calls, elapsedMs: r.elapsedMs, reason: r.reason });
+      return EXIT.ok;
+    } catch (e) {
+      record({ status: "crashed", target, ...empty, reason: maskSecrets((e as Error).message, secretsOf(ctx)) });
+      return EXIT.failed;
+    }
+  } finally {
+    db.close();
+  }
 }
 
 /** 빌더 받기(4.1). 끝난 날짜면 부르지 않고, 소스 실패는 실패로 끝내지 않는다(다시 알림은 쓴다). 멈추면 종료 코드 1이고 스킬이 builder-fail을 부른다 */
@@ -2298,45 +2447,76 @@ async function cmdBuilderFetch(argv: string[], ctx: Context): Promise<number> {
       return EXIT.ok;
     }
     const prev = state.builderFetch;
-    const fetchedInRun = prev?.target === target && (prev.status === "checked" || prev.status === "partial" || prev.status === "failed");
-    if (isBuilderDone(db, target)) {
+    const fetchedInRun = prev?.target === target && (prev.status === "checked" || prev.status === "partial" || prev.status === "failed" || prev.status === "kindsOnly");
+    const toolsDone = isBuilderDone(db, target);
+    if (toolsDone && undoneKinds(db, target).length === 0) {
       if (!fetchedInRun) record({ status: "alreadyDone", target });
       ctx.out(`빌더: ${target} 이미 끝남. 소스를 부르지 않는다.`);
       return EXIT.ok;
     }
-    const work = fetchedInRun ? readBuilderWork(state.dataDir) : null;
-    if (work?.ok && work.data.target === target) {
-      ctx.out(`빌더: 이 실행에서 이미 받았다. 다시 부르지 않는다. 후보 목록 ${builderWorkFile(state.dataDir, "list")}`);
-      return EXIT.ok;
+    if (fetchedInRun && readDiscoverWork(state.dataDir).ok) {
+      const work = toolsDone ? null : readBuilderWork(state.dataDir);
+      if (work === null || (work.ok && work.data.target === target)) {
+        ctx.out(`빌더: 이 실행에서 이미 받았다. 다시 부르지 않는다.${work === null ? "" : ` 후보 목록 ${builderWorkFile(state.dataDir, "list")}`}`);
+        return EXIT.ok;
+      }
     }
-    let report: BuilderFetchReport;
-    try {
-      report = await fetchBuilder({ db, http: ctx.builderHttp ?? builderFetchText, now: ctx.now(), target, dataDir: state.dataDir, home: homeOf(ctx), secrets, off: ctx.builderOff, clock: ctx.builderClock, deadlineMs: ctx.builderDeadlineMs });
-    } catch (e) {
-      const reason = maskSecrets((e as Error).message, secrets);
-      removeBuilderWorkFiles(state.dataDir);
-      record({ status: "crashed", target, reason });
-      ctx.out(`빌더 받기 실패(${target}): ${reason}. 쓰기를 건너뛴다. 다음 실행이 다시 받는다.`);
-      return EXIT.failed;
-    }
-    const data = buildWorkData(db, report);
-    const paths = writeBuilderWork(state.dataDir, data);
-    const done: BuilderFetchState = {
-      status: report.status,
-      target,
-      sources: report.sources,
-      docs: report.docs,
-      warnings: report.warnings.map((w) => maskSecrets(w, secrets)),
-      candidates: data.candidates.filter((c) => !c.cut).length,
-      cut: data.candidates.filter((c) => c.cut).length,
-      reminders: data.reminders.length,
-      droppedByHost: report.droppedByHost,
-      droppedByKey: report.droppedByKey,
-      droppedByScan: report.droppedByScan,
+    const http = ctx.builderHttp ?? builderFetchText;
+    let deadlineAt: number | undefined;
+    let rateRemaining: number | null = null;
+    const counted: FetchText = async (url, init) => {
+      const res = await http(url, init);
+      const left = rateRemainingOf(res);
+      if (left !== null && url.startsWith(`${GITHUB_API}/`)) rateRemaining = left;
+      return res;
     };
-    record(done);
-    ctx.out(maskSecrets([`빌더 받기: 후보 목록 ${paths.md}`, `- 항목 파일을 쓸 곳: ${paths.items}`, ...builderFetchLines(done)].join("\n"), secrets));
-    return EXIT.ok;
+    const lines: string[] = [];
+    let crashed: string | null = null;
+    if (toolsDone) {
+      record({ status: "kindsOnly", target });
+      lines.push(`빌더: ${target} 도구 변화는 이미 끝남. 새 종류만 받는다.`);
+    } else {
+      try {
+        deadlineAt = (ctx.builderClock ?? Date.now)() + (ctx.builderDeadlineMs ?? BUILDER_DEADLINE_MS);
+        const report = await fetchBuilder({ db, http: counted, now: ctx.now(), target, dataDir: state.dataDir, home: homeOf(ctx), secrets, off: ctx.builderOff, clock: ctx.builderClock, deadlineMs: ctx.builderDeadlineMs });
+        const data = buildWorkData(db, report);
+        const paths = writeBuilderWork(state.dataDir, data);
+        const done: BuilderFetchState = {
+          status: report.status,
+          target,
+          sources: report.sources,
+          docs: report.docs,
+          warnings: report.warnings.map((w) => maskSecrets(w, secrets)),
+          candidates: data.candidates.filter((c) => !c.cut).length,
+          cut: data.candidates.filter((c) => c.cut).length,
+          reminders: data.reminders.length,
+          droppedByHost: report.droppedByHost,
+          droppedByKey: report.droppedByKey,
+          droppedByScan: report.droppedByScan,
+        };
+        record(done);
+        lines.push(`빌더 받기: 후보 목록 ${paths.md}`, `- 항목 파일을 쓸 곳: ${paths.items}`, ...builderFetchLines(done));
+      } catch (e) {
+        crashed = maskSecrets((e as Error).message, secrets);
+        removeBuilderWorkFiles(state.dataDir);
+        record({ status: "crashed", target, reason: crashed });
+        lines.push(`빌더 받기 실패(${target}): ${crashed}. 쓰기를 건너뛴다. 다음 실행이 다시 받는다.`);
+      }
+    }
+    let kindState: BuilderKindsState;
+    try {
+      const kinds = await fetchDiscoveries({ db, http, now: ctx.now(), target, home: homeOf(ctx), token: readKeys(ctx.env, keyDirOf(ctx)).PRODUCT_HUNT_TOKEN, secrets, repoTestMode: state.mode === "test", rateRemaining, deadlineAt, off: ctx.builderOff, clock: ctx.builderClock });
+      writeDiscoverWork(state.dataDir, kinds);
+      kindState = { target, product: kinds.kinds.product, repo: kinds.kinds.repo };
+    } catch {
+      // 도구 변화의 상태와 종료 코드에 번지지 않게 여기서 멈춘다(4.3-5)
+      removeDiscoverWorkFiles(state.dataDir);
+      const stopped = (kind: DiscoverKind): KindReport => (isKindDone(db, target, kind) ? emptyReport("done") : { ...emptyReport("failed"), reason: "받기가 중간에 멈췄다" });
+      kindState = { target, product: stopped("product"), repo: stopped("repo") };
+    }
+    updateRun(runFile, (s) => (s.builderKinds = kindState));
+    ctx.out(maskSecrets([...lines, ...kindLines({ builderKinds: kindState })].join("\n"), secrets));
+    return crashed === null ? EXIT.ok : EXIT.failed;
   } finally {
     db.close();
   }
@@ -2349,31 +2529,95 @@ function readBuilderItems(state: RunState): { ok: true; data: unknown; work: Bui
   return r.ok ? { ...r, work: work.data } : r;
 }
 
-function cmdBuilderCheck(argv: string[], ctx: Context): number {
+/** 새 종류 항목을 경로가 막힌 별도 프로세스로 쓴다(N11). 출력과 기록에 글이 없다. 실패해도 쓰기 대상 종류만 받지 못함이 되고 적용으로 간다 */
+function cmdBuilderWrite(argv: string[], ctx: Context): number {
   const v = opts(argv, { run: { type: "string" } });
-  const state = readRun(need(v, "run"));
+  const runFile = need(v, "run");
+  const state = readRun(runFile);
   const refused = indicatorCondition(state, ctx);
   if (refused !== null) return refused;
-  const r = readBuilderItems(state);
-  if (!r.ok) {
-    ctx.out(`빌더 항목 검사 실패:\n- ${r.reason}`);
-    return EXIT.failed;
-  }
   const db = openExistingDb(state.dbPath);
   try {
-    const c = checkBuilderFile(db, r.data, r.work, { home: homeOf(ctx), secrets: secretsOf(ctx) });
-    if (!c.ok) {
-      ctx.out(`빌더 항목 검사 실패, 위반 ${c.violations.length}개:\n${formatViolations(c.violations)}`);
+    const target = videoTargetDate(db);
+    const data = target === null ? null : discoverDataOf(state, target);
+    const kinds = data === null ? [] : writeTargets(db, data);
+    const prev = state.builderWrite?.target === target ? state.builderWrite : undefined;
+    const rounds = prev?.rounds ?? 0;
+    const record = (w: Omit<BuilderWriteState, "target" | "rounds" | "kinds">, n = rounds) => updateRun(runFile, (s) => (s.builderWrite = { ...w, target, rounds: n, kinds }));
+    if (data === null || target === null || kinds.length === 0) {
+      record({ status: "nothing" });
+      ctx.out("새 종류 쓰기: 쓰기 대상이 없어 부르지 않는다.");
+      return EXIT.ok;
+    }
+    const items = readDiscoverItems(state.dataDir);
+    const o = { home: homeOf(ctx), secrets: secretsOf(ctx) };
+    const violations = items.state === "none" ? [] : judgedViolations(judgeDiscoveries(db, target, data, items, o));
+    if (items.state !== "none" && violations.length === 0) {
+      record({ status: "passed" });
+      ctx.out("새 종류 쓰기: 항목 파일에 위반이 없어 부르지 않는다.");
+      return EXIT.ok;
+    }
+    if (rounds >= WRITE_MAX_ROUNDS) {
+      const reason = `${WRITE_MAX_ROUNDS}번 쓴 뒤에도 끝나지 않았다`;
+      record({ status: "failed", reason });
+      ctx.out(`새 종류 쓰기: ${reason}. 더 부르지 않는다.`);
       return EXIT.failed;
     }
-    ctx.out(`빌더 항목 검사 통과: ${c.plan.items.length}건.`);
+    const fix = items.state === "none" ? null : { previous: items.text, violations };
+    const failure = runWriter({ dataDir: state.dataDir, target, kinds, fix, env: ctx.env, run: ctx.claudeRun ?? claudeRunner, timeoutMs: ctx.claudeTimeoutMs ?? WRITE_TIMEOUT_MS });
+    if (failure !== null) {
+      record({ status: "failed", reason: failure }, rounds + 1);
+      ctx.out(`새 종류 쓰기 실패(${failure}). builder-apply로 넘어간다. 쓰지 못한 종류는 받지 못함이 된다.`);
+      return EXIT.failed;
+    }
+    record({ status: "written" }, rounds + 1);
+    ctx.out(`새 종류 쓰기: 대상 ${kinds.map((k) => DISCOVER_LABELS[k]).join(", ")}, ${rounds + 1}번째 프로세스가 항목 파일을 썼다. builder-check로 검사한다.`);
     return EXIT.ok;
   } finally {
     db.close();
   }
 }
 
-/** 검사 → 한 트랜잭션 적용 → 작업 파일 지우기(4.3-4). 실패하면 아무것도 적용하지 않고 파일을 남긴다 */
+function cmdBuilderCheck(argv: string[], ctx: Context): number {
+  const v = opts(argv, { run: { type: "string" } });
+  const state = readRun(need(v, "run"));
+  const refused = indicatorCondition(state, ctx);
+  if (refused !== null) return refused;
+  const db = openExistingDb(state.dbPath);
+  try {
+    const o = { home: homeOf(ctx), secrets: secretsOf(ctx) };
+    const target = videoTargetDate(db);
+    const lines: string[] = [];
+    let failed = false;
+    if (target === null || !isBuilderDone(db, target)) {
+      const r = readBuilderItems(state);
+      if (r.ok) {
+        const c = checkBuilderFile(db, r.data, r.work, o);
+        failed = !c.ok;
+        lines.push(c.ok ? `빌더 항목 검사 통과: ${c.plan.items.length}건.` : `빌더 항목 검사 실패, 위반 ${c.violations.length}개:\n${formatViolations(c.violations)}`);
+      } else {
+        failed = true;
+        lines.push(`빌더 항목 검사 실패:\n- ${r.reason}`);
+      }
+    }
+    const data = target === null ? null : discoverDataOf(state, target);
+    if (target !== null && data !== null) {
+      const j = judgeDiscoveries(db, target, data, readDiscoverItems(state.dataDir), o);
+      lines.push(...judgmentLines(j));
+      failed ||= judgedViolations(j).length > 0;
+    }
+    ctx.out(lines.length > 0 ? lines.join("\n") : "빌더: 검사할 항목이 없다.");
+    return failed ? EXIT.failed : EXIT.ok;
+  } finally {
+    db.close();
+  }
+}
+
+/**
+ * 검사 → 한 트랜잭션 적용 → 작업 파일 지우기(4.3-4). 도구 변화와 새 종류를 따로 판정한다(4.3-5).
+ * 위반이 있으면 아무것도 적용하지 않고 파일을 남기지만, 마지막 번에는 통과한 쪽을 적용하고 실패로 끝난다(이어지는 builder-fail이 나머지를 저장한다).
+ * 도구 변화 후보가 아예 없으면(받기가 멈췄다) 고칠 수 없으므로 그쪽을 기다리지 않는다.
+ */
 function cmdBuilderApply(argv: string[], ctx: Context): number {
   const v = opts(argv, { run: { type: "string" } });
   const runFile = need(v, "run");
@@ -2381,35 +2625,69 @@ function cmdBuilderApply(argv: string[], ctx: Context): number {
   const refused = indicatorCondition(state, ctx);
   if (refused !== null) return refused;
   const prev = state.builderApply;
-  const attempts = prev?.status === "failed" ? prev.attempts : 0;
+  const attempts = prev?.status === "failed" || prev?.status === "applied" ? prev.attempts : 0;
   const db = openExistingDb(state.dbPath);
   try {
     const target = videoTargetDate(db);
-    if (target !== null && isBuilderDone(db, target)) {
+    const toolsDone = target !== null && isBuilderDone(db, target);
+    const recordDone = () => {
       if (prev?.status !== "applied" || prev.target !== target) updateRun(runFile, (s) => (s.builderApply = { status: "alreadyDone", target, attempts }));
+    };
+    if (target !== null && toolsDone && undoneKinds(db, target).length === 0) {
+      recordDone();
       ctx.out(`빌더: ${target} 이미 끝남. 바꾼 것이 없다.`);
       return EXIT.ok;
     }
-    const { fail, exhausted } = applyFailure(ctx, attempts, "빌더 항목을", "작업 파일은 남긴다. 더 고치지 못하면 builder-fail을 부른다.", (f) => updateRun(runFile, (s) => (s.builderApply = { status: "failed", target, ...f })));
+    const record = (f: ApplyFailure) =>
+      updateRun(runFile, (s) => {
+        // 도구 변화를 이미 적용했으면 그 기록을 두고 횟수만 센다
+        if (s.builderApply?.status === "applied" && s.builderApply.target === target) s.builderApply.attempts = f.attempts;
+        else s.builderApply = { status: "failed", target, ...f };
+      });
+    const { fail, exhausted } = applyFailure(ctx, attempts, "빌더 항목을", "작업 파일은 남긴다. 더 고치지 못하면 builder-fail을 부른다.", record);
     const stopped = exhausted();
     if (stopped !== null) return stopped;
-    const r = readBuilderItems(state);
-    if (!r.ok) return fail(r.reason);
-    if (r.work.target !== target) return fail(`후보 목록의 날짜(${r.work.target})가 대상 날짜(${target ?? "없음"})와 다르다(builder-fetch를 다시 한다)`);
-    const o = { home: homeOf(ctx), secrets: secretsOf(ctx) };
-    const c = checkBuilderFile(db, r.data, r.work, o);
-    if (!c.ok) return fail("빌더 항목 파일이 검사를 통과하지 못했다", c.violations);
-    const a = applyBuilderPlan(db, c.plan, r.work, o);
-    const cleaned = removeBuilderWorkFiles(state.dataDir);
-    updateRun(runFile, (s) => (s.builderApply = { status: "applied", target, attempts, items: a.items, reminders: a.reminders, newSchedules: a.newSchedules, linked: a.linked, postponed: a.postponed, moved: a.moved, newsKept: a.newsKept }));
-    ctx.out(`빌더 항목 적용함(${target}): 항목 ${a.items}건, 다시 알림 ${a.reminders}건, 새 일정 ${a.newSchedules}개. 상태 ${BUILDER_STATUS_NAMES[r.work.status]}. 빌더 작업 파일 ${cleaned}개를 지웠다.`);
+    const o = { home: homeOf(ctx), secrets: secretsOf(ctx), offKinds: kindsOff(state, ctx) };
+    const last = attempts + 1 >= PICK_MAX_ATTEMPTS;
+    const toolsWork = toolsDone ? null : readBuilderWork(state.dataDir);
+    const toolsBlocked = toolsWork !== null && (!toolsWork.ok || toolsWork.data.target !== target);
+    const r = toolsDone ? null : readBuilderItems(state);
+    const dateMismatch = r?.ok === true && r.work.target !== target;
+    const checked = r?.ok === true && !dateMismatch ? checkBuilderFile(db, r.data, r.work, o) : null;
+    const plan = r?.ok === true && checked?.ok === true ? { plan: checked.plan, work: r.work } : null;
+    const data = target === null ? null : discoverDataOf(state, target);
+    const j = target === null ? null : judgeDiscoveries(db, target, data, readDiscoverItems(state.dataDir), o);
+    const kindViolations = j === null ? [] : judgedViolations(j);
+    const toolsReason = r === null || plan !== null ? null : !r.ok ? r.reason : dateMismatch ? `후보 목록의 날짜(${r.work.target})가 대상 날짜(${target ?? "없음"})와 다르다(builder-fetch를 다시 한다)` : "빌더 항목 파일이 검사를 통과하지 못했다";
+    const violations = [...(checked?.ok === false ? checked.violations : []), ...kindViolations];
+    const reason = toolsReason ?? (kindViolations.length > 0 ? "새 종류 항목 파일이 검사를 통과하지 못했다" : null);
+    const failNow = () => fail(reason!, violations.length > 0 ? violations : undefined);
+    const toolsWait = toolsReason !== null && !toolsBlocked;
+    if ((toolsWait || kindViolations.length > 0) && !last) return failNow();
+    const saveKinds = () => {
+      if (j !== null && target !== null) applyDiscoveries(db, data, target, j, true, kstDate(ctx.now()));
+    };
+    const a = plan === null ? null : applyBuilderPlan(db, plan.plan, plan.work, o, saveKinds);
+    if (plan === null) inTransaction(db, saveKinds);
+    if (j !== null && target !== null) updateRun(runFile, (s) => (s.builderKinds = kindsAfter(s.builderKinds, db, target, j)));
+    if (a !== null && plan !== null) {
+      const cleaned = removeBuilderWorkFiles(state.dataDir);
+      updateRun(runFile, (s) => (s.builderApply = { status: "applied", target, attempts, items: a.items, reminders: a.reminders, newSchedules: a.newSchedules, linked: a.linked, postponed: a.postponed, moved: a.moved, newsKept: a.newsKept }));
+      ctx.out(`빌더 항목 적용함(${target}): 항목 ${a.items}건, 다시 알림 ${a.reminders}건, 새 일정 ${a.newSchedules}개. 상태 ${BUILDER_STATUS_NAMES[plan.work.status]}. 빌더 작업 파일 ${cleaned}개를 지웠다.`);
+    } else if (toolsDone) {
+      recordDone();
+      ctx.out(`빌더: ${target} 도구 변화는 이미 끝남.`);
+    }
+    if (j !== null) ctx.out(kindLines(readRun(runFile)).join("\n"));
+    if (reason !== null) return failNow();
+    ctx.out(`새 종류 작업 파일 ${removeDiscoverWorkFiles(state.dataDir)}개를 지웠다.`);
     return EXIT.ok;
   } finally {
     db.close();
   }
 }
 
-/** 받기나 쓰기가 끝내 실패한 날짜를 받지 못함으로 저장한다(4.3-1). 시각과 저장된 항목은 그대로 두어 다음 실행이 다시 한다 */
+/** 끝나지 않은 도구 변화와 새 종류를 받지 못함으로 저장한다(4.3-1, 4.3-5). 시각과 저장된 항목은 그대로 두어 다음 실행이 다시 한다. 꺼짐과 기준값 쌓는 중, 후보 없이 확인한 날은 그 상태다 */
 function cmdBuilderFail(argv: string[], ctx: Context): number {
   const v = opts(argv, { run: { type: "string" } });
   const runFile = need(v, "run");
@@ -2419,15 +2697,23 @@ function cmdBuilderFail(argv: string[], ctx: Context): number {
   const db = openExistingDb(state.dbPath);
   try {
     const target = videoTargetDate(db);
-    removeBuilderWorkFiles(state.dataDir);
     if (target === null) {
+      removeBuilderWorkFiles(state.dataDir);
+      removeDiscoverWorkFiles(state.dataDir);
       ctx.out("빌더: 브리프가 없어 저장할 날짜가 없다.");
       return EXIT.ok;
     }
+    const data = discoverDataOf(state, target);
+    const j = judgeDiscoveries(db, target, data, { state: "none" }, { home: homeOf(ctx), secrets: secretsOf(ctx), offKinds: kindsOff(state, ctx) });
+    inTransaction(db, () => applyDiscoveries(db, data, target, j, false, kstDate(ctx.now())));
+    updateRun(runFile, (s) => (s.builderKinds = { ...kindsAfter(s.builderKinds, db, target, j), excluded: s.builderKinds?.excluded ?? [], excludedOther: s.builderKinds?.excludedOther ?? 0 }));
+    removeBuilderWorkFiles(state.dataDir);
+    removeDiscoverWorkFiles(state.dataDir);
     const marked = markBuilderFailed(db, target);
     const prev = state.builderApply;
     if (marked) updateRun(runFile, (s) => (s.builderApply = { status: "gaveUp", target, attempts: prev?.attempts ?? 0, reason: prev?.reason ?? "받기나 쓰기가 끝나지 못했다" }));
-    ctx.out(marked ? `빌더: ${target} 받지 못함으로 저장했다. 다음 실행이 다시 한다.` : `빌더: ${target} 이미 끝나 그대로 둔다.`);
+    else if (prev?.status === "failed") updateRun(runFile, (s) => (s.builderApply = { status: "alreadyDone", target, attempts: prev.attempts }));
+    ctx.out([marked ? `빌더: ${target} 받지 못함으로 저장했다. 다음 실행이 다시 한다.` : `빌더: ${target} 이미 끝나 그대로 둔다.`, ...kindLines(readRun(runFile))].join("\n"));
     return EXIT.ok;
   } finally {
     db.close();
@@ -2679,6 +2965,7 @@ const COMMANDS: Record<string, (argv: string[], ctx: Context) => number> = {
   "indicator-check": cmdIndicatorCheck,
   "indicator-apply": cmdIndicatorApply,
   "video-check": cmdVideoCheck,
+  "builder-write": cmdBuilderWrite,
   "builder-check": cmdBuilderCheck,
   "builder-apply": cmdBuilderApply,
   "builder-fail": cmdBuilderFail,
@@ -2733,6 +3020,7 @@ const ASYNC_COMMANDS: Record<string, (argv: string[], ctx: Context) => Promise<n
   "video-refresh": cmdVideoRefresh,
   "video-fetch": cmdVideoFetch,
   "builder-fetch": cmdBuilderFetch,
+  "builder-snapshot": cmdBuilderSnapshot,
   "video-notes": cmdVideoNotes,
   "video-sections": cmdVideoSections,
 };

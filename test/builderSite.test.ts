@@ -164,7 +164,7 @@ async function build(fx: Fixture, work: string): Promise<string> {
 }
 
 describe("4.6-4 정적 HTML·RSS·검색", () => {
-  const options = { end: "2026-10-27", days: 14, contiguous: true, schedules: 12 };
+  const options = { end: "2026-10-27", days: 18, contiguous: true, schedules: 12 };
   let out = "";
   let plain = "";
   let fx: Fixture;
@@ -222,6 +222,37 @@ describe("4.6-4 정적 HTML·RSS·검색", () => {
     assert.ok(names.every((n) => BUILDER_ITEMS_FILE_RE.test(n) && !BACKUP_NAME_RE.test(n)));
   });
 
+  const found = (date: string) => (JSON.parse(fx.files.get(`site-data/${siteFiles.builderItems(date.slice(0, 7))}`)!) as BuilderMonth).discoveries![date]!;
+
+  test("9.9 4.5-4: 브리프 정적 HTML에 묶음과 새 항목의 칸이 있고, 라이선스 없음과 상태 문구가 그대로다", () => {
+    const b = fx.info.builder!;
+    const html = read(`${b.three}.html`);
+    for (const name of ["도구 변화", "새 제품", "뜨는 저장소"]) assert.ok(html.includes(`>${name}<`), name);
+    for (const x of found(b.three!)) {
+      assert.ok(html.includes(`id="${x.key}"`), x.key);
+      for (const s of [x.name, x.purpose, x.difference, x.reason, x.url]) assert.ok(html.includes(s), s);
+    }
+    assert.ok(html.includes("판별되지 않음") && html.includes("최근 릴리스 없음") && html.includes("최근 릴리스 확인 못 함"));
+    assert.ok(html.includes("정정됨"));
+    assert.ok(read(`${b.allNone}.html`).includes("이날은 실을 만한 뜨는 저장소가 없다."));
+    assert.ok(read(`${b.allFailed}.html`).includes("이날의 새 제품을 받지 못했다."));
+    assert.ok(read(`${b.mixed}.html`).includes("다음 날부터"));
+    assert.ok(!read(`${b.onlyProduct}.html`).includes(">도구 변화<"));
+    assert.ok(!read(`${b.noRecord}.html`).includes(">새 제품<"));
+    assert.ok(!read(`${b.four}.html`).includes(">새 제품<"), "9.9 이전 날짜");
+    assert.ok(!read(`${b.offOnly}.html`).includes('id="builder"'), "꺼짐만 있는 날");
+  });
+
+  test("9.9 4.5-4: RSS 브리프 항목에 새 항목의 이름이 들어간다", () => {
+    const rss = read(RSS_FILE);
+    for (const x of found(fx.info.builder!.three!)) assert.ok(rss.includes(`빌더: ${x.name}`), x.name);
+  });
+
+  test("9.9 4.5-4: 검색 색인을 풀면 새 항목의 글이 빌더 달 레코드로 찾아진다", async () => {
+    const hits = await searchOutput(out, "가짜회의록지어낸용도는");
+    assert.ok(hits.some((h) => h.meta.kind === "builder"), JSON.stringify(hits));
+  });
+
   test("일정 출처 문구: 일정 정적 페이지의 두 곳이 '뉴스와 공식 문서'다", () => {
     const b = fx.info.builder!;
     const page = read("schedules.html");
@@ -234,7 +265,7 @@ describe("4.6-4 정적 HTML·RSS·검색", () => {
 });
 
 describe("4.6-5 크기", () => {
-  test("5년, 하루 4건, 칸별 상한 길이에서 첫 화면과 빌더 탭이 gzip 300KB 이하이고 빌더 파일이 2,000개 이하다", { timeout: 600_000 }, async () => {
+  test("5년, 하루 10건, 칸별 상한 길이에서 첫 화면과 빌더 탭이 gzip 300KB 이하이고 빌더 파일이 2,000개 이하다", { timeout: 600_000 }, async () => {
     const work = tempDir("tidwyn-site98-");
     const dataDir = path.join(work, "data");
     const out = path.join(work, "out");
@@ -244,6 +275,9 @@ describe("4.6-5 크기", () => {
     const day = latest.days["2026-10-31"]!;
     assert.equal(day.length, 4);
     assert.ok(day.every((x) => x.title.length === 60 && x.whatChanged.length === 300 && x.who.length === 100 && x.action.length === 150 && x.why.length === 100));
+    const found = latest.discoveries!["2026-10-31"]!;
+    assert.equal(found.length, 6);
+    assert.ok(found.every((x) => x.purpose.length === 200 && x.difference.length === 200 && x.reason.length === 100));
     assert.ok(new Set(Object.values(latest.days).flat().map((x) => x.whatChanged)).size > 100, "날마다 글이 달라야 압축에 속지 않는다");
     const size = measureOutput(out);
     assert.ok(size.firstScreen.gzip <= FIRST_SCREEN_BUDGET, `브리프 첫 화면 gzip ${size.firstScreen.gzip}B`);

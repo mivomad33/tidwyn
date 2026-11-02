@@ -1,6 +1,6 @@
 // 브리프 화면의 섹션·카테고리 거르기와 `#<뉴스 키>` 처리(4.2-2, 4.2-4). 4.5단계: 세 섹션을 한 목록으로 보는 '전체' 탭. 7단계: 섹션 탭 끝의 '영상' 탭
 import { SECTIONS } from "../../../src/categories.ts";
-import { isBuilderItemKey } from "../../../src/builderTypes.ts";
+import { isBuilderTabKey } from "../../../src/builderTypes.ts";
 import { BUILDER_TAB } from "./builder.ts";
 import { BUILDER_HASH, VIDEO_HASH } from "./routes.ts";
 import { VIDEO_TAB, visibleVideoCount } from "./videos.ts";
@@ -96,8 +96,8 @@ export function stateForHash(day: DayList, key: string | null, current: BriefVie
   // 7단계: `#videos`(이슈 페이지의 "M월 D일 추천")는 영상 탭으로 연다. 영상 탭은 섹션처럼 날짜마다 바꾸지 않고 두며,
   // 그 날짜에 보이는 영상이 없으면 화면이 첫 섹션 탭을 보인다(방문자의 오늘 날짜로 정하므로 여기서는 알 수 없다)
   if (key === VIDEO_HASH) return { ...current, section: VIDEO_TAB, expanded: null };
-  // 9.8단계: `#builder`와 `#builder-<순서>`는 빌더 탭으로 연다. 기록이 없는 날짜면 화면이 첫 섹션 탭을 보인다
-  if (key === BUILDER_HASH || isBuilderItemKey(key)) return { ...current, section: BUILDER_TAB, expanded: null };
+  // 9.8단계: `#builder`와 빌더 탭 항목 키(`#builder-<순서>`, 9.9단계 `#product-<순서>`, `#repo-<순서>`)는 빌더 탭으로 연다. 기록이 없는 날짜면 화면이 첫 섹션 탭을 보인다
+  if (key === BUILDER_HASH || isBuilderTabKey(key)) return { ...current, section: BUILDER_TAB, expanded: null };
   const sections = daySections(day);
   const keep = current.section === ALL_TAB || current.section === VIDEO_TAB || current.section === BUILDER_TAB || sections.includes(current.section);
   const base = keep ? current : { ...current, section: sections[0]! };

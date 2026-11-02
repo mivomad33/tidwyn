@@ -60,7 +60,8 @@ export interface EolSource extends SourceBase {
 
 export type BuilderSourceSpec = ReleaseSource | FeedSource | DocSource | KevSource | GhsaSource | EolSource;
 
-const GITHUB_API = "https://api.github.com";
+export const GITHUB_API = "https://api.github.com";
+export const GITHUB_JSON = "application/vnd.github+json";
 const CLAUDE_DOCS = "https://platform.claude.com/docs/en";
 const OPENAI_DOCS = "https://developers.openai.com/api/docs";
 const GEMINI_DOCS = "https://ai.google.dev/gemini-api/docs";
@@ -124,7 +125,7 @@ export interface BuilderOff {
 
 export const DEFAULT_OFF: BuilderOff = { sources: BUILDER_SOURCES_OFF, vendors: BUILDER_VENDORS_OFF };
 
-export function isOff(s: BuilderSourceSpec, off: BuilderOff): boolean {
+export function isOff(s: Pick<BuilderSourceSpec, "id" | "vendor">, off: BuilderOff): boolean {
   return off.sources.includes(s.id) || off.vendors.includes(s.vendor);
 }
 
@@ -137,6 +138,41 @@ export function ghsaUrl(severity: "critical" | "high", fromDate: string): string
 export function npmDownloadsUrl(name: string): string {
   return `https://api.npmjs.org/downloads/point/last-week/${name.split("/").map(encodeURIComponent).join("/").replace(/^%40/, "@")}`;
 }
+
+// ---- 9.9단계 새 종류(2.4의 소스 표). 끄려면 위 BUILDER_SOURCES_OFF에 id를 넣는다 ----
+
+export const REPO_SOURCE = { id: "github-repos", vendor: "github-search" } as const;
+export const PRODUCT_SOURCE = { id: "product-hunt", vendor: "producthunt" } as const;
+
+/** 스냅샷 범위(N1) */
+export const REPO_MIN_STARS = 2000;
+export const REPO_PUSHED_DAYS = 7;
+export const REPO_PER_PAGE = 100;
+/** 쿼리 하나로 받을 수 있는 페이지 수(1,000건 제한) */
+export const REPO_MAX_PAGES = 10;
+
+/** 저장소 검색. 별 많은 순으로 받아 페이지가 끝나면 마지막 별 수를 다음 쿼리의 상한으로 쓴다. hi가 null이면 상한이 없다 */
+export function repoSearchUrl(hi: number | null, pushedSince: string, page: number): string {
+  const stars = hi === null ? `stars:>=${REPO_MIN_STARS}` : `stars:${REPO_MIN_STARS}..${hi}`;
+  const q = `${stars} pushed:>=${pushedSince} fork:false archived:false`;
+  return `${GITHUB_API}/search/repositories?q=${encodeURIComponent(q)}&sort=stars&order=desc&per_page=${REPO_PER_PAGE}&page=${page}`;
+}
+
+/** 이름은 받은 값을 형식 검사한 뒤에만 넣는다 */
+export const repoApiUrl = (name: string, tail: "stargazers/history" | "readme" | "releases/latest") => `${GITHUB_API}/repos/${name}/${tail}`;
+export const repoPageUrl = (name: string) => `https://github.com/${name}`;
+
+export const PRODUCT_API_URL = "https://api.producthunt.com/v2/api/graphql";
+/** 항목 출처가 있어야 하는 호스트(N3) */
+export const PRODUCT_HOSTS: readonly string[] = ["www.producthunt.com"];
+/** 한 번에 묻는 수. 실린 키와 호스트 밖 주소를 빼고도 후보 상한을 채우게 상한보다 크게 둔다 */
+export const PRODUCT_FETCH_COUNT = 30;
+/** 재료에 쓰는 칸만 묻는다. 메이커, 사용자, 댓글, 이미지, website는 묻지 않는다(4.2-1) */
+export const PRODUCT_QUERY = `query Posts($featured: Boolean!, $postedAfter: DateTime!, $first: Int!) {
+  posts(first: $first, featured: $featured, order: VOTES, postedAfter: $postedAfter) {
+    edges { node { slug name tagline description votesCount createdAt url topics(first: 5) { edges { node { name } } } } }
+  }
+}`;
 
 // ---- 2.5의 기계 필터 값 ----
 

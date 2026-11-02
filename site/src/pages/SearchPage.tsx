@@ -6,10 +6,11 @@ import { loadJson } from "../data.ts";
 import { monthDayWeekday } from "../lib/format.ts";
 import { dataUrl } from "../lib/paths.ts";
 import { briefPath, entityPath, issuePath, searchPath, termPath } from "../lib/routes.ts";
+import { builderItemLabel, builderItemTitle } from "../lib/builder.ts";
 import { matchBuilderItems, matchDayStories, matchEntities, matchIssues, matchTerms, monthOf, parseHit, queryTerms, type SearchHit } from "../lib/search.ts";
 import { excerpt } from "../lib/terms.ts";
 import { categoryVar } from "../lib/theme.ts";
-import type { BuilderMonth, EntityChunk, EntityDetail, IssueChunk, IssueDetail, ListStory, MonthDetail, MonthList, SiteBuilderItem, SiteIssueList, TermGroupFile, TermItem } from "../lib/types.ts";
+import type { BuilderMonth, EntityChunk, EntityDetail, IssueChunk, IssueDetail, ListStory, MonthDetail, MonthList, SiteBuilderItem, SiteDiscoveryItem, SiteIssueList, TermGroupFile, TermItem } from "../lib/types.ts";
 import { searchRecords, type PagefindResult } from "../pagefind.ts";
 import { Link, navigate } from "../router.tsx";
 
@@ -23,7 +24,7 @@ interface NewsResult {
 
 interface BuilderResult {
   date: string;
-  item: SiteBuilderItem;
+  item: SiteBuilderItem | SiteDiscoveryItem;
 }
 
 interface Found {
@@ -246,11 +247,11 @@ function Results({ state, q, onMore }: { state: Extract<State, { status: "ok" }>
               <li key={`${n.date}-${n.item.key}`} className="item">
                 <Link to={briefPath(n.date, n.item.key)} className="item-btn">
                   <span className="cat muted-cat">
-                    {monthDayWeekday(n.date)} · {n.item.field}
+                    {monthDayWeekday(n.date)} · {builderItemLabel(n.item)}
                   </span>
                   <span className="nrow">
                     <NewsTitle date={n.date} newsKey={n.item.key} className="title">
-                      {n.item.title}
+                      {builderItemTitle(n.item)}
                     </NewsTitle>
                     <ReadCheck date={n.date} newsKey={n.item.key} />
                   </span>

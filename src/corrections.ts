@@ -1,7 +1,10 @@
 import type { DatabaseSync } from "node:sqlite";
-import { ITEM_LABELS, checkConfirmedRange, checkItemText, isDueFormat, type ItemTextField } from "./builderCheck.ts";
+import { ITEM_LABELS, checkConfirmedRange, checkItemText, checkPublicText, isDueFormat, type ItemTextField } from "./builderCheck.ts";
 import { recomputeReminder } from "./builderSchedule.ts";
 import { builderItemByKey, isBuilderItemKey, isBuilderSchedule, itemsOfSchedule, type BuilderItem } from "./builderStore.ts";
+import { isDiscoveryItemKey } from "./builderTypes.ts";
+import { DISCOVERY_LABELS, DISCOVERY_LIMITS, DISCOVERY_TEXT_FIELDS, type DiscoveryTextField } from "./discoverCheck.ts";
+import { discoveryByItemKey, type Discovery } from "./discoverStore.ts";
 import { ADDRESS_RE, scanText } from "./precheck.ts";
 import { getSchedule, isLiveSchedule, updateSchedule } from "./schedules.ts";
 import { fullKey, inTransaction, storyByFullKey, storyKey, type StoryRef } from "./issues.ts";
@@ -189,17 +192,24 @@ export function isBuilderCorrection(raw: unknown): boolean {
   return typeof raw === "object" && raw !== null && isBuilderItemKey((raw as Obj).key);
 }
 
-/** 빌더 항목 정정 파일을 검사한다. 출처와 확정 여부는 고칠 수 없다 */
-export function checkBuilderCorrection(db: DatabaseSync, raw: unknown, today: string, home: string | null, secrets: readonly string[] = []): BuilderCorrectionCheck {
-  const c = new Checker();
+/** 빌더·새 종류 정정 파일의 공통 칸. 파일이 객체가 아니면 null */
+function correctionHead(c: Checker, raw: unknown, home: string | null, secrets: readonly string[]): { date: string; key: string; reason: string; fieldsObj: Obj | null } | null {
   const o = c.obj(raw, "정정 파일");
-  if (o === null) return { ok: false, violations: c.violations };
+  if (o === null) return null;
   c.keys(o, ["date", "key", "reason", "fields"], "정정 파일");
   const date = c.text(o, "date", "날짜", "정정 파일");
   const key = c.text(o, "key", "항목 키", "정정 파일");
   const reason = c.text(o, "reason", "사유", "정정 파일");
   if (reason !== "") checkReason(c, reason, home, secrets);
-  const fieldsObj = c.obj(o.fields, "고칠 항목");
+  return { date, key, reason, fieldsObj: c.obj(o.fields, "고칠 항목") };
+}
+
+/** 빌더 항목 정정 파일을 검사한다. 출처와 확정 여부는 고칠 수 없다 */
+export function checkBuilderCorrection(db: DatabaseSync, raw: unknown, today: string, home: string | null, secrets: readonly string[] = []): BuilderCorrectionCheck {
+  const c = new Checker();
+  const head = correctionHead(c, raw, home, secrets);
+  if (head === null) return { ok: false, violations: c.violations };
+  const { date, key, reason, fieldsObj } = head;
   const item = date !== "" && key !== "" ? builderItemByKey(db, date, key) : null;
   if (date !== "" && key !== "" && item === null) c.add("빌더 항목", `${date} ${key} 항목이 없다`);
   if (fieldsObj === null || item === null) return { ok: false, violations: c.violations };
@@ -268,6 +278,59 @@ export function applyBuilderCorrection(db: DatabaseSync, checked: Extract<Builde
       }
     }
     return out;
+  });
+}
+
+// ---- 새 제품·뜨는 저장소 정정(9.9단계 4.4-2) ----
+
+export interface DiscoveryCorrectionInput {
+  date: string;
+  key: string;
+  reason: string;
+  fields: Partial<Record<DiscoveryTextField, string>>;
+}
+
+export type DiscoveryCorrectionCheck = { ok: true; input: DiscoveryCorrectionInput; item: Discovery; changed: DiscoveryTextField[] } | { ok: false; violations: Violation[] };
+
+/** 정정 파일이 새 제품이나 뜨는 저장소 항목을 가리키는지 */
+export function isDiscoveryCorrection(raw: unknown): boolean {
+  return typeof raw === "object" && raw !== null && isDiscoveryItemKey((raw as Obj).key);
+}
+
+/** 글 칸만 고친다. 이름, 출처, 라이선스, 관리 상태, 별 수, 증가량은 후보 값이라 고칠 수 없다 */
+export function checkDiscoveryCorrection(db: DatabaseSync, raw: unknown, home: string | null, secrets: readonly string[] = []): DiscoveryCorrectionCheck {
+  const c = new Checker();
+  const head = correctionHead(c, raw, home, secrets);
+  if (head === null) return { ok: false, violations: c.violations };
+  const { date, key, reason, fieldsObj } = head;
+  const item = date !== "" && key !== "" ? discoveryByItemKey(db, date, key) : null;
+  if (date !== "" && key !== "" && item === null) c.add("빌더 항목", `${date} ${key} 항목이 없다`);
+  if (fieldsObj === null || item === null) return { ok: false, violations: c.violations };
+  const names = Object.keys(fieldsObj);
+  if (names.length === 0) c.add("고칠 항목", "하나 이상이어야 한다");
+  const fields: DiscoveryCorrectionInput["fields"] = {};
+  const changed: DiscoveryTextField[] = [];
+  for (const name of names) {
+    if (!(DISCOVERY_TEXT_FIELDS as string[]).includes(name)) {
+      c.add("고칠 항목", `"${name}"은(는) 고칠 수 없다(고칠 수 있는 항목: ${DISCOVERY_TEXT_FIELDS.join(", ")})`);
+      continue;
+    }
+    const field = name as DiscoveryTextField;
+    const value = c.text(fieldsObj, field, DISCOVERY_LABELS[field], "고칠 항목");
+    if (value === "") continue;
+    checkPublicText(c, DISCOVERY_LABELS[field], value, DISCOVERY_LIMITS[field], home, secrets);
+    fields[field] = value;
+    if (value !== item[field]) changed.push(field);
+  }
+  if (c.violations.length > 0) return { ok: false, violations: c.violations };
+  return { ok: true, input: { date, key, reason, fields }, item, changed };
+}
+
+export function applyDiscoveryCorrection(db: DatabaseSync, checked: Extract<DiscoveryCorrectionCheck, { ok: true }>, today: string): void {
+  const { item, changed, input } = checked;
+  inTransaction(db, () => {
+    for (const field of changed) db.prepare(`UPDATE builder_discoveries SET ${field} = ? WHERE id = ?`).run(input.fields[field]!, item.id);
+    db.prepare("INSERT INTO builder_discovery_corrections (item_id, corrected_on, reason, fields) VALUES (?, ?, ?, ?)").run(item.id, today, input.reason, JSON.stringify(changed));
   });
 }
 

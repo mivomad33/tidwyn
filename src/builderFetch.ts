@@ -52,7 +52,7 @@ import {
   type PendingChange,
   type StoredRow,
 } from "./builderStore.ts";
-import { attr, decodeXmlText, makeFetchText, parseRss, stripTags, tag, type FetchText } from "./feeds.ts";
+import { attr, decodeXmlText, makeFetchText, parseRss, stripTags, tag, type FetchResult, type FetchText } from "./feeds.ts";
 import { inTransaction } from "./issues.ts";
 import { addDays, kstDate } from "./kst.ts";
 import { failsPublicScan } from "./precheck.ts";
@@ -163,13 +163,13 @@ export interface FetchOptions {
   deadlineMs?: number;
 }
 
-class SourceFailure extends Error {}
+export class SourceFailure extends Error {}
 
-function fail(reason: string): never {
+export function fail(reason: string): never {
   throw new SourceFailure(reason);
 }
 
-interface Window {
+export interface Window {
   from: number;
   to: number;
   /** 날짜만 있는 항목의 비교 범위(시작 날짜의 전날부터, B15) */
@@ -178,7 +178,7 @@ interface Window {
   clampedFrom?: string;
 }
 
-function windowOf(fetchedAt: string | null, now: Date): Window {
+export function windowOf(fetchedAt: string | null, now: Date): Window {
   const to = now.getTime();
   const limit = to - MAX_WINDOW_DAYS * DAY_MS;
   const start = fetchedAt === null ? to - DAY_MS : Date.parse(fetchedAt);
@@ -213,14 +213,14 @@ function dayOf(raw: string): string | null {
 }
 
 /** 소스 형식 공통 검사: 200이어도 HTML 페이지면 실패 */
-function checkBody(status: number, text: string): void {
+export function checkBody(status: number, text: string): void {
   if (status !== 200) fail(`HTTP ${status}`);
   if (text.length > MAX_BODY_CHARS) fail("응답이 지나치게 크다");
   if (text.trim() === "") fail("빈 응답");
   if (/^\s*(?:<!doctype|<html)/i.test(text)) fail("HTML 페이지가 왔다");
 }
 
-function readJson(text: string): unknown {
+export function readJson(text: string): unknown {
   try {
     return JSON.parse(text);
   } catch {
@@ -277,12 +277,12 @@ export function urlKey(url: string): string {
   return safeKey(`${u.protocol}//${u.hostname.toLowerCase()}${u.pathname.replace(/\/+$/, "")}${u.hash}`);
 }
 
-function safeKey(key: string): string {
+export function safeKey(key: string): string {
   return key.replace(/(?<=[\w.%+-])@/g, "%40");
 }
 
 /** https이고 소스의 호스트면 주소를 돌려준다 */
-function allowedUrl(raw: string, base: string, hosts: readonly string[]): string | null {
+export function allowedUrl(raw: string, base: string, hosts: readonly string[]): string | null {
   try {
     const u = new URL(raw, base);
     return u.protocol === "https:" && hosts.includes(u.hostname.toLowerCase()) ? u.toString() : null;
@@ -740,6 +740,19 @@ function pendingDrafts(db: DatabaseSync, target: string, active: DocSource[], pu
   return out.sort((a, b) => (a.due ?? "").localeCompare(b.due ?? "") || a.source.localeCompare(b.source));
 }
 
+/** 실패 이유. 소스가 돌려준 글은 넣지 않는다 */
+/** GitHub 응답의 남은 호출 수. 헤더가 없으면 null */
+export function rateRemainingOf(res: FetchResult): number | null {
+  const left = Number(res.headers?.["x-ratelimit-remaining"] ?? Number.NaN);
+  return Number.isFinite(left) ? left : null;
+}
+
+export function failureReason(e: unknown): string {
+  const err = e as Error;
+  if (e instanceof SourceFailure) return err.message;
+  return err.name === "TimeoutError" || err.name === "AbortError" ? "시간 초과" : "받지 못했다";
+}
+
 /** 소스를 받아 거르고 숫자 행을 저장한다. 소스 하나의 실패가 나머지를 막지 않는다 */
 export async function fetchBuilder(o: FetchOptions): Promise<BuilderFetchReport> {
   const { db, http, now, target, dataDir, home } = o;
@@ -776,9 +789,8 @@ export async function fetchBuilder(o: FetchOptions): Promise<BuilderFetchReport>
       report.droppedByHost += out.droppedByHost;
       if (out.doc) report.docs.push(out.doc);
     } catch (e) {
-      const err = e as Error;
       line.status = "failed";
-      line.reason = e instanceof SourceFailure ? err.message : err.name === "TimeoutError" || err.name === "AbortError" ? "시간 초과" : "받지 못했다";
+      line.reason = failureReason(e);
       line.failDays = markSourceFailed(db, spec.id, today);
     }
     report.sources.push(line);

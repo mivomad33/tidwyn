@@ -39,14 +39,15 @@ import { getFirstCollectionDate, loadBrief, recordFirstCollectionDate, saveBrief
 // 형식 6(9.5단계 4.7-4): 뉴스 정정 기록을 corrections.json에 둔다. 정정이 없으면 이 파일을 쓰지 않는다.
 // 형식 7(9.8단계 4.5-1): 빌더 항목, 숫자 행, 소스 시각 등을 builder.json에 둔다. 빌더 데이터가 없으면 이 파일을 쓰지 않는다.
 // 후보 글, 재료, 문서 원문, 실패 이유는 넣지 않는다.
+// 형식 8(9.9단계 4.4-1): builder.json에 새 제품·뜨는 저장소 항목, 종류별 상태, 그 정정을 더한다. 별 수 스냅샷과 메타데이터는 넣지 않는다(N6).
 
-export const BACKUP_FORMAT_VERSION = 7;
+export const BACKUP_FORMAT_VERSION = 8;
 /**
  * 복원할 수 있는 형식 버전. 형식 1 백업은 이슈 없이, 형식 1·2 백업은 대상·용어 없이 모든 날짜가 뽑기 안 함으로,
  * 형식 1·2·3 백업은 일정 없이 모든 날짜가 일정 뽑기 안 함으로, 형식 1~4 백업은 지표 값 없이 모든 이슈가 지표 판단 안 함으로,
- * 형식 1~5 백업은 정정 기록 없이, 형식 1~6 백업은 빌더 기록 없이 복원된다
+ * 형식 1~5 백업은 정정 기록 없이, 형식 1~6 백업은 빌더 기록 없이, 형식 7 백업은 새 제품·뜨는 저장소 기록 없이 복원된다
  */
-const READABLE_VERSIONS = [1, 2, 3, 4, 5, 6, 7];
+const READABLE_VERSIONS = [1, 2, 3, 4, 5, 6, 7, 8];
 export const BACKUP_DIR = "backup";
 export const DATA_REF = "refs/heads/data";
 const META_FILE = "meta.json";

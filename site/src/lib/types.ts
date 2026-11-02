@@ -3,6 +3,7 @@ export type {
   BuilderMonth,
   DayBuilder,
   SiteBuilderItem,
+  SiteDiscoveryItem,
   IndicatorCard,
   IndicatorChip,
   IndicatorList,

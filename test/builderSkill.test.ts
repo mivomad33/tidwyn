@@ -24,7 +24,7 @@ function chapter(heading: string): string {
   return end < 0 ? rest : rest.slice(0, end);
 }
 
-const rows = SKILL.split("\n").filter((l) => /^\| \d+(-\d+)? \|/.test(l));
+const rows = SKILL.split("\n").filter((l) => /^\| \d+(-\d+)* \|/.test(l));
 const rowAt = (n: string) => rows.findIndex((r) => r.startsWith(`| ${n} |`));
 
 describe("9.8단계 4.7-1 스킬 문서의 빌더 명령과 순서", () => {
@@ -79,7 +79,7 @@ describe("9.8단계 4.7-1 스킬 문서의 빌더 명령과 순서", () => {
 
 describe("9.8단계 4.3-1 고르는 기준과 작성 규칙", () => {
   test("빌더 쓰기를 서브에이전트에 맡기지 않는다", () => {
-    assert.ok(SKILL.includes("빌더 고르기와 쓰기(12-8단계)도 서브에이전트에 맡기지 않고 메인이 한다"));
+    assert.ok(SKILL.includes("도구 변화의 고르기와 쓰기(12-8단계)도 서브에이전트에 맡기지 않고 메인이 한다"));
   });
 
   test("고르는 기준이 적혀 있다", () => {
@@ -124,7 +124,99 @@ describe("9.8단계 4.3-5 실패 격리", () => {
 
   test("앞 단계가 실패해도 빌더 단계를 건너뛰지 않는다", () => {
     assert.ok(rows[rowAt("12-7")]!.includes("앞 단계가 실패해도"));
-    assert.ok(chapter("### 12-6단계: 영상 고르기").includes("고르기가 실패해도 12-7단계로 넘어간다"));
-    assert.ok(chapter("### 12-5단계: 영상 받기").includes("멈추지 않고 12-7단계로 넘어간다"));
+    assert.ok(chapter("### 12-6단계: 영상 고르기").includes("고르기가 실패해도 12-6-1단계로 넘어간다"));
+    assert.ok(chapter("### 12-5단계: 영상 받기").includes("멈추지 않고 12-6-1단계로 넘어간다"));
+  });
+});
+
+// 9.9단계 4.3-1, 4.3-3, 4.3-5, 4.6-1: 스냅샷 단계, 쓰기 프로세스, 실패 격리 문구
+const snapshotStep = () => chapter("### 12-6-1단계: 저장소 스냅샷");
+const fetchStep = () => chapter("### 12-7단계: 빌더 받기");
+const writeSteps = () => chapter("### 쓰기 절차");
+
+describe("9.9단계 4.6-1 스냅샷 단계", () => {
+  test("새 명령이 실제 명령이고 문서에 적혀 있다", () => {
+    for (const cmd of ["builder-snapshot", "builder-write"]) {
+      assert.ok(COMMAND_NAMES.includes(cmd), `${cmd}가 CLI에 없다`);
+      assert.ok(SKILL.includes(`node src/cli.ts ${cmd} --run <실행 기록>`), `${cmd}가 문서에 없다`);
+    }
+  });
+
+  test("순서 표에서 스냅샷은 12-6 뒤, 12-7 앞이다", () => {
+    assert.ok(rowAt("12-6") >= 0 && rowAt("12-6") < rowAt("12-6-1") && rowAt("12-6-1") < rowAt("12-7"));
+    assert.ok(rows[rowAt("12-6-1")]!.includes("builder-snapshot"));
+    assert.ok(rows[rowAt("12-6-1")]!.includes("앞 단계가 실패해도"));
+  });
+
+  test("시간 제한, 다시 부르기, 백그라운드 금지, 시험 모드를 적었다", () => {
+    const step = snapshotStep();
+    for (const text of ["Bash 도구 시간 제한을 10분으로 준다", "`끝남 아니오", "모두 3번까지", "백그라운드로 돌리지 않는다", "앞 단계가 실패해도", "시험 모드(`/brief test`)에서는 돌지 않는다", "비정상으로 끝나도 12-7단계로 넘어간다"]) assert.ok(step.includes(text), text);
+  });
+
+  test("12-7을 가리키던 건너뛰기 문장이 모두 스냅샷으로 이어진다", () => {
+    assert.ok(!chapter("### 12-5단계: 영상 받기").includes("12-7단계"));
+    assert.ok(!chapter("### 12-6단계: 영상 고르기").includes("12-7단계"));
+    assert.ok(chapter("### 12-5단계: 영상 받기").includes("두 경우 모두 12-6단계를 건너뛰고 12-6-1단계로 간다"));
+    const noTarget = SKILL.split("\n").find((l) => l.startsWith("- 대상 날짜가 \"없음\"이면"))!;
+    assert.ok(noTarget.includes("12-6단계, 12-6-1단계, 12-7단계"));
+  });
+});
+
+describe("9.9단계 4.3-1 쓰기 프로세스", () => {
+  test("순서가 도구 변화 항목, 쓰기 명령, 적용이고 Bash 시간 제한이 프로세스 상한 8분보다 길다", () => {
+    const steps = writeSteps();
+    const at = (s: string) => steps.indexOf(s);
+    assert.ok(at("work/builder.items.json") >= 0 && at("work/builder.items.json") < at("builder-write --run"));
+    assert.ok(at("builder-write --run") < at("builder-apply --run"));
+    assert.ok(at("builder-apply --run") < at("builder-fail --run"));
+    assert.ok(steps.includes("Bash 도구 시간 제한을 9분으로 준다"));
+    assert.ok(steps.includes("종료 코드가 1이어도 `builder-apply`로 간다"));
+  });
+
+  test("새 종류 위반은 메인이 고치지 않고 쓰기 명령으로 고친다", () => {
+    const steps = writeSteps();
+    assert.ok(steps.includes("새 종류 위반은 `builder-write`를 다시 불러 고친다"));
+    assert.ok(steps.includes("메인이 직접 쓰거나 Bash가 있는 에이전트로 대신하지 않는다"));
+  });
+
+  test("도구 변화가 끝난 날은 새 종류만 하고, 받기가 멈춘 날도 builder-fail 전에 쓰기와 적용을 부른다", () => {
+    const step = fetchStep();
+    assert.ok(step.includes("도구 변화만 끝났으면"));
+    assert.ok(step.includes("모두 끝났으면"));
+    assert.ok(step.indexOf("`builder-write`와 `builder-apply`") < step.indexOf("builder-fail --run"));
+    assert.ok(step.includes("`builder-apply`의 종료 코드 1은 정상"));
+    assert.ok(writeSteps().includes("도구 변화가 끝난 날"));
+  });
+
+  test("'아무것도 적용하지 않고'가 빌더 쓰기 절차에 남지 않았다", () => {
+    assert.ok(!writeSteps().includes("아무것도 적용하지 않고"));
+    assert.ok(writeSteps().includes("통과한 종류만 적용하고"));
+  });
+
+  test("고르는 기준이 N8과 글 칸 규칙을 다룬다", () => {
+    const rules = chapter("### 새 제품과 뜨는 저장소의 기준");
+    for (const text of ["별 조작이 의심되는 것", "탈옥·크랙·불법 우회", "성인·도박", "악성 도구", "목록 저장소", "용도를 재료로 확인할 수 없는 것", "독자(웹 개발자, AI 도구 사용자)에게 쓸모없는 것", "이 실행의 Claude를 향한 요구", "애매하면 싣지 않는다", "건수를 채우지 않는다", "과장하지 않는다", "재료에 없는 성능·사용자 수", "`.com`", "모르면", "메이커와 저장소 소유자"]) assert.ok(rules.includes(text), text);
+  });
+});
+
+describe("9.9단계 4.3-3 메인은 새 종류 재료를 읽지 않는다", () => {
+  test("작업 파일 목록과 금지 줄이 새 종류 파일을 다룬다", () => {
+    const rules = chapter("## 0. 꼭 지킬 규칙");
+    for (const name of ["`builder.discover.md`", "`builder.discover.json`", "`builder.discover.items.json`"]) assert.ok(rules.includes(name), name);
+    assert.ok(rules.includes("저장소 README·설명과 제품 소개"));
+    assert.ok(rules.includes("메인은 새 종류 작업 파일을 읽지 않는다"));
+    assert.ok(rules.includes("표준 출력은 버려지고"));
+    assert.ok(rules.includes("수와 상태, 제외 키만"));
+    assert.ok(rules.includes("키만 알린다"));
+    assert.ok(rules.includes("소스는 `builder-fetch`와 `builder-snapshot`만 받고"));
+  });
+});
+
+describe("9.9단계 4.3-5 요약과 설명 문장", () => {
+  test("요약 항목, 백업 범위, 결과물 키 목록, start 키 줄을 맞췄다", () => {
+    for (const text of ["  - 새 제품과 뜨는 저장소: 저장소 스냅샷 줄", "별 수 스냅샷", "(ECOS·FRED·YouTube·Gemini·Product Hunt)", "키 줄의 \"Product Hunt 있음/없음\""]) assert.ok(SKILL.includes(text), text);
+    const backup = chapter("### 15단계: 백업과 커밋");
+    assert.ok(backup.includes("새 제품과 뜨는 저장소 항목"));
+    assert.ok(backup.includes("별 수 스냅샷"));
   });
 });

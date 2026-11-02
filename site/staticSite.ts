@@ -32,6 +32,7 @@ import {
   type ScheduleItem,
   type ScheduleMonth,
   type SiteBuilderItem,
+  type SiteDiscoveryItem,
   type SiteDates,
   type SiteIssueList,
   type StoryDetail,
@@ -43,7 +44,7 @@ import { RSS_FILE, buildRss, buildSitemaps, robotsTxt, type RssDay, type Sitemap
 import { articleLd, metaDescription, pageLd, renderHead, type HeadInfo } from "./head.ts";
 import { APP_FILE, NOT_FOUND_FILE } from "./hosting.ts";
 import { AboutView, ReadMarksText } from "./src/components/aboutView.ts";
-import { BuilderBody, BuilderEndNote, BuilderFieldLine, BuilderIntro, BuilderReminder, BuilderZero } from "./src/components/builderView.ts";
+import { BuilderBody, BuilderFieldLine, BuilderGroups, BuilderIntro, BuilderReminder, DiscoveryBody, DiscoveryMark, DiscoveryName } from "./src/components/builderView.ts";
 import { FixMark, FixNotes } from "./src/components/correctionView.ts";
 import { FredNotice, SourceNote } from "./src/components/indicatorView.ts";
 import { NOT_FOUND_LABEL, NotFoundView, RecoverLinks } from "./src/components/notFoundView.ts";
@@ -69,6 +70,8 @@ interface SiteInput {
   details: Map<string, Record<string, StoryDetail>>;
   /** 9.8단계: 날짜 → 빌더 항목 */
   builder: Map<string, SiteBuilderItem[]>;
+  /** 9.9단계: 날짜 → 새 제품·뜨는 저장소 항목 */
+  discoveries: Map<string, SiteDiscoveryItem[]>;
   issues: IssueDetail[];
   issueMerged: SiteIssueList["merged"];
   entities: EntityDetail[];
@@ -93,7 +96,11 @@ function loadInput(dataDir: string): SiteInput {
   const details = new Map<string, Record<string, StoryDetail>>();
   for (const m of matching<MonthDetail>(/^detail-\d{4}-\d{2}\.json$/)) for (const [date, stories] of Object.entries(m.days)) details.set(date, stories);
   const builder = new Map<string, SiteBuilderItem[]>();
-  for (const m of matching<BuilderMonth>(BUILDER_ITEMS_FILE_RE)) for (const [date, items] of Object.entries(m.days)) builder.set(date, items);
+  const discoveries = new Map<string, SiteDiscoveryItem[]>();
+  for (const m of matching<BuilderMonth>(BUILDER_ITEMS_FILE_RE)) {
+    for (const [date, items] of Object.entries(m.days)) builder.set(date, items);
+    for (const [date, items] of Object.entries(m.discoveries ?? {})) discoveries.set(date, items);
+  }
 
   const issueList = read<SiteIssueList>(siteFiles.issueList, { issues: [], merged: {} });
   const issueById = new Map<number, IssueDetail>();
@@ -119,7 +126,7 @@ function loadInput(dataDir: string): SiteInput {
   const scheduleIndex = read<ScheduleIndex>(siteFiles.scheduleIndex, { total: 0, months: [], majors: [] });
   const scheduleMonths = scheduleIndex.months.map((m) => read<ScheduleMonth>(siteFiles.scheduleMonth(m.month), { month: m.month, items: [] }));
   const indicators = read<IndicatorList>(siteFiles.indicatorList, { asOf: null, indicators: [] });
-  return { dates, days, details, builder, issues, issueMerged: issueList.merged, entities, entityMerged, terms, termGroups, scheduleMonths, indicators };
+  return { dates, days, details, builder, discoveries, issues, issueMerged: issueList.merged, entities, entityMerged, terms, termGroups, scheduleMonths, indicators };
 }
 
 function latest(values: readonly (string | null | undefined)[]): string | null {
@@ -242,7 +249,7 @@ function ShortStory({ story }: { story: ListStory }) {
 }
 
 /** 빌더 절(B6). 앱의 빌더 탭과 같은 칸이고 탭 대신 구역이다. 기록이 없는 날은 그리지 않는다(B12) */
-function BuilderSection({ day, items }: { day: DayList; items: SiteBuilderItem[] }) {
+function BuilderSection({ day, items, discoveries }: { day: DayList; items: SiteBuilderItem[]; discoveries: SiteDiscoveryItem[] }) {
   const builder = day.builder;
   if (!builder) return null;
   return h(
@@ -250,8 +257,13 @@ function BuilderSection({ day, items }: { day: DayList; items: SiteBuilderItem[]
     { className: "brief-section" },
     h("h2", { className: "h list-h", id: BUILDER_HASH }, BUILDER_TAB),
     h(BuilderIntro, { Link: A }),
-    items.length === 0 ? h(BuilderZero, { status: builder.status }) : h("ul", { className: "list" }, items.map((x) => h("li", { key: x.key, id: x.key, className: "item" }, h(BuilderFieldLine, { item: x }), h("h3", { className: "title" }, x.title), h(BuilderReminder, { item: x, Link: A }), h("div", { className: "detail" }, h(BuilderBody, { item: x, date: day.date, Link: A }))))),
-    h(BuilderEndNote, { builder }),
+    h(BuilderGroups, {
+      builder,
+      tools: items,
+      discoveries,
+      toolRow: (x) => h("li", { key: x.key, id: x.key, className: "item" }, h(BuilderFieldLine, { item: x }), h("h3", { className: "title" }, x.title), h(BuilderReminder, { item: x, Link: A }), h("div", { className: "detail" }, h(BuilderBody, { item: x, date: day.date, Link: A }))),
+      discoveryRow: (x) => h("li", { key: x.key, id: x.key, className: "item" }, h(DiscoveryMark, { item: x }), h("h3", { className: "title bname" }, h(DiscoveryName, { item: x })), h("div", { className: "detail" }, h(DiscoveryBody, { item: x, date: day.date, Link: A }))),
+    }),
   );
 }
 
@@ -261,7 +273,7 @@ function DateNav({ date, prev, next }: { date: string; prev: string | null; next
   return h("span", { className: "datebtn" }, arrow(prev, "‹", "이전 날짜"), h("a", { href: "/dates", className: "date-link", "aria-label": `${monthDayWeekday(date)}, 날짜 목록 보기` }, monthDayWeekday(date)), arrow(next, "›", "다음 날짜"));
 }
 
-function BriefBody({ day, details, builder, prev, next }: { day: DayList; details: Record<string, StoryDetail>; builder: SiteBuilderItem[]; prev: string | null; next: string | null }) {
+function BriefBody({ day, details, builder, discoveries, prev, next }: { day: DayList; details: Record<string, StoryDetail>; builder: SiteBuilderItem[]; discoveries: SiteDiscoveryItem[]; prev: string | null; next: string | null }) {
   const date = day.date;
   const sectionId = (i: number) => `section-${i + 1}`;
   return h(
@@ -283,7 +295,7 @@ function BriefBody({ day, details, builder, prev, next }: { day: DayList; detail
         sec.unverified ? h("p", { className: "flow note" }, `확인되지 않은 내용: ${sec.unverified}`) : null,
       );
     }),
-    h(BuilderSection, { day, items: builder }),
+    h(BuilderSection, { day, items: builder, discoveries }),
     h("nav", { className: "static-more", "aria-label": "다른 날짜" }, prev ? h("a", { href: briefPath(prev) }, `‹ ${monthDay(prev)}`) : h("span"), next ? h("a", { href: briefPath(next) }, `${monthDay(next)} ›`) : null),
   );
 }
@@ -481,7 +493,7 @@ function buildPages(input: SiteInput): StaticPage[] {
   const fixesOf = (news: { date: string; key: string }[]) => news.map((n) => fixOn.get(`${n.date}/${n.key}`));
 
   const dates = input.dates.dates;
-  const briefMods = new Map(dates.map((d) => [d, latest([d, ...(input.days.get(d)?.sections ?? []).flatMap((s) => s.stories.map((x) => x.corrections?.[0]?.on)), ...(input.builder.get(d) ?? []).map((x) => x.corrections?.[0]?.on)])]));
+  const briefMods = new Map(dates.map((d) => [d, latest([d, ...(input.days.get(d)?.sections ?? []).flatMap((s) => s.stories.map((x) => x.corrections?.[0]?.on)), ...[...(input.builder.get(d) ?? []), ...(input.discoveries.get(d) ?? [])].map((x) => x.corrections?.[0]?.on)])]));
   const brief = (pathname: string, date: string, title: string, website: boolean) => {
     const day = input.days.get(date);
     if (!day) return;
@@ -496,7 +508,7 @@ function buildPages(input: SiteInput): StaticPage[] {
       lastmod: modified,
       ogType: website ? "website" : "article",
       ld: (d) => (website ? pageLd("WebSite", { path: pathname, name: "Tidwyn", description: d }) : articleLd({ path: pathname, headline, description: d, published: date, modified })),
-      body: h(Shell, { center: h(DateNav, { date, prev, next }) }, h(BriefBody, { day, details: input.details.get(date) ?? {}, builder: input.builder.get(date) ?? [], prev, next })),
+      body: h(Shell, { center: h(DateNav, { date, prev, next }) }, h(BriefBody, { day, details: input.details.get(date) ?? {}, builder: input.builder.get(date) ?? [], discoveries: input.discoveries.get(date) ?? [], prev, next })),
     });
   };
   const home = input.dates.latestDate;
@@ -611,7 +623,7 @@ export function writeStaticSite(outDir: string): void {
   write(ROBOTS_FILE, robotsTxt());
   const rssDays: RssDay[] = input.dates.dates.flatMap((date) => {
     const day = input.days.get(date);
-    return day ? [{ date, titles: [...day.sections.flatMap((s) => s.stories.filter((x) => x.kind === "top").map((x) => x.title)), ...(input.builder.get(date) ?? []).map((x) => `빌더: ${x.title}`)] }] : [];
+    return day ? [{ date, titles: [...day.sections.flatMap((s) => s.stories.filter((x) => x.kind === "top").map((x) => x.title)), ...(input.builder.get(date) ?? []).map((x) => `빌더: ${x.title}`), ...(input.discoveries.get(date) ?? []).map((x) => `빌더: ${x.name}`)] }] : [];
   });
   write(RSS_FILE, buildRss(rssDays));
 }

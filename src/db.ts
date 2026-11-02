@@ -425,6 +425,79 @@ export const MIGRATIONS: Migration[] = [
       `);
     },
   },
+  {
+    // 9.9단계: 새 제품과 뜨는 저장소. 도구 변화의 builder_items와 섞이지 않게 표를 따로 둔다(N4). 제품 받은 시각과 연속 실패는 builder_sources를 그대로 쓴다.
+    // builder_kind_dates: 날짜·종류별 상태(N9). repo_snapshot_*: 별 수 스냅샷, 받은 자리, 최신 완성 스냅샷의 메타데이터. 로컬에만 두고 백업하지 않는다(N6).
+    // 항목의 후보 값(이름, 출처, 라이선스, 관리 상태, 별 수, 증가량)은 저장한 뒤 고치지 않는다(4.4-2).
+    version: 12,
+    up: (db) => {
+      db.exec(`
+        CREATE TABLE builder_discoveries (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          target_date TEXT NOT NULL,
+          kind TEXT NOT NULL CHECK (kind IN ('product', 'repo')),
+          position INTEGER NOT NULL,
+          key TEXT NOT NULL,
+          name TEXT NOT NULL,
+          url TEXT NOT NULL,
+          purpose TEXT NOT NULL,
+          difference TEXT NOT NULL,
+          reason TEXT NOT NULL,
+          issue_id INTEGER REFERENCES issues(id),
+          license TEXT,
+          pushed_on TEXT,
+          release_state TEXT CHECK (release_state IN ('found', 'none', 'unknown')),
+          release_on TEXT,
+          stars INTEGER,
+          growth REAL,
+          UNIQUE (target_date, kind, position),
+          UNIQUE (target_date, key)
+        );
+        CREATE INDEX builder_discoveries_key ON builder_discoveries(key);
+        CREATE TABLE builder_discovery_corrections (
+          id INTEGER PRIMARY KEY,
+          item_id INTEGER NOT NULL REFERENCES builder_discoveries(id) ON DELETE CASCADE,
+          corrected_on TEXT NOT NULL,
+          reason TEXT NOT NULL,
+          fields TEXT NOT NULL
+        );
+        CREATE INDEX builder_discovery_corrections_item ON builder_discovery_corrections(item_id);
+        CREATE TABLE builder_kind_dates (
+          target_date TEXT NOT NULL,
+          kind TEXT NOT NULL CHECK (kind IN ('product', 'repo')),
+          status TEXT NOT NULL CHECK (status IN ('checked', 'failed', 'off', 'baseline')),
+          PRIMARY KEY (target_date, kind)
+        );
+        CREATE TABLE repo_snapshot_runs (
+          snapshot_date TEXT PRIMARY KEY,
+          state TEXT NOT NULL CHECK (state IN ('running', 'complete', 'short')),
+          next_hi INTEGER,
+          next_page INTEGER NOT NULL DEFAULT 1,
+          calls INTEGER NOT NULL DEFAULT 0,
+          elapsed_ms INTEGER NOT NULL DEFAULT 0,
+          reason TEXT
+        );
+        CREATE TABLE repo_snapshots (
+          snapshot_date TEXT NOT NULL,
+          repo TEXT NOT NULL,
+          stars INTEGER NOT NULL,
+          PRIMARY KEY (snapshot_date, repo)
+        );
+        CREATE TABLE repo_snapshot_meta (
+          snapshot_date TEXT NOT NULL,
+          repo TEXT NOT NULL,
+          name TEXT NOT NULL,
+          description TEXT,
+          language TEXT,
+          license TEXT,
+          pushed_at TEXT NOT NULL,
+          forks INTEGER NOT NULL,
+          created_at TEXT NOT NULL,
+          PRIMARY KEY (snapshot_date, repo)
+        );
+      `);
+    },
+  },
 ];
 
 export function schemaVersion(db: DatabaseSync): number {

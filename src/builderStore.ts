@@ -1,5 +1,6 @@
 import type { DatabaseSync } from "node:sqlite";
 import { BUILDER_FIELDS, builderItemKey, isBuilderItemKey, type BuilderDue, type BuilderDueState, type BuilderField, type BuilderItemSource, type BuilderStatus } from "./builderTypes.ts";
+import { buildDiscoveriesBackup, restoreDiscoveriesBackup, type DiscoveriesBackup } from "./discoverStore.ts";
 import { addDays } from "./kst.ts";
 
 // 9.8단계: 빌더 저장. 항목과 실린 키, 날짜 상태, 숫자 행, 문서 해시, 소스별 시각, 미적용 변경, 낸 키, 다시 알림, 정정.
@@ -464,8 +465,8 @@ export function correctionsByItem(db: DatabaseSync): Map<string, BuilderCorrecti
 
 // ---- 백업(4.5-1) ----
 
-/** 공개 백업의 빌더 파일. 식별자를 그대로 두어 일정 합치기 기록과 다시 알림이 가리키는 값이 맞는다. 후보 글과 재료는 없다 */
-export interface BuilderBackup {
+/** 공개 백업의 빌더 파일. 식별자를 그대로 두어 일정 합치기 기록과 다시 알림이 가리키는 값이 맞는다. 후보 글과 재료, 별 수 스냅샷은 없다. 새 종류 칸은 형식 8부터 있다 */
+export interface BuilderBackup extends Partial<DiscoveriesBackup> {
   formatVersion: number;
   items: Omit<BuilderItem, "key">[];
   dates: { date: string; status: BuilderStatus }[];
@@ -491,6 +492,7 @@ export function buildBuilderBackup(db: DatabaseSync, formatVersion: number): Bui
     emitted: allEmitted(db),
     reminders: allReminders(db),
     corrections: corrections.map((c) => ({ item: c.item_id, ...toCorrection(c) })),
+    ...buildDiscoveriesBackup(db),
   };
 }
 
@@ -515,10 +517,11 @@ export function restoreBuilderBackup(db: DatabaseSync, f: BuilderBackup): void {
   for (const r of f.reminders) setReminder(db, r.schedule, r.state, r.on);
   const correction = db.prepare("INSERT INTO builder_corrections (item_id, corrected_on, reason, fields) VALUES (?, ?, ?, ?)");
   for (const c of f.corrections) correction.run(c.item, c.on, c.reason, JSON.stringify(c.fields));
+  restoreDiscoveriesBackup(db, f);
 }
 
 /** 빌더 데이터가 하나라도 있는지. 백업 파일을 낼지 정한다 */
 export function hasBuilderData(db: DatabaseSync): boolean {
-  const tables = ["builder_dates", "builder_items", "builder_rows", "builder_docs", "builder_sources", "builder_pending", "builder_emitted"];
+  const tables = ["builder_dates", "builder_items", "builder_rows", "builder_docs", "builder_sources", "builder_pending", "builder_emitted", "builder_discoveries", "builder_kind_dates"];
   return tables.some((t) => db.prepare(`SELECT 1 FROM ${t} LIMIT 1`).get() !== undefined);
 }

@@ -207,7 +207,7 @@ describe("5단계 4.1 데이터와 저장", () => {
     old.close();
 
     const db = openDb(file);
-    assert.equal(schemaVersion(db), 11);
+    assert.equal(schemaVersion(db), 12);
     const after = dumpDb(db);
     for (const [table, rows] of Object.entries(before)) assert.deepEqual(after[table], rows, table);
     assert.deepEqual(schedulableDates(db), DATES);

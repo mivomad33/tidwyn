@@ -112,7 +112,7 @@ async function main(): Promise<void> {
   fs.writeFileSync(E2E_VIDEO_INFO_FILE, JSON.stringify(av, null, 2) + "\n");
 
   // 9.8단계: 빌더가 있는 사이트를 따로 빌드한다
-  const bfx = writeFixtures(E2E_BUILDER_DATA_DIR, { end: END, days: 14, contiguous: true, schedules: 12, videos: true, builder: true });
+  const bfx = writeFixtures(E2E_BUILDER_DATA_DIR, { end: END, days: 18, contiguous: true, schedules: 12, videos: true, builder: true });
   await buildSite({ dataDir: E2E_BUILDER_DATA_DIR, outDir: E2E_BUILDER_OUT_DIR });
   fs.writeFileSync(E2E_BUILDER_INFO_FILE, JSON.stringify(bfx.info.builder, null, 2) + "\n");
   console.log(`E2E 준비 완료: ${E2E_OUT_DIR}`);

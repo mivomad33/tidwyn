@@ -4,8 +4,8 @@
 // 빌더 항목은 달 하나가 레코드 하나(`/builder/month/<YYYY-MM>`).
 // Pagefind가 고른 레코드마다 그 날짜·묶음의 사이트 데이터를 받아, 검색어에 맞는 뉴스·이슈를 하나씩 골라낸다.
 // 맞춤 규칙은 Pagefind와 같게 낱말 앞부분 맞춤이다("반도체"가 "반도체가"에 맞는다).
-import type { BuilderMonth, DayList, EntityChunk, EntityDetail, IssueChunk, IssueDetail, ListStory, StoryDetail, SiteBuilderItem, TermGroupFile, TermItem } from "./types.ts";
-import { builderItemText } from "../../../src/siteTypes.ts";
+import type { BuilderMonth, DayList, EntityChunk, EntityDetail, IssueChunk, IssueDetail, ListStory, StoryDetail, SiteBuilderItem, SiteDiscoveryItem, TermGroupFile, TermItem } from "./types.ts";
+import { builderItemText, discoveryItemText } from "../../../src/siteTypes.ts";
 import { SECTION_ORDER } from "./brief.ts";
 import { compareEntityItems } from "./entities.ts";
 import { sortTerms } from "./terms.ts";
@@ -94,10 +94,11 @@ export function matchTerms(group: TermGroupFile, terms: string[]): TermItem[] {
   return pickBest(sortTerms(group.terms), (t) => countMatches(termText(t), terms), terms.length);
 }
 
-/** 걸린 달에서 검색어에 맞는 빌더 항목(날짜 순, 날짜 안은 실린 순서) */
-export function matchBuilderItems(file: BuilderMonth, terms: string[]): { date: string; item: SiteBuilderItem }[] {
-  const all = Object.entries(file.days).flatMap(([date, items]) => items.map((item) => ({ date, item })));
-  return pickBest(all, (x) => countMatches(builderItemText(x.item), terms), terms.length);
+/** 걸린 달에서 검색어에 맞는 빌더 항목(도구 변화 뒤에 새 제품·뜨는 저장소, 날짜 순, 날짜 안은 실린 순서) */
+export function matchBuilderItems(file: BuilderMonth, terms: string[]): { date: string; item: SiteBuilderItem | SiteDiscoveryItem }[] {
+  const tools = Object.entries(file.days).flatMap(([date, items]) => items.map((item) => ({ date, item, text: builderItemText(item) })));
+  const found = Object.entries(file.discoveries ?? {}).flatMap(([date, items]) => items.map((item) => ({ date, item, text: discoveryItemText(item) })));
+  return pickBest([...tools, ...found], (x) => countMatches(x.text, terms), terms.length).map(({ date, item }) => ({ date, item }));
 }
 
 export type SearchHit = { kind: "news"; date: string } | { kind: "issues"; chunk: number } | { kind: "entities"; chunk: number } | { kind: "terms"; group: number } | { kind: "builder"; month: string };

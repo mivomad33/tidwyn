@@ -1,10 +1,10 @@
 // 날짜별 브리프와 펼친 뉴스 카드(4.2). 4.5단계: 읽음 버튼, 펼침·글 누름·링크로 읽음, '안 읽은 것만' 거르기. 5단계: 카드의 일정 칩. 6단계: 브리프 위 '이번 주 일정 | 지표' 상자. 7단계: 섹션 탭 끝의 '영상' 탭(4.7-1). 9.8단계: 그 뒤의 '빌더' 탭(4.6)
 import { useEffect, useMemo, useReducer, useRef, useState, type ReactNode } from "react";
-import { isBuilderItemKey } from "../../../src/builderTypes.ts";
+import { isBuilderTabKey } from "../../../src/builderTypes.ts";
 import { kstDate } from "../../../src/kst.ts";
 import { ALL_MAJORS, CategoryLine, Layout as Shell, Main, ChipFilter, Empty, ErrorState, Footer, Loading, NewsTitle, ReadCheck, ReadToggle, SectionChip, ToggleChip, TopBar, useFullTitle, VideoLoading, VIDEO_LOAD_ERROR } from "../components/common.tsx";
 import { BriefBox } from "../components/briefBox.ts";
-import { BuilderIntro, BuilderBody, BuilderEndNote, BuilderFieldLine, BuilderReminder, BuilderZero } from "../components/builderView.ts";
+import { BuilderIntro, BuilderBody, BuilderFieldLine, BuilderGroups, BuilderReminder, DiscoveryBody, DiscoveryMark, DiscoveryName } from "../components/builderView.ts";
 import { FixMark, FixNotes } from "../components/correctionView.ts";
 import { ScheduleChips } from "../components/scheduleView.ts";
 import { VideoList, VideoSource } from "../components/videoView.ts";
@@ -20,7 +20,7 @@ import { placeTerms, storyBodyParts, termBoxPlace, toggleTerm } from "../lib/ter
 import { categoryVar } from "../lib/theme.ts";
 import { adjacentDates, briefPath, BUILDER_HASH, hashKey, issuePath, resolveBriefDate, VIDEO_HASH, type Route } from "../lib/routes.ts";
 import { VIDEO_CHIPS, filterVideos, videoChips, videoTabLabel, visibleVideos, type VideoChip } from "../lib/videos.ts";
-import type { BuilderMonth, DayBuilder, DayList, ListStory, MonthDetail, MonthList, SiteBuilderItem, SiteDates, StoryDetail } from "../lib/types.ts";
+import type { BuilderMonth, DayBuilder, DayList, ListStory, MonthDetail, MonthList, SiteBuilderItem, SiteDates, SiteDiscoveryItem, StoryDetail } from "../lib/types.ts";
 import { readStored, writeStored } from "../lib/storage.ts";
 import { markRead, readStore, useReadVersion } from "../readMarks.ts";
 import { ReportLink } from "../components/reportLink.ts";
@@ -127,27 +127,35 @@ function VideoTabBody({ date, res, count, today, picked, onPick, onRetry }: { da
   );
 }
 
-/** 빌더 항목 하나. 뉴스와 달리 칸을 늘 펼쳐 둔다. 읽음은 뉴스와 같은 기록을 쓴다 */
-function BuilderRow({ item, date }: { item: SiteBuilderItem; date: string }) {
+/** 빌더 탭의 항목 줄. 뉴스와 달리 칸을 늘 펼쳐 둔다. 읽음은 뉴스와 같은 기록을 쓴다 */
+function BuilderItemRow({ itemKey, date, title, titleNode, titleClass, mark, after, body }: { itemKey: string; date: string; title: string; titleNode?: ReactNode; titleClass: string; mark: ReactNode; after?: ReactNode; body: ReactNode }) {
   return (
-    <li id={storyDomId(item.key)} tabIndex={-1} className="item">
+    <li id={storyDomId(itemKey)} tabIndex={-1} className="item">
       <div className="item-row">
         <div className="item-btn">
-          <BuilderFieldLine item={item} />
+          {mark}
           <h3 className="btitle">
-            <NewsTitle date={date} newsKey={item.key} className="title">
-              {item.title}
+            <NewsTitle date={date} newsKey={itemKey} className={titleClass}>
+              {titleNode ?? title}
             </NewsTitle>
           </h3>
-          <BuilderReminder item={item} Link={Link} />
+          {after}
         </div>
-        <ReadToggle date={date} newsKey={item.key} title={item.title} />
+        <ReadToggle date={date} newsKey={itemKey} title={title} />
       </div>
-      <div className="detail">
-        <BuilderBody item={item} date={date} Link={Link} />
-      </div>
+      <div className="detail">{body}</div>
     </li>
   );
+}
+
+/** 빌더 항목 하나 */
+function BuilderRow({ item, date }: { item: SiteBuilderItem; date: string }) {
+  return <BuilderItemRow itemKey={item.key} date={date} title={item.title} titleClass="title" mark={<BuilderFieldLine item={item} />} after={<BuilderReminder item={item} Link={Link} />} body={<BuilderBody item={item} date={date} Link={Link} />} />;
+}
+
+/** 새 제품·뜨는 저장소 항목 하나 */
+function DiscoveryRow({ item, date }: { item: SiteDiscoveryItem; date: string }) {
+  return <BuilderItemRow itemKey={item.key} date={date} title={item.name} titleNode={<DiscoveryName item={item} />} titleClass="title bname" mark={<DiscoveryMark item={item} />} body={<DiscoveryBody item={item} date={date} Link={Link} />} />;
 }
 
 /** 빌더 탭 본문. 항목이 없는 날은 파일을 받지 않고 상태 문구만 보인다(B11) */
@@ -158,15 +166,7 @@ function BuilderTabBody({ date, builder, res, onRetry }: { date: string; builder
       <BuilderIntro Link={Link} />
     </>
   );
-  if (builder.count === 0) {
-    return (
-      <>
-        {head}
-        <BuilderZero status={builder.status} />
-      </>
-    );
-  }
-  if (res.status !== "ok") {
+  if (builder.count > 0 && res.status !== "ok") {
     return (
       <>
         {head}
@@ -174,17 +174,13 @@ function BuilderTabBody({ date, builder, res, onRetry }: { date: string; builder
       </>
     );
   }
-  const items = res.data.days[date] ?? [];
+  const tools = res.status === "ok" ? (res.data.days[date] ?? []) : [];
+  const discoveries = res.status === "ok" ? (res.data.discoveries?.[date] ?? []) : [];
   return (
     <>
       {head}
-      {items.length === 0 && <Empty>이 날짜의 항목을 찾지 못했다.</Empty>}
-      <ul className="list blist">
-        {items.map((x) => (
-          <BuilderRow key={x.key} item={x} date={date} />
-        ))}
-      </ul>
-      <BuilderEndNote builder={builder} />
+      {builder.count > 0 && tools.length + discoveries.length === 0 && <Empty>이 날짜의 항목을 찾지 못했다.</Empty>}
+      <BuilderGroups builder={builder} tools={tools} discoveries={discoveries} toolRow={(x) => <BuilderRow key={x.key} item={x} date={date} />} discoveryRow={(x) => <DiscoveryRow key={x.key} item={x} date={date} />} />
     </>
   );
 }
@@ -217,10 +213,10 @@ export function BriefPage({ route }: { route: Route }) {
   // 9.8단계: 빌더 파일도 빌더 탭을 열 때만, 항목이 있는 날만 받는다(4.6-5)
   const builderUrl = month && tabView?.current === BUILDER_TAB && day?.builder?.count ? dataUrl.builderItems(month) : null;
   const builderRes = useResource<BuilderMonth>(builderUrl);
-  const hasBuilderItem = (k: string) => builderRes.status === "ok" && date !== null && (builderRes.data.days[date]?.some((x) => x.key === k) ?? false);
+  const hasBuilderItem = (k: string) => builderRes.status === "ok" && date !== null && [...(builderRes.data.days[date] ?? []), ...(builderRes.data.discoveries?.[date] ?? [])].some((x) => x.key === k);
 
   // `#<뉴스 키>`로 화면이 열리면(카드 펼치기, 다른 목록의 링크, 직접 연 주소, 새로 고침, 뒤로 가기) 그 뉴스는 읽음이다(M1, 4.2-3)
-  const hashItem = key !== null && isBuilderItemKey(key) && hasBuilderItem(key);
+  const hashItem = key !== null && isBuilderTabKey(key) && hasBuilderItem(key);
   useEffect(() => {
     if (day && date && key && (findStoryTarget(day, key) || hashItem)) markRead(date, key);
   }, [day, date, key, hashItem]);

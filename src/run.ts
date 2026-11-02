@@ -1,5 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
+import type { KindReport } from "./builderDiscover.ts";
+import type { DiscoverKind } from "./discoverStore.ts";
 import type { DocReport, SourceReport } from "./builderFetch.ts";
 import type { FeedFailure } from "./feeds.ts";
 import type { IndicatorFetchResult } from "./indicatorFetch.ts";
@@ -19,7 +21,7 @@ export function removeWorkFiles(dataDir: string, names: readonly string[]): numb
   for (const name of names) {
     const f = path.join(dataDir, WORK_DIR, name);
     if (fs.existsSync(f)) {
-      fs.rmSync(f, { force: true });
+      fs.rmSync(f, { recursive: true, force: true });
       n++;
     }
   }
@@ -104,9 +106,40 @@ export interface IndicatorJudgeState {
   results: Record<string, JudgeResult>;
 }
 
-/** 빌더 받기(9.8단계 4.1). 소스 글과 재료는 넣지 않는다. 실패 이유와 경고는 받기 명령이 정한 문구다 */
+/** 스냅샷 명령(9.9단계 4.1-1). 호출 수와 시간은 이어 받기까지 더한 값이다 */
+export interface RepoSnapshotState {
+  status: "noBrief" | "off" | "complete" | "running" | "short" | "crashed";
+  target: string | null;
+  finished: boolean;
+  repos: number;
+  calls: number;
+  elapsedMs: number;
+  reason?: string;
+}
+
+/** 새 종류 받기(9.9단계). 수와 상태만 둔다. 이름과 글은 넣지 않는다 */
+export interface BuilderKindsState {
+  target: string;
+  product: KindReport;
+  repo: KindReport;
+  /** 재료에 요구가 들어 뺀 후보의 키(후보 원본에 있고 공개 검사를 지난 것만, 4.3-3) */
+  excluded?: string[];
+  /** 그 밖의 제외 값 수 */
+  excludedOther?: number;
+}
+
+/** 새 종류 쓰기 프로세스(9.9단계 N11). 수와 코드가 정한 문구만 둔다. rounds: 프로세스를 돌린 횟수 */
+export interface BuilderWriteState {
+  status: "nothing" | "written" | "passed" | "failed";
+  target: string | null;
+  rounds: number;
+  kinds: DiscoverKind[];
+  reason?: string;
+}
+
+/** 빌더 받기(9.8단계 4.1). 소스 글과 재료는 넣지 않는다. 실패 이유와 경고는 받기 명령이 정한 문구다. kindsOnly: 도구 변화는 끝나 새 종류만 받았다(N9) */
 export interface BuilderFetchState {
-  status: "noBrief" | "alreadyDone" | "checked" | "partial" | "failed" | "crashed";
+  status: "noBrief" | "alreadyDone" | "kindsOnly" | "checked" | "partial" | "failed" | "crashed";
   target: string | null;
   sources?: SourceReport[];
   docs?: DocReport[];
@@ -302,6 +335,10 @@ export interface RunState {
   builderPlanned?: { date: string | null; done: boolean };
   builderFetch?: BuilderFetchState;
   builderApply?: BuilderApplyState;
+  /** 9.9단계: 스냅샷 명령과 새 종류 받기. 앞 단계 실행 기록에는 없다 */
+  repoSnapshot?: RepoSnapshotState;
+  builderKinds?: BuilderKindsState;
+  builderWrite?: BuilderWriteState;
   /** 지난 날짜 이미지 채우기(3단계). 1·1.5·2단계 실행 기록에는 없다 */
   images?: ImagesResult;
   /** 사이트 빌드·배포·push(3단계). start가 null로 두고 각 명령이 채운다. 앞 단계 실행 기록에는 없다 */
