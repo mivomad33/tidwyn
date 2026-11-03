@@ -118,11 +118,125 @@
         "https://platform.claude.com/docs/en/release-notes/overview#november-2-2026"
       ],
       "schedules": []
+    },
+    {
+      "id": 5,
+      "date": "2026-11-03",
+      "position": 1,
+      "field": "보안",
+      "title": "Next.js 2026년 11월 보안 릴리스",
+      "whatChanged": "Next.js 팀이 11월 정기 보안 릴리스를 공개했다. 받은 재료에는 영향받는 버전과 취약점 내용이 적혀 있지 않아, 공지 글에서 해당 여부를 직접 확인해야 한다.",
+      "who": "Next.js로 만든 사이트와 앱을 운영하는 개발자",
+      "action": "공지 글에서 쓰고 있는 버전이 영향 범위에 드는지 확인하고, 들면 안내된 고친 버전으로 올린다.",
+      "why": "웹 개발자가 많이 쓰는 프레임워크의 보안 패치다.",
+      "due": null,
+      "sources": [
+        {
+          "name": "Next.js 블로그",
+          "url": "https://nextjs.org/blog/november-2026-security-release"
+        }
+      ],
+      "issue": null,
+      "reminderOf": null,
+      "keys": [
+        "https://nextjs.org/blog/november-2026-security-release"
+      ],
+      "schedules": []
+    },
+    {
+      "id": 6,
+      "date": "2026-11-03",
+      "position": 2,
+      "field": "모델",
+      "title": "OpenAI GPT Image 구형 모델, 2026년 12월 1일 종료",
+      "whatChanged": "OpenAI가 chatgpt-image-latest, gpt-image-1-mini, gpt-image-1.5(스냅샷 포함) 등 이미지 생성 모델을 2026년 12월 1일에 끝낸다. 대체 모델로 gpt-image-2.5-sunburst나 gpt-image-2.5-flare를 권한다.",
+      "who": "OpenAI API로 이미지를 만드는 개발자",
+      "action": "코드와 설정에서 해당 모델 이름을 찾아 gpt-image-2.5 계열로 바꾸고 결과물을 시험한다.",
+      "why": "기한이 한 달 남짓이고, 놓치면 이미지 생성 호출이 실패한다.",
+      "due": {
+        "date": "2026-12-01",
+        "state": "confirmed"
+      },
+      "sources": [
+        {
+          "name": "OpenAI 지원 종료",
+          "url": "https://developers.openai.com/api/docs/deprecations"
+        }
+      ],
+      "issue": null,
+      "reminderOf": null,
+      "keys": [
+        "deprecation:chatgpt-image-latest:2026-12-01:확정",
+        "deprecation:gpt-image-1-mini:2026-12-01:확정",
+        "deprecation:gpt-image-1.5:2026-12-01:확정"
+      ],
+      "schedules": [
+        35
+      ]
+    },
+    {
+      "id": 7,
+      "date": "2026-11-03",
+      "position": 3,
+      "field": "모델",
+      "title": "OpenAI GPT-5.1·GPT-5.3-Codex·GPT-5.4-Nano, 2027년 4월 1일 종료",
+      "whatChanged": "OpenAI가 gpt-5.1(스냅샷 포함)과 gpt-5.3-codex를 2027년 4월 1일에 끝내고 gpt-6-sol을 대체로 권한다. 같은 날 gpt-5.4-nano(스냅샷 포함)도 끝나며 대체는 gpt-6-luna다.",
+      "who": "API에서 GPT-5.1, GPT-5.3-Codex, GPT-5.4-Nano를 쓰는 개발자",
+      "action": "쓰는 모델 이름을 확인하고, 대체 모델로 응답 품질과 비용을 미리 시험해 옮길 일정을 잡는다.",
+      "why": "널리 쓰이는 모델이라 옮길 범위가 클 수 있다.",
+      "due": {
+        "date": "2027-04-01",
+        "state": "confirmed"
+      },
+      "sources": [
+        {
+          "name": "OpenAI 지원 종료",
+          "url": "https://developers.openai.com/api/docs/deprecations"
+        }
+      ],
+      "issue": null,
+      "reminderOf": null,
+      "keys": [
+        "deprecation:gpt-5.1:2027-04-01:확정",
+        "deprecation:gpt-5.3-codex:2027-04-01:확정",
+        "deprecation:gpt-5.4-nano:2027-04-01:확정"
+      ],
+      "schedules": [
+        36
+      ]
+    },
+    {
+      "id": 8,
+      "date": "2026-11-03",
+      "position": 4,
+      "field": "모델",
+      "title": "Claude 생성 텍스트에 Anthropic 워터마크 적용",
+      "whatChanged": "Anthropic이 Claude Mythos 5, Opus 4.7, Sonnet 4.6이 만든 글에 텍스트 워터마크가 들어간다고 알렸다. 적용 플랫폼은 안내 문서에 있다. Sonnet 4.6에서 temperature, top_p, top_k를 기본값과 다르게 주면 워터마크가 빠질 수 있다.",
+      "who": "Claude API로 글을 생성해 서비스에 쓰는 개발자",
+      "action": "생성 글의 표시가 중요하면 안내 문서에서 적용 플랫폼과 조건을 확인하고, Sonnet 4.6의 샘플링 설정을 점검한다.",
+      "why": "기본 설정에서 생성되는 글에 바로 적용된다.",
+      "due": null,
+      "sources": [
+        {
+          "name": "Claude 릴리스 노트",
+          "url": "https://platform.claude.com/docs/en/release-notes/overview#november-3-2026"
+        }
+      ],
+      "issue": null,
+      "reminderOf": null,
+      "keys": [
+        "https://platform.claude.com/docs/en/release-notes/overview#november-3-2026"
+      ],
+      "schedules": []
     }
   ],
   "dates": [
     {
       "date": "2026-11-02",
+      "status": "partial"
+    },
+    {
+      "date": "2026-11-03",
       "status": "partial"
     }
   ],
@@ -7755,17 +7869,17 @@
     {
       "doc": "anthropic-deprecations",
       "hash": "7c01727a08cc32c5812ccecc6dd36caa667ae5bd4e9d907b3b7b4272ce950c28",
-      "storedOn": "2026-11-03"
+      "storedOn": "2026-11-04"
     },
     {
       "doc": "anthropic-limits",
       "hash": "02e8215f4b1f45a564d2ebab21196da7b2765a8036742f72de52f270d95cf657",
-      "storedOn": "2026-11-03"
+      "storedOn": "2026-11-04"
     },
     {
       "doc": "anthropic-pricing",
       "hash": "79f8d09b6562f37f5edba5108b871cdd13dba26603efbd748e77a40f18c5ff53",
-      "storedOn": "2026-11-03"
+      "storedOn": "2026-11-04"
     },
     {
       "doc": "gemini-deprecations",
@@ -7780,174 +7894,174 @@
     {
       "doc": "openai-deprecations",
       "hash": "3fddf4c625d689e43e559c236bcdd675de8a3b3d035070ba205827d8ad0a2fc2",
-      "storedOn": "2026-11-03"
+      "storedOn": "2026-11-04"
     },
     {
       "doc": "openai-pricing",
       "hash": "842ac0dce2324251d274026d197a81473e72ff40eef1194bdd4e6b32833d8f55",
-      "storedOn": "2026-11-03"
+      "storedOn": "2026-11-04"
     }
   ],
   "sources": [
     {
       "source": "anthropic-deprecations",
-      "fetchedAt": "2026-11-02T23:28:54.103Z",
+      "fetchedAt": "2026-11-03T21:47:51.476Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "anthropic-limits",
-      "fetchedAt": "2026-11-02T23:28:54.103Z",
+      "fetchedAt": "2026-11-03T21:47:51.476Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "anthropic-pricing",
-      "fetchedAt": "2026-11-02T23:28:54.103Z",
+      "fetchedAt": "2026-11-03T21:47:51.476Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "claude-code",
-      "fetchedAt": "2026-11-02T23:28:54.103Z",
+      "fetchedAt": "2026-11-03T21:47:51.476Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "claude-notes",
-      "fetchedAt": "2026-11-02T23:28:54.103Z",
+      "fetchedAt": "2026-11-03T21:47:51.476Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "cloudflare",
       "fetchedAt": null,
-      "failDays": 1,
-      "failOn": "2026-11-03"
+      "failDays": 2,
+      "failOn": "2026-11-04"
     },
     {
       "source": "codex",
       "fetchedAt": null,
-      "failDays": 1,
-      "failOn": "2026-11-03"
+      "failDays": 2,
+      "failOn": "2026-11-04"
     },
     {
       "source": "copilot",
-      "fetchedAt": "2026-11-02T23:28:54.103Z",
+      "fetchedAt": "2026-11-03T21:47:51.476Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "eol-nextjs",
-      "fetchedAt": "2026-11-02T23:28:54.103Z",
+      "fetchedAt": "2026-11-03T21:47:51.476Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "eol-nodejs",
-      "fetchedAt": "2026-11-02T23:28:54.103Z",
+      "fetchedAt": "2026-11-03T21:47:51.476Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "gemini-cli",
-      "fetchedAt": "2026-11-02T23:28:54.103Z",
+      "fetchedAt": "2026-11-03T21:47:51.476Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "gemini-deprecations",
       "fetchedAt": "2026-11-02T23:28:54.103Z",
-      "failDays": 0,
-      "failOn": null
+      "failDays": 1,
+      "failOn": "2026-11-04"
     },
     {
       "source": "gemini-pricing",
       "fetchedAt": "2026-11-02T23:28:54.103Z",
-      "failDays": 0,
-      "failOn": null
+      "failDays": 1,
+      "failOn": "2026-11-04"
     },
     {
       "source": "ghsa",
-      "fetchedAt": "2026-11-02T23:28:54.103Z",
+      "fetchedAt": "2026-11-03T21:47:51.476Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "kev",
-      "fetchedAt": "2026-11-02T23:28:54.103Z",
+      "fetchedAt": "2026-11-03T21:47:51.476Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "mcp-spec",
-      "fetchedAt": "2026-11-02T23:28:54.103Z",
+      "fetchedAt": "2026-11-03T21:47:51.476Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "nextjs",
-      "fetchedAt": "2026-11-02T23:28:54.103Z",
+      "fetchedAt": "2026-11-03T21:47:51.476Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "nodejs",
-      "fetchedAt": "2026-11-02T23:28:54.103Z",
+      "fetchedAt": "2026-11-03T21:47:51.476Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "openai-deprecations",
-      "fetchedAt": "2026-11-02T23:28:54.103Z",
+      "fetchedAt": "2026-11-03T21:47:51.476Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "openai-pricing",
-      "fetchedAt": "2026-11-02T23:28:54.103Z",
+      "fetchedAt": "2026-11-03T21:47:51.476Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "product-hunt",
-      "fetchedAt": "2026-11-02T23:29:05.619Z",
+      "fetchedAt": "2026-11-03T21:48:09.453Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "react",
-      "fetchedAt": "2026-11-02T23:28:54.103Z",
+      "fetchedAt": "2026-11-03T21:47:51.476Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "socket",
-      "fetchedAt": "2026-11-02T23:28:54.103Z",
+      "fetchedAt": "2026-11-03T21:47:51.476Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "supabase",
-      "fetchedAt": "2026-11-02T23:28:54.103Z",
+      "fetchedAt": "2026-11-03T21:47:51.476Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "typescript",
-      "fetchedAt": "2026-11-02T23:28:54.103Z",
+      "fetchedAt": "2026-11-03T21:47:51.476Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "vercel",
-      "fetchedAt": "2026-11-02T23:28:54.103Z",
+      "fetchedAt": "2026-11-03T21:47:51.476Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "vite",
-      "fetchedAt": "2026-11-02T23:28:54.103Z",
+      "fetchedAt": "2026-11-03T21:47:51.476Z",
       "failDays": 0,
       "failOn": null
     }
@@ -7962,18 +8076,7 @@
       "hash": "938f45865e16f2a5",
       "due": "2027-02-26",
       "before": [],
-      "emits": 1
-    },
-    {
-      "key": "deprecation:chatgpt-image-latest:2026-12-01:확정",
-      "kind": "deprecation",
-      "doc": "openai-deprecations",
-      "changedOn": "2026-11-03",
-      "side": "added",
-      "hash": "ae29cbb10c933024",
-      "due": "2026-12-01",
-      "before": [],
-      "emits": 1
+      "emits": 2
     },
     {
       "key": "deprecation:gpt-4o-audio:2027-01-20:확정",
@@ -7984,7 +8087,7 @@
       "hash": "8c0c3b4d5ad2c0f0",
       "due": "2027-01-20",
       "before": [],
-      "emits": 1
+      "emits": 2
     },
     {
       "key": "deprecation:gpt-4o-mini-audio:2027-01-20:확정",
@@ -7995,7 +8098,7 @@
       "hash": "ba04d8d72eff12db",
       "due": "2027-01-20",
       "before": [],
-      "emits": 1
+      "emits": 2
     },
     {
       "key": "deprecation:gpt-4o-mini-realtime:2027-01-20:확정",
@@ -8006,7 +8109,7 @@
       "hash": "b4fd7fb9afc3b45c",
       "due": "2027-01-20",
       "before": [],
-      "emits": 1
+      "emits": 2
     },
     {
       "key": "deprecation:gpt-4o-mini-transcribe-2025-03-20:2027-01-20:확정",
@@ -8017,7 +8120,7 @@
       "hash": "f2c17b37b802875a",
       "due": "2027-01-20",
       "before": [],
-      "emits": 1
+      "emits": 2
     },
     {
       "key": "deprecation:gpt-4o-mini-transcribe:2027-02-26:확정",
@@ -8028,7 +8131,7 @@
       "hash": "ee258f2a6ad4b675",
       "due": "2027-02-26",
       "before": [],
-      "emits": 1
+      "emits": 2
     },
     {
       "key": "deprecation:gpt-4o-mini-tts:2027-01-06:확정",
@@ -8039,7 +8142,7 @@
       "hash": "ff223196e4a8bdad",
       "due": "2027-01-06",
       "before": [],
-      "emits": 1
+      "emits": 2
     },
     {
       "key": "deprecation:gpt-4o-realtime:2027-01-20:확정",
@@ -8050,7 +8153,7 @@
       "hash": "02fe0d0076294bcb",
       "due": "2027-01-20",
       "before": [],
-      "emits": 1
+      "emits": 2
     },
     {
       "key": "deprecation:gpt-4o-transcribe-diarize:2027-02-26:확정",
@@ -8061,7 +8164,7 @@
       "hash": "f5ae225ea708ea66",
       "due": "2027-02-26",
       "before": [],
-      "emits": 1
+      "emits": 2
     },
     {
       "key": "deprecation:gpt-4o-transcribe:2027-02-26:확정",
@@ -8072,40 +8175,7 @@
       "hash": "e9d8810fd07878ca",
       "due": "2027-02-26",
       "before": [],
-      "emits": 1
-    },
-    {
-      "key": "deprecation:gpt-5.1:2027-04-01:확정",
-      "kind": "deprecation",
-      "doc": "openai-deprecations",
-      "changedOn": "2026-11-03",
-      "side": "added",
-      "hash": "6e7552b8343cfc92",
-      "due": "2027-04-01",
-      "before": [],
-      "emits": 1
-    },
-    {
-      "key": "deprecation:gpt-5.3-codex:2027-04-01:확정",
-      "kind": "deprecation",
-      "doc": "openai-deprecations",
-      "changedOn": "2026-11-03",
-      "side": "added",
-      "hash": "167202be6cc62f1f",
-      "due": "2027-04-01",
-      "before": [],
-      "emits": 1
-    },
-    {
-      "key": "deprecation:gpt-5.4-nano:2027-04-01:확정",
-      "kind": "deprecation",
-      "doc": "openai-deprecations",
-      "changedOn": "2026-11-03",
-      "side": "added",
-      "hash": "8e65b5cfb3511e69",
-      "due": "2027-04-01",
-      "before": [],
-      "emits": 1
+      "emits": 2
     },
     {
       "key": "deprecation:gpt-audio-mini:2027-01-20:확정",
@@ -8116,7 +8186,7 @@
       "hash": "3b07146a553d4c76",
       "due": "2027-01-20",
       "before": [],
-      "emits": 1
+      "emits": 2
     },
     {
       "key": "deprecation:gpt-audio:2027-01-20:확정",
@@ -8127,29 +8197,7 @@
       "hash": "a88ef3282954401b",
       "due": "2027-01-20",
       "before": [],
-      "emits": 1
-    },
-    {
-      "key": "deprecation:gpt-image-1-mini:2026-12-01:확정",
-      "kind": "deprecation",
-      "doc": "openai-deprecations",
-      "changedOn": "2026-11-03",
-      "side": "added",
-      "hash": "20efe2947ae5aba5",
-      "due": "2026-12-01",
-      "before": [],
-      "emits": 1
-    },
-    {
-      "key": "deprecation:gpt-image-1.5:2026-12-01:확정",
-      "kind": "deprecation",
-      "doc": "openai-deprecations",
-      "changedOn": "2026-11-03",
-      "side": "added",
-      "hash": "427b027f2c5144c9",
-      "due": "2026-12-01",
-      "before": [],
-      "emits": 1
+      "emits": 2
     },
     {
       "key": "deprecation:gpt-realtime-mini:2027-01-20:확정",
@@ -8160,7 +8208,7 @@
       "hash": "ce37111f20d0c7a0",
       "due": "2027-01-20",
       "before": [],
-      "emits": 1
+      "emits": 2
     },
     {
       "key": "deprecation:gpt-realtime:2027-01-20:확정",
@@ -8171,7 +8219,7 @@
       "hash": "8150257f0f9f2466",
       "due": "2027-01-20",
       "before": [],
-      "emits": 1
+      "emits": 2
     },
     {
       "key": "deprecation:tts-1-hd:2027-01-06:확정",
@@ -8182,7 +8230,7 @@
       "hash": "5358042e95435f24",
       "due": "2027-01-06",
       "before": [],
-      "emits": 1
+      "emits": 2
     },
     {
       "key": "deprecation:tts-1:2027-01-06:확정",
@@ -8193,7 +8241,7 @@
       "hash": "d02f1b5fe9a5a2d4",
       "due": "2027-01-06",
       "before": [],
-      "emits": 1
+      "emits": 2
     },
     {
       "key": "deprecation:whisper-1:2027-02-26:확정",
@@ -8204,7 +8252,7 @@
       "hash": "252bf39973251dcd",
       "due": "2027-02-26",
       "before": [],
-      "emits": 1
+      "emits": 2
     }
   ],
   "emitted": [
@@ -8269,6 +8317,121 @@
       "release": null,
       "stars": null,
       "growth": null
+    },
+    {
+      "id": 4,
+      "date": "2026-11-03",
+      "kind": "product",
+      "position": 1,
+      "key": "ph:hookdeck-inspect",
+      "name": "Hookdeck Inspect",
+      "url": "https://www.producthunt.com/products/hookdeck",
+      "purpose": "웹훅을 시험하고 디버깅하는 무료 도구다. 사람과 에이전트가 함께 쓸 수 있는 실시간 수신 주소를 주고, 500곳이 넘는 서비스의 웹훅을 흉내 낸 모의 요청도 보낼 수 있다. 계정이나 설정 없이 바로 쓴다.",
+      "difference": "단순히 요청을 받아 보여 주는 RequestBin류 수신기와 달리, 여러 서비스 형식의 모의 웹훅을 직접 만들어 보내 볼 수 있고 에이전트가 쓰는 상황을 전제로 만들었다.",
+      "reason": "웹훅 연동을 만드는 웹 개발자가 가입 없이 바로 쓸 수 있다.",
+      "issue": null,
+      "license": null,
+      "pushedOn": null,
+      "release": null,
+      "stars": null,
+      "growth": null
+    },
+    {
+      "id": 5,
+      "date": "2026-11-03",
+      "kind": "product",
+      "position": 2,
+      "key": "ph:nana-3",
+      "name": "nana",
+      "url": "https://www.producthunt.com/products/nana-2",
+      "purpose": "Windows용 네이티브 터미널 멀티플렉서다. Claude Code, Codex, OpenCode 같은 코딩 에이전트를 저마다의 git worktree에서 나란히 돌리고, 작업 중·대기·완료 상태와 diff를 한곳에서 본다. 앱을 닫아도 에이전트가 계속 돈다.",
+      "difference": "Conductor처럼 여러 에이전트를 worktree로 나눠 돌리는 도구는 주로 macOS용이었는데, 이 제품은 Windows에서 네이티브로 같은 흐름을 제공한다.",
+      "reason": "Windows에서 코딩 에이전트를 여럿 쓰는 사용자에게 빈자리를 채운다.",
+      "issue": null,
+      "license": null,
+      "pushedOn": null,
+      "release": null,
+      "stars": null,
+      "growth": null
+    },
+    {
+      "id": 6,
+      "date": "2026-11-03",
+      "kind": "product",
+      "position": 3,
+      "key": "ph:infino-ai",
+      "name": "Infino AI",
+      "url": "https://www.producthunt.com/products/infino-ai",
+      "purpose": "AI 에이전트용 오픈소스 검색 엔진이다. 데이터를 S3나 로컬 디스크에 Parquet 한 벌로만 두고, 파일 안에 BM25와 벡터 색인을 넣어 키워드·벡터·하이브리드 검색과 SQL을 함께 돌린다. 무료 등급이 있는 클라우드판도 나왔다.",
+      "difference": "전문 검색 엔진과 벡터 DB, 분석용 저장소를 따로 두고 데이터를 복제하는 흔한 구성과 달리, Parquet 파일 하나에 색인을 함께 담아 사본을 하나로 줄인다.",
+      "reason": "RAG·에이전트 검색을 만드는 개발자가 저장 구성을 단순하게 할 수 있다.",
+      "issue": null,
+      "license": null,
+      "pushedOn": null,
+      "release": null,
+      "stars": null,
+      "growth": null
+    },
+    {
+      "id": 7,
+      "date": "2026-11-03",
+      "kind": "repo",
+      "position": 1,
+      "key": "repo:vercel-labs/agent-desktop",
+      "name": "vercel-labs/agent-desktop",
+      "url": "https://github.com/vercel-labs/agent-desktop",
+      "purpose": "AI 에이전트가 macOS, Windows, Linux의 데스크톱 앱을 운영체제 접근성 트리로 보고 조작하게 하는 CLI와 C 라이브러리다. 화면 요소를 JSON과 참조값으로 돌려주고, 에이전트는 그 참조를 눌러 보고 다시 읽어 결과를 확인한다.",
+      "difference": "스크린샷을 찍어 좌표로 클릭하는 흔한 컴퓨터 사용 방식과 달리, 픽셀 매칭 없이 접근성 트리를 읽는다. 안에 모델이 없어 반복 루프는 쓰는 쪽 에이전트가 맡는다.",
+      "reason": "에이전트에 데스크톱 조작을 붙이려는 개발자에게 바로 쓸모가 있다.",
+      "issue": null,
+      "license": "Apache-2.0",
+      "pushedOn": "2026-11-03",
+      "release": {
+        "state": "found",
+        "date": "2026-11-03"
+      },
+      "stars": 12482,
+      "growth": 2989
+    },
+    {
+      "id": 8,
+      "date": "2026-11-03",
+      "kind": "repo",
+      "position": 2,
+      "key": "repo:heydamir/unslop",
+      "name": "heydamir/unslop",
+      "url": "https://github.com/heydamir/unslop",
+      "purpose": "Claude Code와 Codex에서 쓰는 스킬로, AI가 만든 티가 나는 화면을 다듬는다. 보라색 그라데이션, 이모지 라벨, 들쭉날쭉한 간격 같은 흔적을 먼저 찾고, 제품에 맞는 방향을 정한 뒤 여러 차례에 걸쳐 고친다. 링크만 있는 라이브 사이트에도 쓸 수 있다.",
+      "difference": "새 화면을 처음부터 잘 만들도록 이끄는 프런트엔드 디자인 스킬과 달리, 이미 만들어진 화면을 감사하고 디자이너의 수정 검토처럼 단계별로 고치는 데 맞춰져 있다.",
+      "reason": "AI로 UI를 짜는 웹 개발자에게 직접 쓸모 있는 스킬이다.",
+      "issue": null,
+      "license": "CC-BY-4.0",
+      "pushedOn": "2026-11-01",
+      "release": {
+        "state": "none"
+      },
+      "stars": 7429,
+      "growth": 1218
+    },
+    {
+      "id": 9,
+      "date": "2026-11-03",
+      "kind": "repo",
+      "position": 3,
+      "key": "repo:deepseek-ai/dsh-superagent-prototype",
+      "name": "deepseek-ai/dsh-superagent-prototype",
+      "url": "https://github.com/deepseek-ai/dsh-superagent-prototype",
+      "purpose": "DeepSeek Harness용 번들로 묶인 연구 시제품 코딩 에이전트다. 한 GitHub 저장소와 선택적으로 Feishu를 지켜보다가 허용된 사람이 일을 맡기면 작업 항목을 열고 자기 세션에서 처리한 뒤, 풀 리퀘스트 등으로 원래 대화에 답한다.",
+      "difference": "터미널에서 사람이 붙어 지시하는 코딩 에이전트와 달리 저장소 이벤트를 듣고 스스로 움직인다. 요청받았거나 팀이 정한 규칙이 허용할 때만 행동하고, 사람 손이 필요할 때만 알린다.",
+      "reason": "딥시크가 공개한 상시 대기형 에이전트 설계를 직접 살펴볼 수 있다.",
+      "issue": 126,
+      "license": "MIT",
+      "pushedOn": "2026-11-03",
+      "release": {
+        "state": "none"
+      },
+      "stars": 16545,
+      "growth": 3537
     }
   ],
   "kindDates": [
@@ -8281,6 +8444,16 @@
       "date": "2026-11-02",
       "kind": "repo",
       "status": "baseline"
+    },
+    {
+      "date": "2026-11-03",
+      "kind": "product",
+      "status": "checked"
+    },
+    {
+      "date": "2026-11-03",
+      "kind": "repo",
+      "status": "checked"
     }
   ],
   "discoveryCorrections": []

@@ -259,7 +259,7 @@
       "name": "2026 프로야구 한국시리즈 1차전",
       "due": "2026-11-03",
       "major": "문화·스포츠",
-      "outcome": null,
+      "outcome": "result",
       "postponedTo": null,
       "mergedInto": null,
       "deleted": false,
@@ -270,7 +270,7 @@
       "name": "한-튀르키예 정상회담",
       "due": "2026-11-03",
       "major": "정치",
-      "outcome": null,
+      "outcome": "result",
       "postponedTo": null,
       "mergedInto": null,
       "deleted": false,
@@ -346,6 +346,50 @@
       "id": 32,
       "name": "OpenAI GPT-4.1·GPT-4o 지원 종료",
       "due": "2027-01-14",
+      "major": "IT·AI",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 33,
+      "name": "국회 예결위 예산안 종합정책질의 시작",
+      "due": "2026-11-04",
+      "major": "정치",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 34,
+      "name": "아부다비 미국·러시아·우크라이나 3자 평화협상",
+      "due": "2026-11-10",
+      "major": "국제",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 35,
+      "name": "OpenAI GPT Image 구형 모델 지원 종료",
+      "due": "2026-12-01",
+      "major": "IT·AI",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 36,
+      "name": "OpenAI GPT-5.1·5.3-Codex·5.4-Nano 지원 종료",
+      "due": "2027-04-01",
       "major": "IT·AI",
       "outcome": null,
       "postponedTo": null,
@@ -624,6 +668,31 @@
       "story": "2026-11-02/한국-s2",
       "schedule": 25,
       "role": "basis"
+    },
+    {
+      "story": "2026-11-03/세계-4",
+      "schedule": 34,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-03/한국-4",
+      "schedule": 25,
+      "role": "result"
+    },
+    {
+      "story": "2026-11-03/한국-5",
+      "schedule": 27,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-03/한국-5",
+      "schedule": 33,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-03/한국-s5",
+      "schedule": 24,
+      "role": "result"
     }
   ],
   "merges": [],
