@@ -3,6 +3,7 @@ import path from "node:path";
 import type { KindReport } from "./builderDiscover.ts";
 import type { DiscoverKind } from "./discoverStore.ts";
 import type { DocReport, SourceReport } from "./builderFetch.ts";
+import type { DemandReport } from "./demandFetch.ts";
 import type { FeedFailure } from "./feeds.ts";
 import type { IndicatorFetchResult } from "./indicatorFetch.ts";
 import type { VideoBundle } from "./siteTypes.ts";
@@ -273,6 +274,15 @@ export interface VideoNotesState {
   usd?: number;
 }
 
+/** 9.95단계 수요 스냅샷(`demand-fetch`). 수와 사유 종류만 남긴다(받은 글은 남기지 않는다) */
+export type DemandFetchState = Omit<DemandReport, "day"> & {
+  status: "done" | "off" | "crashed";
+  /** 받은 날짜(KST). 시험 모드는 null */
+  day: string | null;
+  dbBytes: number | null;
+  reason?: string;
+};
+
 /** 사이트 빌드 결과(3단계 4.1, 4.5) */
 export type SiteResult =
   | { status: "built"; outDir: string; dates: number; issues: number; entities?: number; terms?: number; schedules?: number; upcoming?: number; indicators?: number; videoDates?: number; videos?: number; files: number; bytes: number }
@@ -339,6 +349,8 @@ export interface RunState {
   repoSnapshot?: RepoSnapshotState;
   builderKinds?: BuilderKindsState;
   builderWrite?: BuilderWriteState;
+  /** 9.95단계: 수요 스냅샷. 앞 단계 실행 기록에는 없다 */
+  demandFetch?: DemandFetchState;
   /** 지난 날짜 이미지 채우기(3단계). 1·1.5·2단계 실행 기록에는 없다 */
   images?: ImagesResult;
   /** 사이트 빌드·배포·push(3단계). start가 null로 두고 각 명령이 채운다. 앞 단계 실행 기록에는 없다 */

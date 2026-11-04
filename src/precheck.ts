@@ -5,6 +5,7 @@ import { CONTACT_MAIL } from "./publicSite.ts";
 import { git, gitBuffer } from "./git.ts";
 import { NAME_KEY_FILE } from "./refs.ts";
 import { SNAPSHOT_NAME_RE } from "./snapshot.ts";
+import { DEMAND_COPY_DIR, DEMAND_COPY_RE, DEMAND_DB_FILE } from "./demandStore.ts";
 
 // 공개 전 점검(3단계 4.7-3)과 결과물 검사(4.1-4)가 함께 쓰는 검사.
 // 걸린 값은 출력하지 않는다(파일·커밋과 종류, 줄 번호만). 이 파일에는 걸리는 값을 그대로 적지 않는다(이 파일도 검사 대상이다).
@@ -47,6 +48,7 @@ export type FindingKind =
   | "실행 기록·작업 파일"
   | "빌더 작업 파일"
   | "빌더 원문 파일"
+  | "수요 데이터 DB"
   | "지운 이름 키 파일"
   | "키 값이 들어 있음"
   | "Google API 키 모양"
@@ -181,7 +183,10 @@ export function isBinary(content: Buffer): boolean {
 const BUILDER_WORK_RE = /^builder\.(?:candidates\.json|candidates\.md|items\.json|discover\.json|discover\.md|discover\.items\.json)$/;
 const BUILDER_RAW_RE = /^\d{4}-\d{2}-\d{2}-[0-9a-f]{8}\.md\.gz$/;
 
-/** 이름으로 찾는 것: SQLite 파일, 실행 전 사본, .env 파일, 지운 이름 키 파일(4단계 E15), 빌더 작업·원문 파일 */
+/** 수요 데이터 전용 DB와 그 사본(9.95단계 4.4-2). 저널 파일 이름도 잡는다 */
+const DEMAND_DB_RE = new RegExp(`^${DEMAND_DB_FILE.replace(".", "\\.")}(?:-journal|-wal|-shm)?$`);
+
+/** 이름으로 찾는 것: SQLite 파일, 실행 전 사본, .env 파일, 지운 이름 키 파일(4단계 E15), 빌더 작업·원문 파일, 수요 데이터 DB와 사본 */
 export function nameKinds(file: string): FindingKind[] {
   const base = path.posix.basename(file.replaceAll("\\", "/"));
   const kinds: FindingKind[] = [];
@@ -190,7 +195,9 @@ export function nameKinds(file: string): FindingKind[] {
   if (/^\.env(?:\..+)?$/i.test(base)) kinds.push(".env 파일");
   if (base === NAME_KEY_FILE) kinds.push("지운 이름 키 파일");
   if (BUILDER_WORK_RE.test(base)) kinds.push("빌더 작업 파일");
-  if (BUILDER_RAW_RE.test(base) || file.replaceAll("\\", "/").split("/").slice(0, -1).includes("builder-raw")) kinds.push("빌더 원문 파일");
+  const dirs = file.replaceAll("\\", "/").split("/").slice(0, -1);
+  if (BUILDER_RAW_RE.test(base) || dirs.includes("builder-raw")) kinds.push("빌더 원문 파일");
+  if (DEMAND_DB_RE.test(base) || DEMAND_COPY_RE.test(base) || dirs.includes(DEMAND_COPY_DIR)) kinds.push("수요 데이터 DB");
   return kinds;
 }
 

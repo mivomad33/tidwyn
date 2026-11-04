@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import { DEMAND_COPY_DIR } from "./demandStore.ts";
 import { BACKUP_NAME_RE, contentFindings, nameKinds, type Finding } from "./precheck.ts";
 import { ROBOTS_DISALLOW, ROBOTS_FILE, SITEMAP_FILE, SITE_URL, pageFile } from "./publicSite.ts";
 
@@ -20,7 +21,7 @@ const RUN_FILE_RES = [
   /^videos\.(?:candidates\.json|candidates\.md|details\.md|pick\.json|check\.json|notes\.json|notes\.tmp\.json|sections\.json|sections\.tmp\.json)$/,
 ];
 /** 데이터 폴더의 작업 폴더 이름. 결과물 안에 이런 폴더가 있으면 데이터 폴더가 섞인 것이다 */
-const DATA_DIRS = new Set(["runs", "work", "snapshots", "backup", "site-input", "builder-raw"]);
+const DATA_DIRS = new Set(["runs", "work", "snapshots", "backup", "site-input", "builder-raw", DEMAND_COPY_DIR]);
 
 export interface OutputCheck {
   findings: Finding[];

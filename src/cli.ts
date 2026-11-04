@@ -51,6 +51,9 @@ import { buildWorkData, builderWorkFile, readBuilderWork, removeBuilderWorkFiles
 import { DISCOVER_KINDS, discoveriesOfDate, isKindDone, undoneKinds, type DiscoverKind } from "./discoverStore.ts";
 import { readDiscoverItems, readDiscoverWork, removeDiscoverWorkFiles, writeDiscoverWork } from "./discoverWork.ts";
 import { runSnapshot } from "./repoSnapshot.ts";
+import { DEMAND_DEADLINE_MS, demandFetchText, demandLines, emptyGroups, runDemandFetch, type DemandReport } from "./demandFetch.ts";
+import { demandSources, type DemandOff, type DemandSource } from "./demandSources.ts";
+import { demandDbPath, openDemandDb } from "./demandStore.ts";
 import { buildCandidateFile, checkCheckFile, checkPickFile, readCandidateFile, readJsonFile, removeVideoWorkFiles, restoreCandidateLists, videoWorkFile, writeCandidateFiles } from "./videoPick.ts";
 import { purgeDataDir, purgeTestDirs, type VideoPurgeResult } from "./videoPurge.ts";
 import { SECTION_LIMITS, VIDEO_SECTIONS_STOPPED, emptySections, readSections, runSections, sectionMaterials, sectionTargets, sectionsUsd, writeSections, type SectionsFile } from "./videoSections.ts";
@@ -93,6 +96,7 @@ import {
   type BuilderFetchState,
   type BuilderKindsState,
   type BuilderWriteState,
+  type DemandFetchState,
   type DeployResult,
   type ExtractResult,
   type ImagesResult,
@@ -181,6 +185,16 @@ export interface Context {
   geminiLimits?: Partial<GeminiLimits>;
   /** 구간 시각 받기를 멈춘 상태인지(9.7단계 4.5-3). 없으면 VIDEO_SECTIONS_STOPPED. 테스트가 바꿔 넣는다 */
   videoSectionsStopped?: boolean;
+  /** 수요 소스 요청(9.95단계 4.1). 없으면 리디렉션을 따라가지 않는 fetch */
+  demandHttp?: FetchText;
+  /** 수요 받기의 시계, 기다림, 요청 시간 상한 타이머, 명령 상한. 테스트가 바꿔 넣는다 */
+  demandClock?: () => number;
+  demandSleep?: (ms: number) => Promise<void>;
+  demandTimer?: (ms: number, signal: AbortSignal) => Promise<void>;
+  demandDeadlineMs?: number;
+  /** 수요 소스 목록과 끄기 값. 없으면 코드의 기본값 */
+  demandSources?: readonly DemandSource[];
+  demandOff?: DemandOff;
 }
 
 /** 의존성 잠금 파일대로, 잠금 파일을 바꾸지 않고 대화형 확인 없이 설치한다 */
@@ -256,7 +270,9 @@ const USAGE = `명령:
   builder-write --run <파일>              새 제품·뜨는 저장소 항목을 경로가 막힌 별도 Claude 프로세스로 쓰기. 쓰기 대상이 없으면 부르지 않고, 항목 파일에 위반이 있으면 고치게 한다(처음 포함 3번까지). 출력에 글은 없다
   builder-check --run <파일>              빌더 항목 파일(work/builder.items.json)과 새 종류 항목 파일 검사. 새 종류는 칸 이름과 위반 종류만 쓴다
   builder-apply --run <파일>              검사 → 한 번에 적용 → 빌더 작업 파일 지우기. 위반이 있으면 적용하지 않고 파일을 남기고, 마지막(3번째)에는 통과한 종류만 적용하고 실패로 끝난다
-  builder-fail --run <파일>               끝나지 않은 도구 변화와 새 종류를 받지 못함으로 저장하고 작업 파일을 지운다(저장된 항목과 받은 시각은 그대로 둔다)`;
+  builder-fail --run <파일>               끝나지 않은 도구 변화와 새 종류를 받지 못함으로 저장하고 작업 파일을 지운다(저장된 항목과 받은 시각은 그대로 둔다)
+수요 스냅샷(9.95단계):
+  demand-fetch --run <파일>               Google 급상승어와 Mastodon 트렌드를 그날(KST) 한 번 받아 전용 DB(<데이터 폴더>/demand.db)에 쌓는다. 받은 소스는 다시 부르지 않고, 5분 안에 끝난다. 소스가 실패해도 종료 코드는 0이다. 시험 모드에서는 돌지 않는다. 받은 글은 출력하지 않는다`;
 
 function opts(argv: string[], options: Record<string, { type: "string" | "boolean" }>) {
   return parseNodeArgs({ args: argv, options, allowPositionals: false, strict: true }).values as Record<string, string | boolean | undefined>;
@@ -594,6 +610,7 @@ function cmdSummary(argv: string[], ctx: Context): number {
   lines.push(...indicatorSummaryLines(s));
   lines.push(...videoSummaryLines(s));
   lines.push(...builderSummaryLines(s));
+  if (s.demandFetch !== undefined) lines.push(...demandSummaryLines(s.demandFetch));
   lines.push(...videoBacklogLines(s, ctx));
   lines.push(...imageSummaryLines(s, saved));
   lines.push(`- 백업: ${describeBackup(s.backup)}`);
@@ -2429,6 +2446,65 @@ async function cmdBuilderSnapshot(argv: string[], ctx: Context): Promise<number>
   }
 }
 
+/** 수요 스냅샷(9.95단계 4.1~4.3). 소스 실패는 종료 코드 0이고, 전용 DB를 열거나 쓰지 못하면 1이다. 본 DB는 열지 않는다 */
+async function cmdDemandFetch(argv: string[], ctx: Context): Promise<number> {
+  const v = opts(argv, { run: { type: "string" } });
+  const runFile = need(v, "run");
+  const state = readRun(runFile);
+  const refused = indicatorCondition(state, ctx);
+  if (refused !== null) return refused;
+  const sources = ctx.demandSources ?? demandSources();
+  const record = (r: DemandFetchState) => {
+    updateRun(runFile, (s) => (s.demandFetch = r));
+    ctx.out(["수요 스냅샷:", ...demandSummaryLines(r)].join("\n"));
+  };
+  if (state.mode === "test") {
+    const groups = emptyGroups(sources);
+    for (const g of Object.values(groups)) g.off = g.total;
+    record({ status: "off", day: null, groups, copied: false, dbBytes: null, elapsedMs: 0, streaks: [] });
+    return EXIT.ok;
+  }
+  const file = demandDbPath(state.dataDir);
+  const existed = fs.existsSync(file);
+  let r: DemandReport;
+  let dbBytes: number;
+  try {
+    const db = openDemandDb(file);
+    try {
+      r = await runDemandFetch({
+        db,
+        dataDir: state.dataDir,
+        dbExisted: existed,
+        http: ctx.demandHttp ?? demandFetchText,
+        now: ctx.now,
+        clock: ctx.demandClock,
+        sleep: ctx.demandSleep,
+        timer: ctx.demandTimer,
+        deadlineMs: ctx.demandDeadlineMs ?? DEMAND_DEADLINE_MS,
+        sources,
+        off: ctx.demandOff,
+      });
+    } finally {
+      db.close();
+    }
+    dbBytes = fs.statSync(file).size;
+  } catch (e) {
+    // 메시지에 입력 조각이 들어갈 수 있어 종류만 남긴다(4.3-3)
+    const reason = e instanceof Error && /SQLITE|database|unable to open|EACCES|ENOENT|EROFS|ENOTDIR|EISDIR/i.test(`${(e as { code?: string }).code ?? ""} ${e.message}`) ? "전용 DB를 열거나 쓰지 못했다" : "받기 명령이 실패했다";
+    record({ status: "crashed", day: null, groups: emptyGroups(sources), copied: false, dbBytes: null, elapsedMs: 0, streaks: [], reason });
+    return EXIT.failed;
+  }
+  // 실행 기록 쓰기 실패는 전용 DB 실패로 적지 않는다
+  record({ status: "done", ...r, dbBytes });
+  return EXIT.ok;
+}
+
+function demandSummaryLines(r: DemandFetchState): string[] {
+  if (r.status === "off") return ["- 수요 스냅샷: 꺼짐(시험 모드)"];
+  if (r.status === "crashed") return [`- 수요 스냅샷: 실패(${r.reason ?? "이유 없음"}). 다음 실행이 다시 받는다`];
+  return demandLines(r);
+}
+
 /** 빌더 받기(4.1). 끝난 날짜면 부르지 않고, 소스 실패는 실패로 끝내지 않는다(다시 알림은 쓴다). 멈추면 종료 코드 1이고 스킬이 builder-fail을 부른다 */
 async function cmdBuilderFetch(argv: string[], ctx: Context): Promise<number> {
   const v = opts(argv, { run: { type: "string" } });
@@ -3021,6 +3097,7 @@ const ASYNC_COMMANDS: Record<string, (argv: string[], ctx: Context) => Promise<n
   "video-fetch": cmdVideoFetch,
   "builder-fetch": cmdBuilderFetch,
   "builder-snapshot": cmdBuilderSnapshot,
+  "demand-fetch": cmdDemandFetch,
   "video-notes": cmdVideoNotes,
   "video-sections": cmdVideoSections,
 };

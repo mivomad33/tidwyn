@@ -52,23 +52,28 @@ export interface FetchInit {
   method?: "GET" | "POST";
   headers?: Record<string, string>;
   body?: string;
+  /** 부르는 쪽이 끊을 때(9.95단계 요청 시간 상한) */
+  signal?: AbortSignal;
 }
 
 export type FetchText = (url: string, init?: FetchInit) => Promise<FetchResult>;
 
-const USER_AGENT = "tidwyn/1.5 (personal RSS reader)";
+/** 피드 받기의 프로젝트 식별 문자열. 수요 스냅샷(9.95단계 S8)도 이것으로 고정한다 */
+export const FEED_USER_AGENT = "tidwyn/1.5 (personal RSS reader)";
 const TIMEOUT_MS = 20_000;
 
-/** 주소 하나를 글로 받는 함수를 만든다. 시간 제한을 넘기면 예외 */
-export function makeFetchText(userAgent: string, timeoutMs: number): FetchText {
+/** 주소 하나를 글로 받는 함수를 만든다. 시간 제한을 넘기면 예외. redirect가 "manual"이면 리디렉션을 따라가지 않고 3xx 응답을 그대로 돌려준다 */
+export function makeFetchText(userAgent: string, timeoutMs: number, redirect: "follow" | "manual" = "follow"): FetchText {
   return async (url, init) => {
-    const res = await fetch(url, { ...init, headers: { "user-agent": userAgent, ...init?.headers }, signal: AbortSignal.timeout(timeoutMs) });
+    const timeout = AbortSignal.timeout(timeoutMs);
+    const signal = init?.signal === undefined ? timeout : AbortSignal.any([timeout, init.signal]);
+    const res = await fetch(url, { ...init, headers: { "user-agent": userAgent, ...init?.headers }, redirect, signal });
     return { status: res.status, text: await res.text(), headers: Object.fromEntries(res.headers) };
   };
 }
 
 /** 피드 하나를 받는다 */
-export const fetchText = makeFetchText(USER_AGENT, TIMEOUT_MS);
+export const fetchText = makeFetchText(FEED_USER_AGENT, TIMEOUT_MS);
 
 // 피드 주소 목록(명세서 6장 준비물). 구글 뉴스는 도메인마다 날짜 범위로 좁혀 검색한다.
 const GOOGLE_DOMAINS: { group: string; domain: string; korean: boolean; topics: string[] }[] = [

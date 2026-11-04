@@ -26,8 +26,9 @@ A personal news archive. Every day, AI gathers Korean, world, and IT/AI news, re
 
 1. Running the `/brief` skill in a local Claude Code session researches the previous day's news and writes it in a fixed format.
 2. A script validates it, saves it to a local SQLite database, and links stories to issues. The database is the source of truth.
-3. The whole database is exported as monthly JSON, committed to the `data` branch as a backup, and pushed.
-4. A static site is built from the database and deployed to Vercel.
+3. Demand signals (Google Trends trending searches, Mastodon trends) cannot be fetched for past dates later, so they are fetched daily and only their history is kept in a separate local database. They are not put on the site or in the backup, and are not published.
+4. The whole database is exported as monthly JSON, committed to the `data` branch as a backup, and pushed.
+5. A static site is built from the database and deployed to Vercel.
 
 
 ## Tech stack
