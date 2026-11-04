@@ -61,7 +61,7 @@
       "name": "미국 중간선거",
       "due": "2026-11-03",
       "major": "국제",
-      "outcome": null,
+      "outcome": "result",
       "postponedTo": null,
       "mergedInto": null,
       "deleted": false,
@@ -149,7 +149,7 @@
       "name": "이스라엘 총선 공식 결과 관보 게재",
       "due": "2026-11-04",
       "major": "국제",
-      "outcome": null,
+      "outcome": "result",
       "postponedTo": null,
       "mergedInto": null,
       "deleted": false,
@@ -390,6 +390,72 @@
       "id": 36,
       "name": "OpenAI GPT-5.1·5.3-Codex·5.4-Nano 지원 종료",
       "due": "2027-04-01",
+      "major": "IT·AI",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 37,
+      "name": "국회 본회의 조작기소 특검법안 처리",
+      "due": "2026-11-05",
+      "major": "정치",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 38,
+      "name": "윤석열 내란 우두머리 혐의 2심 결심",
+      "due": "2026-11-05",
+      "major": "정치",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 39,
+      "name": "다우·CJ 컨소시엄 중앙일보 인수 계약",
+      "due": "2026-11-05",
+      "major": "경제",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 40,
+      "name": "OpenAI tts-1·gpt-4o-mini-tts 지원 종료",
+      "due": "2027-01-06",
+      "major": "IT·AI",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 41,
+      "name": "OpenAI gpt-4o 오디오·실시간 모델 지원 종료",
+      "due": "2027-01-20",
+      "major": "IT·AI",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 42,
+      "name": "Node.js 2026년 11월 보안 릴리스",
+      "due": "2026-11-11",
       "major": "IT·AI",
       "outcome": null,
       "postponedTo": null,
@@ -693,6 +759,36 @@
       "story": "2026-11-03/한국-s5",
       "schedule": 24,
       "role": "result"
+    },
+    {
+      "story": "2026-11-04/세계-1",
+      "schedule": 6,
+      "role": "result"
+    },
+    {
+      "story": "2026-11-04/세계-5",
+      "schedule": 34,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-04/세계-s2",
+      "schedule": 14,
+      "role": "result"
+    },
+    {
+      "story": "2026-11-04/한국-1",
+      "schedule": 38,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-04/한국-2",
+      "schedule": 37,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-04/한국-s5",
+      "schedule": 39,
+      "role": "basis"
     }
   ],
   "merges": [],

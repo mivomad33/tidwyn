@@ -228,6 +228,127 @@
         "https://platform.claude.com/docs/en/release-notes/overview#november-3-2026"
       ],
       "schedules": []
+    },
+    {
+      "id": 9,
+      "date": "2026-11-04",
+      "position": 1,
+      "field": "모델",
+      "title": "OpenAI 음성 합성 모델 tts-1 등, 2027년 1월 6일 종료",
+      "whatChanged": "OpenAI 지원 종료 문서에 음성 합성(TTS) 모델의 종료일이 2027년 1월 6일로 올라 있다. 대상은 gpt-4o-mini-tts와 그 날짜별 스냅샷, tts-1, tts-1-hd이고, 권장 대체 모델은 gpt-realtime-2.1-mini다.",
+      "who": "OpenAI API로 tts-1, tts-1-hd, gpt-4o-mini-tts를 호출하는 개발자",
+      "action": "코드와 설정에서 이 모델 이름을 찾아 대체 모델로 바꾸고, 음성 품질과 응답 형식을 미리 시험한다.",
+      "why": "종료일이 지나면 해당 모델 호출이 실패한다.",
+      "due": {
+        "date": "2027-01-06",
+        "state": "confirmed"
+      },
+      "sources": [
+        {
+          "name": "OpenAI 지원 종료",
+          "url": "https://developers.openai.com/api/docs/deprecations"
+        }
+      ],
+      "issue": null,
+      "reminderOf": null,
+      "keys": [
+        "deprecation:gpt-4o-mini-tts:2027-01-06:확정",
+        "deprecation:tts-1-hd:2027-01-06:확정",
+        "deprecation:tts-1:2027-01-06:확정"
+      ],
+      "schedules": [
+        40
+      ]
+    },
+    {
+      "id": 10,
+      "date": "2026-11-04",
+      "position": 2,
+      "field": "모델",
+      "title": "OpenAI 구형 오디오·실시간 모델, 2027년 1월 20일 종료",
+      "whatChanged": "OpenAI가 구형 오디오, 실시간, 받아쓰기 모델의 종료일을 2027년 1월 20일로 정했다. gpt-4o-audio와 gpt-4o-mini-audio는 gpt-audio-1.5로, gpt-4o-mini-realtime은 gpt-realtime-2.1-mini로 옮기라고 권한다.",
+      "who": "OpenAI API로 gpt-4o 계열 오디오·실시간 모델을 쓰는 개발자",
+      "action": "쓰는 모델 이름을 확인하고 권장 대체 모델로 바꾼 뒤 음성 입출력을 시험한다.",
+      "why": "종료일이 지나면 해당 모델 호출이 실패한다.",
+      "due": {
+        "date": "2027-01-20",
+        "state": "confirmed"
+      },
+      "sources": [
+        {
+          "name": "OpenAI 지원 종료",
+          "url": "https://developers.openai.com/api/docs/deprecations"
+        }
+      ],
+      "issue": null,
+      "reminderOf": null,
+      "keys": [
+        "deprecation:gpt-4o-audio:2027-01-20:확정",
+        "deprecation:gpt-4o-mini-audio:2027-01-20:확정",
+        "deprecation:gpt-4o-mini-realtime:2027-01-20:확정",
+        "deprecation:gpt-4o-mini-transcribe-2025-03-20:2027-01-20:확정",
+        "deprecation:gpt-4o-realtime:2027-01-20:확정",
+        "deprecation:gpt-audio-mini:2027-01-20:확정",
+        "deprecation:gpt-audio:2027-01-20:확정",
+        "deprecation:gpt-realtime-mini:2027-01-20:확정",
+        "deprecation:gpt-realtime:2027-01-20:확정"
+      ],
+      "schedules": [
+        41
+      ]
+    },
+    {
+      "id": 11,
+      "date": "2026-11-04",
+      "position": 3,
+      "field": "플랫폼",
+      "title": "Supabase CLI v3, 기본 대상이 로컬로 바뀌는 호환성 변경",
+      "whatChanged": "Supabase가 CLI v3를 호환성이 깨지는 변경으로 알렸다. 명령이 기본으로 로컬 환경을 대상으로 하고, 호스팅된 프로젝트를 바꿀 때는 확인을 거친다.",
+      "who": "Supabase CLI로 호스팅 프로젝트에 마이그레이션이나 배포를 하는 개발자",
+      "action": "CLI를 v3로 올리기 전에 배포 스크립트와 CI가 호스팅 프로젝트를 대상으로 제대로 지정하는지 확인한다.",
+      "why": "기본 설정이 바뀌어 기존 스크립트가 다르게 동작할 수 있다.",
+      "due": null,
+      "sources": [
+        {
+          "name": "Supabase 변경 기록",
+          "url": "https://supabase.com/changelog/supabase-cli-v3"
+        }
+      ],
+      "issue": null,
+      "reminderOf": null,
+      "keys": [
+        "https://supabase.com/changelog/supabase-cli-v3"
+      ],
+      "schedules": []
+    },
+    {
+      "id": 12,
+      "date": "2026-11-04",
+      "position": 4,
+      "field": "프레임워크",
+      "title": "Node.js 2026년 11월 11일 보안 릴리스 예고",
+      "whatChanged": "Node.js가 2026년 11월 11일 수요일에 보안 릴리스를 낸다고 예고했다. 받은 재료에는 영향받는 버전과 취약점 내용이 아직 없다.",
+      "who": "Node.js로 서버나 빌드 도구를 운영하는 개발자",
+      "action": "릴리스가 나오면 쓰는 버전 줄의 패치 버전으로 올릴 수 있게 준비해 둔다.",
+      "why": "보안 패치를 빨리 적용해야 하는 일정이다.",
+      "due": {
+        "date": "2026-11-11",
+        "state": "confirmed"
+      },
+      "sources": [
+        {
+          "name": "Node.js 블로그",
+          "url": "https://nodejs.org/en/blog/vulnerability/november-2026-security-releases"
+        }
+      ],
+      "issue": null,
+      "reminderOf": null,
+      "keys": [
+        "https://nodejs.org/en/blog/vulnerability/november-2026-security-releases"
+      ],
+      "schedules": [
+        42
+      ]
     }
   ],
   "dates": [
@@ -237,6 +358,10 @@
     },
     {
       "date": "2026-11-03",
+      "status": "partial"
+    },
+    {
+      "date": "2026-11-04",
       "status": "partial"
     }
   ],
@@ -1116,6 +1241,15 @@
     },
     {
       "doc": "anthropic-pricing",
+      "hash": "23db967f37a91b3b",
+      "addedOn": "2026-11-05",
+      "removedOn": null,
+      "path": "Feature-specific pricing > Tool use pricing",
+      "header": "Model | Tool use system prompt tokens: auto, none | Tool use system prompt tokens: any, tool",
+      "row": "Claude Sonnet 4 (retired, except on Claude Models on Google Cloud (Google managed) and Bedrock) | 313 tokens | 315 tokens"
+    },
+    {
+      "doc": "anthropic-pricing",
       "hash": "24045f7ba4fdd50f",
       "addedOn": "2026-11-03",
       "removedOn": null,
@@ -1251,6 +1385,15 @@
     },
     {
       "doc": "anthropic-pricing",
+      "hash": "49af02488c8c8d99",
+      "addedOn": "2026-11-05",
+      "removedOn": null,
+      "path": "Feature-specific pricing > Tool use pricing",
+      "header": "Model | Tool use system prompt tokens: auto, none | Tool use system prompt tokens: any, tool",
+      "row": "Claude Opus 4.1 (retired, except on Claude Models on Google Cloud (Google managed) and Bedrock) | 313 tokens | 315 tokens"
+    },
+    {
+      "doc": "anthropic-pricing",
       "hash": "4c3b07dbaa63c63a",
       "addedOn": "2026-11-03",
       "removedOn": null,
@@ -1262,7 +1405,7 @@
       "doc": "anthropic-pricing",
       "hash": "4ef3d7d0ca770367",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-05",
       "path": "Feature-specific pricing > Batch processing",
       "header": "Model | Batch input | Batch output",
       "row": "Claude Opus 4.1 (retired, except on Bedrock and Claude Models on Google Cloud (Google managed)) | $7.50 / MTok | $37.50 / MTok"
@@ -1280,7 +1423,7 @@
       "doc": "anthropic-pricing",
       "hash": "531a7bac6289e0dc",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-05",
       "path": "Model pricing",
       "header": "Model | Base input tokens | 5m cache writes | 1h cache writes | Cache hits and refreshes | Output tokens",
       "row": "Claude Sonnet 4 (retired, except on Bedrock and Claude Models on Google Cloud (Google managed)) | $3 / MTok | $3.75 / MTok | $6 / MTok | $0.30 / MTok | $15 / MTok"
@@ -1298,7 +1441,7 @@
       "doc": "anthropic-pricing",
       "hash": "5d405ada30e06bd8",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-05",
       "path": "Feature-specific pricing > Tool use pricing",
       "header": "Model | Tool use system prompt tokens: auto, none | Tool use system prompt tokens: any, tool",
       "row": "Claude Opus 4.1 (retired, except on Bedrock and Claude Models on Google Cloud (Google managed)) | 313 tokens | 315 tokens"
@@ -1476,6 +1619,15 @@
     },
     {
       "doc": "anthropic-pricing",
+      "hash": "9c25f7281dae71a2",
+      "addedOn": "2026-11-05",
+      "removedOn": null,
+      "path": "Feature-specific pricing > Batch processing",
+      "header": "Model | Batch input | Batch output",
+      "row": "Claude Opus 4.1 (retired, except on Claude Models on Google Cloud (Google managed) and Bedrock) | $7.50 / MTok | $37.50 / MTok"
+    },
+    {
+      "doc": "anthropic-pricing",
       "hash": "9c317619956f0255",
       "addedOn": "2026-11-03",
       "removedOn": null,
@@ -1496,7 +1648,7 @@
       "doc": "anthropic-pricing",
       "hash": "a0deec3897069332",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-05",
       "path": "Model pricing",
       "header": "Model | Base input tokens | 5m cache writes | 1h cache writes | Cache hits and refreshes | Output tokens",
       "row": "Claude Opus 4.1 (retired, except on Bedrock and Claude Models on Google Cloud (Google managed)) | $15 / MTok | $18.75 / MTok | $30 / MTok | $1.50 / MTok | $75 / MTok"
@@ -1545,6 +1697,15 @@
       "path": "Model pricing",
       "header": "Model | Base input tokens | 5m cache writes | 1h cache writes | Cache hits and refreshes | Output tokens",
       "row": "Claude Fable 5 | $10 / MTok | $12.50 / MTok | $20 / MTok | $1 / MTok | $50 / MTok"
+    },
+    {
+      "doc": "anthropic-pricing",
+      "hash": "aa3cf11c6e30cbf5",
+      "addedOn": "2026-11-05",
+      "removedOn": null,
+      "path": "Feature-specific pricing > Batch processing",
+      "header": "Model | Batch input | Batch output",
+      "row": "Claude Sonnet 4 (retired, except on Claude Models on Google Cloud (Google managed) and Bedrock) | $1.50 / MTok | $7.50 / MTok"
     },
     {
       "doc": "anthropic-pricing",
@@ -1638,6 +1799,15 @@
     },
     {
       "doc": "anthropic-pricing",
+      "hash": "dfefdaa0cdec3101",
+      "addedOn": "2026-11-05",
+      "removedOn": null,
+      "path": "Model pricing",
+      "header": "Model | Base input tokens | 5m cache writes | 1h cache writes | Cache hits and refreshes | Output tokens",
+      "row": "Claude Sonnet 4 (retired, except on Claude Models on Google Cloud (Google managed) and Bedrock) | $3 / MTok | $3.75 / MTok | $6 / MTok | $0.30 / MTok | $15 / MTok"
+    },
+    {
+      "doc": "anthropic-pricing",
       "hash": "e06a0276c325c108",
       "addedOn": "2026-11-03",
       "removedOn": null,
@@ -1685,7 +1855,7 @@
       "doc": "anthropic-pricing",
       "hash": "ea7877774161367e",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-05",
       "path": "Feature-specific pricing > Batch processing",
       "header": "Model | Batch input | Batch output",
       "row": "Claude Sonnet 4 (retired, except on Bedrock and Claude Models on Google Cloud (Google managed)) | $1.50 / MTok | $7.50 / MTok"
@@ -1737,9 +1907,18 @@
     },
     {
       "doc": "anthropic-pricing",
+      "hash": "f7ebf9d9c966135d",
+      "addedOn": "2026-11-05",
+      "removedOn": null,
+      "path": "Model pricing",
+      "header": "Model | Base input tokens | 5m cache writes | 1h cache writes | Cache hits and refreshes | Output tokens",
+      "row": "Claude Opus 4.1 (retired, except on Claude Models on Google Cloud (Google managed) and Bedrock) | $15 / MTok | $18.75 / MTok | $30 / MTok | $1.50 / MTok | $75 / MTok"
+    },
+    {
+      "doc": "anthropic-pricing",
       "hash": "f8c67188da2f0904",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-05",
       "path": "Feature-specific pricing > Tool use pricing",
       "header": "Model | Tool use system prompt tokens: auto, none | Tool use system prompt tokens: any, tool",
       "row": "Claude Sonnet 4 (retired, except on Bedrock and Claude Models on Google Cloud (Google managed)) | 313 tokens | 315 tokens"
@@ -7868,18 +8047,18 @@
   "docs": [
     {
       "doc": "anthropic-deprecations",
-      "hash": "7c01727a08cc32c5812ccecc6dd36caa667ae5bd4e9d907b3b7b4272ce950c28",
-      "storedOn": "2026-11-04"
+      "hash": "dff781a1f1bbf3c53450a89c0758147001197eb5f0d99d02abcc52dddd7f2313",
+      "storedOn": "2026-11-05"
     },
     {
       "doc": "anthropic-limits",
       "hash": "02e8215f4b1f45a564d2ebab21196da7b2765a8036742f72de52f270d95cf657",
-      "storedOn": "2026-11-04"
+      "storedOn": "2026-11-05"
     },
     {
       "doc": "anthropic-pricing",
-      "hash": "79f8d09b6562f37f5edba5108b871cdd13dba26603efbd748e77a40f18c5ff53",
-      "storedOn": "2026-11-04"
+      "hash": "e1b915dea2070daeb283ec647ea7200c592870a9a73382d413d63d38c17993c1",
+      "storedOn": "2026-11-05"
     },
     {
       "doc": "gemini-deprecations",
@@ -7894,174 +8073,174 @@
     {
       "doc": "openai-deprecations",
       "hash": "3fddf4c625d689e43e559c236bcdd675de8a3b3d035070ba205827d8ad0a2fc2",
-      "storedOn": "2026-11-04"
+      "storedOn": "2026-11-05"
     },
     {
       "doc": "openai-pricing",
-      "hash": "842ac0dce2324251d274026d197a81473e72ff40eef1194bdd4e6b32833d8f55",
-      "storedOn": "2026-11-04"
+      "hash": "50c07fca566eacf03589f01047338aa350905b319d15e5f908de3997c542677b",
+      "storedOn": "2026-11-05"
     }
   ],
   "sources": [
     {
       "source": "anthropic-deprecations",
-      "fetchedAt": "2026-11-03T21:47:51.476Z",
+      "fetchedAt": "2026-11-04T21:54:33.506Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "anthropic-limits",
-      "fetchedAt": "2026-11-03T21:47:51.476Z",
+      "fetchedAt": "2026-11-04T21:54:33.506Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "anthropic-pricing",
-      "fetchedAt": "2026-11-03T21:47:51.476Z",
+      "fetchedAt": "2026-11-04T21:54:33.506Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "claude-code",
-      "fetchedAt": "2026-11-03T21:47:51.476Z",
+      "fetchedAt": "2026-11-04T21:54:33.506Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "claude-notes",
-      "fetchedAt": "2026-11-03T21:47:51.476Z",
+      "fetchedAt": "2026-11-04T21:54:33.506Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "cloudflare",
       "fetchedAt": null,
-      "failDays": 2,
-      "failOn": "2026-11-04"
+      "failDays": 3,
+      "failOn": "2026-11-05"
     },
     {
       "source": "codex",
       "fetchedAt": null,
-      "failDays": 2,
-      "failOn": "2026-11-04"
+      "failDays": 3,
+      "failOn": "2026-11-05"
     },
     {
       "source": "copilot",
-      "fetchedAt": "2026-11-03T21:47:51.476Z",
+      "fetchedAt": "2026-11-04T21:54:33.506Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "eol-nextjs",
-      "fetchedAt": "2026-11-03T21:47:51.476Z",
+      "fetchedAt": "2026-11-04T21:54:33.506Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "eol-nodejs",
-      "fetchedAt": "2026-11-03T21:47:51.476Z",
+      "fetchedAt": "2026-11-04T21:54:33.506Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "gemini-cli",
-      "fetchedAt": "2026-11-03T21:47:51.476Z",
+      "fetchedAt": "2026-11-04T21:54:33.506Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "gemini-deprecations",
       "fetchedAt": "2026-11-02T23:28:54.103Z",
-      "failDays": 1,
-      "failOn": "2026-11-04"
+      "failDays": 2,
+      "failOn": "2026-11-05"
     },
     {
       "source": "gemini-pricing",
       "fetchedAt": "2026-11-02T23:28:54.103Z",
-      "failDays": 1,
-      "failOn": "2026-11-04"
+      "failDays": 2,
+      "failOn": "2026-11-05"
     },
     {
       "source": "ghsa",
-      "fetchedAt": "2026-11-03T21:47:51.476Z",
+      "fetchedAt": "2026-11-04T21:54:33.506Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "kev",
-      "fetchedAt": "2026-11-03T21:47:51.476Z",
+      "fetchedAt": "2026-11-04T21:54:33.506Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "mcp-spec",
-      "fetchedAt": "2026-11-03T21:47:51.476Z",
+      "fetchedAt": "2026-11-04T21:54:33.506Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "nextjs",
-      "fetchedAt": "2026-11-03T21:47:51.476Z",
+      "fetchedAt": "2026-11-04T21:54:33.506Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "nodejs",
-      "fetchedAt": "2026-11-03T21:47:51.476Z",
+      "fetchedAt": "2026-11-04T21:54:33.506Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "openai-deprecations",
-      "fetchedAt": "2026-11-03T21:47:51.476Z",
+      "fetchedAt": "2026-11-04T21:54:33.506Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "openai-pricing",
-      "fetchedAt": "2026-11-03T21:47:51.476Z",
+      "fetchedAt": "2026-11-04T21:54:33.506Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "product-hunt",
-      "fetchedAt": "2026-11-03T21:48:09.453Z",
+      "fetchedAt": "2026-11-04T21:54:51.759Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "react",
-      "fetchedAt": "2026-11-03T21:47:51.476Z",
+      "fetchedAt": "2026-11-04T21:54:33.506Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "socket",
-      "fetchedAt": "2026-11-03T21:47:51.476Z",
+      "fetchedAt": "2026-11-04T21:54:33.506Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "supabase",
-      "fetchedAt": "2026-11-03T21:47:51.476Z",
+      "fetchedAt": "2026-11-04T21:54:33.506Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "typescript",
-      "fetchedAt": "2026-11-03T21:47:51.476Z",
+      "fetchedAt": "2026-11-04T21:54:33.506Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "vercel",
-      "fetchedAt": "2026-11-03T21:47:51.476Z",
+      "fetchedAt": "2026-11-04T21:54:33.506Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "vite",
-      "fetchedAt": "2026-11-03T21:47:51.476Z",
+      "fetchedAt": "2026-11-04T21:54:33.506Z",
       "failDays": 0,
       "failOn": null
     }
@@ -8076,51 +8255,7 @@
       "hash": "938f45865e16f2a5",
       "due": "2027-02-26",
       "before": [],
-      "emits": 2
-    },
-    {
-      "key": "deprecation:gpt-4o-audio:2027-01-20:확정",
-      "kind": "deprecation",
-      "doc": "openai-deprecations",
-      "changedOn": "2026-11-03",
-      "side": "added",
-      "hash": "8c0c3b4d5ad2c0f0",
-      "due": "2027-01-20",
-      "before": [],
-      "emits": 2
-    },
-    {
-      "key": "deprecation:gpt-4o-mini-audio:2027-01-20:확정",
-      "kind": "deprecation",
-      "doc": "openai-deprecations",
-      "changedOn": "2026-11-03",
-      "side": "added",
-      "hash": "ba04d8d72eff12db",
-      "due": "2027-01-20",
-      "before": [],
-      "emits": 2
-    },
-    {
-      "key": "deprecation:gpt-4o-mini-realtime:2027-01-20:확정",
-      "kind": "deprecation",
-      "doc": "openai-deprecations",
-      "changedOn": "2026-11-03",
-      "side": "added",
-      "hash": "b4fd7fb9afc3b45c",
-      "due": "2027-01-20",
-      "before": [],
-      "emits": 2
-    },
-    {
-      "key": "deprecation:gpt-4o-mini-transcribe-2025-03-20:2027-01-20:확정",
-      "kind": "deprecation",
-      "doc": "openai-deprecations",
-      "changedOn": "2026-11-03",
-      "side": "added",
-      "hash": "f2c17b37b802875a",
-      "due": "2027-01-20",
-      "before": [],
-      "emits": 2
+      "emits": 3
     },
     {
       "key": "deprecation:gpt-4o-mini-transcribe:2027-02-26:확정",
@@ -8131,29 +8266,7 @@
       "hash": "ee258f2a6ad4b675",
       "due": "2027-02-26",
       "before": [],
-      "emits": 2
-    },
-    {
-      "key": "deprecation:gpt-4o-mini-tts:2027-01-06:확정",
-      "kind": "deprecation",
-      "doc": "openai-deprecations",
-      "changedOn": "2026-11-03",
-      "side": "added",
-      "hash": "ff223196e4a8bdad",
-      "due": "2027-01-06",
-      "before": [],
-      "emits": 2
-    },
-    {
-      "key": "deprecation:gpt-4o-realtime:2027-01-20:확정",
-      "kind": "deprecation",
-      "doc": "openai-deprecations",
-      "changedOn": "2026-11-03",
-      "side": "added",
-      "hash": "02fe0d0076294bcb",
-      "due": "2027-01-20",
-      "before": [],
-      "emits": 2
+      "emits": 3
     },
     {
       "key": "deprecation:gpt-4o-transcribe-diarize:2027-02-26:확정",
@@ -8164,7 +8277,7 @@
       "hash": "f5ae225ea708ea66",
       "due": "2027-02-26",
       "before": [],
-      "emits": 2
+      "emits": 3
     },
     {
       "key": "deprecation:gpt-4o-transcribe:2027-02-26:확정",
@@ -8175,73 +8288,7 @@
       "hash": "e9d8810fd07878ca",
       "due": "2027-02-26",
       "before": [],
-      "emits": 2
-    },
-    {
-      "key": "deprecation:gpt-audio-mini:2027-01-20:확정",
-      "kind": "deprecation",
-      "doc": "openai-deprecations",
-      "changedOn": "2026-11-03",
-      "side": "added",
-      "hash": "3b07146a553d4c76",
-      "due": "2027-01-20",
-      "before": [],
-      "emits": 2
-    },
-    {
-      "key": "deprecation:gpt-audio:2027-01-20:확정",
-      "kind": "deprecation",
-      "doc": "openai-deprecations",
-      "changedOn": "2026-11-03",
-      "side": "added",
-      "hash": "a88ef3282954401b",
-      "due": "2027-01-20",
-      "before": [],
-      "emits": 2
-    },
-    {
-      "key": "deprecation:gpt-realtime-mini:2027-01-20:확정",
-      "kind": "deprecation",
-      "doc": "openai-deprecations",
-      "changedOn": "2026-11-03",
-      "side": "added",
-      "hash": "ce37111f20d0c7a0",
-      "due": "2027-01-20",
-      "before": [],
-      "emits": 2
-    },
-    {
-      "key": "deprecation:gpt-realtime:2027-01-20:확정",
-      "kind": "deprecation",
-      "doc": "openai-deprecations",
-      "changedOn": "2026-11-03",
-      "side": "added",
-      "hash": "8150257f0f9f2466",
-      "due": "2027-01-20",
-      "before": [],
-      "emits": 2
-    },
-    {
-      "key": "deprecation:tts-1-hd:2027-01-06:확정",
-      "kind": "deprecation",
-      "doc": "openai-deprecations",
-      "changedOn": "2026-11-03",
-      "side": "added",
-      "hash": "5358042e95435f24",
-      "due": "2027-01-06",
-      "before": [],
-      "emits": 2
-    },
-    {
-      "key": "deprecation:tts-1:2027-01-06:확정",
-      "kind": "deprecation",
-      "doc": "openai-deprecations",
-      "changedOn": "2026-11-03",
-      "side": "added",
-      "hash": "d02f1b5fe9a5a2d4",
-      "due": "2027-01-06",
-      "before": [],
-      "emits": 2
+      "emits": 3
     },
     {
       "key": "deprecation:whisper-1:2027-02-26:확정",
@@ -8252,7 +8299,7 @@
       "hash": "252bf39973251dcd",
       "due": "2027-02-26",
       "before": [],
-      "emits": 2
+      "emits": 3
     }
   ],
   "emitted": [
@@ -8261,7 +8308,13 @@
       "on": "2026-11-02"
     }
   ],
-  "reminders": [],
+  "reminders": [
+    {
+      "schedule": 42,
+      "state": "skip",
+      "on": "2026-11-04"
+    }
+  ],
   "corrections": [],
   "discoveries": [
     {
@@ -8432,6 +8485,123 @@
       },
       "stars": 16545,
       "growth": 3537
+    },
+    {
+      "id": 10,
+      "date": "2026-11-04",
+      "kind": "product",
+      "position": 1,
+      "key": "ph:render-sandboxes",
+      "name": "Render Sandboxes",
+      "url": "https://www.producthunt.com/products/render",
+      "purpose": "에이전트마다 격리된 리눅스 머신을 1초 안에 띄워 Claude Code나 Codex 같은 하네스를 돌린다. Docker Compose로 앱을 올려 변경을 시험하고, 접속 가능한 도메인을 샌드박스별로 정한다.",
+      "difference": "유휴 상태가 되면 멈춰 과금이 끊기고 파일과 메모리를 그대로 둔 채 다시 깨어난다. 앱을 호스팅하는 같은 플랫폼 안에서 돌아가 따로 샌드박스 서비스를 붙이지 않아도 된다.",
+      "reason": "에이전트 작업 환경을 앱 배포 플랫폼과 한곳에서 관리하려는 웹 개발자에게 맞다.",
+      "issue": null,
+      "license": null,
+      "pushedOn": null,
+      "release": null,
+      "stars": null,
+      "growth": null
+    },
+    {
+      "id": 11,
+      "date": "2026-11-04",
+      "kind": "product",
+      "position": 2,
+      "key": "ph:openmail",
+      "name": "OpenMail",
+      "url": "https://www.producthunt.com/products/openmail",
+      "purpose": "AI 에이전트마다 내 도메인의 전용 받은편지함을 API 호출 한 번으로 만들어 준다. 들어온 메일은 웹훅이나 WebSocket으로 코드에 전달되고 첨부는 텍스트로 바뀐다. 호스팅 MCP 서버도 있다.",
+      "difference": "개인 Gmail이나 여럿이 함께 쓰는 발송 풀을 빌리는 방식과 달리 받은편지함마다 발송 평판이 따로 쌓여, 다른 사용자의 오남용에 함께 차단될 걱정이 줄어든다.",
+      "reason": "가입 인증 코드 수신이나 고객 응대를 에이전트에게 맡기는 개발자에게 쓸모 있다.",
+      "issue": null,
+      "license": null,
+      "pushedOn": null,
+      "release": null,
+      "stars": null,
+      "growth": null
+    },
+    {
+      "id": 12,
+      "date": "2026-11-04",
+      "kind": "product",
+      "position": 3,
+      "key": "ph:deployed-yet",
+      "name": "Deployed Yet?",
+      "url": "https://www.producthunt.com/products/deployed-yet",
+      "purpose": "Vercel, Cloudflare Workers·Pages, GitHub Actions 배포 상태를 Mac 메뉴 막대에 모아 보여 주는 무료 오픈소스 앱이다. 빌드 중·배포 완료·실패를 기호로 표시하고 실패나 운영 반영 때 알림을 보낸다.",
+      "difference": "서비스마다 대시보드를 따로 여는 대신 여러 계정과 프로젝트를 한 메뉴에서 본다. 토큰은 키체인에 두고 각 서비스 API로만 보낸다.",
+      "reason": "여러 배포 서비스를 오가는 웹 개발자가 반영 여부를 바로 확인할 수 있다.",
+      "issue": null,
+      "license": null,
+      "pushedOn": null,
+      "release": null,
+      "stars": null,
+      "growth": null
+    },
+    {
+      "id": 13,
+      "date": "2026-11-04",
+      "kind": "repo",
+      "position": 1,
+      "key": "repo:pingdotgg/t3code",
+      "name": "pingdotgg/t3code",
+      "url": "https://github.com/pingdotgg/t3code",
+      "purpose": "내 컴퓨터에 설치된 코딩 에이전트를 모바일 앱, 웹, Electron 데스크톱 앱에서 조종하는 제어 화면이다. Claude Code, Codex, Cursor, OpenCode 등 이미 쓰는 구독을 그대로 연결한다.",
+      "difference": "Codex 데스크톱 앱처럼 한 회사 에이전트에 묶인 앱과 달리 여러 에이전트를 한 화면에서 다루고, 원격 접속을 염두에 두고 만들어 휴대폰에서도 작업을 이어 간다.",
+      "reason": "여러 코딩 에이전트를 함께 쓰는 사용자에게 맞고 최근 관심이 크게 늘었다.",
+      "issue": null,
+      "license": "MIT",
+      "pushedOn": "2026-11-04",
+      "release": {
+        "state": "found",
+        "date": "2026-11-04"
+      },
+      "stars": 46408,
+      "growth": 2251
+    },
+    {
+      "id": 14,
+      "date": "2026-11-04",
+      "kind": "repo",
+      "position": 2,
+      "key": "repo:pbakaus/impeccable",
+      "name": "pbakaus/impeccable",
+      "url": "https://github.com/pbakaus/impeccable",
+      "purpose": "코딩 에이전트에 디자인 지시어를 더하는 도구다. polish, bolder로 화면을 다듬게 하고 critique, audit로 사용성·접근성·반응형 문제를 우선순위별로 검토한다.",
+      "difference": "LLM이나 API 키 없이 도는 결정적 규칙 62개로 보라색 그라데이션, 카드 속 카드 같은 AI 특유의 뻔한 디자인 흔적과 좁은 여백 등을 잡아낸다.",
+      "reason": "에이전트로 화면을 만드는 웹 개발자가 결과물 품질을 바로 점검할 수 있다.",
+      "issue": null,
+      "license": "Apache-2.0",
+      "pushedOn": "2026-11-04",
+      "release": {
+        "state": "found",
+        "date": "2026-10-26"
+      },
+      "stars": 102694,
+      "growth": 1270
+    },
+    {
+      "id": 15,
+      "date": "2026-11-04",
+      "kind": "repo",
+      "position": 3,
+      "key": "repo:kkkkhazix/agent-autoloop",
+      "name": "KKKKhazix/agent-autoloop",
+      "url": "https://github.com/KKKKhazix/agent-autoloop",
+      "purpose": "Claude Code, Codex 같은 명령줄 에이전트가 정해진 규칙에 따라 정기 작업, 새 이슈, 오류 알림을 백그라운드에서 받아 처리하게 한다. macOS와 Linux에서 명령 하나로 설치한다.",
+      "difference": "데이터 삭제나 비용 지출처럼 판단이 필요할 때만 Slack, Discord, 데스크톱 알림으로 카드를 보내 묻고, 답을 기다리는 동안 프로세스와 토큰을 쓰지 않다가 같은 대화를 이어 간다.",
+      "reason": "터미널을 지키지 않고 에이전트에 일을 맡기려는 사용자에게 쓸모 있다.",
+      "issue": null,
+      "license": "MIT",
+      "pushedOn": "2026-11-04",
+      "release": {
+        "state": "found",
+        "date": "2026-11-03"
+      },
+      "stars": 2399,
+      "growth": 2399
     }
   ],
   "kindDates": [
@@ -8452,6 +8622,16 @@
     },
     {
       "date": "2026-11-03",
+      "kind": "repo",
+      "status": "checked"
+    },
+    {
+      "date": "2026-11-04",
+      "kind": "product",
+      "status": "checked"
+    },
+    {
+      "date": "2026-11-04",
       "kind": "repo",
       "status": "checked"
     }
