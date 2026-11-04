@@ -52,8 +52,9 @@ import { DISCOVER_KINDS, discoveriesOfDate, isKindDone, undoneKinds, type Discov
 import { readDiscoverItems, readDiscoverWork, removeDiscoverWorkFiles, writeDiscoverWork } from "./discoverWork.ts";
 import { runSnapshot } from "./repoSnapshot.ts";
 import { DEMAND_DEADLINE_MS, demandFetchText, demandLines, emptyGroups, runDemandFetch, type DemandReport } from "./demandFetch.ts";
-import { demandSources, type DemandOff, type DemandSource } from "./demandSources.ts";
-import { demandDbPath, openDemandDb } from "./demandStore.ts";
+import { demandSources, officialSources, type DemandOff, type DemandSource, type OfficialSource } from "./demandSources.ts";
+import { demandDbPath, openDemandDbForRun } from "./demandStore.ts";
+import { OFFICIAL_DEADLINE_MS, OFFICIAL_MAX_CALLS, emptyOfficialGroups, officialFetchText, officialLines, runOfficialDemand, type OfficialReport } from "./officialDemand.ts";
 import { buildCandidateFile, checkCheckFile, checkPickFile, readCandidateFile, readJsonFile, removeVideoWorkFiles, restoreCandidateLists, videoWorkFile, writeCandidateFiles } from "./videoPick.ts";
 import { purgeDataDir, purgeTestDirs, type VideoPurgeResult } from "./videoPurge.ts";
 import { SECTION_LIMITS, VIDEO_SECTIONS_STOPPED, emptySections, readSections, runSections, sectionMaterials, sectionTargets, sectionsUsd, writeSections, type SectionsFile } from "./videoSections.ts";
@@ -97,6 +98,7 @@ import {
   type BuilderKindsState,
   type BuilderWriteState,
   type DemandFetchState,
+  type OfficialDemandState,
   type DeployResult,
   type ExtractResult,
   type ImagesResult,
@@ -195,6 +197,10 @@ export interface Context {
   /** 수요 소스 목록과 끄기 값. 없으면 코드의 기본값 */
   demandSources?: readonly DemandSource[];
   demandOff?: DemandOff;
+  /** 공식 수요(9.96단계)의 요청, 명령 상한, 소스 목록. 시계·기다림·타이머·끄기 값은 위 수요 것을 함께 쓴다 */
+  officialHttp?: FetchText;
+  officialDeadlineMs?: number;
+  officialSources?: readonly OfficialSource[];
 }
 
 /** 의존성 잠금 파일대로, 잠금 파일을 바꾸지 않고 대화형 확인 없이 설치한다 */
@@ -272,7 +278,8 @@ const USAGE = `명령:
   builder-apply --run <파일>              검사 → 한 번에 적용 → 빌더 작업 파일 지우기. 위반이 있으면 적용하지 않고 파일을 남기고, 마지막(3번째)에는 통과한 종류만 적용하고 실패로 끝난다
   builder-fail --run <파일>               끝나지 않은 도구 변화와 새 종류를 받지 못함으로 저장하고 작업 파일을 지운다(저장된 항목과 받은 시각은 그대로 둔다)
 수요 스냅샷(9.95단계):
-  demand-fetch --run <파일>               Google 급상승어와 Mastodon 트렌드를 그날(KST) 한 번 받아 전용 DB(<데이터 폴더>/demand.db)에 쌓는다. 받은 소스는 다시 부르지 않고, 5분 안에 끝난다. 소스가 실패해도 종료 코드는 0이다. 시험 모드에서는 돌지 않는다. 받은 글은 출력하지 않는다`;
+  demand-fetch --run <파일>               Google 급상승어와 Mastodon 트렌드를 그날(KST) 한 번 받아 전용 DB(<데이터 폴더>/demand.db)에 쌓는다. 받은 소스는 다시 부르지 않고, 5분 안에 끝난다. 소스가 실패해도 종료 코드는 0이다. 시험 모드에서는 돌지 않는다. 받은 글은 출력하지 않는다
+  demand-official --run <파일>            공식 기관·공개 데이터(국회, 권익위, 1372, DART, SEC Form D, Wikimedia)를 값 날짜마다 받아 전용 DB에 쌓는다. 2026-09-30부터 빠진 날짜를 채우고, 한 번에 9분 안에 끝난다. 상한에 닿아 남은 것이 있으면 그렇게 출력하고, 같은 실행 기록으로 두 번까지 받는다. 소스가 실패해도 종료 코드는 0이다. 시험 모드에서는 돌지 않는다. 받은 글은 출력하지 않는다`;
 
 function opts(argv: string[], options: Record<string, { type: "string" | "boolean" }>) {
   return parseNodeArgs({ args: argv, options, allowPositionals: false, strict: true }).values as Record<string, string | boolean | undefined>;
@@ -611,6 +618,7 @@ function cmdSummary(argv: string[], ctx: Context): number {
   lines.push(...videoSummaryLines(s));
   lines.push(...builderSummaryLines(s));
   if (s.demandFetch !== undefined) lines.push(...demandSummaryLines(s.demandFetch));
+  if (s.officialDemand !== undefined) lines.push(...officialSummaryLines(s.officialDemand));
   lines.push(...videoBacklogLines(s, ctx));
   lines.push(...imageSummaryLines(s, saved));
   lines.push(`- 백업: ${describeBackup(s.backup)}`);
@@ -2446,6 +2454,11 @@ async function cmdBuilderSnapshot(argv: string[], ctx: Context): Promise<number>
   }
 }
 
+/** 수요 명령의 실패 사유. 메시지에 입력 조각이나 주소(키)가 들어갈 수 있어 종류만 남긴다(9.95 4.3-3, 9.96 4.4-3) */
+function demandCrashReason(e: unknown): string {
+  return e instanceof Error && /SQLITE|database|unable to open|EACCES|ENOENT|EROFS|ENOTDIR|EISDIR/i.test(`${(e as { code?: string }).code ?? ""} ${e.message}`) ? "전용 DB를 열거나 쓰지 못했다" : "받기 명령이 실패했다";
+}
+
 /** 수요 스냅샷(9.95단계 4.1~4.3). 소스 실패는 종료 코드 0이고, 전용 DB를 열거나 쓰지 못하면 1이다. 본 DB는 열지 않는다 */
 async function cmdDemandFetch(argv: string[], ctx: Context): Promise<number> {
   const v = opts(argv, { run: { type: "string" } });
@@ -2455,7 +2468,10 @@ async function cmdDemandFetch(argv: string[], ctx: Context): Promise<number> {
   if (refused !== null) return refused;
   const sources = ctx.demandSources ?? demandSources();
   const record = (r: DemandFetchState) => {
-    updateRun(runFile, (s) => (s.demandFetch = r));
+    updateRun(runFile, (s) => {
+      s.demandFetch = r;
+      if (r.copied) s.demandCopied = true;
+    });
     ctx.out(["수요 스냅샷:", ...demandSummaryLines(r)].join("\n"));
   };
   if (state.mode === "test") {
@@ -2465,16 +2481,17 @@ async function cmdDemandFetch(argv: string[], ctx: Context): Promise<number> {
     return EXIT.ok;
   }
   const file = demandDbPath(state.dataDir);
-  const existed = fs.existsSync(file);
+  // 실행 전 사본은 한 실행에 하나다(9.96단계 4.1-6). 공식 수요 명령이 먼저 만들었으면 만들지 않는다
+  const mayCopy = fs.existsSync(file) && state.demandCopied !== true;
   let r: DemandReport;
   let dbBytes: number;
   try {
-    const db = openDemandDb(file);
+    const { db, copied } = openDemandDbForRun(file, state.dataDir, ctx.now(), mayCopy);
     try {
       r = await runDemandFetch({
         db,
         dataDir: state.dataDir,
-        dbExisted: existed,
+        dbExisted: mayCopy && !copied,
         http: ctx.demandHttp ?? demandFetchText,
         now: ctx.now,
         clock: ctx.demandClock,
@@ -2484,19 +2501,93 @@ async function cmdDemandFetch(argv: string[], ctx: Context): Promise<number> {
         sources,
         off: ctx.demandOff,
       });
+      r.copied ||= copied;
     } finally {
       db.close();
     }
     dbBytes = fs.statSync(file).size;
   } catch (e) {
-    // 메시지에 입력 조각이 들어갈 수 있어 종류만 남긴다(4.3-3)
-    const reason = e instanceof Error && /SQLITE|database|unable to open|EACCES|ENOENT|EROFS|ENOTDIR|EISDIR/i.test(`${(e as { code?: string }).code ?? ""} ${e.message}`) ? "전용 DB를 열거나 쓰지 못했다" : "받기 명령이 실패했다";
+    const reason = demandCrashReason(e);
     record({ status: "crashed", day: null, groups: emptyGroups(sources), copied: false, dbBytes: null, elapsedMs: 0, streaks: [], reason });
     return EXIT.failed;
   }
   // 실행 기록 쓰기 실패는 전용 DB 실패로 적지 않는다
   record({ status: "done", ...r, dbBytes });
   return EXIT.ok;
+}
+
+/** 공식 수요(9.96단계 4.1~4.3). 소스 실패는 종료 코드 0이고, 전용 DB를 열거나 쓰지 못하면 1이다. 같은 실행 기록으로 두 번까지 받고 결과를 합친다 */
+async function cmdDemandOfficial(argv: string[], ctx: Context): Promise<number> {
+  const v = opts(argv, { run: { type: "string" } });
+  const runFile = need(v, "run");
+  const state = readRun(runFile);
+  const refused = indicatorCondition(state, ctx);
+  if (refused !== null) return refused;
+  const sources = ctx.officialSources ?? officialSources();
+  const prev = state.officialDemand;
+  const calls = (prev?.calls ?? 0) + 1;
+  const record = (r: OfficialDemandState) => {
+    updateRun(runFile, (s) => {
+      s.officialDemand = r;
+      if (r.copied) s.demandCopied = true;
+    });
+    ctx.out(["공식 수요:", ...officialSummaryLines(r)].join("\n"));
+  };
+  const empty = (groups: OfficialReport["groups"]): Omit<OfficialDemandState, "status" | "calls"> => ({ day: null, groups, sources: {}, copied: false, dbBytes: null, elapsedMs: 0, hitDeadline: false, streaks: [], failed: {}, stops: {}, attempted: [], robotsBlocked: [], failedUnits: {} });
+  if (state.mode === "test") {
+    const groups = emptyOfficialGroups(sources);
+    for (const g of Object.values(groups)) g.off = g.total;
+    record({ status: "off", calls, ...empty(groups) });
+    return EXIT.ok;
+  }
+  if (prev !== undefined && prev.calls >= OFFICIAL_MAX_CALLS) {
+    ctx.out(`공식 수요: 이 실행에서 이미 ${prev.calls}번 받았다. 받지 않는다(남은 것은 다음 실행이 받는다).`);
+    return EXIT.ok;
+  }
+  const file = demandDbPath(state.dataDir);
+  const mayCopy = fs.existsSync(file) && state.demandCopied !== true;
+  let r: OfficialReport;
+  let dbBytes: number;
+  try {
+    const { db, copied } = openDemandDbForRun(file, state.dataDir, ctx.now(), mayCopy);
+    try {
+      r = await runOfficialDemand({
+        db,
+        dataDir: state.dataDir,
+        runId: path.basename(runFile, ".json"),
+        mayCopy: mayCopy && !copied,
+        http: ctx.officialHttp ?? officialFetchText,
+        now: ctx.now,
+        keys: readKeys(ctx.env, keyDirOf(ctx)),
+        secrets: secretsOf(ctx),
+        clock: ctx.demandClock,
+        sleep: ctx.demandSleep,
+        timer: ctx.demandTimer,
+        deadlineMs: ctx.officialDeadlineMs ?? OFFICIAL_DEADLINE_MS,
+        sources,
+        off: ctx.demandOff,
+        prior: prev?.status === "done" ? prev : undefined,
+      });
+      r.copied ||= copied;
+    } finally {
+      db.close();
+    }
+    dbBytes = fs.statSync(file).size;
+  } catch (e) {
+    const reason = demandCrashReason(e);
+    // 같은 실행의 앞 호출이 받은 것은 그대로 둔다(그 수와 상태는 전용 DB에 이미 있다)
+    const kept = prev?.status === "done" ? prev : empty(emptyOfficialGroups(sources));
+    record({ ...kept, status: "crashed", calls, reason });
+    return EXIT.failed;
+  }
+  record({ status: "done", calls, ...r, dbBytes });
+  return EXIT.ok;
+}
+
+function officialSummaryLines(r: OfficialDemandState): string[] {
+  if (r.status === "off") return ["- 공식 수요: 꺼짐(시험 모드)"];
+  if (r.status === "crashed") return [`- 공식 수요: 실패(${r.reason ?? "이유 없음"}). 다음 실행이 다시 받는다`];
+  return officialLines(r);
 }
 
 function demandSummaryLines(r: DemandFetchState): string[] {
@@ -3098,6 +3189,7 @@ const ASYNC_COMMANDS: Record<string, (argv: string[], ctx: Context) => Promise<n
   "builder-fetch": cmdBuilderFetch,
   "builder-snapshot": cmdBuilderSnapshot,
   "demand-fetch": cmdDemandFetch,
+  "demand-official": cmdDemandOfficial,
   "video-notes": cmdVideoNotes,
   "video-sections": cmdVideoSections,
 };

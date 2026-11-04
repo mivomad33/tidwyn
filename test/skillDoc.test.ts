@@ -97,7 +97,7 @@ describe("3단계 4.5-1 스킬 문서의 명령과 실행 순서", () => {
   });
   test("실패해도 계속하고, 시험 모드는 빌드만 하며, Claude가 git·vercel을 직접 치지 않는다고 적혀 있다", () => {
     assert.match(SKILL, /Claude가 직접 실행하는 git·vercel 명령은 없다/);
-    assert.match(SKILL, /앞 명령이 실패해도\(종료 코드 1\) 멈추지 않고 다음 명령과 19단계로 넘어간다/);
+    assert.match(SKILL, /앞 명령이 실패해도\(종료 코드 1\) 멈추지 않고 다음 명령과 18-1단계로 넘어간다/);
     assert.match(SKILL, /시험 모드와 데이터 폴더 지정 실행은 빌드만 한다/);
     assert.match(SKILL, /빌드가 실패했으면 배포하지 않는다/);
   });

@@ -1,10 +1,10 @@
 import fs from "node:fs";
 import path from "node:path";
 
-// 6단계 4.8: 출처 API 키(7단계에서 YouTube 키, 8단계에서 Gemini 키, 9.9단계에서 Product Hunt 토큰을 더함). 키는 환경 변수가 있으면 그것을, 없으면 메인 작업 폴더의 `.env.local`에서 읽는다(4.2-2).
+// 6단계 4.8: 출처 API 키(7단계에서 YouTube 키, 8단계에서 Gemini 키, 9.9단계에서 Product Hunt 토큰을, 9.96단계에서 공공데이터포털·열린국회정보·OpenDART 키를 더함). 키는 환경 변수가 있으면 그것을, 없으면 메인 작업 폴더의 `.env.local`에서 읽는다(4.2-2).
 // 키 값은 출력·기록하지 않는다. 하위 프로세스 환경에도 넣지 않는다(process.env를 바꾸지 않는다, 4.8-1).
 
-export const KEY_NAMES = ["ECOS_API_KEY", "FRED_API_KEY", "YOUTUBE_API_KEY", "GEMINI_API_KEY", "PRODUCT_HUNT_TOKEN"] as const;
+export const KEY_NAMES = ["ECOS_API_KEY", "FRED_API_KEY", "YOUTUBE_API_KEY", "GEMINI_API_KEY", "PRODUCT_HUNT_TOKEN", "DATA_GO_KR_KEY", "ASSEMBLY_API_KEY", "DART_API_KEY"] as const;
 export type KeyName = (typeof KEY_NAMES)[number];
 export const ENV_LOCAL_FILE = ".env.local";
 /** 이보다 짧은 값은 키로 보지 않는다(모든 글에 걸리므로, precheck의 짧은 홈 값 건너뛰기와 같은 방식) */

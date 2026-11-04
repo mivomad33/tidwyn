@@ -4,6 +4,7 @@ import type { KindReport } from "./builderDiscover.ts";
 import type { DiscoverKind } from "./discoverStore.ts";
 import type { DocReport, SourceReport } from "./builderFetch.ts";
 import type { DemandReport } from "./demandFetch.ts";
+import type { OfficialReport } from "./officialDemand.ts";
 import type { FeedFailure } from "./feeds.ts";
 import type { IndicatorFetchResult } from "./indicatorFetch.ts";
 import type { VideoBundle } from "./siteTypes.ts";
@@ -283,6 +284,16 @@ export type DemandFetchState = Omit<DemandReport, "day"> & {
   reason?: string;
 };
 
+/** 9.96단계 공식 수요(`demand-official`). 같은 실행 기록의 호출을 합친 값이다. 수와 사유 종류만 남긴다 */
+export type OfficialDemandState = Omit<OfficialReport, "day"> & {
+  status: "done" | "off" | "crashed";
+  day: string | null;
+  dbBytes: number | null;
+  /** 이 실행 기록으로 부른 횟수(4.3-2: 세 번째부터는 받지 않는다) */
+  calls: number;
+  reason?: string;
+};
+
 /** 사이트 빌드 결과(3단계 4.1, 4.5) */
 export type SiteResult =
   | { status: "built"; outDir: string; dates: number; issues: number; entities?: number; terms?: number; schedules?: number; upcoming?: number; indicators?: number; videoDates?: number; videos?: number; files: number; bytes: number }
@@ -351,6 +362,9 @@ export interface RunState {
   builderWrite?: BuilderWriteState;
   /** 9.95단계: 수요 스냅샷. 앞 단계 실행 기록에는 없다 */
   demandFetch?: DemandFetchState;
+  /** 9.96단계: 공식 수요와, 그 실행에서 전용 DB 실행 전 사본을 이미 만들었는지(4.1-6). 앞 단계 실행 기록에는 없다 */
+  officialDemand?: OfficialDemandState;
+  demandCopied?: boolean;
   /** 지난 날짜 이미지 채우기(3단계). 1·1.5·2단계 실행 기록에는 없다 */
   images?: ImagesResult;
   /** 사이트 빌드·배포·push(3단계). start가 null로 두고 각 명령이 채운다. 앞 단계 실행 기록에는 없다 */

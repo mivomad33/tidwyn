@@ -365,10 +365,10 @@ describe("6단계 4.2 지표 받기", () => {
   test("키: 환경 변수가 있으면 그것을, 없으면 .env.local을 읽고, 짧거나 빈 값은 없는 것으로 본다", () => {
     const dir = tempDir();
     fs.writeFileSync(path.join(dir, ".env.local"), `ECOS_API_KEY="FILE-ECOS-KEY-000"\nFRED_API_KEY=short\n`);
-    assert.deepEqual(readKeys({}, dir), { ECOS_API_KEY: "FILE-ECOS-KEY-000", FRED_API_KEY: null, YOUTUBE_API_KEY: null, GEMINI_API_KEY: null, PRODUCT_HUNT_TOKEN: null });
-    assert.deepEqual(readKeys({ ECOS_API_KEY: "ENV-ECOS-KEY-000", FRED_API_KEY: "" }, dir), { ECOS_API_KEY: "ENV-ECOS-KEY-000", FRED_API_KEY: null, YOUTUBE_API_KEY: null, GEMINI_API_KEY: null, PRODUCT_HUNT_TOKEN: null });
+    assert.deepEqual(readKeys({}, dir), { ECOS_API_KEY: "FILE-ECOS-KEY-000", FRED_API_KEY: null, YOUTUBE_API_KEY: null, GEMINI_API_KEY: null, PRODUCT_HUNT_TOKEN: null, DATA_GO_KR_KEY: null, ASSEMBLY_API_KEY: null, DART_API_KEY: null });
+    assert.deepEqual(readKeys({ ECOS_API_KEY: "ENV-ECOS-KEY-000", FRED_API_KEY: "" }, dir), { ECOS_API_KEY: "ENV-ECOS-KEY-000", FRED_API_KEY: null, YOUTUBE_API_KEY: null, GEMINI_API_KEY: null, PRODUCT_HUNT_TOKEN: null, DATA_GO_KR_KEY: null, ASSEMBLY_API_KEY: null, DART_API_KEY: null });
     fs.writeFileSync(path.join(dir, ".env.local"), `ECOS_API_KEY=FILE-ECOS-KEY-000 # 한국은행\nFRED_API_KEY="FILE-FRED#KEY-000"  # FRED\n`);
-    assert.deepEqual(readKeys({}, dir), { ECOS_API_KEY: "FILE-ECOS-KEY-000", FRED_API_KEY: "FILE-FRED#KEY-000", YOUTUBE_API_KEY: null, GEMINI_API_KEY: null, PRODUCT_HUNT_TOKEN: null }, "줄 끝 주석을 값에 넣지 않는다");
+    assert.deepEqual(readKeys({}, dir), { ECOS_API_KEY: "FILE-ECOS-KEY-000", FRED_API_KEY: "FILE-FRED#KEY-000", YOUTUBE_API_KEY: null, GEMINI_API_KEY: null, PRODUCT_HUNT_TOKEN: null, DATA_GO_KR_KEY: null, ASSEMBLY_API_KEY: null, DART_API_KEY: null }, "줄 끝 주석을 값에 넣지 않는다");
   });
 });
 

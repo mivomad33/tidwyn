@@ -20,3 +20,4 @@
 | 20261101-1858 | [builder-changes](20261101-1858-builder-changes/spec.md) | 변경 건 | 완료 | 9.8단계: 브리프에 빌더 탭을 더해 도구 변화를 필터와 AI 판단으로 하루 0~4건 싣고, 가격·한도 숫자를 쌓으며, 확정 기한을 일정 달력에 올린다 |
 | 20261102-0918 | [new-products-repos](20261102-0918-new-products-repos/spec.md) | 변경 건 | 완료 | 9.9단계: 빌더 탭에 Product Hunt 새 제품과 별 증가량으로 고른 뜨는 저장소를 각각 하루 최대 3건 더한다 |
 | 20261104-1511 | [demand-snapshots](20261104-1511-demand-snapshots/spec.md) | 변경 건 | 완료 | 9.95단계: Google 급상승어(30개국)와 Mastodon 트렌드를 매일 받아 수요 데이터 전용 로컬 DB에 쌓고 공개하지 않는다 |
+| 20261104-1745 | [official-demand](20261104-1745-official-demand/spec.md) | 변경 건 | 완료 | 9.96단계: 지난 기간을 받을 수 있는 공식 기관·공개 데이터를 수요 데이터 전용 DB에 채우고 매일 쌓는다 |

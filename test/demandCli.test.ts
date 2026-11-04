@@ -5,7 +5,7 @@ import path from "node:path";
 import { after, describe, test } from "node:test";
 import { COMMAND_NAMES, main, mainAsync } from "../src/cli.ts";
 import { openDb } from "../src/db.ts";
-import { DEMAND_DOC, DEMAND_GROUPS_OFF, DEMAND_SOURCES_OFF, GOOGLE_GEOS, MASTODON_INSTANCES, demandSources, googleTrendsUrl } from "../src/demandSources.ts";
+import { DEMAND_DOC, DEMAND_GROUPS_OFF, DEMAND_SOURCES_OFF, GOOGLE_GEOS, MASTODON_INSTANCES, allDemandSourceIds, demandSources, googleTrendsUrl } from "../src/demandSources.ts";
 import { DEMAND_COPY_DIR, DEMAND_DB_FILE, openDemandDb } from "../src/demandStore.ts";
 import { commitsOfRefs, localBranches, precheck } from "../src/precheck.ts";
 import { readRun } from "../src/run.ts";
@@ -14,12 +14,13 @@ import { recordFirstCollectionDate } from "../src/store.ts";
 import { addBrief } from "./builderFixtures.ts";
 import { FAKE_ACCOUNT, FAKE_AUTHOR, FAKE_LINK_TITLE, FAKE_TAG, FAKE_TERM, NOW, defaultReply, fakeHttp, rss, virtualTime } from "./demandFixtures.ts";
 import { PROJECT_ROOT, cleanupTemp, gitIn, makeCtx, tempDir, tempRepo, writeFakePublicFiles } from "./helpers.ts";
+import { DROPPED, FAKE, KEYS, TEXTS as OFFICIAL_TEXTS, bodies, fakeOfficial } from "./officialFixtures.ts";
 
 // 9.95단계 4.3, 4.4, 4.5-1: 명령, 실행 요약, 실패 격리, 비공개 보장, 스킬 문서와 판정 문서. 네트워크를 쓰지 않는다
 
 after(cleanupTemp);
 
-const FAKE_TEXTS = [FAKE_TERM, FAKE_TAG, FAKE_LINK_TITLE, FAKE_AUTHOR, FAKE_ACCOUNT];
+const FAKE_TEXTS = [FAKE_TERM, FAKE_TAG, FAKE_LINK_TITLE, FAKE_AUTHOR, FAKE_ACCOUNT, ...OFFICIAL_TEXTS, ...Object.values(KEYS)];
 const NAME = "demand-fetch";
 
 function setup(mode: "custom" | "test" = "custom") {
@@ -170,6 +171,15 @@ async function seedDemand(s: ReturnType<typeof setup>): Promise<void> {
   const raw = (db.prepare("SELECT body FROM demand_parts").all() as { body: Uint8Array }[]).map((r) => Buffer.from(r.body).toString()).join("");
   db.close();
   assert.ok(raw.includes(FAKE_TERM) && raw.includes(FAKE_TAG) && raw.includes(FAKE_LINK_TITLE), "지어낸 글이 전용 DB에 있다");
+  // 9.96단계 공식 수요도 같은 전용 DB에 쌓는다(4.4-2)
+  const ovt = virtualTime();
+  const o = { ...makeCtx(s.repo, { ...s.environment, ...KEYS }, NOW), officialHttp: fakeOfficial(ovt.clock).http, demandClock: ovt.clock, demandSleep: ovt.sleep, demandTimer: ovt.timer };
+  assert.equal(await mainAsync(["demand-official", "--run", s.runFile], o), 0, o.text());
+  const odb = openDemandDb(path.join(s.dataDir, DEMAND_DB_FILE));
+  const official = bodies(odb).join("");
+  odb.close();
+  for (const t of [FAKE.title, FAKE.company, FAKE.article]) assert.ok(official.includes(t), `지어낸 공식 글 "${t}"가 전용 DB에 있다`);
+  for (const t of DROPPED) assert.ok(!official.includes(t), t);
 }
 
 describe("4.4-2 사이트에 나가지 않음", () => {
@@ -282,7 +292,7 @@ describe("4.3-1, 4.4-1 스킬 문서", () => {
 
   test("0장 금지 줄: 전용 DB와 사본을 읽지 않고, 수요 소스를 직접 받거나 찾지 않는다", () => {
     const rules = chapter("### 실행 중에 하지 않는 것");
-    assert.ok(rules.includes("수요 소스(Google Trends 급상승어, Mastodon 트렌드)를 직접 받거나 웹에서 찾지 않는다. 소스는 `demand-fetch`만 받는다."));
+    assert.ok(rules.includes("수요 소스(Google Trends 급상승어, Mastodon 트렌드)와 공식 수요 소스(국회 청원, 권익위 민원, 1372 소비자상담, DART 공시, SEC Form D, Wikimedia 인기 문서)를 직접 받거나 웹에서 찾지 않는다. 소스는 `demand-fetch`와 `demand-official`만 받는다."));
     assert.ok(rules.includes("수요 데이터 전용 DB(`<데이터 폴더>/demand.db`)와 그 사본(`<데이터 폴더>/demand-copies/`)은 읽지 않는다."));
     assert.ok(SKILL.includes("  - 수요 스냅샷: 묶음별"));
   });
@@ -317,7 +327,7 @@ describe("4.5-1 판정 문서와 코드 목록", () => {
       .filter((l) => /^\| [a-z]/.test(l) && l.split("|")[2]!.includes("끔"))
       .map((l) => `mastodon:${l.split("|")[1]!.trim()}`);
     assert.deepEqual(markedInstances, DEMAND_SOURCES_OFF.filter((x) => x.startsWith("mastodon:")));
-    for (const id of DEMAND_SOURCES_OFF) assert.ok(demandSources().some((s) => s.id === id), `끈 소스 ${id}가 목록에 남아 있다`);
+    for (const id of DEMAND_SOURCES_OFF) assert.ok(allDemandSourceIds().includes(id), `끈 소스 ${id}가 목록에 남아 있다`);
   });
 
   test("소스 목록 코드가 판정 문서를 가리킨다", () => {
@@ -330,7 +340,7 @@ describe("4.5-3 README", () => {
     const ko = fs.readFileSync(path.join(PROJECT_ROOT, "README.md"), "utf8").split("\n");
     const en = fs.readFileSync(path.join(PROJECT_ROOT, "README.en.md"), "utf8").split("\n");
     const k = ko.findIndex((l) => l.startsWith("3. 수요 신호(Google Trends 급상승어, Mastodon 트렌드)") && l.includes("별도 로컬 DB") && l.includes("공개하지 않습니다"));
-    const e = en.findIndex((l) => l.startsWith("3. Demand signals (Google Trends trending searches, Mastodon trends)") && l.includes("separate local database") && l.includes("not published"));
+    const e = en.findIndex((l) => l.startsWith("3. Demand signals (Google Trends trending searches, Mastodon trends)") && l.includes("separate local database") && l.includes("none of it is published"));
     assert.ok(k > 0 && k === e, `${k} ${e}`);
   });
 });

@@ -1,8 +1,8 @@
 # 수요 소스 판정
 
-수요 신호 단계(9.95~9.98)가 받는 소스와 이용 조건 판정을 한곳에 둔다. 코드의 소스 목록은 [`src/demandSources.ts`](../src/demandSources.ts)에 있고, 테스트가 이 문서의 목록과 같은지 본다. 소스를 더하거나 끄면 이 문서와 코드를 함께 고친다. 끈 소스는 지우지 않고 '끔'(날짜, 이유)을 적는다. 받는 흐름과 운영은 [operations.md](operations.md)의 "수요 스냅샷" 절에 있다.
+수요 신호 단계(9.95~9.98)가 받는 소스와 이용 조건 판정을 한곳에 둔다. 9.95는 Google·Mastodon, 9.96은 공식 기관·공개 데이터(아래 "공식 수요 소스")다. 코드의 소스 목록은 [`src/demandSources.ts`](../src/demandSources.ts)에 있고, 테스트가 이 문서의 목록과 같은지 본다. 소스를 더하거나 끄면 이 문서와 코드를 함께 고친다. 끈 소스는 지우지 않고 '끔'(날짜, 이유)을 적는다. 받는 흐름과 운영은 [operations.md](operations.md)의 "수요 스냅샷" 절에 있다.
 
-법률 자문이 아니다. 9.95단계 판정(2026-11-04)은 robots.txt와 Mastodon 인스턴스의 약관·규칙·소개·개인정보 문서 원문(API `terms_of_service`, `rules`, `extended_description`, `privacy_policy`)과 외부 약관 페이지(Google, Vivaldi, Hachyderm, Fosstodon, gamedev.place, ML Collective, Piaille)를 읽고 했다. 근거 기록은 [9.95단계 명세서 폴더](specs/20261104-1511-demand-snapshots/source-terms.md)에 있다.
+법률 자문이 아니다. 9.95단계 판정(2026-11-04)은 robots.txt와 Mastodon 인스턴스의 약관·규칙·소개·개인정보 문서 원문(API `terms_of_service`, `rules`, `extended_description`, `privacy_policy`)과 외부 약관 페이지(Google, Vivaldi, Hachyderm, Fosstodon, gamedev.place, ML Collective, Piaille)를 읽고 했다. 근거 기록은 [9.95단계 명세서 폴더](specs/20261104-1511-demand-snapshots/source-terms.md)에 있다. 9.96단계 판정(2026-11-04)은 약관·이용허락 원문, robots.txt, 키를 넣은 단발 호출(칸 이름, 건수, 날짜 범위, 결과 코드만 봤다)로 했고, 근거는 [9.96단계 명세서 폴더](specs/20261104-1745-official-demand/source-terms.md)에 있다.
 
 ## 판정 기준 (D16)
 
@@ -11,7 +11,7 @@
 - 소스 전용 약관이 없으면 그 회사의 일반 약관과 robots로 본다. Mastodon 인스턴스에 이용 약관이 없으면 서버 규칙과 소개·개인정보 문서로 본다.
 - 확인하지 못했거나 해석이 애매하면 넣지 않는다.
 - 'AI 학습'만 막는 문장은 AI 입력을 막는 것으로 보지 않는다. 이 프로젝트는 받은 값으로 모델을 학습하지 않고, 정리할 때 입력으로만 쓴다(2026-11-04 사용자 결정).
-- 공개 백업은 모두 넣지 않는다. D16이 급상승어·트렌드를 로컬에만 두게 했고, 아래 어느 곳도 사용자 글의 재배포를 허락하지 않는다.
+- 공개 백업은 모두 넣지 않는다. D16이 급상승어·트렌드를 로컬에만 두게 했고, Google·Mastodon 어느 곳도 사용자 글의 재배포를 허락하지 않는다. 9.96 공식 소스는 대부분 지난 기간을 다시 받을 수 있어, 전용 DB를 잃으면 다시 받고(다시 받을 수 없는 국회 목록의 날짜별 값과 1372의 앞 값은 잃는 것을 감수한다) 큰 원문(1372 등)이 `data` 브랜치에 쌓이지 않게 한다(9.96단계 명세서 S3). 재배포가 허용되는 소스(SEC, Wikimedia, 1372)도 같다.
 
 ## Google Trends 급상승 RSS
 
@@ -49,6 +49,76 @@
 
 인스턴스 하나를 끄려면 `DEMAND_SOURCES_OFF`에 `mastodon:<인스턴스>`를 넣고 위 표의 '끔' 칸에 `끔(YYYY-MM-DD, 이유)`를 적는다. 묶음 전체는 `DEMAND_GROUPS_OFF`에 `mastodon`을 넣는다.
 
+## 공식 수요 소스 (9.96단계)
+
+받는 흐름과 운영은 [operations.md](operations.md)의 "공식 수요(9.96단계)"에 있다. 모든 소스의 판정은 저장 됨, AI 입력 됨(격리), 요약 게시 됨, 공개 백업 안 함이다. **'AI 입력 됨(격리)'**은 숫자·코드값 밖의 모든 글 칸(청원 제목, 질의응답 질문·답변, 공개제안 글, 민원 키워드, 공시 제목·회사 이름, SEC 회사·업종 글, 위키 문서 제목 등)을 9.97의 경로가 막힌 격리 프로세스만 읽는다는 뜻이다. 9.96에서는 아무 AI도 읽지 않는다.
+
+<!-- demand:official -->
+| 소스 id | 묶음 | 이름 | 끔 |
+|---|---|---|---|
+| `assembly:received` | `assembly` | 국민동의청원 접수목록(22대) | |
+| `assembly:pending` | `assembly` | 청원 계류현황 | |
+| `assembly:processed` | `assembly` | 청원 처리현황(22대) | |
+| `acrc:qna` | `acrc` | 민원정책 질의응답 | |
+| `acrc:proposal` | `acrc` | 공개제안 | |
+| `acrc:bigdata` | `acrc` | 민원빅데이터 오늘의 이슈 | |
+| `ftc1372:consult` | `ftc1372` | 1372 소비자상담 접수 | |
+| `dart:list` | `dart` | 공시검색 목록 | |
+| `sec:formd` | `sec` | EDGAR Form D | |
+| `wikimedia:<위키>` | `wikimedia` | 아래 위키마다 하나 | |
+<!-- /demand:official -->
+
+Wikimedia 위키(명세서 S5, `<코드>.wikipedia`, `all-access`):
+
+<!-- demand:wikis -->
+`en`, `ja`, `de`, `es`, `fr`, `ru`, `zh`, `it`, `pt`, `ko`
+<!-- /demand:wikis -->
+
+소스나 묶음을 끄려면 9.95와 같이 `DEMAND_SOURCES_OFF`에 소스 id를, `DEMAND_GROUPS_OFF`에 묶음 id를 넣고 위 표의 '끔' 칸과 아래 "끈 소스와 묶음" 표에 `끔(YYYY-MM-DD, 이유)`를 적는다.
+
+### 국회 (열린국회정보, `open.assembly.go.kr`)
+
+- 받는 것: 세 목록 전체를 그날(KST) 한 번(100건씩 모든 페이지). 접수목록은 `ERACO=제22대`, 처리현황은 `AGE=22`. 지난 날짜를 받을 수 없어 받은 날부터 쌓는다.
+- 근거: Open API 정보는 출처('열린국회정보')를 밝히고 쓸 수 있다. 저장·AI 입력·자동 호출을 막는 조항이 없다. robots는 `/admin/`만 막는다. 국민동의청원 사이트는 robots가 막아 받지 않는다.
+- 버리는 칸: `PTTR_NM`, `PROPOSER`(청원인). 소개의원 칸은 공직자라 둔다.
+- 응답 모양: 결과 코드 `INFO-000`은 정상, `INFO-200`은 자료 없음(0건 받음), `INFO-300`·`ERROR-290`은 키 거부, `ERROR-337`은 한도다.
+
+### 권익위 (공공데이터포털, `apis.data.go.kr`)
+
+- 공통: 포털 약관은 저장·가공·AI 입력·자동 호출을 막지 않고 데이터마다 이용허락을 따르게 한다. robots는 400(오픈 API 오류 XML)이라 파일이 없는 것으로 본다. 게이트웨이가 200과 함께 주는 오류 XML의 `returnReasonCode` 20·30·31·32는 키 거부(그 서비스만 멈춘다. 활용신청이 서비스마다 따로다), 22는 한도다. 401도 키 거부, 429는 한도다.
+- **민원정책 질의응답(15074671, 제한 없음):** 등록일 하루치 목록(`PolicyQnaList`, `regTo`는 그날을 넣지 않아 다음 날을 준다)과 항목마다 상세(`PolicyQnaItem`, `faqNo`와 `dutySctnNm`). 결과 코드 `S00`은 정상, 목록의 `E03`은 0건 받음, 상세의 `E03`은 자료 없음(없음 표시로 두고 그 값 날짜를 저장한다)이다. 버리는 칸 없음(목록·상세에 사람 이름 칸이 없다).
+- **공개제안(15059423, 제한 없음):** 등록일 하루치 목록(`OpenProposalList`, `regFrom`=`regTo`=그날)과 항목마다 상세(`OpenProposalItem`, `petiNo`). 결과 코드는 질의응답과 같다. 버리는 칸 `peterName`(신청인).
+- **민원빅데이터 분석정보(15101903, 공공누리 2유형: 출처표시, 상업적 이용금지):** 날짜마다 `minTodayTopicInfo5`(`searchDate`, `target=pttn,dfpt,saeol`) 한 번. 응답은 이슈 배열이다. 배열이 아닌 JSON(같은 키의 요청 사이 약 2분을 요구하는 제한 응답 등)은 한도로 보고 그 실행에서 멈춘다. 빈 배열은 받을 수 있는 마지막 날짜(KST 어제)면 아직 없음(다음 실행에 다시 본다), 그 전 날짜면 0건 받음이다. 버리는 칸 없음.
+  - 넣은 오퍼레이션: `minTodayTopicInfo5`만. 다른 오퍼레이션(`minTopNKeyword5`, `minRisingKeyword5` 등)은 넣지 않았다. 하나만 더해도 값 날짜당 요청이 둘이 되어, 2분 간격과 하루 18분 상한(하루 약 9~10회)으로 남은 채우기(약 36일치, 72회)가 1주를 넘기 때문이다(명세서 4.1-1의 조건). 그래서 단발 호출로 확인하지 않았다.
+- 출처: '국민권익위원회'.
+
+### 1372 소비자상담 (공공데이터포털, 15127091, 제한 없음)
+
+- 받는 것: 접수 월(`rcptYm`)마다 1000건씩 모든 페이지. 2026-09부터. 진행 중인 달은 7일마다, 끝난 달은 끝난 뒤 2달까지 7일마다 첫 페이지 한 건으로 전체 건수를 보고 달라졌으면 다시 받는다(명세서 S6).
+- 응답 모양: 결과 코드 `00`은 정상, `03`은 0건 받음, `22`는 한도, `20`·`30`·`31`·`32`는 키 거부다(게이트웨이 오류 XML도 위 공통과 같다).
+- 버리는 칸 없음(코드값 칸만 있다). 출처: '공정거래위원회'.
+
+### DART (OpenDART, `opendart.fss.or.kr`)
+
+- 받는 것: 공시검색 `list.json`을 회사를 정하지 않고 접수일 하루씩(100건씩 모든 페이지).
+- 근거: 약관은 키 관리, 하루 20,000회, 부정 사용·서비스 방해 금지를 다루고 저장·가공·AI 입력을 막는 조항이 없다('조항 없음'을 됨으로 봤다). robots는 `/error.html`(200 HTML)로 가는 302라 파일이 없는 것으로 본다. 공시 원문 뷰어는 robots가 막아 받지 않는다.
+- 응답 모양: HTTP 200 JSON의 `status`가 `000`이면 정상, `013`이면 0건 받음, `010`·`011`·`012`·`901`이면 키 거부, `020`이면 한도다.
+- 버리는 칸 `flr_nm`(공시 제출인). 출처: 'DART'.
+
+### SEC EDGAR Form D (`www.sec.gov`)
+
+- 받는 것: 분기 목록(`daily-index/YYYY/QTRn/index.json`, 명령 호출마다 분기당 한 번)에 있는 날짜의 일별 인덱스 `form.YYYYMMDD.idx`에서 양식 칸이 `D`·`D/A`인 줄과 머리 줄만 저장하고(다른 양식 줄에는 내부자 개인 이름이 있다. 고른 줄 안은 고치지 않는다), 줄마다 그 신고의 `primary_doc.xml`을 받는다. 요청 사이 0.2초 이상이고 User-Agent에 프로젝트 이름, 사이트 주소, 공개 연락 메일을 넣는다(robots 요청 포함).
+- 아직 없음과 받음(0건): 분기 목록에 인덱스가 없는 날짜 중 그 뒤 날짜의 인덱스가 어느 분기에든 있으면(주말·공휴일) 받음(0건)으로 저장한다. 그 밖(가장 최근 인덱스보다 뒤)은 아직 없음이다. 새 분기 목록을 받지 못하면 그 분기 날짜는 아직 없음이다. `primary_doc.xml`의 404는 자료 없음(없음 표시로 두고 그 값 날짜를 저장한다)이다. 인덱스가 없는 날짜의 403은 상태 코드로 막힘과 구분할 수 없어 쓰지 않는다(분기 목록으로 정한다).
+- 근거: 초당 10회 이하와 연락처 User-Agent를 지키면 자동 접근을 허용한다. 사이트 정보는 공개 정보다. robots는 `/Archives/edgar/`를 막지 않는다. 전문 검색은 쓰지 않는다.
+- 버리는 칸: `relatedPersonsList`, `signatureName`, `nameOfSigner`, `signatureTitle`, `salesCompensationList`, `issuerPhoneNumber`, `street1`, `street2`, `zipCode`(XML 요소로 지운다). 회사 이름, 도시·주, 업종, 금액, 날짜는 둔다. 출처: 'SEC EDGAR'.
+
+### Wikimedia 인기 문서 (`wikimedia.org`)
+
+- 받는 것: 위 위키마다 날짜(UTC)마다 `metrics/pageviews/top/<코드>.wikipedia/all-access/YYYY/MM/DD`. User-Agent는 SEC와 같다.
+- 아직 없음과 받음(0건): 받을 수 있는 마지막 날짜(UTC 어제)에서 7일 안의 404(`application/problem+json`, 아직 집계하지 않은 날짜)는 아직 없음이다. 그보다 지난 날짜의 404는 자료 없음(없음 표시로 두고 그 값 날짜를 저장한다)이다. 위키마다 지난 날짜 몇 개가 다음 날은 200인데도 404로 남는다(2026-11-04 시험 실행에서 ko 2026-10-08 등). 문서 목록이 빈 200은 받음(0건)이다.
+- 근거: 조회 수 데이터는 CC0다. API 지침은 연락처 User-Agent와 적당한 호출 속도를 요구한다. robots는 404로 가는 302라 파일이 없는 것으로 본다.
+- 버리는 칸 없음. 특수 문서·대문도 거르지 않는다(뒤 단계가 거른다). 출처: 'Wikimedia'.
+
 ## 끈 소스와 묶음
 
 <!-- demand:off -->
@@ -68,10 +138,22 @@
 | mastodon.social, mastodon.online, mas.to, techhub.social, mastodon.art, mastodon.scot, aus.social | robots가 ClaudeBot이나 anthropic-ai를 막는다 |
 | madost.one | 트렌드 API가 404다 |
 | toot.community | 서버가 닫혔다(410) |
+| 네이버 데이터랩(API HUB) | API HUB 약관 일반조건 7.3③의 '허용 범위'가 정해져 있지 않아 매일 저장이 애매하다. 개발자센터는 robots가 `*`를 막는다 |
+| 한국소비자원 소비자 위해정보(15142643) | 날짜 조건이 없고 2026-11-04 기준 모두 2026-07~08 접수분이라 비교 기간을 채울 수 없다. 최근 데이터가 올라오면 뒤 단계에서 다시 본다 |
+| 국민동의청원 사이트(`petitions.assembly.go.kr`) | robots가 `*`를 막는다 |
+| SEC 전문 검색(`efts.sec.gov`) | robots가 403이라 애매하다 |
+| DART 공시 원문(`dart.fss.or.kr`) | robots가 막는다 |
+| GDELT | 단발 확인에서 429를 줬다 |
+| Pew, KOSIS, World Bank, OECD, Stack Overflow 설문 | 연·월 단위 보조 통계라 7일 비교의 재료가 아니고, 약관을 읽지 않았다 |
+| K-Startup, 크라우드펀딩, 서울 불편신고 | 이번 범위가 아니라 판정하지 않았다(9.96단계 명세서 3장) |
 
 ## 뒤 단계가 지킬 조건
 
 - Google Trends 급상승어를 근거로 쓴 흐름 항목에는 출처를 'Google Trends'로 밝힌다.
 - 급상승 RSS는 받기 직전 한 시간 안팎의 10건쯤만 주고 단독으로 흐름을 만들지 못하며, '서로 다른 소스 두 곳'에 세지 않는다(plan 3.15).
 - 매 실행에서 robots를 다시 보고, 막히면 그 소스를 그날 받지 않는다(`demand-fetch`가 한다).
-- 약관이 바뀐 것을 알게 되면 이 문서를 고치고 판정을 다시 한다. 비상업 조건 소스는 없다.
+- 약관이 바뀐 것을 알게 되면 이 문서를 고치고 판정을 다시 한다.
+- 공식 소스를 근거로 쓴 흐름 항목에는 출처를 밝힌다: 국회는 '열린국회정보', 권익위는 '국민권익위원회', 1372는 '공정거래위원회', DART는 'DART', SEC는 'SEC EDGAR', Wikimedia는 'Wikimedia'.
+- 민원빅데이터는 공공누리 2유형(상업적 이용금지)이다. 사이트에 광고를 달기 전에 다시 본다. 9.95 소스에는 비상업 조건이 없다.
+- 공식 소스의 숫자·코드값 밖의 글 칸은 격리 프로세스만 읽는다. 외부인이 쓴 글(청원 제목, 질의응답 질문, 공개제안 글)은 지시가 들어 있을 수 있어 특히 주의한다.
+- '서로 다른 공식 소스'는 묶음(국회, 권익위, 1372, DART, SEC, Wikimedia)으로 센다. 같은 묶음의 소스는 한 곳이다.
