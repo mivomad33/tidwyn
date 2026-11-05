@@ -4,6 +4,7 @@ import type { KindReport } from "./builderDiscover.ts";
 import type { DiscoverKind } from "./discoverStore.ts";
 import type { DocReport, SourceReport } from "./builderFetch.ts";
 import type { DemandReport } from "./demandFetch.ts";
+import type { DemandFlowState } from "./demandFlowRun.ts";
 import type { OfficialReport } from "./officialDemand.ts";
 import type { FeedFailure } from "./feeds.ts";
 import type { IndicatorFetchResult } from "./indicatorFetch.ts";
@@ -364,6 +365,8 @@ export interface RunState {
   demandFetch?: DemandFetchState;
   /** 9.96단계: 공식 수요와, 그 실행에서 전용 DB 실행 전 사본을 이미 만들었는지(4.1-6). 앞 단계 실행 기록에는 없다 */
   officialDemand?: OfficialDemandState;
+  /** 9.97단계: 수요 흐름. 앞 단계 실행 기록에는 없다 */
+  demandFlow?: DemandFlowState;
   demandCopied?: boolean;
   /** 지난 날짜 이미지 채우기(3단계). 1·1.5·2단계 실행 기록에는 없다 */
   images?: ImagesResult;

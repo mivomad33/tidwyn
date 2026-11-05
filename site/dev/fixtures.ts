@@ -5,13 +5,16 @@
 //   [--indicators 0] [--indicators-all]   (6단계: 지표 값의 햇수. 0이면 지표 파일을 만들지 않는다. --indicators-all은 12개 모두 공개·값 있음(크기 측정용))
 //   [--videos] [--videos-full] [--videos-archive]   (7단계: 끝 날짜까지 30일의 추천 영상. --videos-full은 모든 날짜에 16개·추천 이유 150자·요약 350자·관련 이슈 2개, 몰린 이슈 하나(크기 측정용). --videos-archive는 30일보다 앞선 날짜에도 새로 받은 영상을 붙인다)
 //   [--builder] [--builder-full]   (9.8단계: 날짜마다 빌더 화면 상태 하나. 0~9번째 최근 날짜가 4건, 1건, 긴 글, 0건 세 상태, 안내가 붙는 날, 다시 알림의 원래 항목이고, 다음 빈 날 뒤 10~16번째가 9.9단계 새 종류 상태다: 세 종류 3건씩, 새 제품만, 긴 글, 모두 0건, 모두 받지 못함, 섞인 상태, 꺼짐만. --builder-full은 모든 날짜에 칸별 상한 길이의 10건(크기 측정용))
+//   [--demand]   (9.97단계: 최근 날짜부터 수요 흐름 화면 상태 하나씩: 3건, 0건, 기준 부족, 받지 못함, 빠진 묶음, 이어짐, 정정됨, 긴 글, 이어짐의 원래 항목, 기록 없음, 꺼짐만.
+//     --videos --builder와 함께 쓰면 가장 최근 날짜가 탭 일곱 개인 날이다. 예: --end <오늘> --days 18 --contiguous --videos --builder --demand)
 //   화면 확인·/browser-check에서는 영상이 30일이 지나 숨지 않게 `--end <오늘>`로 만든다
 // <폴더>/site-data/*.json과 <폴더>/search-records.json을 만든다. 같은 인자면 같은 결과다.
 import fs from "node:fs";
 import path from "node:path";
 import { CONFIDENCE_LEVELS, MINORS_BY_MAJOR, SECTIONS, type Major, type SectionName } from "../../src/categories.ts";
-import { ENTITY_FILTERS, ENTITY_FIRST_NEWS, builderSearchRecords, byCount, dayStoryCount, entityChunkOf, issueEntityChips, entityRecordUrl, siteFiles, termRecordUrl, videoGroupsOf, type EntityKind } from "../../src/siteTypes.ts";
+import { ENTITY_FILTERS, ENTITY_FIRST_NEWS, builderSearchRecords, demandSearchRecords, byCount, dayStoryCount, entityChunkOf, issueEntityChips, entityRecordUrl, siteFiles, termRecordUrl, videoGroupsOf, type EntityKind } from "../../src/siteTypes.ts";
 import { addBuilderSchedule, fixtureBuilder, type BuilderFixtureInfo } from "./builderFixtures.ts";
+import { demandFile, fixtureDemand, type DemandFixtureInfo } from "./demandFixtures.ts";
 import { addDays, rng } from "./random.ts";
 import { fixtureIndicators, type IndicatorFixtureInfo } from "./indicatorFixtures.ts";
 import { fixtureSchedules, type FixtureStory, type ScheduleFixtureInfo } from "./scheduleFixtures.ts";
@@ -80,6 +83,8 @@ export interface FixtureOptions {
   builder?: boolean;
   /** 9.8단계: 모든 날짜에 칸별 상한 길이의 빌더 항목 4건을 둔다(크기 측정용) */
   builderFull?: boolean;
+  /** 9.97단계: 최근 날짜부터 수요 흐름 화면 상태를 하나씩 둔다. 없으면 수요 항목을 만들지 않고 다른 파일은 그대로다 */
+  demand?: boolean;
 }
 
 /** 지어낸 정정 기록: 뉴스 키 끝 → 최신순 기록 */
@@ -120,6 +125,8 @@ export interface Fixture {
     videos: VideoFixtureInfo | null;
     /** 9.8단계: 빌더를 만들었을 때만 */
     builder: BuilderFixtureInfo | null;
+    /** 9.97단계: 수요 흐름을 만들었을 때만 */
+    demand: DemandFixtureInfo | null;
   };
 }
 
@@ -530,6 +537,13 @@ export function generateFixtures(opts: FixtureOptions = {}): Fixture {
   }
   if (bld?.schedule) addBuilderSchedule(sched.files, bld.schedule);
 
+  // 9.97단계: 수요 흐름. 난수를 쓰지 않고, 수요가 없으면 다른 파일을 바꾸지 않는다
+  const dmd = opts.demand ? fixtureDemand({ datesDesc: [...datesAsc].reverse(), end, issue: { id: activeIssues[0]!.id, name: activeIssues[0]!.name } }) : null;
+  if (dmd) for (const l of lists.values()) for (const day of l.days) {
+    const d = dmd.byDate.get(day.date);
+    if (d) day.demand = d;
+  }
+
   const chunks = new Map<number, IssueChunk>();
   for (const i of activeIssues) {
     const related = activeIssues.filter((o) => o.id !== i.id && o.major === i.major).slice(0, 2).map((o) => ({ id: o.id, name: o.name }));
@@ -654,7 +668,8 @@ export function generateFixtures(opts: FixtureOptions = {}): Fixture {
   for (const [date, videos] of vids?.byDate ?? []) files.set(`site-data/${siteFiles.videoDay(date)}`, json({ date, videos }));
   for (const [date, videoSections] of vids?.sectionsByDate ?? []) files.set(`site-data/${siteFiles.videoSections(date)}`, json({ date, videoSections }));
   for (const m of bld?.months ?? []) files.set(`site-data/${siteFiles.builderItems(m.month)}`, json(m));
-  files.set("search-records.json", json([...newsRecords, ...issueRecords, ...entityRecords, ...termRecords, ...builderSearchRecords(bld?.months ?? [])]));
+  for (const m of dmd?.months ?? []) files.set(demandFile(m), json(m));
+  files.set("search-records.json", json([...newsRecords, ...issueRecords, ...entityRecords, ...termRecords, ...builderSearchRecords(bld?.months ?? []), ...demandSearchRecords(dmd?.months ?? [])]));
   const most = entityDetails.reduce<EntityDetail | null>((m, e) => (!m || e.count > m.count ? e : m), null);
   return {
     files,
@@ -668,6 +683,7 @@ export function generateFixtures(opts: FixtureOptions = {}): Fixture {
       indicators: ind?.info ?? null,
       videos: vids?.info ?? null,
       builder: bld?.info ?? null,
+      demand: dmd?.info ?? null,
     },
   };
 }
@@ -691,7 +707,7 @@ if (import.meta.main) {
   };
   const out = get("--out");
   if (!out) {
-    console.error("사용법: node site/dev/fixtures.ts --out <폴더> [--end YYYY-MM-DD] [--days N] [--top N] [--short N] [--issues N] [--contiguous] [--entities N] [--terms N] [--hub] [--schedules N] [--indicators N] [--indicators-all] [--videos] [--videos-full] [--videos-archive] [--corrections] [--builder] [--builder-full]");
+    console.error("사용법: node site/dev/fixtures.ts --out <폴더> [--end YYYY-MM-DD] [--days N] [--top N] [--short N] [--issues N] [--contiguous] [--entities N] [--terms N] [--hub] [--schedules N] [--indicators N] [--indicators-all] [--videos] [--videos-full] [--videos-archive] [--corrections] [--builder] [--builder-full] [--demand]");
     process.exit(1);
   }
   const num = (name: string) => (get(name) ? Number(get(name)) : undefined);
@@ -714,6 +730,7 @@ if (import.meta.main) {
     corrections: args.includes("--corrections"),
     builder: args.includes("--builder"),
     builderFull: args.includes("--builder-full"),
+    demand: args.includes("--demand"),
   });
   console.log(`가짜 사이트 데이터: ${out} (날짜 ${fx.dates.length}개, 파일 ${fx.files.size}개)`);
 }

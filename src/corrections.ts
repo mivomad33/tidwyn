@@ -3,8 +3,11 @@ import { ITEM_LABELS, checkConfirmedRange, checkItemText, checkPublicText, isDue
 import { recomputeReminder } from "./builderSchedule.ts";
 import { builderItemByKey, isBuilderItemKey, isBuilderSchedule, itemsOfSchedule, type BuilderItem } from "./builderStore.ts";
 import { isDiscoveryItemKey } from "./builderTypes.ts";
-import { DISCOVERY_LABELS, DISCOVERY_LIMITS, DISCOVERY_TEXT_FIELDS, type DiscoveryTextField } from "./discoverCheck.ts";
+import { DISCOVERY_LABELS, DISCOVERY_LIMITS, DISCOVERY_TEXT_FIELDS, quiet, type DiscoveryTextField } from "./discoverCheck.ts";
 import { discoveryByItemKey, type Discovery } from "./discoverStore.ts";
+import { checkFlowText } from "./demandFlowCheck.ts";
+import { correctFlow, flowByItemKey, type Flow } from "./demandFlowStore.ts";
+import { FLOW_TEXT_FIELDS, FLOW_TEXT_LABELS, isFlowItemKey, type FlowTextField } from "./demandFlowTypes.ts";
 import { ADDRESS_RE, scanText } from "./precheck.ts";
 import { getSchedule, isLiveSchedule, updateSchedule } from "./schedules.ts";
 import { fullKey, inTransaction, storyByFullKey, storyKey, type StoryRef } from "./issues.ts";
@@ -332,6 +335,58 @@ export function applyDiscoveryCorrection(db: DatabaseSync, checked: Extract<Disc
     for (const field of changed) db.prepare(`UPDATE builder_discoveries SET ${field} = ? WHERE id = ?`).run(input.fields[field]!, item.id);
     db.prepare("INSERT INTO builder_discovery_corrections (item_id, corrected_on, reason, fields) VALUES (?, ?, ?, ?)").run(item.id, today, input.reason, JSON.stringify(changed));
   });
+}
+
+// ---- 수요 흐름 항목 정정(9.97단계 4.4-4) ----
+
+export interface FlowCorrectionInput {
+  date: string;
+  key: string;
+  reason: string;
+  fields: Partial<Record<FlowTextField, string>>;
+}
+
+export type FlowCorrectionCheck = { ok: true; input: FlowCorrectionInput; item: Flow; changed: FlowTextField[] } | { ok: false; violations: Violation[] };
+
+/** 정정 파일이 수요 흐름 항목(`demand-N`)을 가리키는지 */
+export function isFlowCorrection(raw: unknown): boolean {
+  return typeof raw === "object" && raw !== null && isFlowItemKey((raw as Obj).key);
+}
+
+/**
+ * 글 칸(제목, 요지, 잇는 이유)만 고친다. 갈래, 분야, 숫자, 근거 수준, 근거 단위(이름 포함), 보조 근거, 출처는 기계가 채운 값이라 고칠 수 없다.
+ * 새 글은 흐름 파일과 같은 글 검사(수, 단정·과장어, 공개 검사)를 받는다
+ */
+export function checkFlowCorrection(db: DatabaseSync, raw: unknown, home: string | null, secrets: readonly string[] = []): FlowCorrectionCheck {
+  const c = new Checker();
+  const head = correctionHead(c, raw, home, secrets);
+  if (head === null) return { ok: false, violations: c.violations };
+  const { date, key, reason, fieldsObj } = head;
+  const item = date !== "" && key !== "" ? flowByItemKey(db, date, key) : null;
+  if (date !== "" && key !== "" && item === null) c.add("수요 흐름 항목", `${date} ${key} 항목이 없다`);
+  if (fieldsObj === null || item === null) return { ok: false, violations: c.violations.map(quiet) };
+  const names = Object.keys(fieldsObj);
+  if (names.length === 0) c.add("고칠 항목", "하나 이상이어야 한다");
+  const fields: FlowCorrectionInput["fields"] = {};
+  const changed: FlowTextField[] = [];
+  for (const name of names) {
+    if (!(FLOW_TEXT_FIELDS as string[]).includes(name)) {
+      c.add("고칠 항목", `"${name}"은(는) 고칠 수 없다(고칠 수 있는 항목: ${FLOW_TEXT_FIELDS.join(", ")})`);
+      continue;
+    }
+    const field = name as FlowTextField;
+    const value = c.text(fieldsObj, field, FLOW_TEXT_LABELS[field], "고칠 항목");
+    if (value === "") continue;
+    checkFlowText(c, FLOW_TEXT_LABELS[field], field, value, { home, secrets });
+    fields[field] = value;
+    if (value !== item[field]) changed.push(field);
+  }
+  if (c.violations.length > 0) return { ok: false, violations: c.violations.map(quiet) };
+  return { ok: true, input: { date, key, reason, fields }, item, changed };
+}
+
+export function applyFlowCorrection(db: DatabaseSync, checked: Extract<FlowCorrectionCheck, { ok: true }>, today: string): void {
+  correctFlow(db, checked.item.id, checked.input.fields, checked.changed, checked.input.reason, today);
 }
 
 export function hasCorrections(db: DatabaseSync): boolean {

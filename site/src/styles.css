@@ -2262,3 +2262,19 @@ ul.isrc {
 @media (max-width: 374.98px) {
   .tabs:has(button:nth-child(6)) button { flex: 1 1 auto; padding-inline: 4px; }
 }
+/* 9.97단계 수요 항목(`docs/design.md`의 '수요 항목'). 줄과 칸은 빌더 항목과 같고, 근거 줄은 소스마다 이름·숫자·기간을 한 묶음으로 둔다 */
+.dlines { padding-left: 0; list-style: none; }
+.dlines li + li { margin-top: 8px; }
+.dlines span { display: block; }
+.dhead { font-weight: 600; overflow-wrap: anywhere; }
+.dwin { font-size: 12px; color: var(--muted); }
+.dnote { margin: 4px 0 0; font-size: 12px; line-height: 1.6; color: var(--muted); }
+.dcont { display: inline-flex; align-items: center; min-height: 44px; margin-block: -12px; }
+/* 수요 탭까지 일곱 개인 날: 휴대폰 폭에서 탭 좌우 여백을 줄이고 남는 폭을 나눠 한 줄을 지킨다 */
+@media (max-width: 479.98px) {
+  .tabs:has(button:nth-child(7)) button { flex: 1 1 auto; min-width: 44px; padding-inline: 3px; }
+}
+@media (max-width: 359.98px) {
+  .tabs:has(button:nth-child(7)) { font-size: 14px; }
+  .tabs:has(button:nth-child(7)) button { padding-inline: 1px; }
+}

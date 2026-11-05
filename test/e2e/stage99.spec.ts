@@ -2,7 +2,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import type { Locator, Page } from "@playwright/test";
-import { expect, expectNoHorizontalScroll, monthDay, storyItem, test } from "./base.ts";
+import { READY_STATE, UNSTICK_TABS, expect, expectNoHorizontalScroll, monthDay, storyItem, test } from "./base.ts";
 import { E2E_BUILDER_BASE_URL, E2E_BUILDER_DATA_DIR, E2E_BUILDER_INFO_FILE } from "./paths.ts";
 import type { BuilderFixtureInfo } from "../../site/dev/builderFixtures.ts";
 import { BUILDER_NONE, builderNotice, discoverEndNotice, discoverZeroText, repoStarsText, repoUpkeepText } from "../../site/src/lib/builder.ts";
@@ -248,9 +248,6 @@ test.describe("JS 없는 묶음", () => {
   });
 });
 
-// 아래 탭이 전체 페이지 사진을 가리지 않게 탭을 흐름에 둔다
-const UNSTICK_TABS = ".tabs { position: static; }";
-
 for (const scheme of ["light", "dark"] as const) {
   for (const width of [375, 1440]) {
     test.describe(`새 묶음 화면 ${scheme} ${width}`, () => {
@@ -259,9 +256,9 @@ for (const scheme of ["light", "dark"] as const) {
         ["세 종류", b.three, ".blist"],
         ["한 종류", b.onlyProduct, ".blist"],
         ["긴 글", b.longKinds, ".blist"],
-        ["모두 0건", b.allNone, ".state"],
-        ["모두 못 받음", b.allFailed, ".state"],
-        ["섞인 상태", b.mixed, ".state"],
+        ["모두 0건", b.allNone, READY_STATE],
+        ["모두 못 받음", b.allFailed, READY_STATE],
+        ["섞인 상태", b.mixed, READY_STATE],
       ];
       for (const [name, date, ready] of shots) {
         test(name, async ({ page }) => {

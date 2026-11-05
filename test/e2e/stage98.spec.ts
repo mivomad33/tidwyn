@@ -3,7 +3,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import type { Locator, Page, Route } from "@playwright/test";
-import { dataFile, expect, expectNoHorizontalScroll, failData, monthDay, storyItem, test } from "./base.ts";
+import { READY_STATE, UNSTICK_TABS, dataFile, expect, expectNoHorizontalScroll, failData, monthDay, storyItem, test } from "./base.ts";
 import { E2E_BUILDER_BASE_URL, E2E_BUILDER_DATA_DIR, E2E_BUILDER_INFO_FILE } from "./paths.ts";
 import type { BuilderFixtureInfo } from "../../site/dev/builderFixtures.ts";
 import { BUILDER_NONE, builderDueText, builderEndNotice, builderNotice } from "../../site/src/lib/builder.ts";
@@ -358,9 +358,6 @@ test.describe("375px", () => {
   });
 });
 
-// 아래 탭이 전체 페이지 사진을 가리지 않게 탭을 흐름에 둔다
-const UNSTICK_TABS = ".tabs { position: static; }";
-
 // 디자인 점검의 화면 × 상태 × 폭(`docs/design.md`의 '빌더 항목')
 for (const width of [375, 1440]) {
   test.describe(`빌더 화면 ${width}`, () => {
@@ -369,9 +366,9 @@ for (const width of [375, 1440]) {
       ["4건", b.four!, ".blist"],
       ["1건 다시 알림", b.one!, ".blist"],
       ["긴 글", b.long!, ".blist"],
-      ["0건 확인함", b.none!, ".state"],
-      ["0건 일부", b.partial!, ".state"],
-      ["0건 못 받음", b.failed!, ".state"],
+      ["0건 확인함", b.none!, READY_STATE],
+      ["0건 일부", b.partial!, READY_STATE],
+      ["0건 못 받음", b.failed!, READY_STATE],
       ["항목과 끝 안내", b.partialItems!, ".blist"],
       ["다시 알림과 끝 안내", b.failedItems!, ".blist"],
     ];
@@ -406,9 +403,9 @@ for (const width of [375, 1440]) {
     const shots: [string, string, string][] = [
       ["4건", b.four!, ".blist"],
       ["다시 알림과 끝 안내", b.failedItems!, ".blist"],
-      ["0건 확인함", b.none!, ".state"],
-      ["0건 일부", b.partial!, ".state"],
-      ["0건 못 받음", b.failed!, ".state"],
+      ["0건 확인함", b.none!, READY_STATE],
+      ["0건 일부", b.partial!, READY_STATE],
+      ["0건 못 받음", b.failed!, READY_STATE],
     ];
     for (const [name, date, ready] of shots) {
       test(name, async ({ page }) => {

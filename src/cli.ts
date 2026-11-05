@@ -5,7 +5,7 @@ import path from "node:path";
 import type { DatabaseSync } from "node:sqlite";
 import { parseArgs as parseNodeArgs } from "node:util";
 import { BACKUP_DIR, backupMessage, commitBackup, exportBackup, readBackupDir, readBackupRef, restoreBackup } from "./backup.ts";
-import { CORRECTION_GUIDE, applyBuilderCorrection, applyCorrection, applyDiscoveryCorrection, checkBuilderCorrection, checkCorrection, checkDiscoveryCorrection, isBuilderCorrection, isDiscoveryCorrection, issuesOfStory } from "./corrections.ts";
+import { CORRECTION_GUIDE, applyBuilderCorrection, applyCorrection, applyDiscoveryCorrection, applyFlowCorrection, checkBuilderCorrection, checkCorrection, checkDiscoveryCorrection, checkFlowCorrection, isBuilderCorrection, isDiscoveryCorrection, isFlowCorrection, issuesOfStory } from "./corrections.ts";
 import { openDb, openExistingDb } from "./db.ts";
 import { gitTry } from "./git.ts";
 import { collectCandidates, describeFeedReport, feedSpecs, fetchText as realFetch, renderCandidatesMarkdown, type FetchText } from "./feeds.ts";
@@ -122,6 +122,11 @@ import { pruneSnapshots, takeSnapshot } from "./snapshot.ts";
 import { AlreadyStoredError, hasBrief, loadBrief, recordFirstCollectionDate, saveBrief } from "./store.ts";
 import { isLate, planTargets } from "./targets.ts";
 import { formatViolations, validateBrief, type Violation } from "./validate.ts";
+import { FLOW_FAIL_ALERT_DAYS, FLOW_OFF_ENV, failDaysOf, runFlowStep, type DemandFlowState } from "./demandFlowRun.ts";
+import { GROUP_INFO, LEVEL_LABELS, FLOW_LEVELS, FLOW_STATUS_NAMES, OFFICIAL_GROUPS } from "./demandFlowTypes.ts";
+import { officialUnits, openDemandReadOnly, SOURCE_STATE_NAMES } from "./demandUnits.ts";
+import { isFlowDateDone, setFlowDate } from "./demandFlowStore.ts";
+import { buildFlowCandidates, removeFlowWorkFiles } from "./demandFlowWork.ts";
 
 // /brief 스킬이 부르는 명령들. 런타임 의존성 없이 Node 내장 기능과 git만 쓴다.
 
@@ -201,6 +206,11 @@ export interface Context {
   officialHttp?: FetchText;
   officialDeadlineMs?: number;
   officialSources?: readonly OfficialSource[];
+  /** 수요 흐름(9.97단계)의 시계, 단계 상한, 프로세스 상한, 저장 중 실패 흉내. 테스트가 바꿔 넣는다 */
+  flowClock?: () => number;
+  flowStageMs?: number;
+  flowProcessMs?: number;
+  flowFailDuringSave?: () => void;
 }
 
 /** 의존성 잠금 파일대로, 잠금 파일을 바꾸지 않고 대화형 확인 없이 설치한다 */
@@ -234,7 +244,7 @@ const USAGE = `명령:
   summary --run <파일>           실행 끝 출력
   render --date <날짜> | --all [--run <파일>]   DB에서 마크다운 다시 만들기(--all: 모든 브리프와 이슈 마크다운)
   restore [--repo <저장소> | --from <폴더>] [--out <DB 경로>] [--force]   백업에서 DB 복원
-  correct --file <JSON>          뉴스나 빌더 항목 하나의 글 정정(사용자가 직접 실행, /brief는 실행하지 않음)
+  correct --file <JSON>          뉴스, 빌더 항목, 수요 흐름 항목(demand-N) 하나의 글 정정(사용자가 직접 실행, /brief는 실행하지 않음)
 이슈(2단계):
   issues --run <파일> --date <날짜>       연결할 뉴스와 후보 이슈 목록(work/<날짜>.issues.md)
   issue-search [--run <파일>] --q <낱말>  이름·별칭·요약으로 이슈 찾기
@@ -279,7 +289,8 @@ const USAGE = `명령:
   builder-fail --run <파일>               끝나지 않은 도구 변화와 새 종류를 받지 못함으로 저장하고 작업 파일을 지운다(저장된 항목과 받은 시각은 그대로 둔다)
 수요 스냅샷(9.95단계):
   demand-fetch --run <파일>               Google 급상승어와 Mastodon 트렌드를 그날(KST) 한 번 받아 전용 DB(<데이터 폴더>/demand.db)에 쌓는다. 받은 소스는 다시 부르지 않고, 5분 안에 끝난다. 소스가 실패해도 종료 코드는 0이다. 시험 모드에서는 돌지 않는다. 받은 글은 출력하지 않는다
-  demand-official --run <파일>            공식 기관·공개 데이터(국회, 권익위, 1372, DART, SEC Form D, Wikimedia)를 값 날짜마다 받아 전용 DB에 쌓는다. 2026-09-30부터 빠진 날짜를 채우고, 한 번에 9분 안에 끝난다. 상한에 닿아 남은 것이 있으면 그렇게 출력하고, 같은 실행 기록으로 두 번까지 받는다. 소스가 실패해도 종료 코드는 0이다. 시험 모드에서는 돌지 않는다. 받은 글은 출력하지 않는다`;
+  demand-official --run <파일>            공식 기관·공개 데이터(국회, 권익위, 1372, DART, SEC Form D, Wikimedia)를 값 날짜마다 받아 전용 DB에 쌓는다. 2026-09-30부터 빠진 날짜를 채우고, 한 번에 9분 안에 끝난다. 상한에 닿아 남은 것이 있으면 그렇게 출력하고, 같은 실행 기록으로 두 번까지 받는다. 소스가 실패해도 종료 코드는 0이다. 시험 모드에서는 돌지 않는다. 받은 글은 출력하지 않는다
+  demand-flow --run <파일>                가장 늦은 브리프 날짜의 수요 흐름(9.97단계): 전용 DB를 읽기 전용으로 열어 오른 단위를 세고, 경로가 막힌 별도 프로세스가 흐름을 쓰고, 검사해 저장한다. 한 번에 프로세스를 하나까지 부르고, 끝나지 않았으면 '다시 부른다'로 끝난다(모두 3번까지, 단계 전체 15분). 실패해도 종료 코드는 0이다. 시험 모드에서는 돌지 않는다. 받은 글과 쓴 글은 출력하지 않는다`;
 
 function opts(argv: string[], options: Record<string, { type: "string" | "boolean" }>) {
   return parseNodeArgs({ args: argv, options, allowPositionals: false, strict: true }).values as Record<string, string | boolean | undefined>;
@@ -619,6 +630,7 @@ function cmdSummary(argv: string[], ctx: Context): number {
   lines.push(...builderSummaryLines(s));
   if (s.demandFetch !== undefined) lines.push(...demandSummaryLines(s.demandFetch));
   if (s.officialDemand !== undefined) lines.push(...officialSummaryLines(s.officialDemand));
+  if (s.demandFlow !== undefined) lines.push(...flowSummaryLines(s.demandFlow));
   lines.push(...videoBacklogLines(s, ctx));
   lines.push(...imageSummaryLines(s, saved));
   lines.push(`- 백업: ${describeBackup(s.backup)}`);
@@ -1279,6 +1291,7 @@ function cmdCorrect(argv: string[], ctx: Context): number {
   try {
     if (isBuilderCorrection(raw)) return correctBuilder(db, raw, prep.snapshot, ctx);
     if (isDiscoveryCorrection(raw)) return correctDiscovery(db, raw, prep.snapshot, ctx);
+    if (isFlowCorrection(raw)) return correctFlowItem(db, raw, prep.snapshot, ctx);
     const checked = checkCorrection(db, raw, homeOf(ctx), secretsOf(ctx));
     if (!checked.ok) {
       ctx.out(`고치지 않음:\n${formatViolations(checked.violations)}`);
@@ -1348,6 +1361,23 @@ function correctDiscovery(db: DatabaseSync, raw: unknown, snapshot: string | nul
     return EXIT.ok;
   }
   applyDiscoveryCorrection(db, checked, kstDate(ctx.now()));
+  ctx.out([`고침: ${date} ${key} (${checked.changed.join(", ")}).`, `- 실행 전 사본: ${snapshot}`, "- 백업과 사이트 배포는 다음 /brief 실행이 한다. 바로 올리려면 docs/operations.md의 손으로 하는 배포를 쓴다."].join("\n"));
+  return EXIT.ok;
+}
+
+/** 수요 흐름 항목 정정(9.97단계 4.4-4). 출력에 글을 내지 않는다(칸 이름과 위반 종류만) */
+function correctFlowItem(db: DatabaseSync, raw: unknown, snapshot: string | null, ctx: Context): number {
+  const checked = checkFlowCorrection(db, raw, homeOf(ctx), secretsOf(ctx));
+  if (!checked.ok) {
+    ctx.out(`고치지 않음:\n${formatViolations(checked.violations)}`);
+    return EXIT.failed;
+  }
+  const { date, key } = checked.input;
+  if (checked.changed.length === 0) {
+    ctx.out(`바뀐 것이 없다(${date} ${key}). 이미 적용한 정정이면 다시 하지 않아도 된다.`);
+    return EXIT.ok;
+  }
+  applyFlowCorrection(db, checked, kstDate(ctx.now()));
   ctx.out([`고침: ${date} ${key} (${checked.changed.join(", ")}).`, `- 실행 전 사본: ${snapshot}`, "- 백업과 사이트 배포는 다음 /brief 실행이 한다. 바로 올리려면 docs/operations.md의 손으로 하는 배포를 쓴다."].join("\n"));
   return EXIT.ok;
 }
@@ -2518,12 +2548,22 @@ async function cmdDemandFetch(argv: string[], ctx: Context): Promise<number> {
 
 /** 공식 수요(9.96단계 4.1~4.3). 소스 실패는 종료 코드 0이고, 전용 DB를 열거나 쓰지 못하면 1이다. 같은 실행 기록으로 두 번까지 받고 결과를 합친다 */
 async function cmdDemandOfficial(argv: string[], ctx: Context): Promise<number> {
-  const v = opts(argv, { run: { type: "string" } });
-  const runFile = need(v, "run");
+  // 시험 전용(9.97단계 4.6-6): --start <소스 id나 묶음>=<날짜>(여러 번), --skip <소스 id>(여러 번)
+  const v = parseNodeArgs({ args: argv, options: { run: { type: "string" }, start: { type: "string", multiple: true }, skip: { type: "string", multiple: true } }, allowPositionals: false, strict: true }).values;
+  const runFile = need(v as Record<string, string | undefined>, "run");
   const state = readRun(runFile);
-  const refused = indicatorCondition(state, ctx);
+  const starts: Record<string, string> = {};
+  for (const x of v.start ?? []) {
+    const m = /^([\w:.-]+)=(\d{4}-\d{2}(?:-\d{2})?)$/.exec(x);
+    if (m === null) throw new UsageError("--start는 <소스 id나 묶음>=YYYY-MM-DD 꼴이어야 한다");
+    // 달(YYYY-MM)은 1372(접수 월)에만 쓴다
+    if (m[2]!.length === 7 && !m[1]!.startsWith("ftc1372")) throw new UsageError("--start의 날짜 소스는 YYYY-MM-DD여야 한다(달은 ftc1372만)");
+    starts[m[1]!] = m[2]!;
+  }
+  const skip = v.skip ?? [];
+  const refused = indicatorCondition(state, ctx) ?? trialRefused(state.mode, Object.keys(starts).length > 0 || skip.length > 0, ctx);
   if (refused !== null) return refused;
-  const sources = ctx.officialSources ?? officialSources();
+  const sources = (ctx.officialSources ?? officialSources()).filter((s) => !skip.includes(s.id));
   const prev = state.officialDemand;
   const calls = (prev?.calls ?? 0) + 1;
   const record = (r: OfficialDemandState) => {
@@ -2567,6 +2607,7 @@ async function cmdDemandOfficial(argv: string[], ctx: Context): Promise<number> 
         sources,
         off: ctx.demandOff,
         prior: prev?.status === "done" ? prev : undefined,
+        starts,
       });
       r.copied ||= copied;
     } finally {
@@ -2582,6 +2623,139 @@ async function cmdDemandOfficial(argv: string[], ctx: Context): Promise<number> 
   }
   record({ status: "done", calls, ...r, dbBytes });
   return EXIT.ok;
+}
+
+/** 시험 전용 옵션(4.6-6): 데이터 폴더를 지정했고 실제 데이터 폴더가 아닌 실행에서만 받는다 */
+function trialRefused(mode: RunState["mode"], used: boolean, ctx: Context): number | null {
+  if (!used || mode === "custom") return null;
+  ctx.out("시험 전용 옵션은 데이터 폴더를 지정한(실제 데이터 폴더가 아닌) 실행에서만 쓴다. 아무것도 하지 않는다.");
+  return EXIT.refused;
+}
+
+const FLOW_TRIAL_FTC_LAG_DAYS = 14;
+
+/**
+ * 수요 흐름(9.97단계 4.2~4.3). 어떤 실패도 종료 코드 0이다(다른 단계를 막지 않는다). 전용 DB는 읽기 전용이다.
+ * 시험 전용: --target(대상 날짜를 바꾸고 그날 07시 운영 실행이 받았을 범위로 자른다), --measure(기계 단계만 재고 저장하지 않는다, --run 없이), --recent-days·--base-days(창 길이)
+ */
+function cmdDemandFlow(argv: string[], ctx: Context): number {
+  const v = opts(argv, { run: { type: "string" }, target: { type: "string" }, measure: { type: "boolean" }, "recent-days": { type: "string" }, "base-days": { type: "string" } });
+  const trialTarget = typeof v.target === "string" ? v.target : null;
+  if (trialTarget !== null && !isValidDate(trialTarget)) throw new UsageError("--target은 YYYY-MM-DD여야 한다");
+  const days = (name: "recent-days" | "base-days"): number | undefined => {
+    const x = v[name];
+    if (typeof x !== "string") return undefined;
+    if (!/^[1-9]\d*$/.test(x)) throw new UsageError(`--${name}는 양의 정수여야 한다`);
+    return Number(x);
+  };
+  const recentDays = days("recent-days");
+  const baseDays = days("base-days");
+  const windowOpts = { ...(recentDays !== undefined ? { recentDays } : {}), ...(baseDays !== undefined ? { baseDays } : {}) };
+  const trialUsed = trialTarget !== null || v.measure === true || Object.keys(windowOpts).length > 0;
+  const asOf = trialTarget === null ? undefined : { date: trialTarget, ftcLagDays: FLOW_TRIAL_FTC_LAG_DAYS };
+  if (v.measure === true) {
+    const s = resolveSettings({ cwd: ctx.cwd, env: ctx.env, args: { test: false, startDate: null }, now: ctx.now() });
+    const refused = trialRefused(s.mode, true, ctx);
+    if (refused !== null) return refused;
+    if (trialTarget === null) throw new UsageError("--measure에는 --target이 필요하다");
+    return measureFlow(s.dataDir, s.dbPath, trialTarget, { asOf, ...windowOpts }, ctx);
+  }
+  const runFile = need(v, "run");
+  const state = readRun(runFile);
+  const refused = indicatorCondition(state, ctx) ?? trialRefused(state.mode, trialUsed, ctx);
+  if (refused !== null) return refused;
+  const db = openExistingDb(state.dbPath);
+  let target: string | null = null;
+  try {
+    target = trialTarget ?? videoTargetDate(db);
+    const r = runFlowStep({
+      db,
+      dataDir: state.dataDir,
+      target,
+      today: kstDate(ctx.now()),
+      prev: state.demandFlow,
+      off: state.mode === "test" || ctx.env[FLOW_OFF_ENV] === "1",
+      env: ctx.env,
+      run: ctx.claudeRun ?? claudeRunner,
+      clock: ctx.flowClock ?? Date.now,
+      home: homeOf(ctx),
+      secrets: secretsOf(ctx),
+      units: { asOf, ...windowOpts },
+      stageMs: ctx.flowStageMs,
+      processTimeoutMs: ctx.flowProcessMs ?? ctx.claudeTimeoutMs,
+      failDuringSave: ctx.flowFailDuringSave,
+    });
+    updateRun(runFile, (s) => (s.demandFlow = r.state));
+    ctx.out(r.lines.join("\n"));
+  } catch (e) {
+    const reason = demandCrashReason(e) === "전용 DB를 열거나 쓰지 못했다" ? "DB를 열거나 쓰지 못했다" : "흐름 단계가 실패했다";
+    // 받지 못함으로 끝낸다(4.3-2): 날짜 상태를 남기고 작업 파일을 지운다. 이것도 실패하면 그대로 넘어간다
+    const failedTarget = target ?? state.demandFlow?.target ?? null;
+    let failDays: number | undefined;
+    if (failedTarget !== null)
+      try {
+        if (!isFlowDateDone(db, failedTarget)) setFlowDate(db, { date: failedTarget, status: "failed", missing: [] });
+        failDays = failDaysOf(db, failedTarget);
+      } catch {
+        // DB를 쓰지 못하면 다음 실행이 같은 날을 다시 한다
+      }
+    try {
+      removeFlowWorkFiles(state.dataDir);
+    } catch {
+      // 지우지 못한 작업 파일은 다음 실행이 덮어쓴다
+    }
+    updateRun(runFile, (s) => (s.demandFlow = { target: failedTarget, status: "failed", rounds: s.demandFlow?.rounds ?? 0, processMs: s.demandFlow?.processMs ?? [], startedMs: s.demandFlow?.startedMs ?? 0, reason, ...(failDays === undefined ? {} : { failDays }) }));
+    ctx.out(`수요 흐름: 실패(${reason}). 다음 단계로 넘어간다.`);
+  } finally {
+    db.close();
+  }
+  return EXIT.ok;
+}
+
+/** 시험 전용 기계 측정: 그날의 비교 묶음, 묶음별 오른 단위 수, 후보 복사본 크기를 수로만 낸다. 날짜 상태와 흐름 기록은 저장하지 않는다 */
+function measureFlow(dataDir: string, dbPath: string, target: string, units: { asOf?: { date: string; ftcLagDays: number }; recentDays?: number; baseDays?: number }, ctx: Context): number {
+  const opened = openDemandReadOnly(demandDbPath(dataDir));
+  if (opened.state !== "ok") {
+    ctx.out(JSON.stringify({ target, demandDb: opened.state }));
+    return EXIT.ok;
+  }
+  const db = openDb(dbPath);
+  try {
+    const u = officialUnits(opened.db, kstDate(ctx.now()), { target, ...units });
+    const built = buildFlowCandidates({ db, target, sources: u.sources, groups: u.groups, aux: [] });
+    ctx.out(
+      JSON.stringify({
+        target,
+        compared: u.groups.filter((g) => g.compared).map((g) => g.group),
+        rising: Object.fromEntries(u.groups.map((g) => [g.group, g.rising])),
+        risingAll: Object.fromEntries(u.groups.map((g) => [g.group, u.sources.filter((s) => s.group === g.group).reduce((n, s) => n + s.risingAll, 0)])),
+        states: Object.fromEntries(u.sources.map((s) => [s.source, s.state])),
+        units: Object.fromEntries(u.sources.map((s) => [s.source, s.unitCount])),
+        windowEnd: Object.fromEntries(u.sources.map((s) => [s.source, s.window?.recentTo ?? null])),
+        copyBytes: built.data.bytes,
+      }),
+    );
+  } finally {
+    db.close();
+    opened.db.close();
+  }
+  return EXIT.ok;
+}
+
+/** 실행 요약의 수요 흐름 줄(4.3-3). 받은 글과 AI가 쓴 글은 쓰지 않는다(단위 키만) */
+function flowSummaryLines(r: DemandFlowState): string[] {
+  const head = r.status === "off" ? FLOW_STATUS_NAMES.off : r.status === "checked" ? `${FLOW_STATUS_NAMES.checked}, 실린 ${r.shown ?? 0}건, 인정된 ${r.recognized ?? 0}건` : r.status === "short" ? FLOW_STATUS_NAMES.short : r.status === "alreadyDone" ? "이미 끝남" : r.status === "nothing" ? "대상 날짜 없음" : r.status === "again" ? "끝나지 않음(다시 부르지 못했다)" : `${FLOW_STATUS_NAMES.failed}(${r.reason ?? "이유 없음"})`;
+  const lines = [`- 수요 흐름${r.target === null ? "" : `(${r.target})`}: ${head}`];
+  if (r.levels !== undefined) lines.push(`  - 근거 수준: ${FLOW_LEVELS.map((l) => `${LEVEL_LABELS[l]} ${r.levels![l] ?? 0}`).join(", ")}`);
+  if (r.dropped !== undefined && Object.keys(r.dropped).length > 0) lines.push(`  - 버린 흐름: ${Object.entries(r.dropped).map(([k, n]) => `${k} ${n}`).join(", ")}`);
+  if (r.compared !== undefined) lines.push(`  - 비교한 공식 묶음: ${r.compared.map((g) => GROUP_INFO[g].label).join(", ") || "없음"}`);
+  if (r.missing !== undefined && r.missing.length > 0) lines.push(`  - 빠진 묶음: ${r.missing.map((m) => `${GROUP_INFO[m.group].label}(${m.reasons.map((x) => SOURCE_STATE_NAMES[x]).join("·")})`).join(", ")}`);
+  if (r.risingByGroup !== undefined) lines.push(`  - 묶음별 오른 단위: ${OFFICIAL_GROUPS.map((g) => `${GROUP_INFO[g].label} ${r.risingByGroup![g] ?? 0}`).join(", ")}`);
+  if (r.copyBytes !== undefined) lines.push(`  - 후보 복사본 ${r.copyBytes}바이트`);
+  if (r.rounds > 0) lines.push(`  - 프로세스 ${r.rounds}번, ${r.processMs.map((ms) => `${Math.round(ms / 1000)}초`).join(", ")}`);
+  if (r.excluded !== undefined && r.excluded.length > 0) lines.push(`  - 제외한 단위 키: ${r.excluded.join(", ")}`);
+  if ((r.failDays ?? 0) >= FLOW_FAIL_ALERT_DAYS) lines.push(`  - 받지 못함이 ${r.failDays}일 이어졌다(운영 문서의 "수요 흐름"을 본다)`);
+  return lines;
 }
 
 function officialSummaryLines(r: OfficialDemandState): string[] {
@@ -3133,6 +3307,7 @@ const COMMANDS: Record<string, (argv: string[], ctx: Context) => number> = {
   "indicator-apply": cmdIndicatorApply,
   "video-check": cmdVideoCheck,
   "builder-write": cmdBuilderWrite,
+  "demand-flow": cmdDemandFlow,
   "builder-check": cmdBuilderCheck,
   "builder-apply": cmdBuilderApply,
   "builder-fail": cmdBuilderFail,

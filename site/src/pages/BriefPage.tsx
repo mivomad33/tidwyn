@@ -1,26 +1,29 @@
-// 날짜별 브리프와 펼친 뉴스 카드(4.2). 4.5단계: 읽음 버튼, 펼침·글 누름·링크로 읽음, '안 읽은 것만' 거르기. 5단계: 카드의 일정 칩. 6단계: 브리프 위 '이번 주 일정 | 지표' 상자. 7단계: 섹션 탭 끝의 '영상' 탭(4.7-1). 9.8단계: 그 뒤의 '빌더' 탭(4.6)
+// 날짜별 브리프와 펼친 뉴스 카드(4.2). 4.5단계: 읽음 버튼, 펼침·글 누름·링크로 읽음, '안 읽은 것만' 거르기. 5단계: 카드의 일정 칩. 6단계: 브리프 위 '이번 주 일정 | 지표' 상자. 7단계: 섹션 탭 끝의 '영상' 탭(4.7-1). 9.8단계: 그 뒤의 '빌더' 탭(4.6). 9.97단계: 그 뒤의 '수요' 탭(4.4-1)
 import { useEffect, useMemo, useReducer, useRef, useState, type ReactNode } from "react";
 import { isBuilderTabKey } from "../../../src/builderTypes.ts";
+import { isFlowItemKey } from "../../../src/demandFlowTypes.ts";
 import { kstDate } from "../../../src/kst.ts";
 import { ALL_MAJORS, CategoryLine, Layout as Shell, Main, ChipFilter, Empty, ErrorState, Footer, Loading, NewsTitle, ReadCheck, ReadToggle, SectionChip, ToggleChip, TopBar, useFullTitle, VideoLoading, VIDEO_LOAD_ERROR } from "../components/common.tsx";
 import { BriefBox } from "../components/briefBox.ts";
+import { DemandBody, DemandCategoryLine, DemandIntro, DemandList } from "../components/demandView.ts";
 import { BuilderIntro, BuilderBody, BuilderFieldLine, BuilderGroups, BuilderReminder, DiscoveryBody, DiscoveryMark, DiscoveryName } from "../components/builderView.ts";
 import { FixMark, FixNotes } from "../components/correctionView.ts";
 import { ScheduleChips } from "../components/scheduleView.ts";
 import { VideoList, VideoSource } from "../components/videoView.ts";
 import { EntityChips, TermBox, TermChips, TermText } from "../components/termView.ts";
 import { retry, useResource, type Resource } from "../data.ts";
-import { ALL_TAB, BRIEF_TAB_KEY, BUILDER_TAB, VIDEO_TAB, briefTabs, currentTab, findDay, findStoryTarget, orderSources, parseBriefTab, sectionView, stateForHash, storyImage, type BriefTab, type BriefViewState } from "../lib/brief.ts";
+import { ALL_TAB, BRIEF_TAB_KEY, BUILDER_TAB, DEMAND_TAB, VIDEO_TAB, briefTabs, currentTab, findDay, findStoryTarget, orderSources, parseBriefTab, sectionView, stateForHash, storyImage, type BriefTab, type BriefViewState } from "../lib/brief.ts";
 import { builderTabLabel } from "../lib/builder.ts";
+import { demandTabLabel } from "../lib/demand.ts";
 import { briefTitle, latestTitle, monthDay, monthDayWeekday, pageTitle, shortDate } from "../lib/format.ts";
 import { dataUrl } from "../lib/paths.ts";
 import type { DayVideos } from "../../../src/siteTypes.ts";
 import { SITE_URL, shortReportHref, storyReportHref } from "../lib/policy.ts";
 import { placeTerms, storyBodyParts, termBoxPlace, toggleTerm } from "../lib/terms.ts";
 import { categoryVar } from "../lib/theme.ts";
-import { adjacentDates, briefPath, BUILDER_HASH, hashKey, issuePath, resolveBriefDate, VIDEO_HASH, type Route } from "../lib/routes.ts";
+import { adjacentDates, briefPath, BUILDER_HASH, DEMAND_HASH, hashKey, issuePath, resolveBriefDate, VIDEO_HASH, type Route } from "../lib/routes.ts";
 import { VIDEO_CHIPS, filterVideos, videoChips, videoTabLabel, visibleVideos, type VideoChip } from "../lib/videos.ts";
-import type { BuilderMonth, DayBuilder, DayList, ListStory, MonthDetail, MonthList, SiteBuilderItem, SiteDates, SiteDiscoveryItem, StoryDetail } from "../lib/types.ts";
+import type { BuilderMonth, DayBuilder, DayDemand, DayList, DemandMonth, SiteFlowItem, ListStory, MonthDetail, MonthList, SiteBuilderItem, SiteDates, SiteDiscoveryItem, StoryDetail } from "../lib/types.ts";
 import { readStored, writeStored } from "../lib/storage.ts";
 import { markRead, readStore, useReadVersion } from "../readMarks.ts";
 import { ReportLink } from "../components/reportLink.ts";
@@ -185,6 +188,37 @@ function BuilderTabBody({ date, builder, res, onRetry }: { date: string; builder
   );
 }
 
+/** 수요 흐름 항목 하나. 줄과 읽음은 빌더 항목과 같다 */
+function DemandRow({ item, date }: { item: SiteFlowItem; date: string }) {
+  return <BuilderItemRow itemKey={item.key} date={date} title={item.title} titleClass="title" mark={<DemandCategoryLine item={item} />} body={<DemandBody item={item} date={date} Link={Link} />} />;
+}
+
+/** 수요 탭 본문. 항목이 없는 날은 파일을 받지 않고 상태 문구만 보인다(4.4-1) */
+function DemandTabBody({ date, demand, res, onRetry }: { date: string; demand: DayDemand; res: Resource<DemandMonth>; onRetry: () => void }) {
+  const head = (
+    <>
+      <h2 className="sr-only">수요</h2>
+      <DemandIntro Link={Link} />
+    </>
+  );
+  if (demand.count > 0 && res.status !== "ok") {
+    return (
+      <>
+        {head}
+        {res.status === "error" ? <ErrorState onRetry={onRetry} /> : <Loading />}
+      </>
+    );
+  }
+  const items = res.status === "ok" ? (res.data.days[date] ?? []) : [];
+  return (
+    <>
+      {head}
+      {demand.count > 0 && items.length === 0 && <Empty>이 날짜의 항목을 찾지 못했다.</Empty>}
+      <DemandList demand={demand} items={items} row={(x) => <DemandRow key={x.key} item={x} date={date} />} />
+    </>
+  );
+}
+
 export function BriefPage({ route }: { route: Route }) {
   const loc = useLocation();
   const datesUrl = dataUrl.dates();
@@ -214,9 +248,13 @@ export function BriefPage({ route }: { route: Route }) {
   const builderUrl = month && tabView?.current === BUILDER_TAB && day?.builder?.count ? dataUrl.builderItems(month) : null;
   const builderRes = useResource<BuilderMonth>(builderUrl);
   const hasBuilderItem = (k: string) => builderRes.status === "ok" && date !== null && [...(builderRes.data.days[date] ?? []), ...(builderRes.data.discoveries?.[date] ?? [])].some((x) => x.key === k);
+  // 9.97단계: 수요 파일도 수요 탭을 열 때만, 항목이 있는 날만 받는다
+  const demandUrl = month && tabView?.current === DEMAND_TAB && day?.demand?.count ? dataUrl.demandItems(month) : null;
+  const demandRes = useResource<DemandMonth>(demandUrl);
+  const hasDemandItem = (k: string) => demandRes.status === "ok" && date !== null && (demandRes.data.days[date] ?? []).some((x) => x.key === k);
 
   // `#<뉴스 키>`로 화면이 열리면(카드 펼치기, 다른 목록의 링크, 직접 연 주소, 새로 고침, 뒤로 가기) 그 뉴스는 읽음이다(M1, 4.2-3)
-  const hashItem = key !== null && isBuilderTabKey(key) && hasBuilderItem(key);
+  const hashItem = key !== null && ((isBuilderTabKey(key) && hasBuilderItem(key)) || (isFlowItemKey(key) && hasDemandItem(key)));
   useEffect(() => {
     if (day && date && key && (findStoryTarget(day, key) || hashItem)) markRead(date, key);
   }, [day, date, key, hashItem]);
@@ -238,7 +276,7 @@ export function BriefPage({ route }: { route: Route }) {
     if (!day || !key || !date) return;
     const token = `${date}#${key}`;
     if (scrolledFor.current === token || lastNavigation().quiet) return;
-    if (key === VIDEO_HASH || key === BUILDER_HASH) {
+    if (key === VIDEO_HASH || key === BUILDER_HASH || key === DEMAND_HASH) {
       scrolledFor.current = token;
       window.scrollTo({ top: 0 });
       return;
@@ -279,6 +317,7 @@ export function BriefPage({ route }: { route: Route }) {
   const all = current === ALL_TAB;
   const onVideos = current === VIDEO_TAB;
   const onBuilder = current === BUILDER_TAB;
+  const onDemand = current === DEMAND_TAB;
   const sv = sectionView(day, current, view.major);
   const hasStories = sv.top.length + sv.short.length > 0;
   const token = `${date}|${current}|${unread.round}`;
@@ -339,6 +378,8 @@ export function BriefPage({ route }: { route: Route }) {
           <VideoTabBody date={date} res={videoRes} count={videoCount} today={today} picked={videoChip.date === date ? videoChip.chip : null} onPick={(c) => setVideoChip({ date, chip: c })} onRetry={() => retry([videoUrl])} />
         ) : onBuilder ? (
           <BuilderTabBody date={date} builder={day.builder!} res={builderRes} onRetry={() => retry([builderUrl])} />
+        ) : onDemand ? (
+          <DemandTabBody date={date} demand={day.demand!} res={demandRes} onRetry={() => retry([demandUrl])} />
         ) : (
           <>
         <ChipFilter
@@ -397,7 +438,7 @@ export function BriefPage({ route }: { route: Route }) {
       <nav className="tabs" aria-label="섹션">
         {tabs.map((s) => (
           <button key={s} type="button" className={s === current ? "on" : ""} aria-pressed={s === current} onClick={() => chooseSection(s)}>
-            {s === VIDEO_TAB ? videoTabLabel(videoCount) : s === BUILDER_TAB ? builderTabLabel(day.builder!.count) : s}
+            {s === VIDEO_TAB ? videoTabLabel(videoCount) : s === BUILDER_TAB ? builderTabLabel(day.builder!.count) : s === DEMAND_TAB ? demandTabLabel(day.demand!.count) : s}
           </button>
         ))}
       </nav>

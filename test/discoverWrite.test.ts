@@ -534,7 +534,7 @@ describe("4.3-4 저장", () => {
   test("옛 버전 DB를 올려도 기존 값이 그대로이고 새 표가 비어 있다", () => {
     const dir = tempDir();
     const dbFile = path.join(dir, "old.db");
-    const old = openDb(dbFile, MIGRATIONS.slice(0, MIGRATIONS.length - 1));
+    const old = openDb(dbFile, MIGRATIONS.filter((m) => m.version <= 11));
     assert.equal(schemaVersion(old), 11);
     old.prepare("INSERT INTO builder_dates (target_date, status) VALUES (?, 'checked')").run(TARGET);
     old.prepare("INSERT INTO builder_sources (source, fetched_at, fail_days, fail_on) VALUES ('vite', '2026-10-26T00:00:00Z', 2, '2026-10-26')").run();
@@ -915,7 +915,7 @@ describe("4.4-1 백업과 복원", () => {
     withDb(s, (db) => markSourceFailed(db, "github-repos", TARGET));
     const files = withDb(s, buildBackup);
     const f = JSON.parse(files.get("builder.json")!) as { formatVersion: number; discoveries: unknown[]; kindDates: unknown[]; discoveryCorrections: unknown[]; sources: { source: string; fetchedAt: string | null; failDays: number }[] };
-    assert.equal(f.formatVersion, 8);
+    assert.equal(f.formatVersion, 9);
     assert.equal(f.discoveries.length, 2);
     assert.equal(f.kindDates.length, 2);
     assert.equal(f.discoveryCorrections.length, 1);
@@ -957,7 +957,7 @@ describe("4.4-1 백업과 복원", () => {
   test("옛 형식(7) 백업이 복원되고 새 표는 비어 있다", async () => {
     const s = await filled();
     const files = withDb(s, buildBackup);
-    const old = new Map([...files].map(([k, v]) => [k, v.replace('"formatVersion": 8', '"formatVersion": 7')]));
+    const old = new Map([...files].map(([k, v]) => [k, v.replace('"formatVersion": 9', '"formatVersion": 7')]));
     const b = JSON.parse(old.get("builder.json")!) as Record<string, unknown>;
     delete b.discoveries;
     delete b.kindDates;

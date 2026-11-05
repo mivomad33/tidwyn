@@ -498,6 +498,64 @@ export const MIGRATIONS: Migration[] = [
       `);
     },
   },
+  {
+    // 9.97단계 S8, S11: 수요 흐름 항목, 근거 단위, 날짜 상태, 정정. 공개 백업에 들어간다. 후보 복사본과 받은 원문은 넣지 않는다.
+    // flow_id는 영구 id(같은 흐름이 다시 실리면 이어 받는다), continues_id는 앞 항목이다. 근거 단위의 숫자와 이름은 저장한 뒤 고치지 않는다.
+    version: 13,
+    up: (db) => {
+      db.exec(`
+        CREATE TABLE demand_flows (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          target_date TEXT NOT NULL,
+          position INTEGER NOT NULL,
+          flow_id TEXT NOT NULL,
+          category TEXT NOT NULL CHECK (category IN ('interest', 'complaint', 'money')),
+          field TEXT NOT NULL,
+          title TEXT NOT NULL,
+          summary TEXT NOT NULL,
+          reason TEXT NOT NULL,
+          level TEXT NOT NULL CHECK (level IN ('strong', 'medium', 'weak')),
+          aux TEXT NOT NULL,
+          issue_id INTEGER REFERENCES issues(id),
+          continues_id INTEGER REFERENCES demand_flows(id),
+          UNIQUE (target_date, position)
+        );
+        CREATE INDEX demand_flows_flow ON demand_flows(flow_id);
+        CREATE TABLE demand_flow_units (
+          item_id INTEGER NOT NULL REFERENCES demand_flows(id) ON DELETE CASCADE,
+          position INTEGER NOT NULL,
+          grp TEXT NOT NULL,
+          source TEXT NOT NULL,
+          unit_key TEXT NOT NULL,
+          unit_name TEXT,
+          recent REAL NOT NULL,
+          base REAL NOT NULL,
+          is_new INTEGER NOT NULL CHECK (is_new IN (0, 1)),
+          recent_from TEXT NOT NULL,
+          recent_to TEXT NOT NULL,
+          base_from TEXT NOT NULL,
+          base_to TEXT NOT NULL,
+          recent_days INTEGER NOT NULL,
+          base_days INTEGER NOT NULL,
+          PRIMARY KEY (item_id, position)
+        );
+        CREATE INDEX demand_flow_units_key ON demand_flow_units(unit_key);
+        CREATE TABLE demand_flow_dates (
+          target_date TEXT PRIMARY KEY,
+          status TEXT NOT NULL CHECK (status IN ('checked', 'failed', 'short', 'off')),
+          missing TEXT NOT NULL
+        );
+        CREATE TABLE demand_flow_corrections (
+          id INTEGER PRIMARY KEY,
+          item_id INTEGER NOT NULL REFERENCES demand_flows(id) ON DELETE CASCADE,
+          corrected_on TEXT NOT NULL,
+          reason TEXT NOT NULL,
+          fields TEXT NOT NULL
+        );
+        CREATE INDEX demand_flow_corrections_item ON demand_flow_corrections(item_id);
+      `);
+    },
+  },
 ];
 
 export function schemaVersion(db: DatabaseSync): number {

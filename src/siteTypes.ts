@@ -1,6 +1,7 @@
 import type { Category, Source } from "./brief.ts";
 import { DISCOVER_KINDS, DISCOVER_LABELS, type BuilderDue, type BuilderField, type BuilderItemSource, type BuilderStatus, type DiscoverKind, type KindStatus, type ReleaseInfo } from "./builderTypes.ts";
 import type { Confidence, Major, SectionName } from "./categories.ts";
+import { GROUP_INFO, fieldLabel, type FlowCategory, type FlowDateStatus, type FlowLevel, type OfficialGroup } from "./demandFlowTypes.ts";
 
 // 사이트 데이터 형식(3단계 4.1). DB에서 만들고(siteData.ts) 사이트 화면(site/)이 읽는다.
 // 파일은 결과물의 `site-data/` 아래에 둔다. 이름은 백업 파일 이름(`YYYY-MM.json`, `issues.json`, `meta.json`)과 겹치지 않는다.
@@ -12,6 +13,8 @@ export const VIDEO_DAY_FILE_RE = /^videos-\d{4}-\d{2}-\d{2}\.json$/;
 export const VIDEO_SECTIONS_FILE_RE = /^video-sections-\d{4}-\d{2}-\d{2}\.json$/;
 /** 달별 빌더 항목 파일 이름(siteFiles.builderItems) */
 export const BUILDER_ITEMS_FILE_RE = /^builder-items-\d{4}-\d{2}\.json$/;
+/** 달별 수요 흐름 항목 파일 이름(siteFiles.demandItems) */
+export const DEMAND_ITEMS_FILE_RE = /^demand-items-\d{4}-\d{2}\.json$/;
 export const SITE_DATA_DIR = "site-data";
 /** 이슈 상세는 식별자를 이 크기로 묶은 파일에 둔다(파일 수 한도, 4.1-3) */
 export const ISSUE_CHUNK_SIZE = 100;
@@ -21,6 +24,8 @@ export const siteFiles = {
   list: (month: string) => `list-${month}.json`,
   /** 9.8단계: 달 하나의 빌더 항목(빌더 탭이나 검색 결과를 열 때만 받는다). `builder.json`은 백업 이름이라 쓰지 않는다 */
   builderItems: (month: string) => `builder-items-${month}.json`,
+  /** 9.97단계: 달 하나의 수요 흐름 항목(수요 탭이나 검색 결과를 열 때만 받는다) */
+  demandItems: (month: string) => `demand-items-${month}.json`,
   /** 9.6단계: 브리프 날짜 하나의 영상(영상 탭이나 관련 영상을 열 때만 받는다) */
   videoDay: (date: string) => `videos-${date}.json`,
   videoSections: (date: string) => `video-sections-${date}.json`,
@@ -86,6 +91,11 @@ export function termRecordUrl(group: number): string {
 /** 빌더 항목은 달 하나에 레코드 하나다(meta kind "builder", month). 항목별 페이지가 없어 주소는 레코드를 가리는 값일 뿐이다 */
 export function builderRecordUrl(month: string): string {
   return `/builder/month/${month}`;
+}
+
+/** 수요 흐름 항목도 달 하나에 레코드 하나다(meta kind "demand", month). 항목별 페이지가 없다(S10) */
+export function demandRecordUrl(month: string): string {
+  return `/demand/month/${month}`;
 }
 
 /** 용어 사전의 첫 자음 묶음. 된소리는 예사소리 묶음에 넣고, 한글이 아닌 첫 글자(영문·숫자 등)는 마지막 묶음이다 */
@@ -442,6 +452,88 @@ export function builderSearchRecords(months: readonly BuilderMonth[]): SearchRec
   }));
 }
 
+// ---- 9.97단계: 수요 흐름 ----
+
+/** 그 날짜의 수요 흐름 수와 상태(S1). 꺼짐만 있는 날과 기록이 없는 날은 칸이 없다 */
+export interface DayDemand {
+  count: number;
+  status: Exclude<FlowDateStatus, "off">;
+  /** 그날 비교에 넣지 못한 공식 묶음(항목이 있는 날만, 비면 칸을 뺀다) */
+  missing?: OfficialGroup[];
+}
+
+/** 그날의 수요 요약. 보일 것이 없으면 null이라 탭이 없다. 상태 없이(또는 꺼짐인데) 항목이 있으면 확인함으로 본다 */
+export function dayDemandOf(status: FlowDateStatus | null, count: number, missing: readonly OfficialGroup[]): DayDemand | null {
+  if (count === 0 && (status === null || status === "off")) return null;
+  const out: DayDemand = { count, status: status === null || status === "off" ? "checked" : status };
+  if (count > 0 && missing.length > 0) out.missing = [...missing];
+  return out;
+}
+
+/** 근거 줄 하나(S7). 숫자는 기계가 센 값 그대로다. 외부인 글 소스는 name이 null이다 */
+export interface SiteFlowUnit {
+  group: OfficialGroup;
+  /** 소스의 묶음 안 이름(기계가 정한 목록 이름. 예: 'ko.wikipedia', '민원정책 질의응답') */
+  source: string;
+  name: string | null;
+  recent: number;
+  /** 앞 28일을 최근 날 수에 맞춘 평균 */
+  base: number;
+  isNew: boolean;
+  recentFrom: string;
+  recentTo: string;
+  baseFrom: string;
+  baseTo: string;
+  recentDays: number;
+  baseDays: number;
+  /** 값의 단위 글자(예: '건', '회', '명') */
+  unit: string;
+  /** 상위 목록 소스: 값이 '목록에 든 날의 합'이다(4.1-1) */
+  topList?: true;
+}
+
+/** 수요 흐름 항목의 공개 칸. 단위 키, 영구 id, 후보 재료는 넣지 않는다 */
+export interface SiteFlowItem {
+  /** `demand-<순서>`. 정정, 읽음, 주소의 `#`가 쓴다 */
+  key: string;
+  category: FlowCategory;
+  field: string;
+  title: string;
+  summary: string;
+  reason: string;
+  level: FlowLevel;
+  units: SiteFlowUnit[];
+  /** 보조 근거의 소스 이름(Google Trends 나라, Mastodon 인스턴스). 없으면 빈 목록 */
+  aux: string[];
+  /** 앞서 실은 같은 흐름 항목의 자리. 아니면 null */
+  continues: { date: string; key: string } | null;
+  issue: IssueRef | null;
+  /** 소스의 공식 공개 페이지(S12) */
+  sources: BuilderItemSource[];
+  /** 정정 기록(최신순). 정정이 없으면 항목을 뺀다 */
+  corrections?: StoryCorrection[];
+}
+
+/** `demand-items-YYYY-MM.json`: 날짜 → 항목. 항목이 있는 날짜만 있다 */
+export interface DemandMonth {
+  month: string;
+  days: Record<string, SiteFlowItem[]>;
+}
+
+/** 근거 줄의 소스 이름(검색에도 쓴다): 묶음 이름과 소스 이름 */
+export function flowUnitSourceText(u: Pick<SiteFlowUnit, "group" | "source">): string {
+  return u.source === "" || u.source === GROUP_INFO[u.group].label ? GROUP_INFO[u.group].label : `${GROUP_INFO[u.group].label} · ${u.source}`;
+}
+
+/** 수요 흐름 항목의 검색 대상 글: 제목, 요지, 분야, 소스 이름(S10) */
+export function flowItemText(x: Pick<SiteFlowItem, "title" | "summary" | "field" | "units">): string {
+  return [x.title, x.summary, fieldLabel(x.field), ...new Set(x.units.map(flowUnitSourceText))].join("\n");
+}
+
+export function demandSearchRecords(months: readonly DemandMonth[]): SearchRecord[] {
+  return months.map((m) => ({ url: demandRecordUrl(m.month), content: Object.values(m.days).flat().map(flowItemText).join("\n"), language: "ko", meta: { kind: "demand", month: m.month } }));
+}
+
 /** 하루의 뉴스 수(모든 섹션의 주요 뉴스 + 짧은 소식) */
 export function dayStoryCount(day: DayList): number {
   return day.sections.reduce((n, s) => n + s.stories.length, 0);
@@ -498,6 +590,8 @@ export interface DayList {
   videoGroups?: VideoGroup[];
   /** 9.8단계: 빌더 기록이 있는 날짜의 항목 수와 상태(항목 파일을 받기 전에 '빌더 N' 탭과 빈 상태를 정한다). 기록이 없는 날은 항목을 뺀다 */
   builder?: DayBuilder;
+  /** 9.97단계: 수요 흐름 기록이 있는 날짜의 항목 수와 상태('수요 N' 탭과 빈 상태를 항목 파일을 받기 전에 정한다). 기록이 없거나 꺼짐만 있는 날은 항목을 뺀다 */
+  demand?: DayDemand;
 }
 
 /** `list-YYYY-MM.json` */

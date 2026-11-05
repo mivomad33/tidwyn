@@ -111,7 +111,7 @@ function checkKind(c: Checker, db: DatabaseSync, d: BuilderDiscoverData, kind: D
 }
 
 /** 인용 위반 문구는 항목 글을 담는다. 메인이 읽는 출력에 글이 들어가지 않게 지운다(4.3-3) */
-const quiet = (v: Violation): Violation => (v.why.startsWith("직접 인용이") ? { where: v.where, why: "직접 인용이 15단어 이상이다" } : v);
+export const quiet = (v: Violation): Violation => (v.why.startsWith("직접 인용이") ? { where: v.where, why: "직접 인용이 15단어 이상이다" } : v);
 
 interface FileParts {
   fileViolations: Violation[];

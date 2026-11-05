@@ -25,3 +25,9 @@ export const E2E_BUILDER_OUT_DIR = path.join(E2E_ROOT, "builder-out");
 export const E2E_BUILDER_INFO_FILE = path.join(E2E_ROOT, "builder-info.json");
 export const E2E_BUILDER_PORT = 4320;
 export const E2E_BUILDER_BASE_URL = `http://127.0.0.1:${E2E_BUILDER_PORT}`;
+/** 9.97단계: 수요 흐름(빌더·영상과 함께)이 있는 지어낸 데이터. 빌더 사이트의 기준 이미지를 그대로 두려고 따로 빌드해 다른 포트로 띄운다 */
+export const E2E_DEMAND_DATA_DIR = path.join(E2E_ROOT, "demand-data");
+export const E2E_DEMAND_OUT_DIR = path.join(E2E_ROOT, "demand-out");
+export const E2E_DEMAND_INFO_FILE = path.join(E2E_ROOT, "demand-info.json");
+export const E2E_DEMAND_PORT = 4321;
+export const E2E_DEMAND_BASE_URL = `http://127.0.0.1:${E2E_DEMAND_PORT}`;

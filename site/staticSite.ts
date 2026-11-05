@@ -10,11 +10,13 @@ import { indicatorDef } from "../src/indicators.ts";
 import { ROBOTS_FILE, pageFile } from "../src/publicSite.ts";
 import {
   BUILDER_ITEMS_FILE_RE,
+  DEMAND_ITEMS_FILE_RE,
   SITE_DATA_DIR,
   TERM_GROUPS,
   siteFiles,
   type BuilderMonth,
   type DayList,
+  type DemandMonth,
   type EntityChunk,
   type EntityDetail,
   type EntityListPage,
@@ -33,6 +35,7 @@ import {
   type ScheduleMonth,
   type SiteBuilderItem,
   type SiteDiscoveryItem,
+  type SiteFlowItem,
   type SiteDates,
   type SiteIssueList,
   type StoryDetail,
@@ -46,6 +49,7 @@ import { APP_FILE, NOT_FOUND_FILE } from "./hosting.ts";
 import { AboutView, ReadMarksText } from "./src/components/aboutView.ts";
 import { BuilderBody, BuilderFieldLine, BuilderGroups, BuilderIntro, BuilderReminder, DiscoveryBody, DiscoveryMark, DiscoveryName } from "./src/components/builderView.ts";
 import { FixMark, FixNotes } from "./src/components/correctionView.ts";
+import { DemandBody, DemandCategoryLine, DemandIntro, DemandList } from "./src/components/demandView.ts";
 import { FredNotice, SourceNote } from "./src/components/indicatorView.ts";
 import { NOT_FOUND_LABEL, NotFoundView, RecoverLinks } from "./src/components/notFoundView.ts";
 import { FooterView, PrivacyView } from "./src/components/policyView.ts";
@@ -53,12 +57,13 @@ import { ReportLink } from "./src/components/reportLink.ts";
 import { EntityChips, IssueEntityChips, type LinkLike } from "./src/components/termView.ts";
 import { orderSources } from "./src/lib/brief.ts";
 import { BUILDER_TAB } from "./src/lib/builder.ts";
+import { DEMAND_TAB } from "./src/lib/demand.ts";
 import { joinEntityPages } from "./src/lib/entities.ts";
 import { briefTitle, entityLabel, fullKoreanDate, groupDatesByMonth, issueLabel, latestTitle, monthDay, monthDayWeekday, monthLabel, pageTitle, shortDate } from "./src/lib/format.ts";
 import { groupCards, readingDateText, readingValueText } from "./src/lib/indicators.ts";
 import { MENU, SKIP_LABEL } from "./src/lib/menu.ts";
 import { PRIVACY_TITLE, PRIVACY_UPDATED, SITE_URL, shortReportHref, storyReportHref } from "./src/lib/policy.ts";
-import { BUILDER_HASH, adjacentDates, briefPath, entityPath, indicatorPath, issuePath, privacyPath } from "./src/lib/routes.ts";
+import { BUILDER_HASH, DEMAND_HASH, adjacentDates, briefPath, entityPath, indicatorPath, issuePath, privacyPath } from "./src/lib/routes.ts";
 import { SCHEDULE_META, chipDue, nameLink } from "./src/lib/schedules.ts";
 import { categoryVar } from "./src/lib/theme.ts";
 
@@ -72,6 +77,8 @@ interface SiteInput {
   builder: Map<string, SiteBuilderItem[]>;
   /** 9.9단계: 날짜 → 새 제품·뜨는 저장소 항목 */
   discoveries: Map<string, SiteDiscoveryItem[]>;
+  /** 9.97단계: 날짜 → 수요 흐름 항목 */
+  demand: Map<string, SiteFlowItem[]>;
   issues: IssueDetail[];
   issueMerged: SiteIssueList["merged"];
   entities: EntityDetail[];
@@ -101,6 +108,8 @@ function loadInput(dataDir: string): SiteInput {
     for (const [date, items] of Object.entries(m.days)) builder.set(date, items);
     for (const [date, items] of Object.entries(m.discoveries ?? {})) discoveries.set(date, items);
   }
+  const demand = new Map<string, SiteFlowItem[]>();
+  for (const m of matching<DemandMonth>(DEMAND_ITEMS_FILE_RE)) for (const [date, items] of Object.entries(m.days)) demand.set(date, items);
 
   const issueList = read<SiteIssueList>(siteFiles.issueList, { issues: [], merged: {} });
   const issueById = new Map<number, IssueDetail>();
@@ -126,7 +135,7 @@ function loadInput(dataDir: string): SiteInput {
   const scheduleIndex = read<ScheduleIndex>(siteFiles.scheduleIndex, { total: 0, months: [], majors: [] });
   const scheduleMonths = scheduleIndex.months.map((m) => read<ScheduleMonth>(siteFiles.scheduleMonth(m.month), { month: m.month, items: [] }));
   const indicators = read<IndicatorList>(siteFiles.indicatorList, { asOf: null, indicators: [] });
-  return { dates, days, details, builder, discoveries, issues, issueMerged: issueList.merged, entities, entityMerged, terms, termGroups, scheduleMonths, indicators };
+  return { dates, days, details, builder, discoveries, demand, issues, issueMerged: issueList.merged, entities, entityMerged, terms, termGroups, scheduleMonths, indicators };
 }
 
 function latest(values: readonly (string | null | undefined)[]): string | null {
@@ -267,13 +276,26 @@ function BuilderSection({ day, items, discoveries }: { day: DayList; items: Site
   );
 }
 
+/** 수요 절(4.4-1). 앱의 수요 탭과 같은 칸이고 탭 대신 구역이다. 기록이 없는 날은 그리지 않는다 */
+function DemandSection({ day, items }: { day: DayList; items: SiteFlowItem[] }) {
+  const demand = day.demand;
+  if (!demand) return null;
+  return h(
+    "section",
+    { className: "brief-section" },
+    h("h2", { className: "h list-h", id: DEMAND_HASH }, DEMAND_TAB),
+    h(DemandIntro, { Link: A }),
+    h(DemandList, { demand, items, row: (x) => h("li", { key: x.key, id: x.key, className: "item" }, h(DemandCategoryLine, { item: x }), h("h3", { className: "title" }, x.title), h("div", { className: "detail" }, h(DemandBody, { item: x, date: day.date, Link: A }))) }),
+  );
+}
+
 function DateNav({ date, prev, next }: { date: string; prev: string | null; next: string | null }) {
   const arrow = (to: string | null, glyph: string, label: string) =>
     to ? h("a", { href: briefPath(to), className: "arrow", "aria-label": `${label} ${monthDay(to)}` }, glyph) : h("span", { className: "arrow off", "aria-hidden": true }, glyph);
   return h("span", { className: "datebtn" }, arrow(prev, "‹", "이전 날짜"), h("a", { href: "/dates", className: "date-link", "aria-label": `${monthDayWeekday(date)}, 날짜 목록 보기` }, monthDayWeekday(date)), arrow(next, "›", "다음 날짜"));
 }
 
-function BriefBody({ day, details, builder, discoveries, prev, next }: { day: DayList; details: Record<string, StoryDetail>; builder: SiteBuilderItem[]; discoveries: SiteDiscoveryItem[]; prev: string | null; next: string | null }) {
+function BriefBody({ day, details, builder, discoveries, demand, prev, next }: { day: DayList; details: Record<string, StoryDetail>; builder: SiteBuilderItem[]; discoveries: SiteDiscoveryItem[]; demand: SiteFlowItem[]; prev: string | null; next: string | null }) {
   const date = day.date;
   const sectionId = (i: number) => `section-${i + 1}`;
   return h(
@@ -281,7 +303,7 @@ function BriefBody({ day, details, builder, discoveries, prev, next }: { day: Da
     { className: "static-brief" },
     h("h1", { className: "page-title pad" }, `${monthDayWeekday(day.date)} 브리프`),
     h("div", { className: "headline" }, day.headline, day.keywords.length > 0 ? h("div", { className: "kw", "aria-label": "키워드" }, day.keywords.map((k) => h("span", { key: k }, k))) : null),
-    day.sections.length > 1 ? h("nav", { className: "rel static-jump", "aria-label": "구역으로 가기" }, day.sections.map((sec, i) => h("a", { key: sec.name, href: `#${sectionId(i)}` }, sec.name)), day.builder ? h("a", { href: `#${BUILDER_HASH}` }, BUILDER_TAB) : null) : null,
+    day.sections.length > 1 ? h("nav", { className: "rel static-jump", "aria-label": "구역으로 가기" }, day.sections.map((sec, i) => h("a", { key: sec.name, href: `#${sectionId(i)}` }, sec.name)), day.builder ? h("a", { href: `#${BUILDER_HASH}` }, BUILDER_TAB) : null, day.demand ? h("a", { href: `#${DEMAND_HASH}` }, DEMAND_TAB) : null) : null,
     day.sections.map((sec, i) => {
       const tops = sec.stories.filter((s) => s.kind === "top");
       const shorts = sec.stories.filter((s) => s.kind === "short");
@@ -296,6 +318,7 @@ function BriefBody({ day, details, builder, discoveries, prev, next }: { day: Da
       );
     }),
     h(BuilderSection, { day, items: builder, discoveries }),
+    h(DemandSection, { day, items: demand }),
     h("nav", { className: "static-more", "aria-label": "다른 날짜" }, prev ? h("a", { href: briefPath(prev) }, `‹ ${monthDay(prev)}`) : h("span"), next ? h("a", { href: briefPath(next) }, `${monthDay(next)} ›`) : null),
   );
 }
@@ -493,7 +516,7 @@ function buildPages(input: SiteInput): StaticPage[] {
   const fixesOf = (news: { date: string; key: string }[]) => news.map((n) => fixOn.get(`${n.date}/${n.key}`));
 
   const dates = input.dates.dates;
-  const briefMods = new Map(dates.map((d) => [d, latest([d, ...(input.days.get(d)?.sections ?? []).flatMap((s) => s.stories.map((x) => x.corrections?.[0]?.on)), ...[...(input.builder.get(d) ?? []), ...(input.discoveries.get(d) ?? [])].map((x) => x.corrections?.[0]?.on)])]));
+  const briefMods = new Map(dates.map((d) => [d, latest([d, ...(input.days.get(d)?.sections ?? []).flatMap((s) => s.stories.map((x) => x.corrections?.[0]?.on)), ...[...(input.builder.get(d) ?? []), ...(input.discoveries.get(d) ?? []), ...(input.demand.get(d) ?? [])].map((x) => x.corrections?.[0]?.on)])]));
   const brief = (pathname: string, date: string, title: string, website: boolean) => {
     const day = input.days.get(date);
     if (!day) return;
@@ -508,7 +531,7 @@ function buildPages(input: SiteInput): StaticPage[] {
       lastmod: modified,
       ogType: website ? "website" : "article",
       ld: (d) => (website ? pageLd("WebSite", { path: pathname, name: "Tidwyn", description: d }) : articleLd({ path: pathname, headline, description: d, published: date, modified })),
-      body: h(Shell, { center: h(DateNav, { date, prev, next }) }, h(BriefBody, { day, details: input.details.get(date) ?? {}, builder: input.builder.get(date) ?? [], discoveries: input.discoveries.get(date) ?? [], prev, next })),
+      body: h(Shell, { center: h(DateNav, { date, prev, next }) }, h(BriefBody, { day, details: input.details.get(date) ?? {}, builder: input.builder.get(date) ?? [], discoveries: input.discoveries.get(date) ?? [], demand: input.demand.get(date) ?? [], prev, next })),
     });
   };
   const home = input.dates.latestDate;
@@ -623,7 +646,7 @@ export function writeStaticSite(outDir: string): void {
   write(ROBOTS_FILE, robotsTxt());
   const rssDays: RssDay[] = input.dates.dates.flatMap((date) => {
     const day = input.days.get(date);
-    return day ? [{ date, titles: [...day.sections.flatMap((s) => s.stories.filter((x) => x.kind === "top").map((x) => x.title)), ...(input.builder.get(date) ?? []).map((x) => `빌더: ${x.title}`), ...(input.discoveries.get(date) ?? []).map((x) => `빌더: ${x.name}`)] }] : [];
+    return day ? [{ date, titles: [...day.sections.flatMap((s) => s.stories.filter((x) => x.kind === "top").map((x) => x.title)), ...(input.builder.get(date) ?? []).map((x) => `빌더: ${x.title}`), ...(input.discoveries.get(date) ?? []).map((x) => `빌더: ${x.name}`), ...(input.demand.get(date) ?? []).map((x) => `수요: ${x.title}`)] }] : [];
   });
   write(RSS_FILE, buildRss(rssDays));
 }

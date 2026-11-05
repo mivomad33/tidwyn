@@ -190,6 +190,15 @@ export interface OfficialRunOptions {
   off?: DemandOff;
   /** 같은 실행 기록의 앞 호출 결과. 돌려주는 결과는 이것과 합친 것이다(4.3-2, 4.3-3) */
   prior?: Omit<OfficialReport, "day">;
+  /** 시험 전용(9.97단계 4.6-6): 소스 id나 묶음마다 채우기 시작일(1372는 그 달). 없으면 S2·S6의 기본값 */
+  starts?: Readonly<Record<string, string>>;
+}
+
+/** 소스의 채우기 시작일. 시험 전용 값이 있으면 그것(소스 id가 묶음보다 앞선다) */
+export function startOf(s: OfficialSource, starts: OfficialRunOptions["starts"]): string {
+  const v = starts?.[s.id] ?? starts?.[s.group];
+  if (s.kind === "ftc-1372") return v === undefined ? FTC1372_START : v.slice(0, 7);
+  return v ?? OFFICIAL_START;
 }
 
 /** 받은 JSON에서 이름이 같은 칸을 어느 깊이에서든 지운다. 다른 칸의 값은 그대로 둔다 */
@@ -536,10 +545,10 @@ const daysSince = (iso: string, now: Date) => (now.getTime() - Date.parse(iso)) 
 /** 민원빅데이터의 마지막 요청 시각(밀리초) */
 const bigdataKey = (s: OfficialSource) => `${s.id}:last-request`;
 /** 1372 건수를 본 시각(S6의 7일에 한 번) */
-const ftcCheckKey = (source: string, ym: string) => `${source}:count-checked:${ym}`;
+export const ftcCheckKey = (source: string, ym: string) => `${source}:count-checked:${ym}`;
 
 /** 날짜 단위 소스의 받을 수 있는 마지막 값 날짜. Wikimedia와 SEC는 UTC 날짜로 올라와 UTC 어제, 나머지는 KST 어제다 */
-function lastValueDate(s: OfficialSource, now: Date): string {
+export function lastValueDate(s: OfficialSource, now: Date): string {
   return s.kind === "wikimedia" || s.kind === "sec-formd" ? addDays(now.toISOString().slice(0, 10), -1) : kstYesterday(now);
 }
 
@@ -547,14 +556,14 @@ function lastValueDate(s: OfficialSource, now: Date): string {
  * 받을 값 날짜를 정한다(4.1-3, S6, S8). SEC와 1372는 요청이 필요해 lane을 쓴다.
  * 남은 채우기 대상은 이 목록에서 받음과 아직 없음을 뺀 것이다
  */
-async function planUnits(db: DatabaseSync, s: OfficialSource, lane: Lane, key: string, now: Date): Promise<{ units: Unit[]; lastDate: string }> {
+async function planUnits(db: DatabaseSync, s: OfficialSource, lane: Lane, key: string, now: Date, start: string): Promise<{ units: Unit[]; lastDate: string }> {
   const today = kstDate(now);
   const have = valueDates(db, s.id);
   if (s.kind === "assembly") return { units: have.has(today) ? [] : [{ valueDate: today }], lastDate: today };
   if (s.kind === "ftc-1372") {
     const cur = today.slice(0, 7);
     const units: Unit[] = [];
-    for (const ym of monthRange(FTC1372_START, cur)) {
+    for (const ym of monthRange(start, cur)) {
       const last = lastValue(db, s.id, ym);
       if (last === null) units.push({ valueDate: ym });
       else if (ym === cur) {
@@ -572,7 +581,7 @@ async function planUnits(db: DatabaseSync, s: OfficialSource, lane: Lane, key: s
   }
   if (s.kind === "sec-formd") {
     const last = lastValueDate(s, now);
-    const want = dateRange(OFFICIAL_START, last).filter((d) => !have.has(d));
+    const want = dateRange(start, last).filter((d) => !have.has(d));
     if (want.length === 0) return { units: [], lastDate: last };
     const quarters = [...new Set([...want.map(quarterOf), quarterOf(last)])].sort();
     const available = new Set<string>();
@@ -605,7 +614,7 @@ async function planUnits(db: DatabaseSync, s: OfficialSource, lane: Lane, key: s
     return { units, lastDate: last };
   }
   const last = lastValueDate(s, now);
-  return { units: dateRange(OFFICIAL_START, last).filter((d) => !have.has(d)).map((valueDate) => ({ valueDate })), lastDate: last };
+  return { units: dateRange(start, last).filter((d) => !have.has(d)).map((valueDate) => ({ valueDate })), lastDate: last };
 }
 
 function emptyGroup(): OfficialGroupReport {
@@ -778,7 +787,7 @@ export async function runOfficialDemand(o: OfficialRunOptions): Promise<Official
     for (const s of list) {
       let plan: { units: Unit[]; lastDate: string };
       try {
-        plan = await planUnits(db, s, lane, s.key === null ? "" : o.keys[s.key]!, now);
+        plan = await planUnits(db, s, lane, s.key === null ? "" : o.keys[s.key]!, now, startOf(s, o.starts));
       } catch (e) {
         const t: Track = { s, units: [], c: { lane, key: "", secrets: o.secrets, lastDate: day }, failures: 0, done: true };
         if (settle(t, e) === "stopAll") return;

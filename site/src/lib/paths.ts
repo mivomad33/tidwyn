@@ -7,6 +7,7 @@ export const dataUrl = {
   dates: () => `${DATA_BASE}dates.json`,
   list: (month: string) => `${DATA_BASE}list-${month}.json`,
   builderItems: (month: string) => `${DATA_BASE}builder-items-${month}.json`,
+  demandItems: (month: string) => `${DATA_BASE}demand-items-${month}.json`,
   videoDay: (date: string) => `${DATA_BASE}videos-${date}.json`,
   videoSections: (date: string) => `${DATA_BASE}video-sections-${date}.json`,
   detail: (month: string) => `${DATA_BASE}detail-${month}.json`,

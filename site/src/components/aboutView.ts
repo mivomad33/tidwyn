@@ -1,10 +1,11 @@
-// 사이트 소개 본문(4.3-4, P9, P10). 4.5단계: 읽은 기록. 5단계: 일정 안내. 6단계: 지표 안내, FRED 고지. 7단계: '추천 영상' 절. 9.5단계: '오류 정정과 연락' 절. 9.8단계: '빌더 탭' 절(9.9단계: 새 제품과 뜨는 저장소).
+// 사이트 소개 본문(4.3-4, P9, P10). 4.5단계: 읽은 기록. 5단계: 일정 안내. 6단계: 지표 안내, FRED 고지. 7단계: '추천 영상' 절. 9.5단계: '오류 정정과 연락' 절. 9.8단계: '빌더 탭' 절(9.9단계: 새 제품과 뜨는 저장소). 9.97단계: '수요 탭' 절.
 // 앱과 정적 HTML이 같은 문구를 쓴다: 링크 컴포넌트와 읽은 기록 절은 부르는 쪽이 넘긴다(정적 HTML에는 지우기 버튼이 없다).
 import { createElement as h, type ReactNode } from "react";
 import { FRED_AGREEMENT } from "../lib/indicators.ts";
 import { CONTACT_MAIL, REPO_URL, mailHref } from "../lib/policy.ts";
 import { RSS_PATH } from "../lib/routes.ts";
 import { AboutBuilder } from "./builderView.ts";
+import { AboutDemand } from "./demandView.ts";
 import { FredNotice } from "./indicatorView.ts";
 import type { LinkLike } from "./termView.ts";
 import { AboutVideos, ExternalLink } from "./videoView.ts";
@@ -54,6 +55,7 @@ export function AboutView({ Link, readMarks }: { Link: LinkLike; readMarks: Reac
     P(FRED_AGREEMENT),
     h(AboutVideos, { Link }),
     h(AboutBuilder),
+    h(AboutDemand),
     h("h2", { className: "h" }, "저작권"),
     P("원문 기사의 저작권은 각 매체에 있다. 이 사이트는 원문 링크와 원문 이미지 주소만 연결하고 기사를 옮겨 싣지 않는다."),
     P("브리프와 이슈 글의 저작권은 만든 사람(mivomad33)에게 있고, 다시 쓰거나 퍼 가는 것을 허락하지 않는다. 사이트의 코드는 MIT 라이선스다."),

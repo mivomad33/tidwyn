@@ -10,6 +10,12 @@ export const info: E2eInfo = readInfo();
 /** 지어낸 데이터의 끝 날짜(가장 최근 브리프 날짜). 영상의 받은 날이 이 날 기준이다 */
 export const FIXTURE_END = info.dates[0]!;
 
+/** 아래 탭이 전체 페이지 사진을 가리지 않게 탭을 흐름에 둔다(시각 회귀) */
+export const UNSTICK_TABS = ".tabs { position: static; }";
+// 화면 스크린샷이 기다릴 빈·오류 상태. 불러오는 중 표시(role=status)도 `.state`라 그것을 건너뛰고 실제 문구를 기다린다
+export const READY = ".state:not([role=status])";
+export const READY_STATE = `main ${READY}`;
+
 /**
  * 모든 테스트: 127.0.0.1 밖으로 나가는 요청(가짜 이미지 주소 등)은 막고,
  * 화면에서 잡히지 않은 오류(pageerror)가 생기면 실패한다.

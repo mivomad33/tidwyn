@@ -2,6 +2,7 @@ import path from "node:path";
 import type { DatabaseSync } from "node:sqlite";
 import type { Source, StoredBrief } from "./brief.ts";
 import { buildBuilderSiteData, type BuilderSiteData } from "./builderSite.ts";
+import { buildDemandSiteData, type DemandSiteData } from "./demandSite.ts";
 import { correctionsByStory, type CorrectionRecord } from "./corrections.ts";
 import { briefIssues } from "./issueMarkdown.ts";
 import { allIssues, developments, relatedIssues, resolveIssue, storyKey, type Issue } from "./issues.ts";
@@ -15,6 +16,7 @@ import {
   ENTITY_FIRST_NEWS,
   SITE_DATA_DIR,
   builderSearchRecords,
+  demandSearchRecords,
   SITE_DATA_VERSION,
   videoGroupsOf,
   buildTermFiles,
@@ -57,6 +59,7 @@ import {
   type SiteIssueList,
   type StoryDetail,
   type BuilderMonth,
+  type DemandMonth,
 } from "./siteTypes.ts";
 import { buildScheduleData, type ScheduleSiteData } from "./scheduleSite.ts";
 import { buildIndicatorSiteData, type IndicatorSiteData } from "./indicatorSite.ts";
@@ -133,7 +136,7 @@ function storyRefs(db: DatabaseSync, entities: Entity[], terms: Term[]): StoryRe
   return out;
 }
 
-function buildDay(db: DatabaseSync, day: DayData, prev: DayData | null, details: Record<string, StoryDetail>, refs: StoryRefs, schedules: ScheduleSiteData, indicators: IndicatorSiteData, videos: VideoSiteData, corrections: Map<string, CorrectionRecord[]>, builder: BuilderSiteData): DayList {
+function buildDay(db: DatabaseSync, day: DayData, prev: DayData | null, details: Record<string, StoryDetail>, refs: StoryRefs, schedules: ScheduleSiteData, indicators: IndicatorSiteData, videos: VideoSiteData, corrections: Map<string, CorrectionRecord[]>, builder: BuilderSiteData, demand: DemandSiteData): DayList {
   const prevIssues = prev === null ? new Set<number>() : primaryIssuesOf(db, prev);
   const listStory = (key: string, base: Omit<ListStory, "issue" | "newIssue" | "continues">): ListStory => {
     const info = day.issues.get(key);
@@ -188,6 +191,8 @@ function buildDay(db: DatabaseSync, day: DayData, prev: DayData | null, details:
   if (dayVideos) out.videoGroups = videoGroupsOf(dayVideos);
   const dayBuilder = builder.byDate.get(day.date);
   if (dayBuilder) out.builder = dayBuilder;
+  const dayDemand = demand.byDate.get(day.date);
+  if (dayDemand) out.demand = dayDemand;
   return out;
 }
 
@@ -273,7 +278,7 @@ function file(name: string): string {
 
 /** 사이트 데이터: 결과물 기준 상대 경로(`site-data/...`) → JSON 내용 */
 /** indicatorDefs는 지표 정의(테스트가 공개 끄기를 바꿔 넣는다, 6단계 4.7-8) */
-export function buildSiteData(db: DatabaseSync, indicatorDefs: readonly IndicatorDef[] = INDICATORS, builder: BuilderSiteData = buildBuilderSiteData(db)): Map<string, string> {
+export function buildSiteData(db: DatabaseSync, indicatorDefs: readonly IndicatorDef[] = INDICATORS, builder: BuilderSiteData = buildBuilderSiteData(db), demand: DemandSiteData = buildDemandSiteData(db)): Map<string, string> {
   const out = new Map<string, string>();
   const days = loadDays(db);
   const entities = allEntities(db);
@@ -292,7 +297,7 @@ export function buildSiteData(db: DatabaseSync, indicatorDefs: readonly Indicato
     let detail = details.get(month);
     if (!detail) details.set(month, (detail = { month, days: {} }));
     const dayDetails: Record<string, StoryDetail> = {};
-    list.days.push(buildDay(db, day, idx > 0 ? days[idx - 1]! : null, dayDetails, refs, schedules, indicators, videos, corrections, builder));
+    list.days.push(buildDay(db, day, idx > 0 ? days[idx - 1]! : null, dayDetails, refs, schedules, indicators, videos, corrections, builder, demand));
     detail.days[day.date] = dayDetails;
   });
   const counts = new Map<string, number>();
@@ -311,6 +316,7 @@ export function buildSiteData(db: DatabaseSync, indicatorDefs: readonly Indicato
   for (const [date, list] of videos.byDate) out.set(file(siteFiles.videoDay(date)), JSON.stringify({ date, videos: list } satisfies DayVideos));
   for (const [date, videoSections] of videos.sectionsByDate) out.set(file(siteFiles.videoSections(date)), JSON.stringify({ date, videoSections } satisfies DaySections));
   for (const data of builder.months) out.set(file(siteFiles.builderItems(data.month)), JSON.stringify(data));
+  for (const data of demand.months) out.set(file(siteFiles.demandItems(data.month)), JSON.stringify(data));
 
   const live = liveIssues(db);
   out.set(file(siteFiles.issueList), JSON.stringify(buildIssueList(db, live)));
@@ -426,7 +432,7 @@ export function issueRecordUrl(chunk: number): string {
  * 저장된 날짜 하나에 뉴스 레코드 하나, 이슈 묶음(issueChunkOf) 하나에 이슈 레코드 하나. 날짜 순, 그다음 묶음 순.
  * 걸린 레코드 안에서 개별 뉴스·이슈를 찾는 일은 사이트가 사이트 데이터로 다시 거른다.
  */
-export function buildSearchRecords(db: DatabaseSync, builderMonths: readonly BuilderMonth[] = buildBuilderSiteData(db).months): SearchRecord[] {
+export function buildSearchRecords(db: DatabaseSync, builderMonths: readonly BuilderMonth[] = buildBuilderSiteData(db).months, demandMonths: readonly DemandMonth[] = buildDemandSiteData(db).months): SearchRecord[] {
   const records: SearchRecord[] = [];
   for (const date of storedDates(db)) {
     const stored = loadBrief(db, date);
@@ -464,5 +470,6 @@ export function buildSearchRecords(db: DatabaseSync, builderMonths: readonly Bui
     records.push({ url: termRecordUrl(g), content: parts.join("\n"), language: "ko", meta: { kind: "terms", group: String(g) } });
   }
   records.push(...builderSearchRecords(builderMonths));
+  records.push(...demandSearchRecords(demandMonths));
   return records;
 }

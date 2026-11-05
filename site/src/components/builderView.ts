@@ -10,16 +10,22 @@ import { monthDay } from "../lib/format.ts";
 import { SITE_URL, storyReportHref } from "../lib/policy.ts";
 import { briefPath, issuePath, schedulePath } from "../lib/routes.ts";
 import type { BuilderItemSource } from "../../../src/builderTypes.ts";
-import type { DayBuilder, IssueRef, SiteBuilderItem, SiteDiscoveryItem } from "../lib/types.ts";
+import type { DayBuilder, IssueRef, SiteBuilderItem, SiteDiscoveryItem, StoryCorrection } from "../lib/types.ts";
 
-function Field({ label, children }: { label: string; children?: ReactNode }) {
+/** 칸 하나: 펼친 뉴스의 머리말과 문단. 빌더와 수요 흐름 항목이 함께 쓴다 */
+export function Field({ label, children }: { label: string; children?: ReactNode }) {
   return h(Fragment, null, h("h4", { className: "h" }, label), h("p", { className: "p" }, children));
 }
 
-/** 분야와 정정 표시. 뉴스의 대분류 줄과 같은 자리다 */
+/** 흐린 대분류 줄과 정정 표시. 뉴스의 대분류 줄과 같은 자리다. 빌더와 수요 흐름 항목이 함께 쓴다 */
+export function MutedCatLine({ text, fixes }: { text: string; fixes: StoryCorrection[] | undefined }) {
+  const line = h("div", { className: "cat muted-cat" }, text);
+  return fixes ? h("span", { className: "cat-row" }, line, h(FixMark, { fixes })) : line;
+}
+
+/** 분야와 정정 표시 */
 export function BuilderFieldLine({ item }: { item: SiteBuilderItem }) {
-  const line = h("div", { className: "cat muted-cat" }, item.field);
-  return item.corrections ? h("span", { className: "cat-row" }, line, h(FixMark, { fixes: item.corrections })) : line;
+  return h(MutedCatLine, { text: item.field, fixes: item.corrections });
 }
 
 /** 탭 머리의 한 줄 안내. 뜻은 소개의 빌더 절로 잇는다 */
@@ -27,8 +33,8 @@ export function BuilderIntro({ Link }: { Link: LinkLike }) {
   return h("p", { className: "flow note" }, "코딩 도구, 모델, 보안, 플랫폼의 바뀐 점을 모았다. 새 제품과 뜨는 저장소는 실린 날에 함께 나온다. ", h(Link, { to: "/about#builder", className: "bintro-l" }, "빌더 탭 소개"));
 }
 
-/** 항목이 없는 날의 상태 문구. 다 확인하지 못한 날은 확인하고 없는 날과 달리 글자색으로 보인다 */
-function zeroState(text: string, error: boolean) {
+/** 항목이 없는 날의 상태 문구. 다 확인하지 못한 날은 확인하고 없는 날과 달리 글자색으로 보인다. 수요 탭도 쓴다 */
+export function zeroState(text: string, error: boolean) {
   return error ? h("div", { className: "state error" }, h("p", null, text)) : h("p", { className: "state empty" }, text);
 }
 
@@ -45,12 +51,16 @@ function Due({ item, Link }: { item: SiteBuilderItem; Link: LinkLike }) {
   return item.schedule === null ? text : h(Link, { to: schedulePath(item.schedule), className: "text-link bdue" }, text);
 }
 
-/** 칸 끝의 관련 이슈, 출처, 제보 링크. 세 종류가 같다 */
-function ItemEnd({ issue, sources, reportTitle, date, itemKey, Link }: { issue: IssueRef | null; sources: BuilderItemSource[]; reportTitle: string; date: string; itemKey: string; Link: LinkLike }) {
+/** 관련 이슈 칩(있을 때). 빌더와 수요 흐름 항목이 같다 */
+export function IssueField({ issue, Link }: { issue: IssueRef | null; Link: LinkLike }) {
+  return issue ? h(Fragment, null, h("h4", { className: "h" }, "관련 이슈"), h("div", { className: "rel brel" }, h(Link, { to: issuePath(issue.id) }, issue.name))) : null;
+}
+
+/** 칸 끝의 출처와 제보 링크. 빌더 세 종류와 수요 흐름 항목이 같다 */
+export function SourcesAndReport({ sources, reportTitle, date, itemKey }: { sources: BuilderItemSource[]; reportTitle: string; date: string; itemKey: string }) {
   return h(
     Fragment,
     null,
-    issue ? h(Fragment, null, h("h4", { className: "h" }, "관련 이슈"), h("div", { className: "rel brel" }, h(Link, { to: issuePath(issue.id) }, issue.name))) : null,
     h("h4", { className: "h" }, "출처"),
     h(
       "div",
@@ -59,6 +69,11 @@ function ItemEnd({ issue, sources, reportTitle, date, itemKey, Link }: { issue: 
     ),
     h(ReportLink, { href: storyReportHref(monthDay(date), reportTitle, `${SITE_URL}${briefPath(date, itemKey)}`), label: "틀린 내용 알리기" }),
   );
+}
+
+/** 칸 끝의 관련 이슈, 출처, 제보 링크. 세 종류가 같다 */
+function ItemEnd({ issue, sources, reportTitle, date, itemKey, Link }: { issue: IssueRef | null; sources: BuilderItemSource[]; reportTitle: string; date: string; itemKey: string; Link: LinkLike }) {
+  return h(Fragment, null, h(IssueField, { issue, Link }), h(SourcesAndReport, { sources, reportTitle, date, itemKey }));
 }
 
 /** 칸을 정해진 순서로 그린다. 제목 줄은 부르는 쪽이 그린다 */

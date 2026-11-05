@@ -4,8 +4,8 @@
 // 빌더 항목은 달 하나가 레코드 하나(`/builder/month/<YYYY-MM>`).
 // Pagefind가 고른 레코드마다 그 날짜·묶음의 사이트 데이터를 받아, 검색어에 맞는 뉴스·이슈를 하나씩 골라낸다.
 // 맞춤 규칙은 Pagefind와 같게 낱말 앞부분 맞춤이다("반도체"가 "반도체가"에 맞는다).
-import type { BuilderMonth, DayList, EntityChunk, EntityDetail, IssueChunk, IssueDetail, ListStory, StoryDetail, SiteBuilderItem, SiteDiscoveryItem, TermGroupFile, TermItem } from "./types.ts";
-import { builderItemText, discoveryItemText } from "../../../src/siteTypes.ts";
+import type { BuilderMonth, DayList, DemandMonth, SiteFlowItem, EntityChunk, EntityDetail, IssueChunk, IssueDetail, ListStory, StoryDetail, SiteBuilderItem, SiteDiscoveryItem, TermGroupFile, TermItem } from "./types.ts";
+import { builderItemText, discoveryItemText, flowItemText } from "../../../src/siteTypes.ts";
 import { SECTION_ORDER } from "./brief.ts";
 import { compareEntityItems } from "./entities.ts";
 import { sortTerms } from "./terms.ts";
@@ -101,7 +101,13 @@ export function matchBuilderItems(file: BuilderMonth, terms: string[]): { date: 
   return pickBest([...tools, ...found], (x) => countMatches(x.text, terms), terms.length).map(({ date, item }) => ({ date, item }));
 }
 
-export type SearchHit = { kind: "news"; date: string } | { kind: "issues"; chunk: number } | { kind: "entities"; chunk: number } | { kind: "terms"; group: number } | { kind: "builder"; month: string };
+/** 걸린 달에서 검색어에 맞는 수요 흐름 항목(날짜 순, 날짜 안은 실린 순서) */
+export function matchDemandItems(file: DemandMonth, terms: string[]): { date: string; item: SiteFlowItem }[] {
+  const items = Object.entries(file.days).flatMap(([date, list]) => list.map((item) => ({ date, item, text: flowItemText(item) })));
+  return pickBest(items, (x) => countMatches(x.text, terms), terms.length).map(({ date, item }) => ({ date, item }));
+}
+
+export type SearchHit = { kind: "news"; date: string } | { kind: "issues"; chunk: number } | { kind: "entities"; chunk: number } | { kind: "terms"; group: number } | { kind: "builder"; month: string } | { kind: "demand"; month: string };
 
 /** Pagefind 결과의 레코드 정보(meta, 없으면 주소)를 읽는다. 모르는 모양이면 null */
 export function parseHit(url: string, meta: Record<string, string> | undefined): SearchHit | null {
@@ -110,6 +116,7 @@ export function parseHit(url: string, meta: Record<string, string> | undefined):
   if (meta?.kind === "entities" && meta.chunk && /^\d+$/.test(meta.chunk)) return { kind: "entities", chunk: Number(meta.chunk) };
   if (meta?.kind === "terms" && meta.group && /^\d+$/.test(meta.group)) return { kind: "terms", group: Number(meta.group) };
   if (meta?.kind === "builder" && meta.month && /^\d{4}-\d{2}$/.test(meta.month)) return { kind: "builder", month: meta.month };
+  if (meta?.kind === "demand" && meta.month && /^\d{4}-\d{2}$/.test(meta.month)) return { kind: "demand", month: meta.month };
   const news = /^\/(\d{4}-\d{2}-\d{2})\/?$/.exec(url);
   if (news) return { kind: "news", date: news[1]! };
   const issues = /^\/issues\/chunk\/(\d+)\/?$/.exec(url);
@@ -120,6 +127,8 @@ export function parseHit(url: string, meta: Record<string, string> | undefined):
   if (termGroup) return { kind: "terms", group: Number(termGroup[1]) };
   const builder = /^\/builder\/month\/(\d{4}-\d{2})\/?$/.exec(url);
   if (builder) return { kind: "builder", month: builder[1]! };
+  const demand = /^\/demand\/month\/(\d{4}-\d{2})\/?$/.exec(url);
+  if (demand) return { kind: "demand", month: demand[1]! };
   return null;
 }
 

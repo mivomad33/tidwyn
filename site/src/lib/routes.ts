@@ -140,6 +140,9 @@ export function briefVideosPath(date: string): string {
 /** 9.8단계: 브리프를 빌더 탭으로 여는 `#` 값. 항목 하나는 `#builder-<순서>`다 */
 export const BUILDER_HASH = "builder";
 
+/** 9.97단계: 브리프를 수요 탭으로 여는 `#` 값. 항목 하나는 `#demand-<순서>`다 */
+export const DEMAND_HASH = "demand";
+
 /** 9.7단계 영상별 페이지 */
 export function videoPath(date: string, id: string): string {
   return `/videos/${date}/${encodeURIComponent(id)}`;

@@ -1,6 +1,7 @@
 // 읽은 뉴스 기록(4.5단계 4.1). 뉴스 식별자(날짜 + 뉴스 키)만 로컬 스토리지 키 하나에 둔다. 화면(DOM) 없이 테스트한다.
 // 저장할 수 없거나 값이 깨졌으면 빈 기록으로 시작하고, 그 탭 안에서만 기억한다(4.1-4).
 import { isBuilderTabKey } from "../../../src/builderTypes.ts";
+import { isFlowItemKey } from "../../../src/demandFlowTypes.ts";
 import { addDays, isValidDate } from "../../../src/kst.ts";
 import { READ_MARKS_KEY } from "./browserKeys.ts";
 
@@ -131,7 +132,7 @@ export function createReadStore(storage: StorageLike | null, today: string): Rea
       changed();
     },
     readKeys: (date) => new Set(marks.get(date) ?? []),
-    readCount: (date) => [...(marks.get(date) ?? [])].filter((k) => !isBuilderTabKey(k)).length,
+    readCount: (date) => [...(marks.get(date) ?? [])].filter((k) => !isBuilderTabKey(k) && !isFlowItemKey(k)).length,
     clear() {
       marks.clear();
       changed();

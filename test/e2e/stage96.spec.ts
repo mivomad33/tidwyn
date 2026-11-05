@@ -3,7 +3,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import type { Page, Route } from "@playwright/test";
-import { expect, test } from "./base.ts";
+import { READY, READY_STATE, expect, test } from "./base.ts";
 import { E2E_VIDEO_DATA_DIR, E2E_VIDEO_INFO_FILE } from "./paths.ts";
 import type { VideoFixtureInfo } from "../../site/dev/videoFixtures.ts";
 import type { DayList, DayVideos, IssueChunk, MonthList } from "../../src/siteTypes.ts";
@@ -255,7 +255,7 @@ for (const width of [375, 1440]) {
         await useVideoData(page);
         await fault?.(page);
         await page.goto(`/${PAST}#videos`);
-        await expect(name === "정상" ? rows(page).first() : page.locator("main .state")).toBeVisible();
+        await expect(name === "정상" ? rows(page).first() : page.locator(name === "대기" ? "main .state" : READY_STATE)).toBeVisible();
         await expect(page).toHaveScreenshot(`videos-tab-${name}-${width}.png`, { animations: "disabled" });
       });
 
@@ -264,7 +264,7 @@ for (const width of [375, 1440]) {
         await useVideoData(page);
         await fault?.(page);
         await page.goto(`/issues/${v.spread}`);
-        await expect(name === "정상" ? rows(page).first() : related(page).locator(".state")).toBeVisible();
+        await expect(name === "정상" ? rows(page).first() : related(page).locator(name === "대기" ? ".state" : READY)).toBeVisible();
         await expect(related(page)).toHaveScreenshot(`videos-related-${name}-${width}.png`, { animations: "disabled" });
       });
     }

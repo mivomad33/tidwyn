@@ -3,7 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import zlib from "node:zlib";
 import type { Page, Route } from "@playwright/test";
-import { expect, expectNoHorizontalScroll, info, test } from "./base.ts";
+import { READY_STATE, expect, expectNoHorizontalScroll, info, test } from "./base.ts";
 import { E2E_DATA_DIR, E2E_VIDEO_DATA_DIR, E2E_VIDEO_INFO_FILE } from "./paths.ts";
 import type { VideoFixtureInfo } from "../../site/dev/videoFixtures.ts";
 import { videoPath } from "../../site/src/lib/routes.ts";
@@ -286,7 +286,7 @@ for (const width of [375, 1440]) {
       ["1시간", videoPath(hour.date, hour.id), ".vsecrow", async () => {}],
       ["없는 영상", videoPath(s.date, none.id), ".nf", async () => {}],
       ["대기", videoPath(s.date, s.eight), "main .state", (page) => page.route("**/site-data/videos-*.json", () => undefined)],
-      ["오류", videoPath(s.date, s.eight), "main .state", (page) => page.route("**/site-data/videos-*.json", (route) => route.fulfill({ status: 500, body: "" }))],
+      ["오류", videoPath(s.date, s.eight), READY_STATE, (page) => page.route("**/site-data/videos-*.json", (route) => route.fulfill({ status: 500, body: "" }))],
     ];
     for (const [name, url, ready, fault] of shots) {
       test(name, async ({ page }) => {

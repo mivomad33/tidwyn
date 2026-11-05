@@ -23,6 +23,7 @@ import { listScheduleMerges, type ScheduleMergeRow } from "./scheduleMerge.ts";
 import { allSchedules, hasScheduleData, markScheduled, scheduledDates, storiesOfSchedule, type ScheduleOutcome, type ScheduleRole } from "./schedules.ts";
 import { allCorrections, hasCorrections, type StoredCorrection } from "./corrections.ts";
 import { listMerges, type MergeRecord } from "./merge.ts";
+import { buildDemandBackup, hasFlowData, restoreDemandBackup, type DemandBackup } from "./demandFlowStore.ts";
 import { buildIndicatorsBackup, hasIndicatorData, restoreIndicatorsBackup, type IndicatorsBackup } from "./indicatorStore.ts";
 import { listRefMerges, type RefMergeRecord } from "./refMerge.ts";
 import { allEntities, allTerms, extractedDates, hasRefData, markExtracted, storiesOfRef, type EntityKind, type RefItem } from "./refs.ts";
@@ -40,14 +41,16 @@ import { getFirstCollectionDate, loadBrief, recordFirstCollectionDate, saveBrief
 // 형식 7(9.8단계 4.5-1): 빌더 항목, 숫자 행, 소스 시각 등을 builder.json에 둔다. 빌더 데이터가 없으면 이 파일을 쓰지 않는다.
 // 후보 글, 재료, 문서 원문, 실패 이유는 넣지 않는다.
 // 형식 8(9.9단계 4.4-1): builder.json에 새 제품·뜨는 저장소 항목, 종류별 상태, 그 정정을 더한다. 별 수 스냅샷과 메타데이터는 넣지 않는다(N6).
+// 형식 9(9.97단계 4.5-1, S11): 수요 흐름 항목, 근거 단위, 날짜 상태, 정정을 demand.json에 둔다. 흐름 데이터가 없으면 이 파일을 쓰지 않는다.
+// 후보 복사본, 흐름 파일, 전용 DB(받은 원문)는 넣지 않는다.
 
-export const BACKUP_FORMAT_VERSION = 8;
+export const BACKUP_FORMAT_VERSION = 9;
 /**
  * 복원할 수 있는 형식 버전. 형식 1 백업은 이슈 없이, 형식 1·2 백업은 대상·용어 없이 모든 날짜가 뽑기 안 함으로,
  * 형식 1·2·3 백업은 일정 없이 모든 날짜가 일정 뽑기 안 함으로, 형식 1~4 백업은 지표 값 없이 모든 이슈가 지표 판단 안 함으로,
- * 형식 1~5 백업은 정정 기록 없이, 형식 1~6 백업은 빌더 기록 없이, 형식 7 백업은 새 제품·뜨는 저장소 기록 없이 복원된다
+ * 형식 1~5 백업은 정정 기록 없이, 형식 1~6 백업은 빌더 기록 없이, 형식 7 백업은 새 제품·뜨는 저장소 기록 없이, 형식 1~8 백업은 수요 흐름 기록 없이 복원된다
  */
-const READABLE_VERSIONS = [1, 2, 3, 4, 5, 6, 7, 8];
+const READABLE_VERSIONS = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 export const BACKUP_DIR = "backup";
 export const DATA_REF = "refs/heads/data";
 const META_FILE = "meta.json";
@@ -57,6 +60,7 @@ const SCHEDULES_FILE = "schedules.json";
 const INDICATORS_FILE = "indicators.json";
 const CORRECTIONS_FILE = "corrections.json";
 const BUILDER_FILE = "builder.json";
+const DEMAND_FILE = "demand.json";
 const MONTH_RE = /^\d{4}-\d{2}\.json$/;
 
 interface MetaFile {
@@ -95,7 +99,7 @@ interface RefsFile {
 }
 
 function isBackupFile(name: string): boolean {
-  return name === META_FILE || name === ISSUES_FILE || name === REFS_FILE || name === SCHEDULES_FILE || name === INDICATORS_FILE || name === CORRECTIONS_FILE || name === BUILDER_FILE || MONTH_RE.test(name);
+  return name === META_FILE || name === ISSUES_FILE || name === REFS_FILE || name === SCHEDULES_FILE || name === INDICATORS_FILE || name === CORRECTIONS_FILE || name === BUILDER_FILE || name === DEMAND_FILE || MONTH_RE.test(name);
 }
 
 function buildRefsFile(db: DatabaseSync): RefsFile {
@@ -270,6 +274,7 @@ export function buildBackup(db: DatabaseSync): Map<string, string> {
   if (hasIndicatorData(db)) files.set(INDICATORS_FILE, toJson(buildIndicatorsBackup(db, BACKUP_FORMAT_VERSION)));
   if (hasCorrections(db)) files.set(CORRECTIONS_FILE, toJson({ formatVersion: BACKUP_FORMAT_VERSION, corrections: allCorrections(db) } satisfies CorrectionsFile));
   if (hasBuilderData(db)) files.set(BUILDER_FILE, toJson(buildBuilderBackup(db, BACKUP_FORMAT_VERSION)));
+  if (hasFlowData(db)) files.set(DEMAND_FILE, toJson(buildDemandBackup(db, BACKUP_FORMAT_VERSION)));
   const extracted = extractedDates(db);
   const scheduled = scheduledDates(db);
   const byMonth = new Map<string, StoredBrief[]>();
@@ -404,6 +409,9 @@ export function restoreBackup(files: Map<string, string>, outPath: string, force
   const builderText = files.get(BUILDER_FILE);
   const builder = builderText === undefined ? null : (JSON.parse(builderText) as BuilderBackup);
   if (builder !== null) checkVersion(BUILDER_FILE, builder);
+  const demandText = files.get(DEMAND_FILE);
+  const demand = demandText === undefined ? null : (JSON.parse(demandText) as DemandBackup);
+  if (demand !== null) checkVersion(DEMAND_FILE, demand);
   const tmp = `${outPath}.restoring`;
   fs.rmSync(tmp, { force: true });
   const db = openDb(tmp);
@@ -418,7 +426,7 @@ export function restoreBackup(files: Map<string, string>, outPath: string, force
     }
     if (meta.firstLinkedOn !== undefined) setMeta(db, FIRST_LINKED_KEY, meta.firstLinkedOn);
     if (meta.mergeCheckedOn !== undefined) setMeta(db, MERGE_CHECKED_KEY, meta.mergeCheckedOn);
-    if (issues !== null || refs !== null || schedules !== null || indicators !== null || corrections !== null || builder !== null || months.some((m) => m.extracted !== undefined || m.scheduled !== undefined)) {
+    if (issues !== null || refs !== null || schedules !== null || indicators !== null || corrections !== null || builder !== null || demand !== null || months.some((m) => m.extracted !== undefined || m.scheduled !== undefined)) {
       db.exec("BEGIN");
       try {
         if (issues !== null) restoreIssues(db, issues);
@@ -427,6 +435,7 @@ export function restoreBackup(files: Map<string, string>, outPath: string, force
         if (indicators !== null) restoreIndicatorsBackup(db, indicators);
         if (corrections !== null) restoreCorrections(db, corrections);
         if (builder !== null) restoreBuilderBackup(db, builder);
+        if (demand !== null) restoreDemandBackup(db, demand);
         for (const m of months) for (const d of m.extracted ?? []) markExtracted(db, d);
         for (const m of months) for (const d of m.scheduled ?? []) markScheduled(db, d);
         db.exec("COMMIT");

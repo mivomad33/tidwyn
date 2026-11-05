@@ -35,9 +35,6 @@ function siteItem(x: BuilderItem, placeOf: Map<number, BuilderItem>, issueOf: (i
   return out;
 }
 
-/** 정정 기록의 공개 칸(최신순) */
-const publicFixes = (fixes: { on: string; reason: string }[]) => fixes.map((f) => ({ on: f.on, reason: f.reason })).reverse();
-
 /** 공개 칸만 옮긴다. 후보 값은 저장된 그대로다(N5) */
 function siteDiscovery(x: Discovery, issueOf: (id: number) => IssueRef, fixes: { on: string; reason: string }[] | undefined): SiteDiscoveryItem {
   const out: SiteDiscoveryItem = { key: x.itemKey, kind: x.kind, name: x.name, url: x.url, purpose: x.purpose, difference: x.difference, reason: x.reason, issue: x.issue === null ? null : issueOf(x.issue) };
@@ -46,13 +43,11 @@ function siteDiscovery(x: Discovery, issueOf: (id: number) => IssueRef, fixes: {
   return out;
 }
 
-export function buildBuilderSiteData(db: DatabaseSync): BuilderSiteData {
-  const items = allBuilderItems(db);
-  const placeOf = new Map(items.map((x) => [x.id, x]));
-  const fixes = correctionsByItem(db);
+/** 이슈 id → 사이트의 관련 이슈(흡수된 이슈는 남는 이슈). resolveIssue와 같은 규칙을 항목마다 DB를 읽지 않게 메모리에서 따른다.
+ * 빌더와 수요 흐름 항목이 함께 쓴다 */
+export function issueRefResolver(db: DatabaseSync): (id: number) => IssueRef {
   const issues = new Map(allIssues(db).map((i) => [i.id, i]));
-  // resolveIssue와 같은 규칙이다. 항목마다 DB를 읽지 않게 메모리에서 따라간다
-  const issueOf = (id: number): IssueRef => {
+  return (id) => {
     const seen = new Set<number>();
     let live = id;
     for (;;) {
@@ -62,6 +57,16 @@ export function buildBuilderSiteData(db: DatabaseSync): BuilderSiteData {
       live = into;
     }
   };
+}
+
+/** 정정 기록의 공개 칸(최신순). 빌더와 수요 흐름 항목이 함께 쓴다 */
+export const publicFixes = (fixes: readonly { on: string; reason: string }[]) => fixes.map((f) => ({ on: f.on, reason: f.reason })).reverse();
+
+export function buildBuilderSiteData(db: DatabaseSync): BuilderSiteData {
+  const items = allBuilderItems(db);
+  const placeOf = new Map(items.map((x) => [x.id, x]));
+  const fixes = correctionsByItem(db);
+  const issueOf = issueRefResolver(db);
   const counts = new Map<string, number>();
   const months = new Map<string, BuilderMonth>();
   const monthFile = (date: string): BuilderMonth => {
