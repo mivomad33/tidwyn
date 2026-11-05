@@ -4,6 +4,7 @@ import type { KindReport } from "./builderDiscover.ts";
 import type { DiscoverKind } from "./discoverStore.ts";
 import type { DocReport, SourceReport } from "./builderFetch.ts";
 import type { DemandReport } from "./demandFetch.ts";
+import type { CommunityReport } from "./communityFetch.ts";
 import type { DemandFlowState } from "./demandFlowRun.ts";
 import type { OfficialReport } from "./officialDemand.ts";
 import type { FeedFailure } from "./feeds.ts";
@@ -295,6 +296,16 @@ export type OfficialDemandState = Omit<OfficialReport, "day"> & {
   reason?: string;
 };
 
+/** 9.98단계 커뮤니티 받기(`demand-community`). 수와 상태, 사유 종류만 남긴다(검색어와 응답은 남기지 않는다) */
+export type CommunityState = Omit<CommunityReport, "target"> & {
+  status: "done" | "off" | "nothing" | "crashed";
+  target: string | null;
+  /** 꺼진 까닭: 시험 모드, 수요 흐름 끄기 */
+  offBy?: "test" | "flowOff";
+  copied: boolean;
+  reason?: string;
+};
+
 /** 사이트 빌드 결과(3단계 4.1, 4.5) */
 export type SiteResult =
   | { status: "built"; outDir: string; dates: number; issues: number; entities?: number; terms?: number; schedules?: number; upcoming?: number; indicators?: number; videoDates?: number; videos?: number; files: number; bytes: number }
@@ -367,6 +378,8 @@ export interface RunState {
   officialDemand?: OfficialDemandState;
   /** 9.97단계: 수요 흐름. 앞 단계 실행 기록에는 없다 */
   demandFlow?: DemandFlowState;
+  /** 9.98단계: 커뮤니티 받기. 앞 단계 실행 기록에는 없다 */
+  demandCommunity?: CommunityState;
   demandCopied?: boolean;
   /** 지난 날짜 이미지 채우기(3단계). 1·1.5·2단계 실행 기록에는 없다 */
   images?: ImagesResult;

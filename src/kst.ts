@@ -8,6 +8,9 @@ export function daysBetween(from: string, to: string): number {
   return Math.round((Date.parse(to) - Date.parse(from)) / DAY_MS);
 }
 
+/** 창의 날 수(양 끝 포함) */
+export const daysIn = (from: string, to: string): number => daysBetween(from, to) + 1;
+
 /** 시각의 KST 날짜(YYYY-MM-DD) */
 export function kstDate(now: Date): string {
   return new Date(now.getTime() + KST_OFFSET_MS).toISOString().slice(0, 10);

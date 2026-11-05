@@ -126,8 +126,8 @@ describe("4.2-2 흐름 파일 검사", () => {
     rejects(file([flowOf([1, 1, 2])]), /같은 번호를 두 번 썼다/);
     rejects(file([flowOf([1, 2]), flowOf([2, 3], { category: "money" })]), /흐름 2 units: 다른 흐름이 쓴 번호다/);
     rejects(file([flowOf([1, 2])], { excluded: [2] }), /제외 칸에 적은 번호다/);
-    rejects(file([flowOf([1])]), /흐름 1 units: 서로 다른 공식 묶음이 둘 미만이다/);
-    rejects(file([flowOf([2, 3], { category: "money" }), flowOf([1], { aux: [1] })]), /흐름 2 units: 서로 다른 공식 묶음이 둘 미만이다/, ["보조 근거는 묶음 수에 세지 않는다"]);
+    rejects(file([flowOf([1])]), /흐름 1 units: 공식 묶음이 하나뿐인데 그 공식 단위를 검색어로 한 오른 커뮤니티 단위가 없다/);
+    rejects(file([flowOf([2, 3], { category: "money" }), flowOf([1], { aux: [1] })]), /흐름 2 units: 공식 묶음이 하나뿐인데 그 공식 단위를 검색어로 한 오른 커뮤니티 단위가 없다/, ["보조 근거는 묶음 수에 세지 않는다"]);
     rejects(withText({ field: "없는분야" }), /흐름 1 field: 분야 목록 밖이다/);
     rejects(withText({ category: "other" }), /흐름 1 category: 갈래 목록 밖이다/);
     rejects(file([flowOf([1, 4], { category: "money" })]), /흐름 1 category: 근거 묶음과 맞지 않는 갈래다/);

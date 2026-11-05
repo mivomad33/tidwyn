@@ -1,6 +1,7 @@
 // 9.97단계 수요 탭의 화면 로직(4.4-1): 탭 이름, 날짜 상태 문구, 근거 줄과 근거 수준의 글자. 화면(DOM) 없이 테스트한다.
-import { BASE_DAYS, CATEGORY_LABELS, GROUP_INFO, RECENT_DAYS, LEVEL_LABELS, LEVEL_MEANINGS, fieldLabel, type FlowLevel, type OfficialGroup } from "../../../src/demandFlowTypes.ts";
-import { flowUnitSourceText, type DayDemand, type SiteFlowItem, type SiteFlowUnit } from "../../../src/siteTypes.ts";
+import { BASE_DAYS, CATEGORY_LABELS, COMMUNITY_LEVEL_MEANINGS, GROUP_INFO, communityMissingText, RECENT_DAYS, LEVEL_LABELS, LEVEL_MEANINGS, fieldLabel, type FlowLevel, type OfficialGroup } from "../../../src/demandFlowTypes.ts";
+import { flowUnitSourceText, type DayDemand, type SiteFlowCommunityUnit, type SiteFlowItem, type SiteFlowUnit } from "../../../src/siteTypes.ts";
+import { daysIn } from "../../../src/kst.ts";
 import { monthDay } from "./format.ts";
 import { fmtNumber } from "./indicators.ts";
 
@@ -19,9 +20,19 @@ export function demandZeroText(status: DayDemand["status"]): string {
   return "이날은 서로 다른 소스 두 곳 이상에서 함께 보인 흐름이 없다.";
 }
 
-/** 항목이 있는 날의 목록 끝 안내: 비교에 넣지 못한 공식 묶음 */
-export function demandMissingText(missing: readonly OfficialGroup[] | undefined): string | null {
-  return missing?.length ? `이날 비교에 넣지 못한 소스: ${missing.map((g) => GROUP_INFO[g].label).join(", ")}` : null;
+/** 탭 머리의 흐름 인정 문장(9.98 S1)과 커뮤니티 표본 안내(S5). 고정 문구(FLOW_CAVEAT)와 소개 링크는 뒤에 붙는다 */
+export const DEMAND_INTRO = "서로 다른 공식 소스 두 곳 이상, 또는 공식 소스 한 곳과 커뮤니티 검색에서 함께 오른 관심, 불만·요구, 돈의 흐름을 모았다. 커뮤니티 건수는 개발자·영어 사용자에 치우친 표본이다.";
+/** 탭 머리의 소개 링크: 소개의 분야별 사각지대 표(S6)로 간다 */
+export const DEMAND_ABOUT_HASH = "demand-coverage";
+export const DEMAND_ABOUT_LINK = "수요 탭 소개와 분야별 소스";
+
+/** 목록 끝 안내의 머리말. 소개의 설명도 같은 말을 쓴다 */
+export const DEMAND_MISSING_LABEL = "이날 비교에 넣지 못한 소스";
+
+/** 항목이 있는 날의 목록 끝 안내: 비교에 넣지 못한 공식 묶음, 그다음 커뮤니티 소스(사유를 괄호로, 9.98 4.4-2) */
+export function demandMissingText(missing: readonly OfficialGroup[] | undefined, community: DayDemand["communityMissing"] = undefined): string | null {
+  const names = [...(missing ?? []).map((g) => GROUP_INFO[g].label), ...(community ?? []).map(communityMissingText)];
+  return names.length > 0 ? `${DEMAND_MISSING_LABEL}: ${names.join(", ")}` : null;
 }
 
 /** 흐린 대분류 줄: 갈래 · 분야 */
@@ -29,9 +40,10 @@ export function flowCategoryText(x: Pick<SiteFlowItem, "category" | "field">): s
   return `${CATEGORY_LABELS[x.category]} · ${fieldLabel(x.field)}`;
 }
 
-/** 근거 수준 줄: '근거 중 · 서로 다른 공식 소스 두 곳에서 함께 올랐다' */
-export function flowLevelText(level: FlowLevel): string {
-  return `근거 ${LEVEL_LABELS[level]} · ${LEVEL_MEANINGS[level]}`;
+/** 근거 수준 줄: '근거 중 · 서로 다른 공식 소스 두 곳에서 함께 올랐다'. 커뮤니티 확인 흐름(9.98 S5)은 뜻 문구가 다르다('강'은 없다) */
+export function flowLevelText(level: FlowLevel, communityConfirmed = false): string {
+  const meaning = communityConfirmed && level !== "strong" ? COMMUNITY_LEVEL_MEANINGS[level] : LEVEL_MEANINGS[level];
+  return `근거 ${LEVEL_LABELS[level]} · ${meaning}`;
 }
 
 /** 기간 글자: 같은 달이면 '10월 25일~31일', 다르면 '9월 27일~10월 24일' */
@@ -57,8 +69,20 @@ export function flowUnitNumbers(u: SiteFlowUnit): string {
   return `${recent} ${num(u.recent)}${u.unit} · ${base} ${num(u.base)}${u.unit}${u.isNew ? ` · 앞 ${BASE_DAYS}일에는 없었다` : ""}`;
 }
 
-/** 근거 줄의 창 기간 */
-export function flowUnitPeriod(u: SiteFlowUnit): string {
+/** 커뮤니티 근거 줄의 첫 줄: 소스 이름 · 표본 설명(9.98 S5) */
+export function flowCommunityHead(c: Pick<SiteFlowCommunityUnit, "source" | "sample">): string {
+  return `${c.source} · ${c.sample}`;
+}
+
+/** 커뮤니티 근거 줄의 숫자: 최근 창 건수와 앞 창의 같은 길이 평균. 창이 7일·28일이 아니면(공식 소스의 창이 짧을 때) 그 날 수를 보인다 */
+export function flowCommunityNumbers(c: SiteFlowCommunityUnit): string {
+  const r = daysIn(c.recentFrom, c.recentTo);
+  const b = daysIn(c.baseFrom, c.baseTo);
+  return `최근 ${r}일 ${num(c.recent)}${c.unit} · 앞 ${b}일의 ${r}일 평균 ${num(c.base)}${c.unit}${c.isNew ? ` · 앞 ${b}일에는 없었다` : ""}`;
+}
+
+/** 근거 줄의 창 기간(공식·커뮤니티 같다) */
+export function flowUnitPeriod(u: Pick<SiteFlowUnit, "recentFrom" | "recentTo" | "baseFrom" | "baseTo">): string {
   return `최근 ${periodText(u.recentFrom, u.recentTo)} · 앞 ${periodText(u.baseFrom, u.baseTo)}`;
 }
 

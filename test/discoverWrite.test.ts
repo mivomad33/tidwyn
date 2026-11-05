@@ -915,7 +915,7 @@ describe("4.4-1 백업과 복원", () => {
     withDb(s, (db) => markSourceFailed(db, "github-repos", TARGET));
     const files = withDb(s, buildBackup);
     const f = JSON.parse(files.get("builder.json")!) as { formatVersion: number; discoveries: unknown[]; kindDates: unknown[]; discoveryCorrections: unknown[]; sources: { source: string; fetchedAt: string | null; failDays: number }[] };
-    assert.equal(f.formatVersion, 9);
+    assert.equal(f.formatVersion, 10);
     assert.equal(f.discoveries.length, 2);
     assert.equal(f.kindDates.length, 2);
     assert.equal(f.discoveryCorrections.length, 1);

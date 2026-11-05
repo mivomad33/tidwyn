@@ -1,6 +1,7 @@
 // 9.95단계 4.1-5, 4.2-1: 수요 소스 목록과 끄기 값을 이 파일 한 곳에 둔다. 판정 근거는 DEMAND_DOC이다.
 // 소스를 끄려면 아래 두 목록에 넣고 판정 문서 표에 '끔'(날짜, 이유)을 적는다. 끈 소스는 목록에서 지우지 않는다.
 // 끈 소스는 호출하지 않고 상태는 꺼짐이며, 쌓인 스냅샷은 그대로 둔다.
+import { COMMUNITY_GROUPS, COMMUNITY_INFO, type CommunityGroup } from "./demandFlowTypes.ts";
 
 /** 소스 판정 문서(저장소 루트 기준). 9.96~9.98이 같은 문서에 소스를 더한다 */
 export const DEMAND_DOC = "docs/demand-sources.md";
@@ -41,6 +42,8 @@ export const DEMAND_GROUPS: readonly DemandGroup[] = [
   { id: "dart", label: "DART 공시" },
   { id: "sec", label: "SEC Form D" },
   { id: "wikimedia", label: "Wikimedia 인기 문서" },
+  // 9.98단계 커뮤니티 소스 묶음(명세서 S2). 공식 묶음이 아니고 갈래에 속하지 않는다
+  ...COMMUNITY_GROUPS.map((id) => ({ id, label: COMMUNITY_INFO[id].label })),
 ];
 
 /** Google Trends 급상승 RSS의 나라(명세서 S2). 시험 실행에서 지원 안 함으로 뺀 나라는 판정 문서와 함께 고친다 */
@@ -167,7 +170,36 @@ export function officialSources(): OfficialSource[] {
   ];
 }
 
-/** 9.95와 9.96 소스 전부(끄기 값 대조에 쓴다) */
+// 9.98단계 4.1-1(S2, S5): 커뮤니티 소스. 공식 소스에서 오른 단위의 이름을 검색어로 두 창의 건수만 센다(글은 받는 자리에서 버린다).
+// 끄기는 위의 같은 두 목록(DEMAND_GROUPS_OFF, DEMAND_SOURCES_OFF)으로 한다. 판정 근거는 9.98 명세서 폴더의 source-terms.md다.
+
+export type CommunityKind = "github-issues" | "bluesky-posts";
+
+export interface CommunitySource {
+  id: string;
+  group: CommunityGroup;
+  kind: CommunityKind;
+  /** 요약과 근거 줄의 소스 이름 */
+  label: string;
+  host: string;
+  /** 검색 경로. robots 판정도 이 경로로 한다 */
+  path: string;
+}
+
+export const GITHUB_API_HOST = "api.github.com";
+export const GITHUB_ISSUES_PATH = "/search/issues";
+/** Bluesky는 이 호스트의 표준 경로만 쓴다(S2: 다른 주소·대소문자 바꾸기·둘째 쪽 우회를 하지 않는다) */
+export const BLUESKY_API_HOST = "api.bsky.app";
+export const BLUESKY_SEARCH_PATH = "/xrpc/app.bsky.feed.searchPosts";
+
+export function communitySources(): CommunitySource[] {
+  return [
+    { id: "github:issues", group: "github", kind: "github-issues", label: COMMUNITY_INFO.github.label, host: GITHUB_API_HOST, path: GITHUB_ISSUES_PATH },
+    { id: "bluesky:posts", group: "bluesky", kind: "bluesky-posts", label: COMMUNITY_INFO.bluesky.label, host: BLUESKY_API_HOST, path: BLUESKY_SEARCH_PATH },
+  ];
+}
+
+/** 9.95, 9.96, 9.98 소스 전부(끄기 값 대조에 쓴다) */
 export function allDemandSourceIds(): string[] {
-  return [...demandSources().map((s) => s.id), ...officialSources().map((s) => s.id)];
+  return [...demandSources().map((s) => s.id), ...officialSources().map((s) => s.id), ...communitySources().map((s) => s.id)];
 }

@@ -1,5 +1,5 @@
 import type { DatabaseSync } from "node:sqlite";
-import { FLOW_TEXT_FIELDS, SAME_FLOW_DAYS, flowItemKey, flowKeyPosition, isFlowItemKey, type FlowCategory, type FlowDateStatus, type FlowLevel, type FlowTextField, type OfficialGroup } from "./demandFlowTypes.ts";
+import { FLOW_TEXT_FIELDS, SAME_FLOW_DAYS, flowItemKey, flowKeyPosition, isFlowItemKey, type CommunityGroup, type CommunityMissingReason, type FlowCategory, type FlowDateStatus, type FlowLevel, type FlowTextField, type OfficialGroup } from "./demandFlowTypes.ts";
 import { inTransaction } from "./issues.ts";
 import { addDays } from "./kst.ts";
 
@@ -22,6 +22,26 @@ export interface FlowUnit {
   baseDays: number;
 }
 
+/** 커뮤니티 근거 줄(9.98 S1, S8). 숫자는 기계가 전용 DB에서 센 값이고, 이름은 검색어였던 공식 단위의 이름이다(검색어 문자열이 아니다) */
+export interface FlowCommunityUnit {
+  group: CommunityGroup;
+  source: string;
+  /** 커뮤니티 단위 키(소스 id와 공식 단위 키) */
+  unitKey: string;
+  /** 검색어를 낸 공식 단위 키(같은 항목의 근거 단위에 있다) */
+  officialKey: string;
+  /** 검색어였던 공식 단위의 이름 */
+  unitName: string;
+  recent: number;
+  /** 앞 창을 최근 창 날 수에 맞춘 평균 */
+  base: number;
+  isNew: boolean;
+  recentFrom: string;
+  recentTo: string;
+  baseFrom: string;
+  baseTo: string;
+}
+
 export interface NewFlow {
   flowId: string;
   category: FlowCategory;
@@ -36,8 +56,13 @@ export interface NewFlow {
   /** 앞서 실은 같은 흐름 항목의 행 id */
   continues: number | null;
   units: FlowUnit[];
+  /** 커뮤니티 근거 줄(9.98). 없으면 빈 목록 */
+  community?: FlowCommunityUnit[];
+  /** 꺾임 표시(9.98 S7) */
+  turning?: boolean;
 }
 
+/** DB에서 읽은 항목은 community와 turning이 늘 있다(9.97 항목은 빈 목록과 거짓) */
 export interface Flow extends NewFlow {
   id: number;
   date: string;
@@ -60,7 +85,27 @@ interface FlowRow {
   aux: string;
   issue_id: number | null;
   continues_id: number | null;
+  turning: number;
 }
+
+interface CommunityRow {
+  item_id: number;
+  position: number;
+  grp: CommunityGroup;
+  source: string;
+  unit_key: string;
+  official_key: string;
+  unit_name: string;
+  recent: number;
+  base: number;
+  is_new: number;
+  recent_from: string;
+  recent_to: string;
+  base_from: string;
+  base_to: string;
+}
+
+const toCommunity = (r: CommunityRow): FlowCommunityUnit => ({ group: r.grp, source: r.source, unitKey: r.unit_key, officialKey: r.official_key, unitName: r.unit_name, recent: r.recent, base: r.base, isNew: r.is_new === 1, recentFrom: r.recent_from, recentTo: r.recent_to, baseFrom: r.base_from, baseTo: r.base_to });
 
 interface UnitRow {
   item_id: number;
@@ -87,6 +132,8 @@ function toFlows(db: DatabaseSync, rows: FlowRow[]): Flow[] {
   const units = db.prepare(`SELECT * FROM demand_flow_units WHERE item_id IN (${rows.map(() => "?").join(",")}) ORDER BY item_id, position`).all(...rows.map((r) => r.id)) as unknown as UnitRow[];
   const byItem = new Map<number, UnitRow[]>();
   for (const u of units) byItem.set(u.item_id, [...(byItem.get(u.item_id) ?? []), u]);
+  const community = db.prepare(`SELECT * FROM demand_flow_community WHERE item_id IN (${rows.map(() => "?").join(",")}) ORDER BY item_id, position`).all(...rows.map((r) => r.id)) as unknown as CommunityRow[];
+  const communityByItem = Map.groupBy(community, (c) => c.item_id);
   return rows.map((r) => ({
     id: r.id,
     date: r.target_date,
@@ -103,6 +150,8 @@ function toFlows(db: DatabaseSync, rows: FlowRow[]): Flow[] {
     issue: r.issue_id,
     continues: r.continues_id,
     units: (byItem.get(r.id) ?? []).map(toUnit),
+    community: (communityByItem.get(r.id) ?? []).map(toCommunity),
+    turning: r.turning === 1,
   }));
 }
 
@@ -136,19 +185,30 @@ export interface FlowDate {
   status: FlowDateStatus;
   /** 비교에 넣지 못한 공식 묶음 */
   missing: OfficialGroup[];
+  /** 비교에 넣지 못한 커뮤니티 소스와 사유(9.98 4.4-2). 9.97 기록과 9.97 형식 백업은 빈 목록이다 */
+  communityMissing?: CommunityMissing[];
 }
 
+export interface CommunityMissing {
+  source: string;
+  group: CommunityGroup;
+  reason: CommunityMissingReason;
+}
+
+type DateRow = { target_date: string; status: FlowDateStatus; missing: string; community_missing: string };
+const toDate = (r: DateRow): FlowDate => ({ date: r.target_date, status: r.status, missing: JSON.parse(r.missing) as OfficialGroup[], communityMissing: JSON.parse(r.community_missing) as CommunityMissing[] });
+
 export function flowDateOf(db: DatabaseSync, date: string): FlowDate | null {
-  const r = db.prepare("SELECT target_date, status, missing FROM demand_flow_dates WHERE target_date = ?").get(date) as { target_date: string; status: FlowDateStatus; missing: string } | undefined;
-  return r === undefined ? null : { date: r.target_date, status: r.status, missing: JSON.parse(r.missing) as OfficialGroup[] };
+  const r = db.prepare("SELECT target_date, status, missing, community_missing FROM demand_flow_dates WHERE target_date = ?").get(date) as DateRow | undefined;
+  return r === undefined ? null : toDate(r);
 }
 
 export function allFlowDates(db: DatabaseSync): FlowDate[] {
-  return (db.prepare("SELECT target_date, status, missing FROM demand_flow_dates ORDER BY target_date").all() as { target_date: string; status: FlowDateStatus; missing: string }[]).map((r) => ({ date: r.target_date, status: r.status, missing: JSON.parse(r.missing) as OfficialGroup[] }));
+  return (db.prepare("SELECT target_date, status, missing, community_missing FROM demand_flow_dates ORDER BY target_date").all() as DateRow[]).map(toDate);
 }
 
 export function setFlowDate(db: DatabaseSync, d: FlowDate): void {
-  db.prepare("INSERT INTO demand_flow_dates (target_date, status, missing) VALUES (?, ?, ?) ON CONFLICT(target_date) DO UPDATE SET status = excluded.status, missing = excluded.missing").run(d.date, d.status, JSON.stringify(d.missing));
+  db.prepare("INSERT INTO demand_flow_dates (target_date, status, missing, community_missing) VALUES (?, ?, ?, ?) ON CONFLICT(target_date) DO UPDATE SET status = excluded.status, missing = excluded.missing, community_missing = excluded.community_missing").run(d.date, d.status, JSON.stringify(d.missing), JSON.stringify(d.communityMissing ?? []));
 }
 
 /** 끝남: 확인함과 기준 부족(4.2-4). 받지 못함과 꺼짐은 다시 한다(4.3-2) */
@@ -162,11 +222,17 @@ function insertFlowUnits(db: DatabaseSync, itemId: number, units: readonly FlowU
   units.forEach((x, i) => u.run(itemId, i + 1, x.group, x.source, x.unitKey, x.unitName, x.recent, x.base, x.isNew ? 1 : 0, x.recentFrom, x.recentTo, x.baseFrom, x.baseTo, x.recentDays, x.baseDays));
 }
 
+function insertFlowCommunity(db: DatabaseSync, itemId: number, units: readonly FlowCommunityUnit[]): void {
+  const u = db.prepare("INSERT INTO demand_flow_community (item_id, position, grp, source, unit_key, official_key, unit_name, recent, base, is_new, recent_from, recent_to, base_from, base_to) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+  units.forEach((x, i) => u.run(itemId, i + 1, x.group, x.source, x.unitKey, x.officialKey, x.unitName, x.recent, x.base, x.isNew ? 1 : 0, x.recentFrom, x.recentTo, x.baseFrom, x.baseTo));
+}
+
 /** 항목과 근거 단위를 넣고 행 id를 돌려준다. id가 있으면 그 id로 넣는다(백업 되살리기) */
 function insertFlow(db: DatabaseSync, date: string, position: number, f: NewFlow, id?: number): number {
-  const r = db.prepare("INSERT INTO demand_flows (id, target_date, position, flow_id, category, field, title, summary, reason, level, aux, issue_id, continues_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)").run(id ?? null, date, position, f.flowId, f.category, f.field, f.title, f.summary, f.reason, f.level, JSON.stringify(f.aux), f.issue, f.continues);
+  const r = db.prepare("INSERT INTO demand_flows (id, target_date, position, flow_id, category, field, title, summary, reason, level, aux, issue_id, continues_id, turning) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)").run(id ?? null, date, position, f.flowId, f.category, f.field, f.title, f.summary, f.reason, f.level, JSON.stringify(f.aux), f.issue, f.continues, f.turning === true ? 1 : 0);
   const itemId = Number(r.lastInsertRowid);
   insertFlowUnits(db, itemId, f.units);
+  insertFlowCommunity(db, itemId, f.community ?? []);
   return itemId;
 }
 
@@ -219,6 +285,7 @@ export function correctFlow(db: DatabaseSync, itemId: number, fields: Partial<Re
 
 export interface DemandBackup {
   formatVersion: number;
+  /** 9.97 형식(9)에는 community와 turning이 없다 */
   flows: Omit<Flow, "itemKey">[];
   flowDates: FlowDate[];
   flowCorrections: (FlowCorrection & { item: number })[];

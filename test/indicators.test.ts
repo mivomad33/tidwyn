@@ -235,7 +235,7 @@ describe("6단계 4.1 데이터와 저장", () => {
       const before = dumpDb(old);
       old.close();
       const db = openDb(file);
-      assert.equal(schemaVersion(db), 13);
+      assert.equal(schemaVersion(db), 14);
       const after = dumpDb(db);
       for (const [table, rows] of Object.entries(before)) assert.deepEqual(after[table], rows, table);
       for (const table of ["entities", "terms", "story_entities", "story_terms", ...(v >= 5 ? ["schedules"] : [])]) assert.equal(before[table]?.length, 1, table);

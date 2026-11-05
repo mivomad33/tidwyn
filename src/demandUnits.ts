@@ -50,8 +50,8 @@ export const EXTERNAL_KINDS: readonly OfficialKind[] = ["assembly", "acrc-qna", 
 /** 값이 '목록에 든 날의 합'인 상위 목록 소스(4.1-1) */
 export const TOP_LIST_KINDS: readonly OfficialKind[] = ["wikimedia", "acrc-bigdata"];
 
-export type SourceState = "ok" | "unfetched" | "absent" | "stale" | "short" | "nodata" | "off";
-export const SOURCE_STATE_NAMES: Record<SourceState, string> = { ok: "비교함", unfetched: "받지 못한 날 있음", absent: "자료 없음 날 많음", stale: "오래됨", short: "기록 부족", nodata: "기록 없음", off: "꺼짐" };
+import { SOURCE_STATE_NAMES, type SourceState } from "./demandFlowTypes.ts";
+export { SOURCE_STATE_NAMES, type SourceState };
 
 export interface UnitCount {
   name: string | null;
@@ -88,6 +88,8 @@ export interface RisingUnit {
   recentDaily: (number | null)[];
   /** 앞 28일의 일평균 */
   baseDailyMean: number;
+  /** 앞 28일 날마다 값(자료 없음 날은 null). 꺾임(9.98 S7)의 같은 요일 평균에 쓴다 */
+  baseDaily?: (number | null)[];
   material: string[];
   window: WindowInfo;
 }
@@ -506,7 +508,7 @@ function ftcSeries(db: DatabaseSync, s: OfficialSource, target: string, today: s
   };
 }
 
-const round1 = (x: number) => Math.round(x * 10) / 10;
+export const round1 = (x: number) => Math.round(x * 10) / 10;
 
 /** 소스 하나의 창과 오른 단위(4.1-1, S5) */
 export function sourceUnits(db: DatabaseSync, s: OfficialSource, target: string, today: string, o: UnitsOptions): SourceUnits {
@@ -550,13 +552,14 @@ export function sourceUnits(db: DatabaseSync, s: OfficialSource, target: string,
     const baseAvg = round1(baseDailyMean * window.recentDays);
     if (baseSum > 0 && recent < rule.ratio * baseAvg) continue;
     if (s.kind === "wikimedia" && Math.max(...recentDaily.map((v) => v ?? 0)) >= WIKI_SPIKE_RATIO * recent) continue;
-    rising.push({ key, source: s.id, group: s.group as OfficialGroup, name: external ? null : info.name, recent, base: baseAvg, isNew: baseSum === 0, recentDaily, baseDailyMean, material: info.material, window, score: (recent - baseAvg) / Math.sqrt(baseAvg + rule.floor) });
+    rising.push({ key, source: s.id, group: s.group as OfficialGroup, name: external ? null : info.name, recent, base: baseAvg, isNew: baseSum === 0, recentDaily, baseDailyMean, baseDaily: daily, material: info.material, window, score: (recent - baseAvg) / Math.sqrt(baseAvg + rule.floor) });
   }
   rising.sort((a, b) => b.score - a.score || a.key.localeCompare(b.key));
+  // 앞 창의 날 값(꺾임, S7)은 남긴 단위에만 자른다
   const top = rising.slice(0, rule.top).map((u): RisingUnit => {
     const { score, ...unit } = u;
     void score;
-    return unit;
+    return { ...unit, baseDaily: (unit.baseDaily ?? []).slice(0, B) };
   });
   return { ...base, state: "ok", window, unitCount: keys.size, rising: top, risingAll: rising.length };
 }

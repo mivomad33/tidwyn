@@ -6,7 +6,7 @@ import type { Locator, Page } from "@playwright/test";
 import { READY_STATE, UNSTICK_TABS, expect, expectNoHorizontalScroll, failData, monthDay, storyItem, test } from "./base.ts";
 import { E2E_DEMAND_BASE_URL, E2E_DEMAND_DATA_DIR, E2E_DEMAND_INFO_FILE } from "./paths.ts";
 import type { DemandFixtureInfo } from "../../site/dev/demandFixtures.ts";
-import { demandZeroText, flowCategoryText, flowContinuesText, flowLevelText, flowPeriod, flowUnitHead, flowUnitNumbers, flowUnitPeriod } from "../../site/src/lib/demand.ts";
+import { DEMAND_ABOUT_HASH, DEMAND_ABOUT_LINK, demandZeroText, flowCategoryText, flowContinuesText, flowLevelText, flowPeriod, flowUnitHead, flowUnitNumbers, flowUnitPeriod } from "../../site/src/lib/demand.ts";
 import { BRIEF_TAB_KEY } from "../../site/src/lib/browserKeys.ts";
 import { FLOW_AI_NOTE, FLOW_CAVEAT } from "../../src/demandFlowTypes.ts";
 import { siteFiles, type DayList, type DemandMonth, type MonthList, type SiteFlowItem } from "../../src/siteTypes.ts";
@@ -65,7 +65,7 @@ for (const width of [1440, 375]) {
       await demandTab(page, 3).click();
       await expect(rows(page)).toHaveCount(3);
       await expect(page.locator("main .flow.note").first()).toContainText(FLOW_CAVEAT);
-      await expect(page.getByRole("link", { name: "수요 탭 소개" })).toHaveAttribute("href", "/about#demand");
+      await expect(page.getByRole("link", { name: DEMAND_ABOUT_LINK })).toHaveAttribute("href", `/about#${DEMAND_ABOUT_HASH}`);
       for (const x of itemsOf(d.three)) await expectItem(page, x);
       await expect(page.locator("main")).not.toContainText("이날 비교에 넣지 못한 소스");
       await expectNoHorizontalScroll(page, "3건");
@@ -187,9 +187,9 @@ test.describe("검색과 소개", () => {
 
   test("소개의 수요 절로 간다", async ({ page }) => {
     await page.goto(`/${d.three}#demand`);
-    await page.getByRole("link", { name: "수요 탭 소개" }).click();
-    await expect(page).toHaveURL("/about#demand");
-    await expect(page.locator("#demand")).toBeInViewport();
+    await page.getByRole("link", { name: DEMAND_ABOUT_LINK }).click();
+    await expect(page).toHaveURL(`/about#${DEMAND_ABOUT_HASH}`);
+    await expect(page.locator(`#${DEMAND_ABOUT_HASH}`)).toBeInViewport();
     await expect(page.locator("#demand")).toContainText("공공누리 제2유형");
   });
 });

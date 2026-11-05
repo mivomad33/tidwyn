@@ -92,7 +92,7 @@ function parsePage(res: FetchResult): SearchPage & { incomplete: boolean } {
 }
 
 /** 한도 응답이 말하는 대기 시간 */
-function rateWait(res: FetchResult, now: number): number {
+export function rateWait(res: FetchResult, now: number): number {
   const after = Number(res.headers?.["retry-after"]);
   if (Number.isFinite(after) && after > 0) return after * 1000;
   const reset = Number(res.headers?.["x-ratelimit-reset"]);

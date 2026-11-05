@@ -1,7 +1,7 @@
 import type { Category, Source } from "./brief.ts";
 import { DISCOVER_KINDS, DISCOVER_LABELS, type BuilderDue, type BuilderField, type BuilderItemSource, type BuilderStatus, type DiscoverKind, type KindStatus, type ReleaseInfo } from "./builderTypes.ts";
 import type { Confidence, Major, SectionName } from "./categories.ts";
-import { GROUP_INFO, fieldLabel, type FlowCategory, type FlowDateStatus, type FlowLevel, type OfficialGroup } from "./demandFlowTypes.ts";
+import { COMMUNITY_INFO, GROUP_INFO, fieldLabel, type CommunityGroup, type CommunityMissingReason, type FlowCategory, type FlowDateStatus, type FlowLevel, type OfficialGroup } from "./demandFlowTypes.ts";
 
 // 사이트 데이터 형식(3단계 4.1). DB에서 만들고(siteData.ts) 사이트 화면(site/)이 읽는다.
 // 파일은 결과물의 `site-data/` 아래에 둔다. 이름은 백업 파일 이름(`YYYY-MM.json`, `issues.json`, `meta.json`)과 겹치지 않는다.
@@ -460,13 +460,16 @@ export interface DayDemand {
   status: Exclude<FlowDateStatus, "off">;
   /** 그날 비교에 넣지 못한 공식 묶음(항목이 있는 날만, 비면 칸을 뺀다) */
   missing?: OfficialGroup[];
+  /** 9.98: 그날 비교에 넣지 못한 커뮤니티 소스와 사유(항목이 있는 날만, 비면 칸을 뺀다). 이름은 COMMUNITY_INFO, 사유 글은 COMMUNITY_MISSING_NAMES */
+  communityMissing?: { group: CommunityGroup; reason: CommunityMissingReason }[];
 }
 
 /** 그날의 수요 요약. 보일 것이 없으면 null이라 탭이 없다. 상태 없이(또는 꺼짐인데) 항목이 있으면 확인함으로 본다 */
-export function dayDemandOf(status: FlowDateStatus | null, count: number, missing: readonly OfficialGroup[]): DayDemand | null {
+export function dayDemandOf(status: FlowDateStatus | null, count: number, missing: readonly OfficialGroup[], communityMissing: NonNullable<DayDemand["communityMissing"]> = []): DayDemand | null {
   if (count === 0 && (status === null || status === "off")) return null;
   const out: DayDemand = { count, status: status === null || status === "off" ? "checked" : status };
   if (count > 0 && missing.length > 0) out.missing = [...missing];
+  if (count > 0 && communityMissing.length > 0) out.communityMissing = communityMissing.map((m) => ({ group: m.group, reason: m.reason }));
   return out;
 }
 
@@ -492,6 +495,27 @@ export interface SiteFlowUnit {
   topList?: true;
 }
 
+/**
+ * 커뮤니티 근거 줄 하나(9.98 S5, 4.5-1). 숫자는 기계가 센 검색 건수다. name은 검색어였던 공식 단위의 이름이다(같은 항목의 근거 줄에 있다).
+ * source는 소스 이름, sample은 고정 표본 설명이다(COMMUNITY_INFO)
+ */
+export interface SiteFlowCommunityUnit {
+  group: CommunityGroup;
+  source: string;
+  sample: string;
+  name: string;
+  recent: number;
+  /** 앞 창을 최근 창 날 수에 맞춘 평균 */
+  base: number;
+  isNew: boolean;
+  recentFrom: string;
+  recentTo: string;
+  baseFrom: string;
+  baseTo: string;
+  /** 값의 단위 글자('건') */
+  unit: string;
+}
+
 /** 수요 흐름 항목의 공개 칸. 단위 키, 영구 id, 후보 재료는 넣지 않는다 */
 export interface SiteFlowItem {
   /** `demand-<순서>`. 정정, 읽음, 주소의 `#`가 쓴다 */
@@ -508,8 +532,14 @@ export interface SiteFlowItem {
   /** 앞서 실은 같은 흐름 항목의 자리. 아니면 null */
   continues: { date: string; key: string } | null;
   issue: IssueRef | null;
-  /** 소스의 공식 공개 페이지(S12) */
+  /** 소스의 공식 공개 페이지(S12). 커뮤니티 근거가 있으면 그 소스의 고정 공식 주소도 든다 */
   sources: BuilderItemSource[];
+  /** 9.98: 커뮤니티 근거 줄(공식 근거 줄 뒤에 '커뮤니티'로 묶는다). 없으면 칸을 뺀다 */
+  community?: SiteFlowCommunityUnit[];
+  /** 9.98: 커뮤니티 확인 흐름(공식 묶음 하나 + 커뮤니티). 근거 수준 줄은 COMMUNITY_LEVEL_MEANINGS 문구다. 아니면 칸을 뺀다 */
+  communityConfirmed?: true;
+  /** 9.98 S7: 꺾임 표시(FLOW_TURNING_TEXT). 아니면 칸을 뺀다 */
+  turning?: true;
   /** 정정 기록(최신순). 정정이 없으면 항목을 뺀다 */
   corrections?: StoryCorrection[];
 }
@@ -525,9 +555,9 @@ export function flowUnitSourceText(u: Pick<SiteFlowUnit, "group" | "source">): s
   return u.source === "" || u.source === GROUP_INFO[u.group].label ? GROUP_INFO[u.group].label : `${GROUP_INFO[u.group].label} · ${u.source}`;
 }
 
-/** 수요 흐름 항목의 검색 대상 글: 제목, 요지, 분야, 소스 이름(S10) */
-export function flowItemText(x: Pick<SiteFlowItem, "title" | "summary" | "field" | "units">): string {
-  return [x.title, x.summary, fieldLabel(x.field), ...new Set(x.units.map(flowUnitSourceText))].join("\n");
+/** 수요 흐름 항목의 검색 대상 글: 제목, 요지, 분야, 소스 이름(S10). 9.98: 커뮤니티 소스 이름도 든다(4.5-3) */
+export function flowItemText(x: Pick<SiteFlowItem, "title" | "summary" | "field" | "units" | "community">): string {
+  return [x.title, x.summary, fieldLabel(x.field), ...new Set([...x.units.map(flowUnitSourceText), ...(x.community ?? []).map((c) => COMMUNITY_INFO[c.group].label)])].join("\n");
 }
 
 export function demandSearchRecords(months: readonly DemandMonth[]): SearchRecord[] {

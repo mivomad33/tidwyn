@@ -1,10 +1,10 @@
 import type { DatabaseSync } from "node:sqlite";
 import { issueRefResolver, publicFixes } from "./builderSite.ts";
 import { officialSources, type OfficialKind } from "./demandSources.ts";
-import { allFlowDates, allFlows, flowCorrectionsByItem, type Flow, type FlowUnit } from "./demandFlowStore.ts";
-import { AUX_GROUPS, GROUP_INFO, flowSourceName, sourcePage, type OfficialGroup } from "./demandFlowTypes.ts";
+import { allFlowDates, allFlows, flowCorrectionsByItem, type Flow, type FlowCommunityUnit, type FlowUnit } from "./demandFlowStore.ts";
+import { AUX_GROUPS, COMMUNITY_GROUPS, COMMUNITY_INFO, GROUP_INFO, isCommunityConfirmed, flowSourceName, sourcePage, type OfficialGroup } from "./demandFlowTypes.ts";
 import { TOP_LIST_KINDS } from "./demandUnits.ts";
-import { dayDemandOf, type DayDemand, type DemandMonth, type SiteFlowItem, type SiteFlowUnit } from "./siteTypes.ts";
+import { dayDemandOf, type DayDemand, type DemandMonth, type SiteFlowCommunityUnit, type SiteFlowItem, type SiteFlowUnit } from "./siteTypes.ts";
 import type { BuilderItemSource } from "./builderTypes.ts";
 
 // 9.97단계 4.4(S1, S7, S10, S12): 수요 흐름 사이트 데이터. 빌더처럼 항목은 달별 파일에 두고 달 목록에는 수와 상태만 둔다.
@@ -59,13 +59,23 @@ function siteUnit(u: FlowUnit, infos: Map<string, SourceInfo>): SiteFlowUnit {
   return out;
 }
 
-/** 출처: 근거 줄 소스의 공식 공개 페이지(S12), 처음 나온 순서로 겹치지 않게. 보조 근거가 있으면 그 묶음의 출처 표시도 더한다 */
-function flowSources(units: readonly FlowUnit[], aux: readonly string[], infos: Map<string, SourceInfo>): BuilderItemSource[] {
+/** 커뮤니티 근거 줄(9.98). 공개 칸만 옮긴다(단위 키, 공식 단위 키는 나가지 않는다) */
+function siteCommunity(c: FlowCommunityUnit): SiteFlowCommunityUnit {
+  const info = COMMUNITY_INFO[c.group];
+  return { group: c.group, source: info.label, sample: info.sample, name: c.unitName, recent: c.recent, base: c.base, isNew: c.isNew, recentFrom: c.recentFrom, recentTo: c.recentTo, baseFrom: c.baseFrom, baseTo: c.baseTo, unit: "건" };
+}
+
+/**
+ * 출처: 근거 줄 소스의 공식 공개 페이지(S12), 처음 나온 순서로 겹치지 않게. 커뮤니티 근거가 있으면 그 소스의 고정 공식 주소(검색어 없음, 9.98 4.5-1)를,
+ * 보조 근거가 있으면 그 묶음의 출처 표시도 더한다
+ */
+function flowSources(units: readonly FlowUnit[], aux: readonly string[], infos: Map<string, SourceInfo>, community: readonly FlowCommunityUnit[] = []): BuilderItemSource[] {
   const out: BuilderItemSource[] = [];
   const add = (name: string, url: string) => {
     if (!out.some((s) => s.url === url)) out.push({ name, url });
   };
   for (const u of units) add(flowSourceName(u.group, infos.get(u.source)?.label ?? ""), sourcePage(u.source, u.group));
+  for (const g of COMMUNITY_GROUPS) if (community.some((c) => c.group === g)) add(COMMUNITY_INFO[g].credit, COMMUNITY_INFO[g].url);
   for (const g of AUX_GROUPS) if (aux.some((a) => a.startsWith(`${GROUP_INFO[g].credit} `))) add(GROUP_INFO[g].credit, GROUP_INFO[g].url);
   return out;
 }
@@ -94,8 +104,14 @@ export function buildDemandSiteData(db: DatabaseSync): DemandSiteData {
       aux: f.aux,
       continues: origin ? { date: origin.date, key: origin.itemKey } : null,
       issue: f.issue === null ? null : issueOf(f.issue),
-      sources: flowSources(f.units, f.aux, infos),
+      sources: flowSources(f.units, f.aux, infos, f.community),
     };
+    const community = f.community ?? [];
+    if (community.length > 0) {
+      item.community = community.map(siteCommunity);
+      if (isCommunityConfirmed(f.units, community)) item.communityConfirmed = true;
+    }
+    if (f.turning === true) item.turning = true;
     if (fixes.length > 0) item.corrections = publicFixes(fixes);
     const month = f.date.slice(0, 7);
     let file = months.get(month);
@@ -106,7 +122,7 @@ export function buildDemandSiteData(db: DatabaseSync): DemandSiteData {
   const byDate = new Map<string, DayDemand>();
   for (const date of new Set([...statuses.keys(), ...counts.keys()])) {
     const d = statuses.get(date);
-    const day = dayDemandOf(d?.status ?? null, counts.get(date) ?? 0, (d?.missing ?? []) as OfficialGroup[]);
+    const day = dayDemandOf(d?.status ?? null, counts.get(date) ?? 0, (d?.missing ?? []) as OfficialGroup[], d?.communityMissing ?? []);
     if (day) byDate.set(date, day);
   }
   return { byDate, months: [...months.values()].sort((a, b) => a.month.localeCompare(b.month)) };

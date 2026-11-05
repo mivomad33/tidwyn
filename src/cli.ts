@@ -52,7 +52,7 @@ import { DISCOVER_KINDS, discoveriesOfDate, isKindDone, undoneKinds, type Discov
 import { readDiscoverItems, readDiscoverWork, removeDiscoverWorkFiles, writeDiscoverWork } from "./discoverWork.ts";
 import { runSnapshot } from "./repoSnapshot.ts";
 import { DEMAND_DEADLINE_MS, demandFetchText, demandLines, emptyGroups, runDemandFetch, type DemandReport } from "./demandFetch.ts";
-import { demandSources, officialSources, type DemandOff, type DemandSource, type OfficialSource } from "./demandSources.ts";
+import { communitySources, demandSources, officialSources, type CommunitySource, type DemandOff, type DemandSource, type OfficialSource } from "./demandSources.ts";
 import { demandDbPath, openDemandDbForRun } from "./demandStore.ts";
 import { OFFICIAL_DEADLINE_MS, OFFICIAL_MAX_CALLS, emptyOfficialGroups, officialFetchText, officialLines, runOfficialDemand, type OfficialReport } from "./officialDemand.ts";
 import { buildCandidateFile, checkCheckFile, checkPickFile, readCandidateFile, readJsonFile, removeVideoWorkFiles, restoreCandidateLists, videoWorkFile, writeCandidateFiles } from "./videoPick.ts";
@@ -97,6 +97,7 @@ import {
   type BuilderFetchState,
   type BuilderKindsState,
   type BuilderWriteState,
+  type CommunityState,
   type DemandFetchState,
   type OfficialDemandState,
   type DeployResult,
@@ -123,10 +124,11 @@ import { AlreadyStoredError, hasBrief, loadBrief, recordFirstCollectionDate, sav
 import { isLate, planTargets } from "./targets.ts";
 import { formatViolations, validateBrief, type Violation } from "./validate.ts";
 import { FLOW_FAIL_ALERT_DAYS, FLOW_OFF_ENV, failDaysOf, runFlowStep, type DemandFlowState } from "./demandFlowRun.ts";
-import { GROUP_INFO, LEVEL_LABELS, FLOW_LEVELS, FLOW_STATUS_NAMES, OFFICIAL_GROUPS } from "./demandFlowTypes.ts";
+import { GROUP_INFO, communityMissingText, LEVEL_LABELS, FLOW_LEVELS, FLOW_STATUS_NAMES, OFFICIAL_GROUPS } from "./demandFlowTypes.ts";
 import { officialUnits, openDemandReadOnly, SOURCE_STATE_NAMES } from "./demandUnits.ts";
 import { isFlowDateDone, setFlowDate } from "./demandFlowStore.ts";
 import { buildFlowCandidates, removeFlowWorkFiles } from "./demandFlowWork.ts";
+import { COMMUNITY_DEADLINE_MS, communityFetchText, communityLines, emptyReport as emptyCommunityReport, runCommunity, type CommunityReport } from "./communityFetch.ts";
 
 // /brief 스킬이 부르는 명령들. 런타임 의존성 없이 Node 내장 기능과 git만 쓴다.
 
@@ -211,6 +213,14 @@ export interface Context {
   flowStageMs?: number;
   flowProcessMs?: number;
   flowFailDuringSave?: () => void;
+  /** 커뮤니티 받기(9.98단계)의 요청, 시계, 기다림, 요청 시간 상한 타이머, 명령 상한, 소스 목록, 저장 직전 실패 흉내. 끄기 값은 demandOff를 함께 쓴다 */
+  communityHttp?: FetchText;
+  communityClock?: () => number;
+  communitySleep?: (ms: number) => Promise<void>;
+  communityTimer?: (ms: number, signal: AbortSignal) => Promise<void>;
+  communityDeadlineMs?: number;
+  communitySources?: readonly CommunitySource[];
+  communityBeforeWrite?: () => void;
 }
 
 /** 의존성 잠금 파일대로, 잠금 파일을 바꾸지 않고 대화형 확인 없이 설치한다 */
@@ -290,6 +300,7 @@ const USAGE = `명령:
 수요 스냅샷(9.95단계):
   demand-fetch --run <파일>               Google 급상승어와 Mastodon 트렌드를 그날(KST) 한 번 받아 전용 DB(<데이터 폴더>/demand.db)에 쌓는다. 받은 소스는 다시 부르지 않고, 5분 안에 끝난다. 소스가 실패해도 종료 코드는 0이다. 시험 모드에서는 돌지 않는다. 받은 글은 출력하지 않는다
   demand-official --run <파일>            공식 기관·공개 데이터(국회, 권익위, 1372, DART, SEC Form D, Wikimedia)를 값 날짜마다 받아 전용 DB에 쌓는다. 2026-09-30부터 빠진 날짜를 채우고, 한 번에 9분 안에 끝난다. 상한에 닿아 남은 것이 있으면 그렇게 출력하고, 같은 실행 기록으로 두 번까지 받는다. 소스가 실패해도 종료 코드는 0이다. 시험 모드에서는 돌지 않는다. 받은 글은 출력하지 않는다
+  demand-community --run <파일>           가장 늦은 브리프 날짜의 커뮤니티 건수(9.98단계): 공식 오른 단위의 이름을 검색어로 GitHub Issues와 Bluesky의 최근 7일·앞 28일 건수만 받아 전용 DB에 쌓는다(검색어는 하루 20개까지, 6분 안에 끝난다). 실패해도 종료 코드는 0이다. 시험 모드나 수요 흐름을 끈 날에는 돌지 않는다. 검색어와 받은 글은 출력하지 않는다
   demand-flow --run <파일>                가장 늦은 브리프 날짜의 수요 흐름(9.97단계): 전용 DB를 읽기 전용으로 열어 오른 단위를 세고, 경로가 막힌 별도 프로세스가 흐름을 쓰고, 검사해 저장한다. 한 번에 프로세스를 하나까지 부르고, 끝나지 않았으면 '다시 부른다'로 끝난다(모두 3번까지, 단계 전체 15분). 실패해도 종료 코드는 0이다. 시험 모드에서는 돌지 않는다. 받은 글과 쓴 글은 출력하지 않는다`;
 
 function opts(argv: string[], options: Record<string, { type: "string" | "boolean" }>) {
@@ -630,6 +641,7 @@ function cmdSummary(argv: string[], ctx: Context): number {
   lines.push(...builderSummaryLines(s));
   if (s.demandFetch !== undefined) lines.push(...demandSummaryLines(s.demandFetch));
   if (s.officialDemand !== undefined) lines.push(...officialSummaryLines(s.officialDemand));
+  if (s.demandCommunity !== undefined) lines.push(...communitySummaryLines(s.demandCommunity));
   if (s.demandFlow !== undefined) lines.push(...flowSummaryLines(s.demandFlow));
   lines.push(...videoBacklogLines(s, ctx));
   lines.push(...imageSummaryLines(s, saved));
@@ -2681,6 +2693,7 @@ function cmdDemandFlow(argv: string[], ctx: Context): number {
       home: homeOf(ctx),
       secrets: secretsOf(ctx),
       units: { asOf, ...windowOpts },
+      communitySources: ctx.communitySources,
       stageMs: ctx.flowStageMs,
       processTimeoutMs: ctx.flowProcessMs ?? ctx.claudeTimeoutMs,
       failDuringSave: ctx.flowFailDuringSave,
@@ -2710,6 +2723,98 @@ function cmdDemandFlow(argv: string[], ctx: Context): number {
     db.close();
   }
   return EXIT.ok;
+}
+
+/**
+ * 커뮤니티 받기(9.98단계 4.2, 4.4). 어떤 실패도 종료 코드 0이다(14-2와 다른 단계를 막지 않는다). 전용 DB는 9.96처럼 열고(사본을 먼저 만든다) 새 표에만 쓴다.
+ * 시험 전용: --target(demand-flow --target과 같은 뜻과 같은 공식 자르기)
+ */
+async function cmdDemandCommunity(argv: string[], ctx: Context): Promise<number> {
+  const v = opts(argv, { run: { type: "string" }, target: { type: "string" } });
+  const trialTarget = typeof v.target === "string" ? v.target : null;
+  if (trialTarget !== null && !isValidDate(trialTarget)) throw new UsageError("--target은 YYYY-MM-DD여야 한다");
+  const runFile = need(v, "run");
+  const state = readRun(runFile);
+  const refused = indicatorCondition(state, ctx) ?? trialRefused(state.mode, trialTarget !== null, ctx);
+  if (refused !== null) return refused;
+  const sources = ctx.communitySources ?? communitySources();
+  const clock = ctx.communityClock ?? Date.now;
+  const started = clock();
+  const empty = (status: CommunityReport["sources"][string]["status"]): CommunityReport["sources"] => Object.fromEntries(sources.map((s) => [s.id, emptyCommunityReport(status)]));
+  const base = { terms: 0, elapsedMs: 0, unitsMs: 0, hitDeadline: false, streaks: [], copied: false };
+  const record = (r: CommunityState) => {
+    try {
+      updateRun(runFile, (s) => {
+        s.demandCommunity = r;
+        if (r.copied) s.demandCopied = true;
+      });
+    } catch {
+      // 실행 기록을 쓰지 못해도 다음 단계로 넘어간다
+    }
+    ctx.out(["커뮤니티 신호:", ...communitySummaryLines(r)].join("\n"));
+  };
+  const crashed = (target: string | null, e: unknown, copied?: boolean): CommunityState => {
+    const reason = demandCrashReason(e);
+    return { status: "crashed", target, sources: empty("failed"), ...base, ...(copied === undefined ? {} : { copied }), elapsedMs: clock() - started, reason: reason === "받기 명령이 실패했다" ? "커뮤니티 받기가 실패했다" : reason };
+  };
+  if (state.mode === "test" || ctx.env[FLOW_OFF_ENV] === "1") {
+    record({ status: "off", target: trialTarget, offBy: state.mode === "test" ? "test" : "flowOff", sources: empty("off"), ...base });
+    return EXIT.ok;
+  }
+  let target: string | null = trialTarget;
+  try {
+    if (target === null) {
+      const db = openExistingDb(state.dbPath);
+      try {
+        target = videoTargetDate(db);
+      } finally {
+        db.close();
+      }
+    }
+    if (target === null) {
+      record({ status: "nothing", target, sources: empty("noterms"), ...base });
+      return EXIT.ok;
+    }
+    const file = demandDbPath(state.dataDir);
+    const mayCopy = fs.existsSync(file) && state.demandCopied !== true;
+    const { db, copied } = openDemandDbForRun(file, state.dataDir, ctx.now(), mayCopy);
+    let r: CommunityReport;
+    try {
+      r = await runCommunity({
+        db,
+        target,
+        today: kstDate(ctx.now()),
+        units: trialTarget === null ? {} : { asOf: { date: trialTarget, ftcLagDays: FLOW_TRIAL_FTC_LAG_DAYS } },
+        http: ctx.communityHttp ?? communityFetchText,
+        now: ctx.now,
+        clock,
+        sleep: ctx.communitySleep,
+        timer: ctx.communityTimer,
+        deadlineMs: ctx.communityDeadlineMs ?? COMMUNITY_DEADLINE_MS,
+        startedMs: started,
+        sources,
+        off: ctx.demandOff,
+        beforeWrite: ctx.communityBeforeWrite,
+      });
+    } catch (e) {
+      record(crashed(target, e, copied));
+      return EXIT.ok;
+    } finally {
+      db.close();
+    }
+    record({ status: "done", ...r, copied });
+  } catch (e) {
+    record(crashed(target, e));
+  }
+  return EXIT.ok;
+}
+
+/** 실행 요약의 커뮤니티 줄(4.4-3). 검색어와 받은 응답은 쓰지 않는다 */
+function communitySummaryLines(r: CommunityState): string[] {
+  if (r.status === "off") return [`- 커뮤니티 신호: 꺼짐(${r.offBy === "test" ? "시험 모드" : "수요 흐름 꺼짐"})`];
+  if (r.status === "nothing") return ["- 커뮤니티 신호: 브리프가 없어 대상 날짜가 없다"];
+  if (r.status === "crashed") return [`- 커뮤니티 신호${r.target === null ? "" : `(${r.target})`}: 실패(${r.reason ?? "이유 없음"}). 다음 실행이 다시 받는다`];
+  return communityLines(r);
 }
 
 /** 시험 전용 기계 측정: 그날의 비교 묶음, 묶음별 오른 단위 수, 후보 복사본 크기를 수로만 낸다. 날짜 상태와 흐름 기록은 저장하지 않는다 */
@@ -2751,6 +2856,8 @@ function flowSummaryLines(r: DemandFlowState): string[] {
   if (r.compared !== undefined) lines.push(`  - 비교한 공식 묶음: ${r.compared.map((g) => GROUP_INFO[g].label).join(", ") || "없음"}`);
   if (r.missing !== undefined && r.missing.length > 0) lines.push(`  - 빠진 묶음: ${r.missing.map((m) => `${GROUP_INFO[m.group].label}(${m.reasons.map((x) => SOURCE_STATE_NAMES[x]).join("·")})`).join(", ")}`);
   if (r.risingByGroup !== undefined) lines.push(`  - 묶음별 오른 단위: ${OFFICIAL_GROUPS.map((g) => `${GROUP_INFO[g].label} ${r.risingByGroup![g] ?? 0}`).join(", ")}`);
+  if (r.communityUnits !== undefined || r.communityFlows !== undefined) lines.push(`  - 커뮤니티 단위 ${r.communityUnits ?? 0}개(오른 것 ${r.communityRising ?? 0}개), 커뮤니티 확인 흐름 ${r.communityFlows ?? 0}건`);
+  if (r.communityMissing !== undefined && r.communityMissing.length > 0) lines.push(`  - 비교에 넣지 못한 커뮤니티 소스: ${r.communityMissing.map(communityMissingText).join(", ")}`);
   if (r.copyBytes !== undefined) lines.push(`  - 후보 복사본 ${r.copyBytes}바이트`);
   if (r.rounds > 0) lines.push(`  - 프로세스 ${r.rounds}번, ${r.processMs.map((ms) => `${Math.round(ms / 1000)}초`).join(", ")}`);
   if (r.excluded !== undefined && r.excluded.length > 0) lines.push(`  - 제외한 단위 키: ${r.excluded.join(", ")}`);
@@ -3365,6 +3472,7 @@ const ASYNC_COMMANDS: Record<string, (argv: string[], ctx: Context) => Promise<n
   "builder-snapshot": cmdBuilderSnapshot,
   "demand-fetch": cmdDemandFetch,
   "demand-official": cmdDemandOfficial,
+  "demand-community": cmdDemandCommunity,
   "video-notes": cmdVideoNotes,
   "video-sections": cmdVideoSections,
 };

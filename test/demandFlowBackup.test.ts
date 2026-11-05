@@ -90,8 +90,8 @@ describe("4.5-1 백업과 복원", () => {
     assert.ok(files.has("demand.json"));
     assert.ok(BACKUP_NAME_RE.test("demand.json"));
     const f = JSON.parse(files.get("demand.json")!) as { formatVersion: number; flows: unknown[]; flowDates: unknown[]; flowCorrections: unknown[] };
-    assert.equal(f.formatVersion, 9);
-    assert.equal(JSON.parse(files.get("meta.json")!).formatVersion, 9);
+    assert.equal(f.formatVersion, 10);
+    assert.equal(JSON.parse(files.get("meta.json")!).formatVersion, 10);
     assert.equal(f.flows.length, 3);
     assert.equal(f.flowDates.length, 3);
     assert.equal(f.flowCorrections.length, 1);
@@ -125,7 +125,7 @@ describe("4.5-1 백업과 복원", () => {
     addBrief(db, DAY);
     const files = buildBackup(db);
     assert.equal(files.has("demand.json"), false);
-    const old = new Map([...files].map(([k, v]) => [k, v.replace('"formatVersion": 9', '"formatVersion": 8')]));
+    const old = new Map([...files].map(([k, v]) => [k, v.replace('"formatVersion": 10', '"formatVersion": 8')]));
     assert.ok(old.get("meta.json")!.includes('"formatVersion": 8'));
     const back = restoredFrom(old);
     assert.equal(hasFlowData(back), false);

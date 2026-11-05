@@ -230,7 +230,7 @@ describe("4.2-4 고치기와 적용", () => {
     const prompt = fake.reqs[1]!.args[1]!;
     assert.match(prompt, /## 고칠 것/);
     assert.match(prompt, /- 흐름 1 category: 갈래 목록 밖이다/);
-    assert.match(prompt, /- 흐름 1 units: 서로 다른 공식 묶음이 둘 미만이다/);
+    assert.match(prompt, /- 흐름 1 units: 공식 묶음이 하나뿐인데 그 공식 단위를 검색어로 한 오른 커뮤니티 단위가 없다/);
     assert.ok(fake.copies[1]!.includes("## 앞서 쓴 흐름 파일"));
     assert.ok(!fake.copies[0]!.includes("## 앞서 쓴 흐름 파일"));
     assert.equal(flowsOfDate(e.db, TARGET).length, 1);
@@ -263,7 +263,7 @@ describe("4.2-4 고치기와 적용", () => {
     const s = step(e, fake);
     assert.equal(s.state.status, "short");
     assert.equal(fake.reqs.length, 0);
-    assert.deepEqual(flowDateOf(e.db, TARGET), { date: TARGET, status: "short", missing: ["assembly", "acrc", "ftc1372", "dart", "sec"] });
+    assert.deepEqual(flowDateOf(e.db, TARGET), { date: TARGET, status: "short", missing: ["assembly", "acrc", "ftc1372", "dart", "sec"], communityMissing: [] });
     assert.equal(step(e, fake).state.status, "alreadyDone");
     assert.equal(fake.reqs.length, 0);
   });

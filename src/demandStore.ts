@@ -109,6 +109,49 @@ export const DEMAND_MIGRATIONS: Migration[] = [
       `);
     },
   },
+  {
+    // 9.98단계 4.2-4(S8): 커뮤니티 건수. 글·제목·작성자·글 식별자·저장소 이름은 칸이 없다(받는 자리에서 버린다).
+    // 검색어와 건수는 덧붙이기만 하고(고치기·지우기를 트리거가 막는다), 상태 표는 대상 날짜 × 소스마다 한 줄을 고쳐 쓴다(9.95 demand_status는 쓰지 않는다)
+    version: 3,
+    up: (db) => {
+      db.exec(`
+        CREATE TABLE community_terms (
+          target_date TEXT NOT NULL,
+          term TEXT NOT NULL,
+          unit_key TEXT NOT NULL,
+          selected_at TEXT NOT NULL,
+          PRIMARY KEY (target_date, term)
+        );
+        CREATE TABLE community_counts (
+          id INTEGER PRIMARY KEY,
+          target_date TEXT NOT NULL,
+          source TEXT NOT NULL,
+          term TEXT NOT NULL,
+          unit_key TEXT NOT NULL,
+          win_kind TEXT NOT NULL CHECK (win_kind IN ('recent', 'base')),
+          win_from TEXT NOT NULL,
+          win_to TEXT NOT NULL,
+          count INTEGER NOT NULL,
+          cap_hit INTEGER NOT NULL CHECK (cap_hit IN (0, 1)),
+          top_share REAL,
+          fetched_at TEXT NOT NULL,
+          UNIQUE (target_date, source, term, win_from, win_to)
+        );
+        CREATE TABLE community_status (
+          target_date TEXT NOT NULL,
+          source TEXT NOT NULL,
+          status TEXT NOT NULL CHECK (status IN ('ok', 'partial', 'off', 'robots', 'blocked', 'failed', 'noterms')),
+          reason TEXT,
+          updated_at TEXT NOT NULL,
+          PRIMARY KEY (target_date, source)
+        );
+        CREATE TRIGGER community_terms_no_update BEFORE UPDATE ON community_terms BEGIN SELECT RAISE(ABORT, '커뮤니티 검색어는 고치지 않는다'); END;
+        CREATE TRIGGER community_terms_no_delete BEFORE DELETE ON community_terms BEGIN SELECT RAISE(ABORT, '커뮤니티 검색어는 지우지 않는다'); END;
+        CREATE TRIGGER community_counts_no_update BEFORE UPDATE ON community_counts BEGIN SELECT RAISE(ABORT, '커뮤니티 건수는 고치지 않는다'); END;
+        CREATE TRIGGER community_counts_no_delete BEFORE DELETE ON community_counts BEGIN SELECT RAISE(ABORT, '커뮤니티 건수는 지우지 않는다'); END;
+      `);
+    },
+  },
 ];
 
 export const DEMAND_SCHEMA_VERSION = Math.max(...DEMAND_MIGRATIONS.map((m) => m.version));

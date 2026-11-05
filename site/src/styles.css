@@ -2269,6 +2269,20 @@ ul.isrc {
 .dhead { font-weight: 600; overflow-wrap: anywhere; }
 .dwin { font-size: 12px; color: var(--muted); }
 .dnote { margin: 4px 0 0; font-size: 12px; line-height: 1.6; color: var(--muted); }
+/* 9.98단계 커뮤니티 근거 줄의 첫 줄(소스 · 표본 설명)과 꺾임 표시, 소개의 분야별 사각지대 표. 표는 세 칸이라 좁은 폭에서도 칸 안에서 줄을 바꾼다 */
+.dsrc { overflow-wrap: anywhere; }
+.dturn { margin-top: 2px; }
+.demand-community li + li { margin-top: 4px; }
+.dcover-h { margin-top: 20px; }
+.plain .dcover-note { margin-top: 16px; }
+.dcover { width: 100%; margin: 8px 0 0; border-collapse: collapse; table-layout: fixed; font-size: 14px; line-height: 1.5; }
+.dcover th, .dcover td { padding: 8px 8px 8px 0; text-align: left; vertical-align: top; border-top: 1px solid var(--line); overflow-wrap: anywhere; }
+.dcover th:last-child, .dcover td:last-child { padding-right: 0; }
+.dcover thead th { border-top: none; font-size: 12px; font-weight: 700; color: var(--muted); }
+.dcover tbody th { font-weight: 600; }
+.dcover-n { display: inline-block; max-width: 100%; }
+.dcover thead th:first-child { width: 28%; }
+.dcover thead th:last-child { width: 30%; }
 .dcont { display: inline-flex; align-items: center; min-height: 44px; margin-block: -12px; }
 /* 수요 탭까지 일곱 개인 날: 휴대폰 폭에서 탭 좌우 여백을 줄이고 남는 폭을 나눠 한 줄을 지킨다 */
 @media (max-width: 479.98px) {

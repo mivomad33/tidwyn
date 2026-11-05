@@ -1,7 +1,8 @@
 import { COPY_WORDS, checkPublicText, copied, copyGrams } from "./builderCheck.ts";
-import { CATEGORY_GROUPS, FIELD_IDS, FLOW_CATEGORIES, FLOW_LIMITS, FLOW_MAX_SHOWN, FLOW_MAX_WRITTEN, FLOW_TEXT_FIELDS, FLOW_TEXT_LABELS, OFFICIAL_GROUPS, levelRank, type FlowCategory, type FlowLevel, type FlowTextField, type OfficialGroup } from "./demandFlowTypes.ts";
-import type { Flow, FlowUnit, NewFlow } from "./demandFlowStore.ts";
-import type { FlowCandidates, FlowItems, NumberedUnit } from "./demandFlowWork.ts";
+import { CATEGORY_GROUPS, COMMUNITY_GROUPS, isCommunityConfirmed, FIELD_IDS, FLOW_CATEGORIES, FLOW_LIMITS, FLOW_MAX_SHOWN, FLOW_MAX_WRITTEN, FLOW_TEXT_FIELDS, FLOW_TEXT_LABELS, OFFICIAL_GROUPS, levelRank, type FlowCategory, type FlowLevel, type FlowTextField, type OfficialGroup } from "./demandFlowTypes.ts";
+import type { Flow, FlowCommunityUnit, FlowUnit, NewFlow } from "./demandFlowStore.ts";
+import type { FlowCandidates, FlowItems, NumberedCommunity, NumberedUnit } from "./demandFlowWork.ts";
+import { COMMUNITY_RULES, type CommunityUnit } from "./communityStore.ts";
 import { UNIT_RULES, type SourceUnits } from "./demandUnits.ts";
 import { officialSources, type OfficialKind } from "./demandSources.ts";
 import { quiet } from "./discoverCheck.ts";
@@ -9,6 +10,7 @@ import { Checker, type Violation } from "./validate.ts";
 import { addDays } from "./kst.ts";
 
 // 9.97단계 4.2-2~3: 흐름 파일 검사, 기계가 채우는 칸, 근거 수준(S6), 같은 흐름(S8), 3건 자르기.
+// 9.98단계 4.3-3~4(S1, S7): 흐름 인정은 공식 묶음 둘, 또는 공식 묶음 하나와 그 공식 단위를 검색어로 한 오른 커뮤니티 단위다. 꺾임 표시를 기계가 정한다.
 // 흐름 파일은 재료를 읽은 프로세스가 썼으므로 검사 출력에는 칸 이름, 위반 종류, 수만 쓴다(9.9 quiet와 같다).
 
 const FILE_KEYS = ["targetDate", "flows", "excluded"];
@@ -58,6 +60,8 @@ export interface CheckedFlow {
   field: string;
   texts: Record<FlowTextField, string>;
   units: NumberedUnit[];
+  /** 근거 커뮤니티 단위(9.98). 없으면 빈 목록 */
+  community?: NumberedCommunity[];
   aux: string[];
   issue: number | null;
   continues: string | null;
@@ -88,6 +92,7 @@ export function checkFlowFile(d: FlowCandidates, items: FlowItems, o: FlowCheckO
   const raw = c.arr(file, "flows", "flows", "흐름 파일");
   if (raw.length > FLOW_MAX_WRITTEN) c.add("흐름 파일 flows", `${raw.length}건이다(${FLOW_MAX_WRITTEN}건 이하여야 한다)`);
   const byN = new Map(d.units.map((u) => [u.n, u]));
+  const comByN = new Map((d.community ?? []).map((x) => [x.n, x]));
   const auxByN = new Map(d.aux.map((a) => [a.n, a]));
   const excludedRaw = file.excluded === undefined ? [] : c.arr(file, "excluded", "excluded", "흐름 파일");
   const excluded = new Set<number>();
@@ -120,7 +125,15 @@ export function checkFlowFile(d: FlowCandidates, items: FlowItems, o: FlowCheckO
     }
     const nums = c.arr(f, "units", "units", w);
     const units: NumberedUnit[] = [];
+    const community: NumberedCommunity[] = [];
     for (const n of nums) {
+      const x = typeof n === "number" ? comByN.get(n) : undefined;
+      if (x !== undefined) {
+        if (community.includes(x)) c.add(`${w} units`, "같은 번호를 두 번 썼다");
+        else if (used.has(x.n)) c.add(`${w} units`, "다른 흐름이 쓴 번호다");
+        else community.push(x);
+        continue;
+      }
       const u = typeof n === "number" ? byN.get(n) : undefined;
       if (u === undefined) c.add(`${w} units`, "없는 단위 번호다");
       else if (units.includes(u)) c.add(`${w} units`, "같은 번호를 두 번 썼다");
@@ -128,9 +141,15 @@ export function checkFlowFile(d: FlowCandidates, items: FlowItems, o: FlowCheckO
       else if (excluded.has(u.n)) c.add(`${w} units`, "제외 칸에 적은 번호다");
       else units.push(u);
     }
-    for (const u of units) used.add(u.n);
+    for (const u of [...units, ...community]) used.add(u.n);
     const groups = new Set(units.map((u) => u.group));
-    if (groups.size < 2) c.add(`${w} units`, "서로 다른 공식 묶음이 둘 미만이다");
+    // S1: 공식 묶음이 꼭 있고, 둘 이상이거나 그 공식 단위를 검색어로 한 오른 커뮤니티 단위가 있어야 한다
+    if (groups.size === 0) c.add(`${w} units`, "공식 묶음이 없다(커뮤니티 단위만으로는 흐름이 아니다)");
+    for (const x of community) {
+      if (!x.rising) c.add(`${w} units`, x.concentrated ? "한 곳 쏠림인 커뮤니티 단위다" : "오르지 않은 커뮤니티 단위다");
+      if (!units.some((u) => u.n === x.officialN)) c.add(`${w} units`, "검색어의 공식 단위가 흐름 근거에 없는 커뮤니티 단위다");
+    }
+    if (groups.size === 1 && !community.some((x) => x.rising && units.some((u) => u.n === x.officialN))) c.add(`${w} units`, "공식 묶음이 하나뿐인데 그 공식 단위를 검색어로 한 오른 커뮤니티 단위가 없다");
     if ((FLOW_CATEGORIES as readonly unknown[]).includes(f.category) && !units.some((u) => CATEGORY_GROUPS[category].includes(u.group))) c.add(`${w} category`, "근거 묶음과 맞지 않는 갈래다");
     const aux: string[] = [];
     const auxRaw = f.aux === undefined || f.aux === null ? [] : c.arr(f, "aux", "aux", w);
@@ -151,7 +170,7 @@ export function checkFlowFile(d: FlowCandidates, items: FlowItems, o: FlowCheckO
       else if (ref.field !== field || !ref.unitKeys.some((k) => units.some((u) => u.key === k))) c.add(`${w} continues`, "기계가 겹침을 찾지 못한 이어짐이다(분야가 같고 근거 단위가 겹쳐야 한다)");
       else continues = ref.flowId;
     }
-    flows.push({ category, field, texts, units, aux, issue, continues });
+    flows.push({ category, field, texts, units, community, aux, issue, continues });
   });
   if (c.violations.length > 0) return { ok: false, violations: c.violations.map(quiet) };
   return { ok: true, flows, excludedKeys: [...excluded].map((n) => byN.get(n)!.key) };
@@ -169,8 +188,14 @@ export function checkFlowText(c: Checker, where: string, field: FlowTextField, t
 const KIND_OF = new Map(officialSources().map((s) => [s.id, s.kind]));
 const floorOf = (source: string) => UNIT_RULES[(KIND_OF.get(source) ?? "dart") as OfficialKind].floor;
 
-/** S6: 약 → 강 → 중 순서로 먼저 맞는 것 */
-export function flowLevel(units: readonly NumberedUnit[]): FlowLevel {
+/** 근거 커뮤니티 단위(수준에 쓰는 칸만) */
+export type LevelCommunity = Pick<NumberedCommunity, "group" | "recent">;
+
+/**
+ * S6: 약 → 강 → 중 순서로 먼저 맞는 것. 9.98 S1: 공식 묶음이 하나이고 커뮤니티 단위가 있으면 '중'이 최고이고,
+ * 그 공식 묶음이나 근거 커뮤니티 단위 중 어느 것이든 하한의 두 배 미만이면 '약'이다. 공식 묶음이 둘 이상이면 커뮤니티는 수준을 바꾸지 않는다
+ */
+export function flowLevel(units: readonly NumberedUnit[], community: readonly LevelCommunity[] = []): FlowLevel {
   const byGroup = new Map<OfficialGroup, NumberedUnit[]>();
   for (const u of units) byGroup.set(u.group, [...(byGroup.get(u.group) ?? []), u]);
   const weak = [...byGroup.values()].some((us) => {
@@ -179,6 +204,7 @@ export function flowLevel(units: readonly NumberedUnit[]): FlowLevel {
     return ![...bySource].some(([s, sum]) => sum >= 2 * floorOf(s));
   });
   if (weak) return "weak";
+  if (isCommunityConfirmed(units, community)) return community.some((x) => x.recent < 2 * COMMUNITY_RULES[x.group].floor) ? "weak" : "medium";
   if (byGroup.size >= 3) return "strong";
   const lasting = [...byGroup.values()].every((us) => {
     // 판정 문서는 날마다 값이 없는 소스를 뺀다고 정하지만, 국회도 날마다 차이로 세어 지금은 해당 소스가 없다
@@ -197,6 +223,66 @@ export function flowLevel(units: readonly NumberedUnit[]): FlowLevel {
   return byGroup.size === 2 && lasting ? "strong" : "medium";
 }
 
+// ---- 꺾임(9.98 S7) ----
+
+export interface TurningUnit {
+  group: string;
+  window: { recentFrom: string; baseFrom: string };
+  recentDaily: readonly (number | null)[];
+  baseDaily?: readonly (number | null)[];
+}
+
+/** 날마다 값이 있는 묶음(S7). 지금은 공식 묶음 모두다(9.97 코드처럼). 커뮤니티 건수는 창 합계라 들지 않는다 */
+export const isDailyGroup = (g: string): boolean => (OFFICIAL_GROUPS as readonly string[]).includes(g);
+
+const mean = (xs: readonly number[]) => xs.reduce((n, x) => n + x, 0) / xs.length;
+
+/**
+ * 꺾임(S7): 날마다 값이 있는 근거 묶음 모두에서, 그날 값을 앞 창의 같은 요일 평균으로 나눈 비로 최근 창 마지막 3일의 평균이 앞 4일의 평균보다 낮으면 참이다.
+ * 묶음의 날 값은 그 묶음 근거 단위의 합이고, 어느 단위든 값이 없는 날(자료 없음)은 뺀다. 같은 요일 평균이 0인 날도 뺀다.
+ * 날마다 값이 있는 묶음이 없거나, 비를 낼 날이 앞 4일이나 마지막 3일 중 한쪽이라도 없는 묶음이 있으면 거짓이다
+ */
+export function turningOf(units: readonly TurningUnit[], isDaily: (group: string) => boolean = isDailyGroup): boolean {
+  const byGroup = Map.groupBy(
+    units.filter((u) => isDaily(u.group)),
+    (u) => u.group,
+  );
+  if (byGroup.size === 0) return false;
+  for (const us of byGroup.values()) {
+    const maps = us.map((u) => {
+      const m = new Map<string, number | null>();
+      (u.baseDaily ?? []).forEach((v, k) => m.set(addDays(u.window.baseFrom, k), v));
+      u.recentDaily.forEach((v, k) => m.set(addDays(u.window.recentFrom, k), v));
+      return m;
+    });
+    const value = (d: string): number | null => {
+      let sum = 0;
+      for (const m of maps) {
+        const v = m.get(d);
+        if (v === undefined || v === null) return null;
+        sum += v;
+      }
+      return sum;
+    };
+    const first = us[0]!;
+    const ratios = first.recentDaily.map((_, k) => {
+      const d = addDays(first.window.recentFrom, k);
+      const v = value(d);
+      if (v === null) return null;
+      const same = [1, 2, 3, 4].map((w) => value(addDays(d, -7 * w))).filter((x): x is number => x !== null);
+      if (same.length === 0) return null;
+      const m = mean(same);
+      return m === 0 ? null : v / m;
+    });
+    const cut = ratios.length - 3;
+    const head = ratios.slice(0, cut).filter((x): x is number => x !== null);
+    const tail = ratios.slice(cut).filter((x): x is number => x !== null);
+    if (cut < 1 || head.length === 0 || tail.length === 0) return false;
+    if (!(mean(tail) < mean(head))) return false;
+  }
+  return true;
+}
+
 // ---- 적용할 계획(4.2-3) ----
 
 export type DropReason = "다시 센 값이 다름" | "같은 흐름이 강해지지 않음" | "같은 날 같은 흐름" | "3건 밖";
@@ -210,34 +296,46 @@ export interface FlowPlan {
 
 const toFlowUnit = (u: NumberedUnit): FlowUnit => ({ group: u.group, source: u.source, unitKey: u.key, unitName: u.name, recent: u.recent, base: u.base, isNew: u.isNew, recentFrom: u.window.recentFrom, recentTo: u.window.recentTo, baseFrom: u.window.baseFrom, baseTo: u.window.baseTo, recentDays: u.window.recentDays, baseDays: u.window.baseDays });
 
+const toFlowCommunity = (c: NumberedCommunity, units: readonly NumberedUnit[]): FlowCommunityUnit => ({ group: c.group, source: c.source, unitKey: c.key, officialKey: c.officialKey, unitName: units.find((u) => u.n === c.officialN)?.name ?? "", recent: c.recent, base: c.base, isNew: c.isNew, recentFrom: c.window.recentFrom, recentTo: c.window.recentTo, baseFrom: c.window.baseFrom, baseTo: c.window.baseTo });
+
 /**
  * 통과한 흐름에 기계 칸을 채운다. recount는 전용 DB에서 다시 센 소스별 결과다. 다시 센 값이 다르면 그 흐름을 버리고(4.2-3),
  * 같은 흐름(S8)은 새 묶음이 더해졌거나 수준이 올랐을 때만 같은 id로 싣는다. 그 뒤 4건 이상이면 수준 순으로 3건만 남긴다(S6)
  */
-export function planFlows(checked: CheckedFlow[], recount: readonly SourceUnits[], recentItems: readonly Flow[], recent: FlowCandidates["recent"]): FlowPlan {
+export function planFlows(checked: CheckedFlow[], recount: readonly SourceUnits[], recentItems: readonly Flow[], recent: FlowCandidates["recent"], communityRecount: readonly CommunityUnit[] = []): FlowPlan {
   const fresh = new Map(recount.flatMap((s) => s.rising.map((u) => [u.key, u] as const)));
+  const freshCommunity = new Map(communityRecount.map((x) => [x.key, x] as const));
   const dropped: FlowPlan["dropped"] = {};
   const drop = (r: DropReason) => (dropped[r] = (dropped[r] ?? 0) + 1);
   const kept: { flow: NewFlow; order: number }[] = [];
   /** 이 날 이미 이어 받은 앞 흐름 id. 같은 흐름을 한 날에 두 번 싣지 않는다(수준이 높은 것, 같으면 앞서 쓴 것이 잇는다) */
   const claimed = new Set<string>();
-  const byLevel = checked.map((f, order) => ({ f, order, rank: levelRank(flowLevel(f.units)) })).sort((a, b) => a.rank - b.rank || a.order - b.order);
+  const byLevel = checked.map((f, order) => ({ f, order, rank: levelRank(flowLevel(f.units, f.community)) })).sort((a, b) => a.rank - b.rank || a.order - b.order);
   byLevel.forEach(({ f, order }) => {
+    const community = f.community ?? [];
     const same = f.units.every((u) => {
       const x = fresh.get(u.key);
       return x !== undefined && x.recent === u.recent && x.base === u.base && x.window.recentTo === u.window.recentTo && x.window.recentDays === u.window.recentDays;
     });
-    if (!same) return drop("다시 센 값이 다름");
-    const level = flowLevel(f.units);
+    // 커뮤니티 숫자도 전용 DB에서 다시 센 값과 같아야 한다(4.3-3)
+    const sameCommunity = community.every((c) => {
+      const x = freshCommunity.get(c.key);
+      return x !== undefined && x.recent === c.recent && x.baseCount === c.baseCount && x.judgement.rising === c.rising && x.window.recentFrom === c.window.recentFrom && x.window.recentTo === c.window.recentTo && x.window.baseFrom === c.window.baseFrom && x.window.baseTo === c.window.baseTo;
+    });
+    if (!same || !sameCommunity) return drop("다시 센 값이 다름");
+    const level = flowLevel(f.units, community);
     const groups = new Set(f.units.map((u) => u.group));
     const ref = overlapOf(f.field, f.units.map((u) => u.key), recent);
     let flowId = "";
     let continues: number | null = null;
     if (ref !== null) {
-      const prev = recentItems.filter((x) => x.flowId === ref.flowId).sort((a, b) => b.date.localeCompare(a.date) || b.position - a.position)[0];
+      const ofFlow = recentItems.filter((x) => x.flowId === ref.flowId);
+      const prev = [...ofFlow].sort((a, b) => b.date.localeCompare(a.date) || b.position - a.position)[0];
       if (prev !== undefined) {
         const prevGroups = new Set(prev.units.map((u) => u.group));
-        const added = [...groups].some((g) => !prevGroups.has(g));
+        // 커뮤니티 소스는 그 흐름 id의 최근 14일 항목 어디에도 없던 것만 새 묶음으로 친다(S1)
+        const communityAdded = [...new Set(community.map((c) => c.source))].some((s) => !ofFlow.some((x) => (x.community ?? []).some((y) => y.source === s)));
+        const added = [...groups].some((g) => !prevGroups.has(g)) || communityAdded;
         if (!added && levelRank(level) >= levelRank(prev.level)) return drop("같은 흐름이 강해지지 않음");
         if (claimed.has(prev.flowId)) return drop("같은 날 같은 흐름");
         claimed.add(prev.flowId);
@@ -246,7 +344,9 @@ export function planFlows(checked: CheckedFlow[], recount: readonly SourceUnits[
       }
     }
     const sorted = [...f.units].sort((a, b) => OFFICIAL_GROUPS.indexOf(a.group) - OFFICIAL_GROUPS.indexOf(b.group) || a.n - b.n);
-    kept.push({ order, flow: { flowId, category: f.category, field: f.field, ...f.texts, level, aux: f.aux, issue: f.issue, continues, units: sorted.map(toFlowUnit) } });
+    const communitySorted = [...community].sort((a, b) => COMMUNITY_GROUPS.indexOf(a.group) - COMMUNITY_GROUPS.indexOf(b.group) || a.n - b.n);
+    const turning = turningOf(f.units.map((u) => fresh.get(u.key)!));
+    kept.push({ order, flow: { flowId, category: f.category, field: f.field, ...f.texts, level, aux: f.aux, issue: f.issue, continues, units: sorted.map(toFlowUnit), community: communitySorted.map((c) => toFlowCommunity(c, f.units)), turning } });
   });
   const recognized = kept.length;
   kept.sort((a, b) => levelRank(a.flow.level) - levelRank(b.flow.level) || a.order - b.order);

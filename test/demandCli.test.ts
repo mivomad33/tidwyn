@@ -285,7 +285,7 @@ describe("4.3-1, 4.4-1 스킬 문서", () => {
     const step = chapter("### 14-1단계: 수요 스냅샷");
     assert.ok(step.includes("Bash 도구 시간 제한을 6분으로 준다(명령 전체 상한이 5분"));
     assert.ok(step.includes("백그라운드로 돌리지 않는다"));
-    assert.ok(step.includes("다시 부르지 않고 14-2단계로 넘어간다"));
+    assert.ok(step.includes("다시 부르지 않고 14-1-1단계로 넘어간다"));
     assert.ok(step.includes("앞 단계가 실패해도 돈다"));
     assert.ok(step.includes("시험 모드(`/brief test`)에서는 돌지 않는다"));
   });

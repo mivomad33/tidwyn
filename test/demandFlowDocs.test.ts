@@ -45,8 +45,8 @@ describe("9.97단계 4.6-3 README", () => {
   test("두 파일의 수요 신호 줄이 같은 자리에서 수요 탭과 원본은 로컬에만 둔다는 것을 말한다", () => {
     const ko = fs.readFileSync(path.join(PROJECT_ROOT, "README.md"), "utf8").split("\n");
     const en = fs.readFileSync(path.join(PROJECT_ROOT, "README.en.md"), "utf8").split("\n");
-    const k = ko.findIndex((l) => l.startsWith("3. 수요 신호") && l.includes("받은 원본은 사이트와 백업에 넣지 않고 로컬에만 두며") && l.includes("브리프의 '수요' 탭에는 서로 다른 공식 소스 두 곳 이상에서 함께 보인 흐름을 하루 0~3건 근거 숫자와 함께 싣습니다."));
-    const e = en.findIndex((l) => l.startsWith("3. Demand signals") && l.includes("they stay local") && l.includes('The brief\'s "Demand" tab shows 0 to 3 flows a day that appear together in at least two different official sources, with the evidence numbers.'));
+    const k = ko.findIndex((l) => l.startsWith("3. 수요 신호") && l.includes("받은 원본은 사이트와 백업에 넣지 않고 로컬에만 두며") && l.includes("브리프의 '수요' 탭에는 서로 다른 공식 소스 두 곳 이상, 또는 공식 소스 한 곳과 커뮤니티 검색 건수(GitHub Issues, Bluesky)에서 함께 보인 흐름을 하루 0~3건 근거 숫자와 함께 싣습니다."));
+    const e = en.findIndex((l) => l.startsWith("3. Demand signals") && l.includes("they stay local") && l.includes('The brief\'s "Demand" tab shows 0 to 3 flows a day that appear together in at least two different official sources, or in one official source and community search counts (GitHub Issues, Bluesky), with the evidence numbers.'));
     assert.ok(k >= 0 && k === e, `${k} ${e}`);
   });
 });

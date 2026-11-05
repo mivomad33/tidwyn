@@ -120,4 +120,48 @@ export const FLOW_TEXT_LABELS: Record<FlowTextField, string> = { title: "제목"
 /** 탭 머리와 소개의 고정 문구(S7) */
 export const FLOW_CAVEAT = "관심과 불만의 크기를 보인 것이며 원인이나 사업성을 뜻하지 않는다.";
 /** 소스를 잇는 것이 AI 판단이라는 표시(S2) */
-export const FLOW_AI_NOTE = "소스를 잇는 것은 AI 판단이다. 숫자는 기계가 공식 소스에서 센 값이다.";
+const FLOW_AI_NOTE_HEAD = "소스를 잇는 것은 AI 판단이다.";
+export const FLOW_AI_NOTE = `${FLOW_AI_NOTE_HEAD} 숫자는 기계가 공식 소스에서 센 값이다.`;
+/** 커뮤니티 근거가 있는 흐름의 같은 표시: 숫자에 커뮤니티 검색 건수도 든다 */
+export const FLOW_AI_NOTE_COMMUNITY = `${FLOW_AI_NOTE_HEAD} 숫자는 기계가 공식 소스와 커뮤니티 검색에서 센 값이다.`;
+
+// ---- 9.98단계: 커뮤니티 근거(S1, S5, S7) ----
+
+/** 커뮤니티 묶음(9.98). 공식 묶음이 아니고 갈래(S12)에 속하지 않는다. 묶음마다 소스가 하나다 */
+export const COMMUNITY_GROUPS = ["github", "bluesky"] as const;
+export type CommunityGroup = (typeof COMMUNITY_GROUPS)[number];
+export const isCommunityGroup = (g: unknown): g is CommunityGroup => (COMMUNITY_GROUPS as readonly unknown[]).includes(g);
+
+/**
+ * 커뮤니티 묶음의 소스 이름, 출처 표시, 고정 공식 주소(검색어를 넣지 않는다, 4.5-1), 표본 설명(S5).
+ * 소스 이름과 표본 설명 문구는 이 한 곳에 두고, 소스 목록(src/demandSources.ts)과 사이트, 판정 문서가 이 값을 쓴다
+ */
+export const COMMUNITY_INFO: Record<CommunityGroup, { label: string; credit: string; url: string; sample: string }> = {
+  github: { label: "GitHub Issues", credit: "GitHub", url: "https://docs.github.com/en/rest/search/search#search-issues-and-pull-requests", sample: "공개 저장소 이슈, 개발자·영어 중심" },
+  bluesky: { label: "Bluesky", credit: "Bluesky", url: "https://docs.bsky.app/docs/api/app-bsky-feed-search-posts", sample: "검색 건수, 영어·초기 사용자 중심" },
+};
+
+/** 커뮤니티 확인 흐름(S1): 오른 공식 묶음이 정확히 하나이고 커뮤니티 근거가 있다 */
+export const isCommunityConfirmed = (units: readonly { group: string }[], community: readonly { group: CommunityGroup }[]): boolean => new Set(units.map((u) => u.group)).size === 1 && community.length > 0;
+
+/** 커뮤니티 확인 흐름(공식 묶음 하나 + 커뮤니티)의 근거 수준 뜻(S5). '중'이 최고다(S1) */
+export const COMMUNITY_LEVEL_MEANINGS: Record<Exclude<FlowLevel, "strong">, string> = {
+  medium: "공식 소스 한 곳에서 오르고 커뮤니티 검색에서도 늘었다",
+  weak: "공식 소스 한 곳과 커뮤니티 검색에서 함께 늘었지만 한 곳의 규모가 작다",
+};
+
+/** 꺾임 표시(S7) */
+export const FLOW_TURNING_TEXT = "최근 며칠은 줄고 있다";
+
+/** 그날 비교에 넣지 못한 커뮤니티 소스의 사유(4.4-2). 그 대상 날짜의 기록이 없는 소스는 넣지 않는다(9.97과 같은 날짜 상태, 4.3-5) */
+export const COMMUNITY_MISSING_REASONS = ["off", "robots", "blocked", "failed"] as const;
+export type CommunityMissingReason = (typeof COMMUNITY_MISSING_REASONS)[number];
+export const COMMUNITY_MISSING_NAMES: Record<CommunityMissingReason, string> = { off: "꺼짐", robots: "robots 막힘", blocked: "막힘", failed: "받지 못함" };
+/** 소개에 쓰는 사유의 뜻 */
+export const COMMUNITY_MISSING_MEANINGS: Record<CommunityMissingReason, string> = { off: "설정에서 끔", robots: "사이트가 자동 수집을 막음", blocked: "인증이나 권한 거절로 막힘", failed: "요청이 실패함" };
+
+/** 공식 소스 하나의 비교 상태(9.97). 사이트의 소개도 이 이름을 쓴다 */
+export type SourceState = "ok" | "unfetched" | "absent" | "stale" | "short" | "nodata" | "off";
+export const SOURCE_STATE_NAMES: Record<SourceState, string> = { ok: "비교함", unfetched: "받지 못한 날 있음", absent: "자료 없음 날 많음", stale: "오래됨", short: "기록 부족", nodata: "기록 없음", off: "꺼짐" };
+/** 비교에 넣지 못한 커뮤니티 소스 하나의 표시 글: '소스 이름(사유)' */
+export const communityMissingText = (m: { group: CommunityGroup; reason: CommunityMissingReason }): string => `${COMMUNITY_INFO[m.group].label}(${COMMUNITY_MISSING_NAMES[m.reason]})`;

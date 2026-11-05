@@ -556,6 +556,34 @@ export const MIGRATIONS: Migration[] = [
       `);
     },
   },
+  {
+    // 9.98단계 S1, S7, S8, 4.4-2: 흐름 항목의 커뮤니티 근거 줄(소스, 검색어였던 공식 단위 이름, 두 창 숫자, 창 기간),
+    // 꺾임 표시, 날짜 상태의 비교에 넣지 못한 커뮤니티 소스. 9.97 항목은 커뮤니티 근거 줄이 없고 꺾임 표시가 없다(0). 공개 백업에 들어간다
+    version: 14,
+    up: (db) => {
+      db.exec(`
+        ALTER TABLE demand_flows ADD COLUMN turning INTEGER NOT NULL DEFAULT 0 CHECK (turning IN (0, 1));
+        ALTER TABLE demand_flow_dates ADD COLUMN community_missing TEXT NOT NULL DEFAULT '[]';
+        CREATE TABLE demand_flow_community (
+          item_id INTEGER NOT NULL REFERENCES demand_flows(id) ON DELETE CASCADE,
+          position INTEGER NOT NULL,
+          grp TEXT NOT NULL,
+          source TEXT NOT NULL,
+          unit_key TEXT NOT NULL,
+          official_key TEXT NOT NULL,
+          unit_name TEXT NOT NULL,
+          recent REAL NOT NULL,
+          base REAL NOT NULL,
+          is_new INTEGER NOT NULL CHECK (is_new IN (0, 1)),
+          recent_from TEXT NOT NULL,
+          recent_to TEXT NOT NULL,
+          base_from TEXT NOT NULL,
+          base_to TEXT NOT NULL,
+          PRIMARY KEY (item_id, position)
+        );
+      `);
+    },
+  },
 ];
 
 export function schemaVersion(db: DatabaseSync): number {

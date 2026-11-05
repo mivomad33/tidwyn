@@ -43,14 +43,16 @@ import { getFirstCollectionDate, loadBrief, recordFirstCollectionDate, saveBrief
 // 형식 8(9.9단계 4.4-1): builder.json에 새 제품·뜨는 저장소 항목, 종류별 상태, 그 정정을 더한다. 별 수 스냅샷과 메타데이터는 넣지 않는다(N6).
 // 형식 9(9.97단계 4.5-1, S11): 수요 흐름 항목, 근거 단위, 날짜 상태, 정정을 demand.json에 둔다. 흐름 데이터가 없으면 이 파일을 쓰지 않는다.
 // 후보 복사본, 흐름 파일, 전용 DB(받은 원문)는 넣지 않는다.
+// 형식 10(9.98단계 4.6-1, S8): demand.json의 흐름 항목에 커뮤니티 근거 줄과 꺾임 표시, 날짜 상태에 비교에 넣지 못한 커뮤니티 소스를 더한다.
+// 전용 DB의 커뮤니티 건수 표는 넣지 않는다.
 
-export const BACKUP_FORMAT_VERSION = 9;
+export const BACKUP_FORMAT_VERSION = 10;
 /**
  * 복원할 수 있는 형식 버전. 형식 1 백업은 이슈 없이, 형식 1·2 백업은 대상·용어 없이 모든 날짜가 뽑기 안 함으로,
  * 형식 1·2·3 백업은 일정 없이 모든 날짜가 일정 뽑기 안 함으로, 형식 1~4 백업은 지표 값 없이 모든 이슈가 지표 판단 안 함으로,
- * 형식 1~5 백업은 정정 기록 없이, 형식 1~6 백업은 빌더 기록 없이, 형식 7 백업은 새 제품·뜨는 저장소 기록 없이, 형식 1~8 백업은 수요 흐름 기록 없이 복원된다
+ * 형식 1~5 백업은 정정 기록 없이, 형식 1~6 백업은 빌더 기록 없이, 형식 7 백업은 새 제품·뜨는 저장소 기록 없이, 형식 1~8 백업은 수요 흐름 기록 없이, 형식 9 백업은 커뮤니티 근거 줄과 꺾임 표시 없이 복원된다
  */
-const READABLE_VERSIONS = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+const READABLE_VERSIONS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 export const BACKUP_DIR = "backup";
 export const DATA_REF = "refs/heads/data";
 const META_FILE = "meta.json";
