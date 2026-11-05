@@ -1,5 +1,5 @@
 {
-  "formatVersion": 8,
+  "formatVersion": 10,
   "schedules": [
     {
       "id": 1,
@@ -402,8 +402,8 @@
       "name": "국회 본회의 조작기소 특검법안 처리",
       "due": "2026-11-05",
       "major": "정치",
-      "outcome": null,
-      "postponedTo": null,
+      "outcome": "postponed",
+      "postponedTo": 48,
       "mergedInto": null,
       "deleted": false,
       "deletedOn": null
@@ -413,7 +413,7 @@
       "name": "윤석열 내란 우두머리 혐의 2심 결심",
       "due": "2026-11-05",
       "major": "정치",
-      "outcome": null,
+      "outcome": "result",
       "postponedTo": null,
       "mergedInto": null,
       "deleted": false,
@@ -456,6 +456,94 @@
       "id": 42,
       "name": "Node.js 2026년 11월 보안 릴리스",
       "due": "2026-11-11",
+      "major": "IT·AI",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 43,
+      "name": "윤석열 내란 우두머리 혐의 2심 선고",
+      "due": "2027-01-26",
+      "major": "정치",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 44,
+      "name": "오동운 공수처장 직무유기 사건 1심 선고",
+      "due": "2027-01-12",
+      "major": "정치",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 45,
+      "name": "잉글랜드은행 12월 통화정책 회의",
+      "due": "2026-12",
+      "major": "경제",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 46,
+      "name": "러셀 브랜드 성범죄 사건 형량 선고",
+      "due": "2026-11-09",
+      "major": "문화·스포츠",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 47,
+      "name": "캘리포니아 청소년 SNS 법 AB 1709 시행",
+      "due": "2027-01-01",
+      "major": "IT·AI",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 48,
+      "name": "국회 본회의 조작기소 특검법안 처리",
+      "due": "2026-11-06",
+      "major": "정치",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 49,
+      "name": "OpenAI gpt-5.5-cyber-preview 지원 종료",
+      "due": "2027-02-01",
+      "major": "IT·AI",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 50,
+      "name": "OpenAI 받아쓰기 모델·번역 엔드포인트 종료",
+      "due": "2027-02-26",
       "major": "IT·AI",
       "outcome": null,
       "postponedTo": null,
@@ -788,6 +876,46 @@
     {
       "story": "2026-11-04/한국-s5",
       "schedule": 39,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-05/IT·AI-5",
+      "schedule": 47,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-05/세계-2",
+      "schedule": 45,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-05/세계-s2",
+      "schedule": 46,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-05/한국-2",
+      "schedule": 37,
+      "role": "notice"
+    },
+    {
+      "story": "2026-11-05/한국-2",
+      "schedule": 48,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-05/한국-3",
+      "schedule": 38,
+      "role": "result"
+    },
+    {
+      "story": "2026-11-05/한국-3",
+      "schedule": 43,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-05/한국-s3",
+      "schedule": 44,
       "role": "basis"
     }
   ],

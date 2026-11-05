@@ -1,5 +1,5 @@
 {
-  "formatVersion": 8,
+  "formatVersion": 10,
   "month": "2026-11",
   "briefs": [
     {
@@ -3467,18 +3467,953 @@
       },
       "collectedAt": "2026-11-05T06:19:15+09:00",
       "late": false
+    },
+    {
+      "brief": {
+        "targetDate": "2026-11-05",
+        "headline": "미국 민주당 압승이 AI 데이터센터 규제 우려로 번지며 코스피와 나스닥이 하루에 5% 넘게 떨어졌고, 영국은 3년 만에 기준금리를 올렸다.",
+        "keywords": [
+          "블루웨이브 쇼크",
+          "나스닥 조정",
+          "영국 금리 인상",
+          "조작기소 특검법",
+          "GPT-6 Cyber"
+        ],
+        "sections": [
+          {
+            "name": "한국",
+            "flow": "미국 중간선거 결과가 반도체주 폭락으로 번진 가운데, 국회에서는 조작기소 특검법을 두고 필리버스터가 시작됐고 윤석열 전 대통령 내란 재판 2심 선고일이 잡혔다.",
+            "topStories": [
+              {
+                "rank": 1,
+                "title": "미국 데이터센터 규제 우려에 코스피가 5.28% 폭락하고 삼성전자·SK하이닉스가 7~9% 넘게 떨어졌다",
+                "summary": "미국 민주당 압승이 AI 데이터센터 건설 규제로 이어질 수 있다는 걱정에 코스피가 5,383.80으로 주저앉았다.",
+                "whyItMatters": "한국 증시는 AI 반도체에 크게 기대고 있어, 미국 정치 변화가 데이터센터 투자 속도를 늦출 수 있다는 신호에 가장 먼저 크게 흔들렸다. 개인 투자자와 연금 자산에도 바로 영향을 준다.",
+                "background": "전날 미국 중간선거에서 민주당이 상·하원을 모두 되찾았고, 데이터센터 중심지인 텍사스에서는 신규 건설 중단을 공약한 민주당 후보가 주지사에 당선됐다. 삼성전자와 SK하이닉스의 실적은 AI 데이터센터용 메모리 수요에 크게 의존한다. 전날 미국 증시는 오르고 코스피도 장중 급락 뒤 회복했지만, 이날은 반도체 매도가 한꺼번에 쏟아졌다.",
+                "keyFacts": [
+                  "코스피는 전날보다 300.00포인트(5.28%) 내린 5,383.80으로 마쳐 7개월 만의 최저치를 기록했고, 코스닥도 5%대 떨어졌다.",
+                  "오전 10시 16분 유가증권시장에 매도 사이드카(프로그램 매도 호가 5분 정지)가 발동됐고, 코스닥 시장에도 사이드카가 걸렸다.",
+                  "삼성전자는 7.57% 내린 20만1,500원, SK하이닉스는 9.46% 내린 126만4,000원으로 마쳤다.",
+                  "외국인은 유가증권시장에서 3조원 넘게 순매도했고, 원/달러 환율은 0.6원 오른 1,342.1원이었다.",
+                  "국고채 금리는 일제히 내려 3년물이 연 3.669%로 마감했다."
+                ],
+                "outlook": "미국 의회와 텍사스 주정부가 데이터센터 규제를 실제로 어떻게 추진하는지, 외국인 매도가 이어지는지, 이날 밤 미국 기술주 흐름을 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "경제",
+                  "minor": "금융·증시"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261105086751008",
+                    "publishedAt": "2026-11-05",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/11/05/PYH2026110514970001300_P2.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261105040851008",
+                    "publishedAt": "2026-11-05",
+                    "imageUrl": "https://img.yna.co.kr/photo/cms/2026/10/29/29/PCM20261029000029990_P2.jpg"
+                  },
+                  {
+                    "name": "머니투데이",
+                    "url": "https://www.mt.co.kr/stock/2026/11/05/2026110510351380454",
+                    "publishedAt": "2026-11-05"
+                  },
+                  {
+                    "name": "마이데일리",
+                    "url": "https://www.mydaily.co.kr/page/view/2026110515595512723",
+                    "publishedAt": "2026-11-05"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261105138400002",
+                    "publishedAt": "2026-11-05",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/11/05/PYH2026110515020001300_P2.jpg"
+                  }
+                ],
+                "analogy": "주요 손님인 데이터센터의 공사가 막힐 수 있다는 소문에, 그 공사에 들어갈 자재를 파는 가게 주식부터 한꺼번에 팔린 셈이다."
+              },
+              {
+                "rank": 2,
+                "title": "조작기소 특검법이 국회 본회의에 상정되자 국민의힘이 필리버스터에 들어갔다",
+                "summary": "민주당 주도로 조작기소 특검법이 본회의에 올랐고, 국민의힘은 무제한 토론으로 맞서 표결은 6일로 넘어갈 전망이다.",
+                "whyItMatters": "이재명 대통령 관련 사건을 포함해 지난 정부 검찰의 기소가 조작됐는지를 특검이 수사하게 되는 법이라, 여야 대립과 사법 체계 논란의 중심에 있다.",
+                "background": "특검법은 윤석열 정부 검찰이 이재명 대통령 관련 사건 등을 조작해 기소했다는 의혹을 수사하는 내용이다. 원안에 있던 특검의 공소 취소 권한 조항은 법제사법위원회 심사 과정에서 빠졌다. 국민의힘은 대통령을 위한 방탄 특검이라고 반발해 왔고, 여야 협상은 이날 오전 최종 결렬됐다.",
+                "keyFacts": [
+                  "조정식 국회의장은 협상이 결렬되자 오후 본회의에 특검법 등 3개 안건을 올렸고, 민주당이 요구한 나머지 4건은 빠졌다.",
+                  "국민의힘은 특검법에만 필리버스터를 했고, 첫 주자는 박형수 법사위 야당 간사였다.",
+                  "민주당은 토론 종결 동의서를 냈고, 24시간 뒤인 6일 토론을 끝내고 표결할 계획이다.",
+                  "청와대 홍익표 정무수석은 이 특검이 대통령 보호가 아니라 검찰의 권한 남용을 수사하는 것이라고 밝혔다.",
+                  "국민의힘은 국회에서 막지 못하면 장외 투쟁에 나서겠다고 예고했다."
+                ],
+                "outlook": "6일 필리버스터 종결과 표결, 통과 뒤 대통령의 공포와 특검 임명 절차, 국민의힘의 장외 투쟁 수위를 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "정치",
+                  "minor": "국회·정당"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261105122751001",
+                    "publishedAt": "2026-11-05",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/11/05/PYH2026110516210001300_P2.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "아주경제",
+                    "url": "https://www.ajunews.com/view/20261105172316020",
+                    "publishedAt": "2026-11-05"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261105161500001",
+                    "publishedAt": "2026-11-05",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/08/24/PYH2026082415340001300_P2.jpg"
+                  },
+                  {
+                    "name": "서울신문",
+                    "url": "https://seoul.co.kr/news/politics/2026/11/06/20261106008004",
+                    "publishedAt": "2026-11-06"
+                  }
+                ]
+              },
+              {
+                "rank": 3,
+                "title": "윤석열 전 대통령 내란 우두머리 2심이 끝나 내년 1월 26일 선고가 잡혔다",
+                "summary": "서울고법이 결심 공판을 마치고 선고일을 2027년 1월 26일로 정했고, 윤 전 대통령은 최후진술에서 혐의를 모두 부인했다.",
+                "whyItMatters": "12·3 비상계엄에 대한 두 번째 사법 판단이 나오는 일정이 정해졌다. 1심 무기징역이 유지될지, 특검이 요구한 사형으로 무거워질지가 계엄 사태 정리의 큰 고비다.",
+                "background": "윤 전 대통령은 2024년 12월 3일 비상계엄을 선포한 일로 내란 우두머리 혐의로 기소됐다. 1심은 올해 2월 무기징역을 선고했고, 특검은 10월 29일 항소심 결심에서 다시 사형을 구형했다. 김용현 전 국방부 장관과 노상원 전 국군정보사령관도 함께 재판을 받고 있다.",
+                "keyFacts": [
+                  "서울고법 형사12-1부는 5일 윤 전 대통령 측 최후변론과 최후진술을 듣고 변론을 마쳤다.",
+                  "선고는 2027년 1월 26일 오후로, 1심 선고 뒤 약 11개월 만이다.",
+                  "윤 전 대통령은 약 80분 동안 계엄이 대통령의 헌법상 권한 행사라 내란죄가 될 수 없다고 주장했다.",
+                  "특검은 윤 전 대통령에게 사형, 김용현 전 장관에게 무기징역, 노상원 전 사령관에게 징역 30년을 구형했다.",
+                  "재판부는 사건의 중대성과 쟁점, 병합 사건을 고려해 선고일을 정했다고 밝혔다."
+                ],
+                "outlook": "2027년 1월 26일 2심 선고에서 형량이 바뀌는지, 그 뒤 대법원 상고로 이어지는지를 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "정치",
+                  "minor": "사법·검찰"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261105173200004",
+                    "publishedAt": "2026-11-05",
+                    "imageUrl": "https://img.yna.co.kr/photo/cms/2025/12/20/04/PCM20251220000004990_P2.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "MBC",
+                    "url": "https://imnews.imbc.com/replay/2026/nwdesk/article/6863513_37004.html",
+                    "publishedAt": "2026-11-05"
+                  },
+                  {
+                    "name": "노컷뉴스",
+                    "url": "https://nocutnews.co.kr/news/6602947",
+                    "publishedAt": "2026-11-05"
+                  },
+                  {
+                    "name": "뉴스1",
+                    "url": "https://www.news1.kr/society/court-prosecution/6344852",
+                    "publishedAt": "2026-11-05"
+                  }
+                ]
+              },
+              {
+                "rank": 4,
+                "title": "법원이 쿠팡의 개인정보 유출 과징금 4,235억원 효력을 유지했다",
+                "summary": "서울행정법원이 쿠팡의 과징금 집행정지 신청은 기각하고, 시정명령과 공표명령만 본안 판결 뒤까지 멈췄다.",
+                "whyItMatters": "단일 개인정보 유출 사고로는 역대 최대 과징금이 일단 그대로 효력을 갖게 돼, 대형 유출에 대한 제재가 실제로 작동하는지를 보여 준다.",
+                "background": "개인정보보호위원회는 6월 쿠팡에서 약 3,750만 명의 개인정보가 유출됐다며 과징금과 시정명령을 내렸다. 쿠팡은 과징금이 지나치다며 집행정지를 신청했다.",
+                "keyFacts": [
+                  "서울행정법원 행정4부는 과징금 4,235억7,500만원 부분의 집행정지 신청을 기각했다.",
+                  "재판부는 돈으로 생긴 손해는 나중에 회복할 수 있어 긴급한 필요가 없다고 봤다.",
+                  "시정명령과 홈페이지 공표명령은 본안 판결 선고 뒤 30일까지 효력이 멈춘다.",
+                  "이번 결정은 처분이 적법한지를 판단한 것이 아니고, 본안 재판 일정은 아직 없다."
+                ],
+                "outlook": "쿠팡의 항고 여부와 과징금 분할 납부, 본안 소송 첫 재판 일정을 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "사회",
+                  "minor": "법·재판"
+                },
+                "sources": [
+                  {
+                    "name": "경향신문",
+                    "url": "https://www.khan.co.kr/article/202611052115005/",
+                    "publishedAt": "2026-11-05",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261105168400004",
+                    "publishedAt": "2026-11-05",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/06/11/PYH2026061111160001300_P2.jpg"
+                  },
+                  {
+                    "name": "뉴스1",
+                    "url": "https://www.news1.kr/society/court-prosecution/6344779",
+                    "publishedAt": "2026-11-05"
+                  }
+                ]
+              },
+              {
+                "rank": 5,
+                "title": "정부가 가상자산 소득 과세를 2029년으로 2년 더 미루고 손실 3년 이월공제를 넣기로 했다",
+                "summary": "2027년 1월 시작하려던 코인 과세가 네 번째로 미뤄지고, 손실을 뒤 3년의 이익에서 빼 주는 제도가 추진된다.",
+                "whyItMatters": "국내 가상자산 투자자의 세금 부담과 시점이 바뀌는 결정이다. 과세 원칙이 계속 미뤄지면서 조세 정책의 일관성 논란도 커졌다.",
+                "background": "가상자산 소득 과세는 처음 2022년 시행 예정이었지만 2023년, 2025년, 2027년으로 세 번 늦춰졌다. 현행 기준은 연 250만원을 넘는 소득에 세금을 매긴다. 해외 거래소와 개인 지갑 거래의 취득가를 확인하기 어렵다는 지적이 이어져 왔다.",
+                "keyFacts": [
+                  "정부는 과세 시행일을 2027년 1월에서 2029년 1월로 바꾸는 세법 개정을 국회 조세소위 논의를 거쳐 확정하겠다고 했다.",
+                  "미국과의 가상자산 과세 정보 교환(CARF)이 2029년 시작되는 점을 미루는 이유로 들었다.",
+                  "한 해의 손실을 이후 3년 동안의 이익에서 빼 주는 이월공제를 새로 넣는다.",
+                  "이번이 네 번째 유예다."
+                ],
+                "outlook": "이달 국회 조세소위 논의와 해외 거래 과세 방안, 2028년 상반기로 예정된 세부 과세 기준을 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "경제",
+                  "minor": "거시·정책"
+                },
+                "sources": [
+                  {
+                    "name": "한국경제",
+                    "url": "https://www.hankyung.com/article/2026110590561",
+                    "publishedAt": "2026-11-05",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261105132100002",
+                    "publishedAt": "2026-11-05",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/11/05/PYH2026110514490001300_P2.jpg"
+                  },
+                  {
+                    "name": "아시아경제",
+                    "url": "https://view.asiae.co.kr/article/2026110515553556642",
+                    "publishedAt": "2026-11-05"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261105125500002",
+                    "publishedAt": "2026-11-05",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/10/28/PYH2026102802560001300_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 6,
+                "title": "북한이 신형 대공미사일을 시험하고 순항미사일로 비행장을 때리는 훈련을 했다고 밝혔다",
+                "summary": "조선중앙통신은 4일 신형 반항공미사일 시험발사와 장거리 전략순항미사일 비행장 타격 훈련을 함께 했다고 보도했다.",
+                "whyItMatters": "한미 연합공중훈련에 맞선 무력시위로, 공군 기지를 겨냥한 타격 능력을 과시해 한반도 긴장을 높인다.",
+                "background": "합동참모본부는 4일 오전 함경남도 선덕 일대에서 동해상으로 미사일 여러 발이 발사돼 300km 미만을 비행했다고 밝혔다. 이날은 미국 중간선거 당일이었고, 북한은 앞서 바이낸스 해킹 배후로 지목된 데 반발했다.",
+                "keyFacts": [
+                  "북한 미사일총국이 새 비행체 재료와 복합 유도 방식을 검증했다고 주장했고, 김정식 당 중앙군사위원이 현장을 지도했다.",
+                  "동부지구 장거리 전략순항미사일 부대가 가상 비행장 표적을 타격했고, 공개 사진에는 활주로의 항공기 모양 표적 20여 개가 나왔다.",
+                  "미사일 제원과 비행거리, 발사 장소는 공개하지 않았다.",
+                  "통일부는 한미 연합공중훈련 '프리덤 플래그'에 대응한 무력시위로 평가했다."
+                ],
+                "outlook": "추가 발사 여부와 한미의 대응 훈련, 북한의 대미 대화 언급이 실제 접촉으로 이어지는지를 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "정치",
+                  "minor": "북한"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261105011152504",
+                    "publishedAt": "2026-11-05",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/11/05/PYH2026110500630004200_P2.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "세계일보",
+                    "url": "https://www.segye.com/newsView/20261105502629",
+                    "publishedAt": "2026-11-05"
+                  },
+                  {
+                    "name": "아시아경제",
+                    "url": "https://view.asiae.co.kr/article/2026110513565942874",
+                    "publishedAt": "2026-11-05"
+                  }
+                ]
+              },
+              {
+                "rank": 7,
+                "title": "철도노조가 쟁의행위를 가결하고 코레일·SR 통합 뒤 첫 12월 총파업을 예고했다",
+                "summary": "전국철도노동조합이 조합원 77.58% 찬성으로 쟁의행위를 가결해 12월 총파업 가능성이 커졌다.",
+                "whyItMatters": "코레일과 SR이 통합된 뒤 처음 맞는 파업 위기라, 예전처럼 SRT가 KTX 공백을 메우기 어려워 고속철 운행 차질이 커질 수 있다.",
+                "background": "코레일과 SR은 9월 통합했다. 노사는 승진 제도와 안전 인력 충원을 두고 임금·단체교섭에서 합의하지 못했다.",
+                "keyFacts": [
+                  "찬반투표에는 조합원 2만1,634명이 참여해 1만6,783명(77.58%)이 찬성했다.",
+                  "노조는 승진 적체 해소와 상위 직급 정원 확대, 안전 인력 충원을 요구한다.",
+                  "노조는 휴일근무 거부 등 단계적 투쟁 뒤 교섭이 진전되지 않으면 12월 총파업에 나설 방침이다.",
+                  "코레일은 대체 인력으로 운행률 75.2%를 확보할 수 있다고 보고, 국토교통부는 고속철 75% 이상 운행을 목표로 한다."
+                ],
+                "outlook": "추가 교섭 결과와 총파업 날짜 확정, SR 노조의 참여 여부를 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "경제",
+                  "minor": "노동·일자리"
+                },
+                "sources": [
+                  {
+                    "name": "이투데이",
+                    "url": "https://www.etoday.co.kr/news/view/2644799",
+                    "publishedAt": "2026-11-05",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261105172051063",
+                    "publishedAt": "2026-11-05",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2025/12/23/PYH2025122303790001300_P2.jpg"
+                  },
+                  {
+                    "name": "뉴스1",
+                    "url": "https://www.news1.kr/realestate/general/6344800",
+                    "publishedAt": "2026-11-05"
+                  }
+                ]
+              }
+            ],
+            "shortNews": [
+              {
+                "summary": "경찰이 세브란스병원 진료실에서 정신건강의학과 교수에게 흉기를 휘두른 50대 여성에게 살인미수 혐의로 구속영장을 신청했고, 의료계는 의료진 보호 대책을 요구했다.",
+                "category": {
+                  "major": "사회",
+                  "minor": "사건·사고"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261105063751004",
+                    "publishedAt": "2026-11-05",
+                    "imageUrl": "https://img.yna.co.kr/etc/inner/KR/2026/11/05/AKR20261105063751004_01_i_P2.jpg"
+                  },
+                  {
+                    "name": "파이낸셜뉴스",
+                    "url": "https://www.fnnews.com/news/202611051047073324",
+                    "publishedAt": "2026-11-05"
+                  }
+                ]
+              },
+              {
+                "summary": "국회가 '내란 부정' 발언 논란을 빚은 국민의힘 김태규 의원의 제명 촉구 결의안을 민주당 주도로 의결했다.",
+                "category": {
+                  "major": "정치",
+                  "minor": "국회·정당"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261105136151001",
+                    "publishedAt": "2026-11-05",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/10/01/PYH2026100126230001300_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "특검이 소속 부장검사 고발 사건을 1년 가까이 방치한 혐의로 기소된 오동운 공수처장에게 징역 1년을 구형했고, 선고는 1월 12일이다.",
+                "category": {
+                  "major": "정치",
+                  "minor": "사법·검찰"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261105127051004",
+                    "publishedAt": "2026-11-05",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/10/13/PYH2026101317130001300_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "서울 은평구에서 70대 여성이 전 연인에게 살해돼, 임시숙소와 모니터링 등 보호 조치에도 스토킹 범죄를 막지 못했다는 지적이 나왔다.",
+                "category": {
+                  "major": "사회",
+                  "minor": "사건·사고"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261105120051004",
+                    "publishedAt": "2026-11-05",
+                    "imageUrl": "https://img.yna.co.kr/etc/inner/KR/2026/11/05/AKR20261105120051004_03_i_P2.jpg"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "세계",
+            "flow": "미국 선거 결과가 AI 투자 위축 걱정으로 번져 뉴욕 증시가 폭락했고, 영국은 에너지발 물가에 금리를 올렸으며, 파라과이 대통령은 은행 파산 여파로 물러났다.",
+            "topStories": [
+              {
+                "rank": 1,
+                "title": "AI 투자 위축 우려에 다우지수가 1,800포인트 넘게 빠지고 나스닥은 조정 국면에 들어갔다",
+                "summary": "민주당이 데이터센터 규제를 강화할 것이라는 걱정에 미국 기술주가 무너져 나스닥 종합지수가 5% 넘게 떨어졌다.",
+                "whyItMatters": "지난 몇 년 세계 증시를 끌어 온 AI 투자 흐름이 정치 변화로 흔들릴 수 있다는 신호다. 전날의 선거 직후 상승분이 하루 만에 사라져 세계 시장 불안이 커졌다.",
+                "background": "민주당은 4일 중간선거에서 상·하원을 모두 되찾았다. 데이터센터가 몰린 텍사스에서는 더 강한 보호 장치가 생길 때까지 신규 건설을 멈추겠다고 공약한 지나 히노호사 후보가 주지사에 당선됐다. 선거 다음 날 미국 증시는 크게 올랐지만, 이날은 AI 관련주에 매도가 쏟아졌다.",
+                "keyFacts": [
+                  "나스닥 종합지수는 5.3% 떨어져 고점 대비 10% 넘게 내린 조정 국면에 들어갔고, 나스닥100 지수는 6% 넘게 빠졌다.",
+                  "다우지수는 1,834포인트 내려 전날 오른 몫을 모두 잃었다.",
+                  "엔비디아는 8%, AMD는 14%, 코어위브는 8.9% 떨어졌다.",
+                  "2025년 4월 관세 충격 이후 가장 나쁜 하루라는 평가가 나왔다."
+                ],
+                "outlook": "민주당 의회의 데이터센터·AI 규제 법안 움직임과 빅테크의 투자 계획 수정 여부, 이번 주 미국 고용 지표를 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "경제",
+                  "minor": "금융·증시"
+                },
+                "sources": [
+                  {
+                    "name": "CNN",
+                    "url": "https://www.cnn.com/2026/11/05/investing/tech-heavy-nasdaq-plunges",
+                    "publishedAt": "2026-11-05",
+                    "primary": true
+                  },
+                  {
+                    "name": "NBC News",
+                    "url": "https://www.nbcnews.com/business/markets/tech-stocks-plunge-ai-midterms-rcna607650",
+                    "publishedAt": "2026-11-05"
+                  },
+                  {
+                    "name": "Axios",
+                    "url": "https://www.axios.com/2026/11/05/nasdaq-plummets-correction",
+                    "publishedAt": "2026-11-05"
+                  }
+                ]
+              },
+              {
+                "rank": 2,
+                "title": "영국 중앙은행이 3년 만에 처음으로 기준금리를 올려 연 4%로 만들었다",
+                "summary": "잉글랜드은행이 에너지 가격 상승에 따른 물가 압력을 이유로 금리를 0.25%포인트 올리고 추가 인상 가능성도 열어 뒀다.",
+                "whyItMatters": "주요 중앙은행이 금리를 내리던 흐름에서 다시 올리기 시작한 것이라, 영국의 대출 이자 부담이 커지고 다른 나라 통화정책에도 영향을 줄 수 있다.",
+                "background": "이란 전쟁과 호르무즈 해협 봉쇄로 에너지 가격이 크게 올라 영국 물가가 다시 오르고 있다. 잉글랜드은행은 2023년 이후 금리를 올리지 않았고, 그동안 연 3.75%까지 내려 둔 상태였다.",
+                "keyFacts": [
+                  "통화정책위원회는 8대 1로 기준금리를 3.75%에서 4.00%로 올리기로 했다.",
+                  "반대한 1명(캐서린 만 위원)은 0.5%포인트 인상을 주장했다.",
+                  "잉글랜드은행은 물가 상승률이 2027년 중반 5% 가까이 오를 것으로 내다봤다.",
+                  "앤드루 베일리 총재는 이란 전쟁이 이어지면 금리를 더 올릴 수 있다고 말했다."
+                ],
+                "outlook": "12월 다음 회의의 추가 인상 여부와 에너지 가격, 영국 주택담보대출 금리 변화를 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "경제",
+                  "minor": "금융·증시"
+                },
+                "sources": [
+                  {
+                    "name": "CNBC",
+                    "url": "https://www.cnbc.com/2026/11/05/interest-rates-inflation-uk.html",
+                    "publishedAt": "2026-11-05",
+                    "primary": true
+                  },
+                  {
+                    "name": "Bank of England",
+                    "url": "https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes/2026/november-2026",
+                    "publishedAt": "2026-11-05"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261105179052085",
+                    "publishedAt": "2026-11-05",
+                    "imageUrl": "https://img.yna.co.kr/photo/etc/epa/2024/06/05/PEP20240605132601009_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 3,
+                "title": "파라과이 페냐 대통령이 디지털 은행 파산 여파로 사임했다",
+                "summary": "고객 약 300만 명의 계좌를 묶은 디지털 은행 '우에노' 파산 뒤 탄핵 압박이 커지자 산티아고 페냐 대통령이 물러났다.",
+                "whyItMatters": "은행 한 곳의 파산이 정권 교체로까지 이어진 드문 사례다. 금융 감독 실패와 정치권의 이해 충돌이 겹치면 어떤 결과가 오는지 보여 준다.",
+                "background": "파라과이 중앙은행은 3일 자본이 크게 모자란 디지털 은행 우에노를 인수해 관리에 들어갔고, 고객들은 돈을 찾지 못하게 됐다. 페냐 대통령은 2025년 3월까지 이 은행을 소유한 그룹의 주주였다. 야당은 이해 충돌과 연금 기금 오용, 사실 은폐를 이유로 탄핵을 추진했고, 거리 시위도 이어졌다.",
+                "keyFacts": [
+                  "페냐 대통령은 녹화 연설에서 나라의 안정과 민주주의 제도를 위해 물러난다고 밝혔다.",
+                  "페드로 알리아나 부통령이 대통령직을 넘겨받는다.",
+                  "중앙은행 총재도 사임했고, 우에노 경영진 8명이 붙잡혔다.",
+                  "페냐 대통령은 은행과의 부적절한 관계를 부인해 왔다."
+                ],
+                "outlook": "알리아나 새 대통령의 예금자 구제책과 은행 파산 수사, 탄핵 절차의 마무리를 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "국제",
+                  "minor": "기타 지역"
+                },
+                "sources": [
+                  {
+                    "name": "Al Jazeera",
+                    "url": "https://www.aljazeera.com/economy/2026/11/5/paraguay-president-pena-resigns-in-wake-of-bank-collapse",
+                    "publishedAt": "2026-11-05",
+                    "primary": true
+                  },
+                  {
+                    "name": "CNN",
+                    "url": "https://www.cnn.com/2026/11/05/americas/president-paraguay-resigns-latam-intl",
+                    "publishedAt": "2026-11-05"
+                  },
+                  {
+                    "name": "Euronews",
+                    "url": "https://www.euronews.com/2026/11/05/ueno-bank-collapse-in-paraguay-prompts-president-santiago-pena-to-resign",
+                    "publishedAt": "2026-11-05"
+                  }
+                ]
+              },
+              {
+                "rank": 4,
+                "title": "홍콩 법원이 민주화 활동가 조슈아 웡에게 외국 세력 결탁 혐의로 징역 10년을 선고했다",
+                "summary": "이미 수감 중인 조슈아 웡이 국가보안법 두 번째 사건에서 징역 10년을 더 받았다.",
+                "whyItMatters": "홍콩 국가보안법에 따른 처벌이 계속 무거워지고 있음을 보여 주고, 미국과 중국의 갈등 요인이 하나 더 생겼다.",
+                "background": "조슈아 웡은 2014년 우산혁명을 이끈 학생 지도자다. 그는 민주파 47명 사건으로 복역 중이었고 2027년 1월쯤 풀려날 예정이었다. 2025년 6월 외국 세력과 결탁한 혐의로 다시 기소됐고 9월 혐의를 인정했다.",
+                "keyFacts": [
+                  "홍콩 고등법원은 조슈아 웡과 네이선 로를 범행의 주도자로 봤다.",
+                  "주홍콩 미국 총영사관은 판결을 강하게 비판하고 즉시 석방을 요구했다.",
+                  "중국 정부는 홍콩 당국의 법 집행을 확고히 지지한다고 밝혔다."
+                ],
+                "outlook": "미국 의회의 제재 요구와 다른 민주파 인사들의 재판 결과를 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "국제",
+                  "minor": "동아시아"
+                },
+                "sources": [
+                  {
+                    "name": "Hong Kong Free Press",
+                    "url": "https://hongkongfp.com/2026/11/05/breaking-jailed-hong-kong-activist-joshua-wong-sentenced-to-10-years-over-foreign-collusion/",
+                    "publishedAt": "2026-11-05",
+                    "primary": true
+                  },
+                  {
+                    "name": "CBC",
+                    "url": "https://www.cbc.ca/news/world/joshua-wong-second-sentence-9.7410128",
+                    "publishedAt": "2026-11-05"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261105116351009",
+                    "publishedAt": "2026-11-05",
+                    "imageUrl": "https://img.yna.co.kr/photo/ap/2026/11/05/PAP20261105146401009_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 5,
+                "title": "유럽에서 여객기 27편 이상에 가짜 폭탄 위협이 이어져 비상착륙과 전투기 호위가 잇따랐다",
+                "summary": "이번 주 두 번째로 유럽 여러 나라의 여객기에 폭탄 위협이 들어왔지만 위험물은 발견되지 않았다.",
+                "whyItMatters": "슈퍼마켓 냉장고와 혈액원 해킹에 이어 항공 운항까지 흔드는 일이 연달아 일어나, 유럽의 기반 시설을 노린 조직적 교란인지에 관심이 쏠린다.",
+                "background": "며칠 전에도 유럽 여객기 여러 편이 폭탄 위협으로 회항했다. 최근 유럽에서는 냉장 시설 해킹 등 기반 시설을 겨냥한 공격이 이어지고 있다.",
+                "keyFacts": [
+                  "이탈리아 공군 전투기가 헬싱키발 핀에어 여객기를 로마까지 호위했고, 아일랜드 항공사 여객기는 프랑스 공군 기지에 내렸다.",
+                  "불가리아 공군은 라이언에어 여객기 3편을 호위해 착륙시켰다.",
+                  "영국 교통장관은 악의적인 가짜 위협이라고 밝혔고, 위험물은 나오지 않았다.",
+                  "피해 집계는 매체마다 14편에서 27편으로 다르다."
+                ],
+                "outlook": "위협을 보낸 주체에 대한 각국 수사 결과와 항공 보안 조치 강화 여부를 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "사회",
+                  "minor": "사건·사고"
+                },
+                "sources": [
+                  {
+                    "name": "CBC",
+                    "url": "https://www.cbc.ca/news/world/europe-bomb-threats-czechia-poland-france-9.7410169",
+                    "publishedAt": "2026-11-05",
+                    "primary": true
+                  },
+                  {
+                    "name": "ABC News",
+                    "url": "https://abcnews.com/International/wireStory/dozen-flights-europe-receive-bomb-threats-official-calls-137869253",
+                    "publishedAt": "2026-11-05"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261105173451109",
+                    "publishedAt": "2026-11-05",
+                    "imageUrl": "https://img.yna.co.kr/photo/reuters/2026/11/04/PRU20261104067601009_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 6,
+                "title": "캘리포니아 주지사가 사형수 548명 전원을 감형하겠다고 발표했다",
+                "summary": "개빈 뉴섬 주지사가 캘리포니아의 모든 사형수를 가석방 없는 종신형으로 바꾸는 미국 역사상 가장 큰 감형을 발표했다.",
+                "whyItMatters": "미국에서 사형수가 가장 많은 주가 사형을 사실상 끝내는 결정이라, 미국 사형제 논쟁에 큰 영향을 준다.",
+                "background": "캘리포니아는 2006년 이후 사형을 집행하지 않았고, 뉴섬 주지사는 2019년 사형 집행을 유예했다. 뉴섬 주지사는 두 번째 임기 끝을 앞두고 있다.",
+                "keyFacts": [
+                  "뉴섬 주지사는 모든 캘리포니아 주민에게 보내는 편지 형식으로 감형을 알렸다.",
+                  "사형은 가석방 없는 종신형으로 바뀐다.",
+                  "약 3분의 1은 바로 효력이 생기고, 나머지 3분의 2는 법원 검토를 거쳐야 확정된다.",
+                  "범죄 피해자 단체 등 사형 찬성 쪽은 강하게 반발했다."
+                ],
+                "outlook": "주 대법원의 검토 절차와 피해자 단체의 법적 대응을 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "사회",
+                  "minor": "법·재판"
+                },
+                "sources": [
+                  {
+                    "name": "The Detroit News",
+                    "url": "https://www.detroitnews.com/story/news/nation/2026/11/05/newsom-to-grant-clemency-to-largest-death-row-in-western-hemisphere/92629877007/",
+                    "publishedAt": "2026-11-05",
+                    "primary": true
+                  },
+                  {
+                    "name": "Death Penalty Information Center",
+                    "url": "https://deathpenaltyinfo.org/news/governor-gavin-newsom-grants-largest-mass-commutation-in-u-s-history-to-death-sentenced-prisoners-in-california",
+                    "publishedAt": "2026-11-05",
+                    "publishedAtEstimated": true
+                  },
+                  {
+                    "name": "FOX 5 DC",
+                    "url": "https://www.fox5dc.com/news/newsom-death-row-inmates-commutation",
+                    "publishedAt": "2026-11-05",
+                    "publishedAtEstimated": true
+                  }
+                ]
+              }
+            ],
+            "shortNews": [
+              {
+                "summary": "이란 혁명수비대가 호르무즈 해협에서 유조선 2척과 예인선이 불탔다고 주장했고, 선거 뒤 100달러 아래로 떨어졌던 브렌트유가 다시 올랐다.",
+                "category": {
+                  "major": "국제",
+                  "minor": "중동"
+                },
+                "sources": [
+                  {
+                    "name": "CBS News",
+                    "url": "https://www.cbsnews.com/live-updates/iran-war-us-trump-midterms-strait-of-hormuz/",
+                    "publishedAt": "2026-11-05"
+                  }
+                ]
+              },
+              {
+                "summary": "영국 코미디언 러셀 브랜드가 런던 법원에서 성폭행 1건과 성추행 3건 유죄 평결을 받아 구금됐고, 형량은 다음 주 월요일 선고된다.",
+                "category": {
+                  "major": "문화·스포츠",
+                  "minor": "대중문화"
+                },
+                "sources": [
+                  {
+                    "name": "NBC News",
+                    "url": "https://www.nbcnews.com/world/united-kingdom/russell-brand-guilty-rape-sexual-assault-rcna606967",
+                    "publishedAt": "2026-11-05"
+                  },
+                  {
+                    "name": "PBS",
+                    "url": "https://www.pbs.org/newshour/world/russell-brand-convicted-of-rape-and-sexual-assault",
+                    "publishedAt": "2026-11-05"
+                  }
+                ]
+              },
+              {
+                "summary": "크리스티아누 호날두가 포르투갈 축구대표팀 은퇴를 발표했다.",
+                "category": {
+                  "major": "문화·스포츠",
+                  "minor": "스포츠"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261105177251007",
+                    "publishedAt": "2026-11-05",
+                    "imageUrl": "https://img.yna.co.kr/etc/inner/KR/2026/11/05/AKR20261105177251007_02_i_P2.jpg"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "IT·AI",
+            "flow": "OpenAI가 해킹 능력이 가장 높은 등급인 보안 모델을 내놓았고, 중국은 소프트뱅크의 로봇 사업 인수와 엔비디아 칩 수입을 막아 기술 공급망 갈등이 이어졌다.",
+            "topStories": [
+              {
+                "rank": 1,
+                "title": "OpenAI가 사이버 위험 '최고' 등급을 받은 보안 전용 모델 GPT-6 Cyber를 승인 고객에게 내놓았다",
+                "summary": "보안 취약점을 찾아 공격 코드까지 만드는 GPT-6 Cyber가 침투 테스트용 승인 고객에게만 공개됐다.",
+                "whyItMatters": "AI가 실제 소프트웨어의 새 취약점을 대량으로 찾아내는 수준에 이르러, 방어하는 쪽에는 강력한 도구지만 악용되면 위험이 커진다. 회사 스스로 가장 높은 위험 등급을 붙인 첫 사례라 규제 논의에도 영향을 준다.",
+                "background": "OpenAI는 자체 안전 기준(준비 프레임워크)에 따라 모델의 사이버 능력을 등급으로 나눈다. 이전 보안 모델 GPT-5.6 Cyber는 한 단계 아래인 '높음' 등급이었다. 보안 업체는 이런 모델로 침투 테스트와 취약점 분석을 한다.",
+                "keyFacts": [
+                  "GPT-6 Cyber는 OpenAI의 침투 테스트·공격 코드 개발용 고객 등급인 Daybreak Red에만 제공되고, 몇 주에 걸쳐 승인 고객 전체로 넓힌다.",
+                  "OpenAI는 연구진이 이 모델로 Firefox에서 알려지지 않은 심각한 취약점 81개를 찾았고 Mozilla가 고치기 시작했다고 밝혔다.",
+                  "리눅스 커널 취약점 948개의 공격 코드를 만들었고, 그중 588개는 처음 알려진 것이라고 했다.",
+                  "공격 시험 지표인 ExploitGym 점수는 48.5%로 이전 모델(32.1%)보다 높았다.",
+                  "수치는 OpenAI 발표이고 외부 검증은 아직 없다."
+                ],
+                "outlook": "승인 범위가 얼마나 넓어지는지, 경쟁사 보안 모델과 미국 정부의 AI 연구소 규제 설명(이달 예정)을 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "AI 모델·연구"
+                },
+                "sources": [
+                  {
+                    "name": "The Register",
+                    "url": "https://www.theregister.com/security/2026/11/05/openai-releases-gpt-6-cyber-and-promises-this-one-stays-within-rules-of-engagement/5307855",
+                    "publishedAt": "2026-11-05",
+                    "primary": true
+                  },
+                  {
+                    "name": "OpenAI",
+                    "url": "https://openai.com/index/introducing-gpt-6-cyber/",
+                    "publishedAt": "2026-11-05"
+                  },
+                  {
+                    "name": "The Next Web",
+                    "url": "https://thenextweb.com/news/openai-gpt-6-cyber-launch-firefox-linux-daybreak-red",
+                    "publishedAt": "2026-11-05"
+                  }
+                ],
+                "devCheckpoint": "Firefox와 리눅스 커널의 보안 업데이트가 연달아 나올 수 있으니 자동 업데이트를 켜 두고 커널 패치 공지를 챙긴다."
+              },
+              {
+                "rank": 2,
+                "title": "중국이 소프트뱅크의 54억 달러 규모 ABB 로봇 사업부 인수를 막았다",
+                "summary": "중국 외국인 투자 안보 심사 기구가 소프트뱅크의 ABB 로봇 사업 인수 가운데 중국 사업 부분을 금지했다.",
+                "whyItMatters": "AI와 로봇을 묶으려는 손정의 회장의 계획에 차질이 생겼고, 중국이 로봇 데이터의 해외 유출을 국가 안보 문제로 다룬다는 점을 보여 준다.",
+                "background": "소프트뱅크는 2025년 10월 스위스 ABB의 로봇 사업부 전체를 약 53억7,500만 달러에 사기로 했다. 중국은 ABB 로봇 사업의 가장 큰 시장이다. 중국 경쟁 당국은 2월 이 거래를 승인한 것으로 알려졌다.",
+                "keyFacts": [
+                  "ABB는 중국 외국인 투자 안보 심사 기구가 중국 내 로봇 사업 인수를 금지했다고 밝혔다.",
+                  "FT는 중국이 민감한 로봇 데이터가 해외로 넘어가 AI 학습에 쓰일 수 있다고 우려했다고 보도했다.",
+                  "ABB 로봇 사업부는 2024년 매출 약 23억 달러, 직원 약 7,000명 규모다.",
+                  "소프트뱅크 주가는 도쿄에서 약 7% 떨어졌다."
+                ],
+                "outlook": "소프트뱅크가 승인을 다시 신청할지, 중국 사업을 뺀 형태로 거래를 바꿀지를 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "AI 산업·기업"
+                },
+                "sources": [
+                  {
+                    "name": "The Japan Times",
+                    "url": "https://www.japantimes.co.jp/business/2026/11/05/companies/china-block-softbank-robot-sale/",
+                    "publishedAt": "2026-11-05",
+                    "primary": true
+                  },
+                  {
+                    "name": "Nikkei Asia",
+                    "url": "https://asia.nikkei.com/business/business-deals/china-blocks-softbank-s-5.4bn-deal-for-abb-robotics-division",
+                    "publishedAt": "2026-11-05",
+                    "publishedAtEstimated": true
+                  },
+                  {
+                    "name": "Robotics 24/7",
+                    "url": "https://www.robotics247.com/article/softbanks-proposed-5.4b-acquisition-of-abb-robotics-blocked-by-china",
+                    "publishedAt": "2026-11-05",
+                    "publishedAtEstimated": true
+                  }
+                ]
+              },
+              {
+                "rank": 3,
+                "title": "중국이 수입 승인을 미루면서 엔비디아 H200 칩 약 60만 개가 홍콩에 쌓여 있다",
+                "summary": "로이터는 중국 정부가 대규모 수입을 승인하지 않아 엔비디아 H200 칩이 홍콩에 묶여 있다고 보도했다.",
+                "whyItMatters": "미국이 판매를 일부 허용해도 중국이 자국 칩을 밀어주려고 수입을 막으면서, 엔비디아의 중국 매출과 중국 AI 기업의 칩 확보가 함께 막혔다.",
+                "background": "미국은 수출 통제로 고성능 AI 칩의 중국 판매를 막아 왔고, 트럼프 행정부가 H200의 제한적 판매를 허용했다. 중국은 자국 기업에 추론용으로 중국산 칩을 먼저 쓰라고 요구하는 것으로 알려졌다.",
+                "keyFacts": [
+                  "홍콩에 약 60만 개의 H200 칩이 수입 승인을 기다리고 있다.",
+                  "중국 대형 인터넷 기업 몇 곳은 지난 몇 달 동안 각각 약 1만 개씩만 받았다.",
+                  "중국 본토에서 H200 8장짜리 서버 가격은 10월 말 600만 위안(약 90만 달러)을 넘어 1년 전의 약 3배가 됐다."
+                ],
+                "outlook": "중국의 수입 승인 규모와 엔비디아 실적 전망, 미국 공화당의 엔비디아 CEO 보고 요구를 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "반도체·하드웨어"
+                },
+                "sources": [
+                  {
+                    "name": "Investing.com",
+                    "url": "https://www.investing.com/news/stock-market-news/nvidia-chips-stockpile-in-hong-kong-awaits-china-import-approval--report-5003235",
+                    "publishedAt": "2026-11-05",
+                    "primary": true
+                  },
+                  {
+                    "name": "Seeking Alpha",
+                    "url": "https://seekingalpha.com/news/4667107-nvidia-chips-lie-stockpiled-in-hong-kong-amid-chinas-import-restrictions",
+                    "publishedAt": "2026-11-05"
+                  }
+                ]
+              },
+              {
+                "rank": 4,
+                "title": "마이크론이 노사 분쟁으로 대만의 45억 달러 규모 메모리 공장 건설을 멈췄다",
+                "summary": "블룸버그는 마이크론이 대만 타오위안 신규 공장 계획을 노조와의 긴 분쟁 때문에 중단했다고 보도했다.",
+                "whyItMatters": "AI용 메모리 공급을 늘리려던 계획이 늦어질 수 있고, 반도체 업계에서 드문 노사 갈등이 생산 투자에 직접 영향을 준 사례다.",
+                "background": "마이크론 타오위안 노조는 10월 22일 대만 반도체 업계 첫 파업인 경고 파업을 했다. 노조는 큰 폭의 성과급과 분기 영업이익 배분을 요구하고 있다.",
+                "keyFacts": [
+                  "멈춘 곳은 타오위안에 지으려던 신규 공장(Fab 11E)으로, 장비까지 합하면 투자액이 최대 45억 달러로 보도됐다.",
+                  "마이크론은 기존 대만 공장은 정상 가동 중이라고 밝혔지만 중단 여부에는 직접 답하지 않았다.",
+                  "대만 경제부는 회사와 노조의 이견 해소를 돕겠다고 했다.",
+                  "마이크론 주가는 반도체주 폭락과 겹쳐 이날 크게 떨어졌다."
+                ],
+                "outlook": "노사 협상 결과와 공사 재개 시점, 메모리 가격과 한국 메모리 업체에 미칠 영향을 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "반도체·하드웨어"
+                },
+                "sources": [
+                  {
+                    "name": "Yahoo Finance",
+                    "url": "https://finance.yahoo.com/markets/stocks/articles/micron-stock-falls-report-4-193252177.html",
+                    "publishedAt": "2026-11-05",
+                    "primary": true
+                  },
+                  {
+                    "name": "TipRanks",
+                    "url": "https://www.tipranks.com/news/micron-stock-news-4-5b-taiwan-plant-put-on-hold-amid-labor-dispute",
+                    "publishedAt": "2026-11-05"
+                  },
+                  {
+                    "name": "Central Oregon Daily",
+                    "url": "https://www.centraloregondaily.com/news/consumer/micron-pauses-work-on-4-5-billion-taiwan-plant-bloomberg-news-reports/article_46ad8293-6afb-5bb1-b600-46f764fc3f3e.html",
+                    "publishedAt": "2026-11-05"
+                  }
+                ]
+              },
+              {
+                "rank": 5,
+                "title": "구글·메타·틱톡이 미성년자의 맞춤 추천과 자동 재생을 막는 캘리포니아 법을 멈춰 달라고 소송을 냈다",
+                "summary": "세 회사는 2027년 1월 시행되는 캘리포니아 청소년 소셜미디어 법이 표현의 자유를 침해한다며 연방법원에 소송을 냈다.",
+                "whyItMatters": "법이 시행되면 미성년자에게 추천 알고리즘과 자동 재생 같은 기능을 끄거나 계정을 지워야 해, 큰 플랫폼의 운영 방식이 바뀐다. 다른 주와 나라의 비슷한 규제에도 본보기가 된다.",
+                "background": "AB 1709는 미성년자에게 강박적 사용을 부르는 기능을 제공하지 못하게 하는 캘리포니아 주법으로, 뉴섬 주지사가 9월 10일 서명했다. 플랫폼들은 청소년 중독 소송도 따로 겪고 있다.",
+                "keyFacts": [
+                  "법은 맞춤 추천과 자동 재생 같은 기능을 미성년자에게 제공하지 못하게 하고, 그런 기능이 있는 어린이 계정은 지우게 한다.",
+                  "구글은 새너제이 연방법원에 소송을 냈다.",
+                  "회사들은 수정헌법 1조와 통신품위법 230조 위반을 주장한다.",
+                  "피고인 롭 본타 주 법무장관실은 소송을 검토 중이라고 밝혔다."
+                ],
+                "outlook": "2027년 1월 1일 시행 전에 법원이 효력 정지를 내릴지를 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "규제·정책"
+                },
+                "sources": [
+                  {
+                    "name": "GV Wire",
+                    "url": "https://gvwire.com/2026/11/05/google-meta-tiktok-sue-to-block-california-youth-social-media-law/",
+                    "publishedAt": "2026-11-05",
+                    "primary": true
+                  },
+                  {
+                    "name": "SJV Sun",
+                    "url": "https://sjvsun.com/california/social-media-companies-sue-california-to-block-new-youth-law",
+                    "publishedAt": "2026-11-05",
+                    "publishedAtEstimated": true
+                  },
+                  {
+                    "name": "PYMNTS",
+                    "url": "https://www.pymnts.com/cpi-posts/google-meta-and-tiktok-sue-over-californias-limits-on-digital-algorithms/",
+                    "publishedAt": "2026-11-05",
+                    "publishedAtEstimated": true
+                  }
+                ]
+              },
+              {
+                "rank": 6,
+                "title": "미국 정부가 산업용 냉장·냉동 제어 장치를 노린 해킹이 계속된다며 보안 강화를 촉구했다",
+                "summary": "CISA와 FBI 등 미국 기관들이 인터넷에 노출된 냉장 온도 제어기를 겨냥한 공격에 대비하라는 공동 안내서를 냈다.",
+                "whyItMatters": "유럽 슈퍼마켓, 프랑스 혈액원, 미군 기지 냉동고가 잇따라 해킹당한 뒤 나온 경고로, 식품과 의약품 공급망이 사이버 공격에 직접 노출돼 있음을 보여 준다.",
+                "background": "최근 유럽 대형 마트의 냉장 설비가 원격으로 조작되고 프랑스 혈액원 냉동 시설도 공격받았다. 많은 냉장 제어기가 인터넷에 그대로 연결돼 있고 보안 업데이트가 끊긴 제품도 있다.",
+                "keyFacts": [
+                  "CISA, FBI, 보건복지부, 농무부, 교통부가 함께 안내서를 냈다.",
+                  "패치되지 않았거나 인터넷에 노출된 전자 온도 제어기와 상업용 냉장 제어기가 표적이다.",
+                  "인터넷 노출 줄이기, 원격 접속 보호, 업데이트 적용, 이상 활동 감시를 권고했다.",
+                  "공격 주체는 밝히지 않았다."
+                ],
+                "outlook": "공격 주체 발표와 제조사의 보안 업데이트, 유럽 각국의 추가 피해 조사를 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "보안"
+                },
+                "sources": [
+                  {
+                    "name": "TechCrunch",
+                    "url": "https://techcrunch.com/2026/11/05/u-s-government-warns-of-ongoing-cyber-threat-amid-mass-hacks-of-industrial-retail-and-military-freezers/",
+                    "publishedAt": "2026-11-05",
+                    "primary": true
+                  },
+                  {
+                    "name": "CISA",
+                    "url": "https://www.cisa.gov/news-events/news/cisa-fbi-hhs-usda-and-dot-urge-critical-infrastructure-strengthen-industrial-refrigeration-and-cold",
+                    "publishedAt": "2026-11-05",
+                    "publishedAtEstimated": true
+                  }
+                ],
+                "devCheckpoint": "운영 기술(OT) 장비나 IoT 제어기가 인터넷에 직접 노출돼 있지 않은지 점검하고 원격 접속을 VPN 뒤로 옮긴다."
+              }
+            ],
+            "shortNews": [
+              {
+                "summary": "프랑스 협동조합 은행 크레디뮈튀엘 아르케아가 사이버 공격으로 약 1억 유로가 빠져나갔다고 밝혔고, 고객 계좌는 피해가 없다고 했다.",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "보안"
+                },
+                "sources": [
+                  {
+                    "name": "Euronext",
+                    "url": "https://live.euronext.com/en/financial-news/french-bank-credit-mutuel-arkea-says-eu100-million-missing-after-cyberattack",
+                    "publishedAt": "2026-11-05",
+                    "publishedAtEstimated": true
+                  },
+                  {
+                    "name": "France 24",
+                    "url": "https://www.france24.com/en/live-news/20261104-french-regional-bank-says-cyberattack-caused-fraudulent-transactions",
+                    "publishedAt": "2026-11-04"
+                  }
+                ]
+              },
+              {
+                "summary": "대구 공공배달앱 '대구로'가 해킹돼 가맹점주 계좌번호 2만5천여 개가 노출됐고, 늑장 통보 논란이 일었다.",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "보안"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261105051252053",
+                    "publishedAt": "2026-11-05",
+                    "imageUrl": "https://img.yna.co.kr/photo/cms/2023/04/29/05/PCM20230429000005053_P2.jpg"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "collectedAt": "2026-11-06T06:19:10+09:00",
+      "late": false
     }
   ],
   "extracted": [
     "2026-11-01",
     "2026-11-02",
     "2026-11-03",
-    "2026-11-04"
+    "2026-11-04",
+    "2026-11-05"
   ],
   "scheduled": [
     "2026-11-01",
     "2026-11-02",
     "2026-11-03",
-    "2026-11-04"
+    "2026-11-04",
+    "2026-11-05"
   ]
 }

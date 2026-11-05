@@ -1,0 +1,67 @@
+{
+  "formatVersion": 10,
+  "flows": [
+    {
+      "id": 1,
+      "date": "2026-11-05",
+      "position": 1,
+      "flowId": "2026-11-05-1",
+      "category": "interest",
+      "field": "media",
+      "title": "Z세대라는 세대 개념에 대한 관심이 오름",
+      "summary": "독일어 위키백과의 Z세대 문서 조회가 앞선 기간보다 늘었고, 같은 이름을 담은 블루스카이 글도 함께 늘었다. 무엇 때문인지는 재료로 확인되지 않으며, 블루스카이는 영어·초기 사용자에 치우친 표본이다.",
+      "reason": "같은 세대 개념의 위키 문서 조회와 그 이름으로 찾은 커뮤니티 글이 같은 기간에 함께 올랐다.",
+      "level": "medium",
+      "aux": [],
+      "issue": null,
+      "continues": null,
+      "units": [
+        {
+          "group": "wikimedia",
+          "source": "wikimedia:de",
+          "unitKey": "wikimedia:de:b5ea496178f710c5",
+          "unitName": "Generation Z",
+          "recent": 205759,
+          "base": 17329.8,
+          "isNew": false,
+          "recentFrom": "2026-10-28",
+          "recentTo": "2026-11-03",
+          "baseFrom": "2026-09-30",
+          "baseTo": "2026-10-27",
+          "recentDays": 7,
+          "baseDays": 28
+        }
+      ],
+      "community": [
+        {
+          "group": "bluesky",
+          "source": "bluesky:posts",
+          "unitKey": "bluesky:posts:wikimedia:de:b5ea496178f710c5",
+          "officialKey": "wikimedia:de:b5ea496178f710c5",
+          "unitName": "Generation Z",
+          "recent": 314,
+          "base": 124.5,
+          "isNew": false,
+          "recentFrom": "2026-10-28",
+          "recentTo": "2026-11-03",
+          "baseFrom": "2026-09-30",
+          "baseTo": "2026-10-27"
+        }
+      ],
+      "turning": false
+    }
+  ],
+  "flowDates": [
+    {
+      "date": "2026-11-05",
+      "status": "checked",
+      "missing": [
+        "assembly",
+        "acrc",
+        "sec"
+      ],
+      "communityMissing": []
+    }
+  ],
+  "flowCorrections": []
+}

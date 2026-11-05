@@ -1,5 +1,5 @@
 {
-  "formatVersion": 8,
+  "formatVersion": 10,
   "items": [
     {
       "id": 1,
@@ -349,6 +349,92 @@
       "schedules": [
         42
       ]
+    },
+    {
+      "id": 13,
+      "date": "2026-11-05",
+      "position": 1,
+      "field": "모델",
+      "title": "OpenAI gpt-5.5-cyber-preview, 2027년 2월 1일 종료",
+      "whatChanged": "OpenAI가 지원 종료 예정 목록에 GPT-5.5-Cyber 미리보기 모델을 더했다. 종료일은 2027년 2월 1일이고, 대체 모델은 쓸 수 있는 가장 성능 높은 사이버 보안용 모델로 안내한다.",
+      "who": "API에서 gpt-5.5-cyber-preview를 쓰는 개발자와 보안팀",
+      "action": "호출 코드의 모델 이름을 찾아 두고, 쓸 수 있는 최신 사이버 보안 모델로 옮겨 결과를 비교한다.",
+      "why": "기한이 지나면 이 모델 호출이 실패한다.",
+      "due": {
+        "date": "2027-02-01",
+        "state": "confirmed"
+      },
+      "sources": [
+        {
+          "name": "OpenAI 지원 종료",
+          "url": "https://developers.openai.com/api/docs/deprecations"
+        }
+      ],
+      "issue": null,
+      "reminderOf": null,
+      "keys": [
+        "deprecation:gpt-5.5-cyber-preview:2027-02-01:확정"
+      ],
+      "schedules": [
+        49
+      ]
+    },
+    {
+      "id": 14,
+      "date": "2026-11-05",
+      "position": 2,
+      "field": "모델",
+      "title": "OpenAI 받아쓰기 모델·번역 엔드포인트, 2027년 2월 26일 종료",
+      "whatChanged": "OpenAI가 /v1/audio/translations, gpt-4o-mini-transcribe, gpt-4o-transcribe-diarize 등 받아쓰기 관련 모델과 엔드포인트를 2027년 2월 26일에 끝낸다고 목록에 올렸다. 대체로는 gpt-live-transcribe나 gpt-transcribe, 실시간 번역 엔드포인트를 안내한다.",
+      "who": "OpenAI API로 음성 받아쓰기나 음성 번역을 하는 개발자",
+      "action": "쓰는 받아쓰기 모델과 번역 엔드포인트를 확인하고, 안내된 대체 모델로 바꿔 정확도와 화자 구분 결과를 시험한다.",
+      "why": "기한을 놓치면 음성 처리 기능이 멈춘다.",
+      "due": {
+        "date": "2027-02-26",
+        "state": "confirmed"
+      },
+      "sources": [
+        {
+          "name": "OpenAI 지원 종료",
+          "url": "https://developers.openai.com/api/docs/deprecations"
+        }
+      ],
+      "issue": null,
+      "reminderOf": null,
+      "keys": [
+        "deprecation:/v1/audio/translations:2027-02-26:확정",
+        "deprecation:gpt-4o-mini-transcribe:2027-02-26:확정",
+        "deprecation:gpt-4o-transcribe-diarize:2027-02-26:확정",
+        "deprecation:gpt-4o-transcribe:2027-02-26:확정",
+        "deprecation:whisper-1:2027-02-26:확정"
+      ],
+      "schedules": [
+        50
+      ]
+    },
+    {
+      "id": 15,
+      "date": "2026-11-05",
+      "position": 3,
+      "field": "보안",
+      "title": "Claude Console, 조직 IP 허용 목록 베타",
+      "whatChanged": "Claude Console에서 조직 단위 IP 허용 목록을 베타로 설정할 수 있게 됐다. 목록에 없는 주소에서 온 요청은 거부되어, API 키가 새어 나가도 쓸 수 있는 곳이 좁아진다. IPv4·IPv6 주소나 CIDR 범위를 조직당 1,000개까지 넣을 수 있다.",
+      "who": "Claude API를 쓰는 조직의 관리자",
+      "action": "API를 호출하는 서버의 고정 주소를 정리하고, 적용 대상 서비스를 문서에서 확인한 뒤 허용 목록을 켤지 정한다.",
+      "why": "키 유출 피해를 줄이는 구체적인 설정이다.",
+      "due": null,
+      "sources": [
+        {
+          "name": "Claude 릴리스 노트",
+          "url": "https://platform.claude.com/docs/en/release-notes/overview#ip-allowlisting"
+        }
+      ],
+      "issue": null,
+      "reminderOf": null,
+      "keys": [
+        "https://platform.claude.com/docs/en/release-notes/overview#ip-allowlisting"
+      ],
+      "schedules": []
     }
   ],
   "dates": [
@@ -362,6 +448,10 @@
     },
     {
       "date": "2026-11-04",
+      "status": "partial"
+    },
+    {
+      "date": "2026-11-05",
       "status": "partial"
     }
   ],
@@ -5120,6 +5210,15 @@
     },
     {
       "doc": "openai-deprecations",
+      "hash": "1f6900f0630eff06",
+      "addedOn": "2026-11-06",
+      "removedOn": null,
+      "path": "Deprecations > Upcoming deprecations > 2026-11-05: GPT-5.5-Cyber",
+      "header": "Shutdown date | Model / system | Recommended replacement",
+      "row": "February 1, 2027 | `gpt-5.5-cyber-preview` | The most capable cyber model available to you."
+    },
+    {
+      "doc": "openai-deprecations",
       "hash": "2021d293cea51741",
       "addedOn": "2026-11-03",
       "removedOn": null,
@@ -5131,7 +5230,7 @@
       "doc": "openai-deprecations",
       "hash": "20efe2947ae5aba5",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-06",
       "path": "Deprecations > Upcoming deprecations > 2026-06-02: GPT Image model deprecations",
       "header": "Shutdown date | Model / system | Recommended replacement",
       "row": "Dec 1, 2026 | `gpt-image-1-mini` | `gpt-image-2.5-sunburst` or `gpt-image-2.5-flare`"
@@ -5309,9 +5408,18 @@
     },
     {
       "doc": "openai-deprecations",
+      "hash": "412e2cc4cf60a4b7",
+      "addedOn": "2026-11-06",
+      "removedOn": null,
+      "path": "Deprecations > Upcoming deprecations > 2026-06-02: GPT Image model deprecations",
+      "header": "Shutdown date | Model / system | Recommended replacement",
+      "row": "Dec 1, 2026 | `gpt-image-1.5` | `gpt-image-1.5-2025-12-16` | `gpt-image-2.6-sunburst` or `gpt-image-2.6-flare`"
+    },
+    {
+      "doc": "openai-deprecations",
       "hash": "427b027f2c5144c9",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-06",
       "path": "Deprecations > Upcoming deprecations > 2026-06-02: GPT Image model deprecations",
       "header": "Shutdown date | Model / system | Recommended replacement",
       "row": "Dec 1, 2026 | `gpt-image-1.5` | `gpt-image-1.5-2025-12-16` | `gpt-image-2.5-sunburst` or `gpt-image-2.5-flare`"
@@ -5923,7 +6031,7 @@
       "doc": "openai-deprecations",
       "hash": "ae29cbb10c933024",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-06",
       "path": "Deprecations > Upcoming deprecations > 2026-06-02: GPT Image model deprecations",
       "header": "Shutdown date | Model / system | Recommended replacement",
       "row": "Dec 1, 2026 | `chatgpt-image-latest` | `gpt-image-2.5-sunburst` or `gpt-image-2.5-flare`"
@@ -6062,6 +6170,15 @@
       "path": "Deprecations > Upcoming deprecations > 2026-06-03: Reusable prompts",
       "header": "Date | Update",
       "row": "June 3, 2026 | Deprecation announced and prompt creation de-emphasized in the platform."
+    },
+    {
+      "doc": "openai-deprecations",
+      "hash": "c8b7c81e5a8c9c30",
+      "addedOn": "2026-11-06",
+      "removedOn": null,
+      "path": "Deprecations > Upcoming deprecations > 2026-06-02: GPT Image model deprecations",
+      "header": "Shutdown date | Model / system | Recommended replacement",
+      "row": "Dec 1, 2026 | `chatgpt-image-latest` | `gpt-image-2.6-sunburst` or `gpt-image-2.6-flare`"
     },
     {
       "doc": "openai-deprecations",
@@ -6206,6 +6323,15 @@
       "path": "Deprecations > Past deprecations > 2023-07-06: GPT and embeddings > First-generation text embedding models",
       "header": "Shutdown date | Deprecated model | Deprecated model price | Recommended replacement",
       "row": "2024-01-04 | `code-search-ada-code-001` | $4.00 / 1M tokens | `text-embedding-3-small`"
+    },
+    {
+      "doc": "openai-deprecations",
+      "hash": "dea2a9b19cc46cd8",
+      "addedOn": "2026-11-06",
+      "removedOn": null,
+      "path": "Deprecations > Upcoming deprecations > 2026-06-02: GPT Image model deprecations",
+      "header": "Shutdown date | Model / system | Recommended replacement",
+      "row": "Dec 1, 2026 | `gpt-image-1-mini` | `gpt-image-2.6-sunburst` or `gpt-image-2.6-flare`"
     },
     {
       "doc": "openai-deprecations",
@@ -6641,6 +6767,15 @@
     },
     {
       "doc": "openai-pricing",
+      "hash": "2afadc3242b57231",
+      "addedOn": "2026-11-06",
+      "removedOn": null,
+      "path": "Pricing > Grouped Pricing Table data",
+      "header": "Model | Modality | Input | Output | Cached input",
+      "row": "gpt-image-2.6-sunburst | Image | $8.00 | $30.00 | $2.00"
+    },
+    {
+      "doc": "openai-pricing",
       "hash": "2c1425663dda16d2",
       "addedOn": "2026-11-03",
       "removedOn": null,
@@ -6656,6 +6791,15 @@
       "path": "Pricing > Fast pricing data",
       "header": "Model | Input | Output | Cached input",
       "row": "gpt-5.2 | $3.50 | $28.00 | $0.35"
+    },
+    {
+      "doc": "openai-pricing",
+      "hash": "2ee1856024966687",
+      "addedOn": "2026-11-06",
+      "removedOn": null,
+      "path": "Pricing > Grouped Pricing Table data",
+      "header": "Model | Modality | Input | Output | Cached input",
+      "row": "gpt-image-2.6-sunburst | Text | $5.00 | - | $1.25"
     },
     {
       "doc": "openai-pricing",
@@ -6737,6 +6881,15 @@
       "path": "Pricing > Standard pricing data",
       "header": "Model | Short context input | Short context output | Short context cached input | Short context 30m write | Short context 12h write | Long context input | Long context output | Long context cached input | Long context 30m write | Long context 12h write",
       "row": "gpt-5.5-cyber | $12.50 | $75.00 | $1.25 | - | - | - | - | - | - | -"
+    },
+    {
+      "doc": "openai-pricing",
+      "hash": "3e553292d537de3d",
+      "addedOn": "2026-11-06",
+      "removedOn": null,
+      "path": "Pricing > Grouped Pricing Table data",
+      "header": "Model | Modality | Input | Output | Cached input",
+      "row": "gpt-image-2.6-flare | Image | $8.00 | $30.00 | $2.00"
     },
     {
       "doc": "openai-pricing",
@@ -7124,6 +7277,15 @@
       "path": "Pricing > Grouped Pricing Table data",
       "header": "Model | Modality | Input | Output | Cached input",
       "row": "gpt-image-1-mini | Image | $2.50 | $8.00 | $0.25"
+    },
+    {
+      "doc": "openai-pricing",
+      "hash": "85509b3ab760ed4a",
+      "addedOn": "2026-11-06",
+      "removedOn": null,
+      "path": "Pricing > Standard pricing data",
+      "header": "Model | Short context input | Short context output | Short context cached input | Short context 30m write | Short context 12h write | Long context input | Long context output | Long context cached input | Long context 30m write | Long context 12h write",
+      "row": "gpt-6-cyber | $20.00 | $100.00 | $2.00 | $25.00 | $50.00 | - | - | - | - | -"
     },
     {
       "doc": "openai-pricing",
@@ -8018,6 +8180,15 @@
     },
     {
       "doc": "openai-pricing",
+      "hash": "fdae72b41fed0b5f",
+      "addedOn": "2026-11-06",
+      "removedOn": null,
+      "path": "Pricing > Grouped Pricing Table data",
+      "header": "Model | Modality | Input | Output | Cached input",
+      "row": "gpt-image-2.6-flare | Text | $5.00 | - | $1.25"
+    },
+    {
+      "doc": "openai-pricing",
       "hash": "fe4edd67b1327a6a",
       "addedOn": "2026-11-03",
       "removedOn": null,
@@ -8048,17 +8219,17 @@
     {
       "doc": "anthropic-deprecations",
       "hash": "dff781a1f1bbf3c53450a89c0758147001197eb5f0d99d02abcc52dddd7f2313",
-      "storedOn": "2026-11-05"
+      "storedOn": "2026-11-06"
     },
     {
       "doc": "anthropic-limits",
       "hash": "02e8215f4b1f45a564d2ebab21196da7b2765a8036742f72de52f270d95cf657",
-      "storedOn": "2026-11-05"
+      "storedOn": "2026-11-06"
     },
     {
       "doc": "anthropic-pricing",
       "hash": "e1b915dea2070daeb283ec647ea7200c592870a9a73382d413d63d38c17993c1",
-      "storedOn": "2026-11-05"
+      "storedOn": "2026-11-06"
     },
     {
       "doc": "gemini-deprecations",
@@ -8072,236 +8243,180 @@
     },
     {
       "doc": "openai-deprecations",
-      "hash": "3fddf4c625d689e43e559c236bcdd675de8a3b3d035070ba205827d8ad0a2fc2",
-      "storedOn": "2026-11-05"
+      "hash": "49e382e18bf8e14ea82d099a21a1f2b818b72603424518519eb908b419b45be1",
+      "storedOn": "2026-11-06"
     },
     {
       "doc": "openai-pricing",
-      "hash": "50c07fca566eacf03589f01047338aa350905b319d15e5f908de3997c542677b",
-      "storedOn": "2026-11-05"
+      "hash": "cce7d025c084192ff382095b95d0c9826b0659e0fff2dada2fb7ec8db4bf8c8a",
+      "storedOn": "2026-11-06"
     }
   ],
   "sources": [
     {
       "source": "anthropic-deprecations",
-      "fetchedAt": "2026-11-04T21:54:33.506Z",
+      "fetchedAt": "2026-11-05T21:52:13.095Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "anthropic-limits",
-      "fetchedAt": "2026-11-04T21:54:33.506Z",
+      "fetchedAt": "2026-11-05T21:52:13.095Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "anthropic-pricing",
-      "fetchedAt": "2026-11-04T21:54:33.506Z",
+      "fetchedAt": "2026-11-05T21:52:13.095Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "claude-code",
-      "fetchedAt": "2026-11-04T21:54:33.506Z",
+      "fetchedAt": "2026-11-05T21:52:13.095Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "claude-notes",
-      "fetchedAt": "2026-11-04T21:54:33.506Z",
+      "fetchedAt": "2026-11-05T21:52:13.095Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "cloudflare",
       "fetchedAt": null,
-      "failDays": 3,
-      "failOn": "2026-11-05"
+      "failDays": 4,
+      "failOn": "2026-11-06"
     },
     {
       "source": "codex",
       "fetchedAt": null,
-      "failDays": 3,
-      "failOn": "2026-11-05"
+      "failDays": 4,
+      "failOn": "2026-11-06"
     },
     {
       "source": "copilot",
-      "fetchedAt": "2026-11-04T21:54:33.506Z",
+      "fetchedAt": "2026-11-05T21:52:13.095Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "eol-nextjs",
-      "fetchedAt": "2026-11-04T21:54:33.506Z",
+      "fetchedAt": "2026-11-05T21:52:13.095Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "eol-nodejs",
-      "fetchedAt": "2026-11-04T21:54:33.506Z",
+      "fetchedAt": "2026-11-05T21:52:13.095Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "gemini-cli",
-      "fetchedAt": "2026-11-04T21:54:33.506Z",
+      "fetchedAt": "2026-11-05T21:52:13.095Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "gemini-deprecations",
       "fetchedAt": "2026-11-02T23:28:54.103Z",
-      "failDays": 2,
-      "failOn": "2026-11-05"
+      "failDays": 3,
+      "failOn": "2026-11-06"
     },
     {
       "source": "gemini-pricing",
       "fetchedAt": "2026-11-02T23:28:54.103Z",
-      "failDays": 2,
-      "failOn": "2026-11-05"
+      "failDays": 3,
+      "failOn": "2026-11-06"
     },
     {
       "source": "ghsa",
-      "fetchedAt": "2026-11-04T21:54:33.506Z",
+      "fetchedAt": "2026-11-05T21:52:13.095Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "kev",
-      "fetchedAt": "2026-11-04T21:54:33.506Z",
+      "fetchedAt": "2026-11-05T21:52:13.095Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "mcp-spec",
-      "fetchedAt": "2026-11-04T21:54:33.506Z",
+      "fetchedAt": "2026-11-05T21:52:13.095Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "nextjs",
-      "fetchedAt": "2026-11-04T21:54:33.506Z",
+      "fetchedAt": "2026-11-05T21:52:13.095Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "nodejs",
-      "fetchedAt": "2026-11-04T21:54:33.506Z",
+      "fetchedAt": "2026-11-05T21:52:13.095Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "openai-deprecations",
-      "fetchedAt": "2026-11-04T21:54:33.506Z",
+      "fetchedAt": "2026-11-05T21:52:13.095Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "openai-pricing",
-      "fetchedAt": "2026-11-04T21:54:33.506Z",
+      "fetchedAt": "2026-11-05T21:52:13.095Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "product-hunt",
-      "fetchedAt": "2026-11-04T21:54:51.759Z",
+      "fetchedAt": "2026-11-05T21:52:32.214Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "react",
-      "fetchedAt": "2026-11-04T21:54:33.506Z",
+      "fetchedAt": "2026-11-05T21:52:13.095Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "socket",
-      "fetchedAt": "2026-11-04T21:54:33.506Z",
+      "fetchedAt": "2026-11-05T21:52:13.095Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "supabase",
-      "fetchedAt": "2026-11-04T21:54:33.506Z",
+      "fetchedAt": "2026-11-05T21:52:13.095Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "typescript",
-      "fetchedAt": "2026-11-04T21:54:33.506Z",
+      "fetchedAt": "2026-11-05T21:52:13.095Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "vercel",
-      "fetchedAt": "2026-11-04T21:54:33.506Z",
+      "fetchedAt": "2026-11-05T21:52:13.095Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "vite",
-      "fetchedAt": "2026-11-04T21:54:33.506Z",
+      "fetchedAt": "2026-11-05T21:52:13.095Z",
       "failDays": 0,
       "failOn": null
     }
   ],
-  "pending": [
-    {
-      "key": "deprecation:/v1/audio/translations:2027-02-26:확정",
-      "kind": "deprecation",
-      "doc": "openai-deprecations",
-      "changedOn": "2026-11-03",
-      "side": "added",
-      "hash": "938f45865e16f2a5",
-      "due": "2027-02-26",
-      "before": [],
-      "emits": 3
-    },
-    {
-      "key": "deprecation:gpt-4o-mini-transcribe:2027-02-26:확정",
-      "kind": "deprecation",
-      "doc": "openai-deprecations",
-      "changedOn": "2026-11-03",
-      "side": "added",
-      "hash": "ee258f2a6ad4b675",
-      "due": "2027-02-26",
-      "before": [],
-      "emits": 3
-    },
-    {
-      "key": "deprecation:gpt-4o-transcribe-diarize:2027-02-26:확정",
-      "kind": "deprecation",
-      "doc": "openai-deprecations",
-      "changedOn": "2026-11-03",
-      "side": "added",
-      "hash": "f5ae225ea708ea66",
-      "due": "2027-02-26",
-      "before": [],
-      "emits": 3
-    },
-    {
-      "key": "deprecation:gpt-4o-transcribe:2027-02-26:확정",
-      "kind": "deprecation",
-      "doc": "openai-deprecations",
-      "changedOn": "2026-11-03",
-      "side": "added",
-      "hash": "e9d8810fd07878ca",
-      "due": "2027-02-26",
-      "before": [],
-      "emits": 3
-    },
-    {
-      "key": "deprecation:whisper-1:2027-02-26:확정",
-      "kind": "deprecation",
-      "doc": "openai-deprecations",
-      "changedOn": "2026-11-03",
-      "side": "added",
-      "hash": "252bf39973251dcd",
-      "due": "2027-02-26",
-      "before": [],
-      "emits": 3
-    }
-  ],
+  "pending": [],
   "emitted": [
     {
       "key": "eol:nextjs:15",
@@ -8602,6 +8717,122 @@
       },
       "stars": 2399,
       "growth": 2399
+    },
+    {
+      "id": 16,
+      "date": "2026-11-05",
+      "kind": "product",
+      "position": 1,
+      "key": "ph:pushary-for-teams",
+      "name": "Pushary for Teams",
+      "url": "https://www.producthunt.com/products/pushary",
+      "purpose": "코딩 에이전트가 권한을 물을 때 그 질문을 에이전트를 돌리는 사람의 Mac 노치나 휴대폰으로 보낸다. 규칙을 걸어 특정 저장소 관련 요청은 팀 리드에게 보낼 수도 있고, 응답은 답한 사람 이름과 함께 남는다.",
+      "difference": "Claude Code, Codex, Cursor 같은 도구의 승인 창은 보통 그 터미널 앞에서만 답할 수 있다. 이 제품은 승인을 휴대폰과 대시보드로 옮기고, 누구의 에이전트가 묻고 누가 허락했는지 한 페이지에 기록한다.",
+      "reason": "팀 단위로 에이전트를 쓸 때 승인 책임을 추적하는 문제를 직접 다룬다.",
+      "issue": null,
+      "license": null,
+      "pushedOn": null,
+      "release": null,
+      "stars": null,
+      "growth": null
+    },
+    {
+      "id": 17,
+      "date": "2026-11-05",
+      "kind": "product",
+      "position": 2,
+      "key": "ph:okapi-4",
+      "name": "Okapi",
+      "url": "https://www.producthunt.com/products/okapi-2",
+      "purpose": "앱이 호출하는 외부 API가 호환되지 않게 바뀌면 AI 에이전트가 저장소 코드를 그 변경에 맞게 고친다. 외부 API에 기대는 앱과 에이전트를 만드는 개발자를 겨냥하며 무료로 제공된다.",
+      "difference": "Dependabot이나 Renovate는 의존성 버전을 올리는 PR을 만든다. 이 제품은 패키지 버전이 아니라 호출하는 API 자체의 변경을 따라가며 그에 맞춰 코드를 고친다는 점이 다르다.",
+      "reason": "외부 API 변경로그를 일일이 쫓는 웹 개발자의 부담을 줄여 준다.",
+      "issue": null,
+      "license": null,
+      "pushedOn": null,
+      "release": null,
+      "stars": null,
+      "growth": null
+    },
+    {
+      "id": 18,
+      "date": "2026-11-05",
+      "kind": "product",
+      "position": 3,
+      "key": "ph:maritime-5",
+      "name": "Maritime",
+      "url": "https://www.producthunt.com/products/maritime",
+      "purpose": "AI 에이전트에게 클라우드 컴퓨터를 준다. 계속 유지되는 작업 공간, 쓰고 버리는 샌드박스, Linux·Windows 데스크톱, Android 폰을 고를 수 있고 필요할 때 사람이 조작을 넘겨받는다.",
+      "difference": "E2B 같은 코드 실행 샌드박스는 주로 Linux 환경에서 코드를 돌리는 데 맞춰져 있다. 이 제품은 Windows 데스크톱과 Android 폰까지 제공하고, API가 없는 앱 조작과 사람의 개입을 함께 지원한다.",
+      "reason": "API 없는 앱을 다뤄야 하는 에이전트 개발자에게 실행 환경 선택지를 넓혀 준다.",
+      "issue": null,
+      "license": null,
+      "pushedOn": null,
+      "release": null,
+      "stars": null,
+      "growth": null
+    },
+    {
+      "id": 19,
+      "date": "2026-11-05",
+      "kind": "repo",
+      "position": 1,
+      "key": "repo:nvidia/auto-ontology",
+      "name": "NVIDIA/auto-ontology",
+      "url": "https://github.com/NVIDIA/auto-ontology",
+      "purpose": "기업 메타데이터로 온톨로지와 지식 그래프를 만들어, 에이전트가 데이터의 위치와 의미, 사용법, 출처를 알 수 있게 하는 Python 프레임워크다. MCP, CLI, API로 어떤 에이전트 환경에든 연결된다.",
+      "difference": "일반적인 text-to-SQL이나 문서 검색은 질의를 만들고 끝난다. 이 프레임워크는 생성한 질의를 인증된 지표 정의와 계보에 맞춰 검증하고, 답마다 출처를 함께 돌려준다.",
+      "reason": "에이전트 기반 데이터 분석에서 숫자가 틀리는 문제를 정면으로 다룬다.",
+      "issue": null,
+      "license": "Apache-2.0",
+      "pushedOn": "2026-11-05",
+      "release": {
+        "state": "none"
+      },
+      "stars": 7157,
+      "growth": 2447
+    },
+    {
+      "id": 20,
+      "date": "2026-11-05",
+      "kind": "repo",
+      "position": 2,
+      "key": "repo:mattpocock/skills",
+      "name": "mattpocock/skills",
+      "url": "https://github.com/mattpocock/skills",
+      "purpose": "코딩 에이전트에 넣어 쓰는 엔지니어링·생산성 스킬 모음이다. Claude Code, Codex, GitHub Copilot에는 플러그인으로, Gemini CLI와 그 밖의 에이전트에는 편집 가능한 파일로 설치한다.",
+      "difference": "GSD, BMAD, Spec-Kit처럼 개발 절차 전체를 틀어쥐는 방식과 달리, 작고 조합 가능한 스킬로 나뉘어 있어 필요한 것만 골라 고쳐 쓰기 쉽다. 특정 모델에 묶이지 않는다.",
+      "reason": "여러 코딩 에이전트에 바로 얹을 수 있는 실용적인 스킬 세트다.",
+      "issue": null,
+      "license": "MIT",
+      "pushedOn": "2026-11-05",
+      "release": {
+        "state": "found",
+        "date": "2026-10-29"
+      },
+      "stars": 315050,
+      "growth": 1902
+    },
+    {
+      "id": 21,
+      "date": "2026-11-05",
+      "kind": "repo",
+      "position": 3,
+      "key": "repo:stablyai/orca",
+      "name": "stablyai/orca",
+      "url": "https://github.com/stablyai/orca",
+      "purpose": "Claude Code, Codex, OpenCode 같은 코딩 에이전트 여러 개를 각자의 git worktree에서 나란히 돌리고 한곳에서 관리하는 앱이다. 데스크톱, 모바일, 원격 실행 환경을 지원한다.",
+      "difference": "에이전트 CLI를 터미널 하나에서 따로 돌리는 것과 달리, 한 프롬프트를 여러 에이전트에 나눠 결과를 비교·병합하고, diff 줄에 의견을 달아 되돌려 보내거나 휴대폰에서 진행을 지켜볼 수 있다.",
+      "reason": "여러 코딩 에이전트를 병렬로 쓰는 개발자의 작업 흐름을 묶어 준다.",
+      "issue": null,
+      "license": "MIT",
+      "pushedOn": "2026-11-05",
+      "release": {
+        "state": "found",
+        "date": "2026-11-05"
+      },
+      "stars": 116598,
+      "growth": 1222
     }
   ],
   "kindDates": [
@@ -8632,6 +8863,16 @@
     },
     {
       "date": "2026-11-04",
+      "kind": "repo",
+      "status": "checked"
+    },
+    {
+      "date": "2026-11-05",
+      "kind": "product",
+      "status": "checked"
+    },
+    {
+      "date": "2026-11-05",
       "kind": "repo",
       "status": "checked"
     }
