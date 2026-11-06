@@ -1,8 +1,9 @@
 // 인물·기관·국가 목록(4.7-3): 최근 등장일 순, 종류로 거른다. 거르기마다 0쪽만 먼저 받고 나머지 쪽은 "더 보기"로 받는다(4.6-2).
-import { useState } from "react";
-import { BriefBackLink, Empty, ErrorState, Layout, Loading, useFocusNewRow, useTitle } from "../components/common.tsx";
+import { useEffect, useState } from "react";
+import { BriefBackLink, ChipFilter, Empty, ErrorState, Layout, Loading, useFocusNewRow, useTitle } from "../components/common.tsx";
+import { ALL_CHIP_TEXT, countLabel, type ChipOption } from "../lib/chips.ts";
 import { yearOf } from "../lib/format.ts";
-import { retry, useResource } from "../data.ts";
+import { retry, useResource, useResources } from "../data.ts";
 import { ENTITY_FILTER_LABEL, entityListLine } from "../lib/entities.ts";
 import { dataUrl } from "../lib/paths.ts";
 import { entitiesPath, entityPath } from "../lib/routes.ts";
@@ -16,16 +17,49 @@ export function EntitiesPage({ filter }: { filter: EntityFilter }) {
     <Layout left={<BriefBackLink />}>
       <h1 className="page-title pad">인물·기관·국가</h1>
       <p className="count">최근 등장 순</p>
-      <div className="chips" role="group" aria-label="종류">
-        {ENTITY_FILTERS.map((f) => (
-          <button key={f} type="button" className={f === filter ? "on" : ""} aria-pressed={f === filter} onClick={() => navigate(entitiesPath(f), { replace: true, quiet: true })}>
-            {ENTITY_FILTER_LABEL[f]}
-          </button>
-        ))}
-      </div>
+      <KindChips filter={filter} />
       {/* 거르기를 바꾸면 쪽 상태를 새로 시작한다 */}
       <EntityPages key={filter} filter={filter} />
     </Layout>
+  );
+}
+
+type Kind = Exclude<EntityFilter, "all">;
+const KINDS = ENTITY_FILTERS.filter((f): f is Kind => f !== "all");
+
+/**
+ * 종류 칩(U2 4.3, S15): 종류마다 첫 쪽 파일의 total로 세어 있는 종류만 건수와 함께 보인다. 파일을 받지 못한 종류는 건수 없이 둔다.
+ * 주소로 들어온 종류(`?kind=`)가 0건이면 첫 칩으로 돌아가고 주소도 바꾼다(S12). 칩은 지금처럼 주소를 바꾼다(U1 S10)
+ */
+function KindChips({ filter }: { filter: EntityFilter }) {
+  const res = useResources<EntityListPage>(ENTITY_FILTERS.map((f) => dataUrl.entityList(f, 0)));
+  const settled = res.every((r) => r.status === "ok" || r.status === "error");
+  const totalOf = (f: EntityFilter) => {
+    const r = res[ENTITY_FILTERS.indexOf(f)]!;
+    return r.status === "ok" ? r.data.total : null;
+  };
+  const options: ChipOption<Kind>[] = KINDS.flatMap((k) => {
+    const n = totalOf(k);
+    if (n === 0) return [];
+    return [{ value: k, count: n ?? 0, label: n === null ? ENTITY_FILTER_LABEL[k] : countLabel(ENTITY_FILTER_LABEL[k], n) }];
+  });
+  // 0건 확인은 고른 종류의 파일 하나면 되므로(목록과 같은 파일) 다른 종류를 기다리지 않는다
+  const gone = filter !== "all" && totalOf(filter) === 0;
+  useEffect(() => {
+    if (gone) navigate(entitiesPath("all"), { replace: true, quiet: true });
+  }, [gone, filter]);
+  if (!settled) return null;
+  const all = totalOf("all");
+  return (
+    <ChipFilter
+      label="종류"
+      allText={ALL_CHIP_TEXT.kind}
+      total={all ?? 0}
+      totalKnown={all !== null}
+      options={options}
+      value={filter === "all" ? null : filter}
+      onChange={(k) => navigate(entitiesPath(k ?? "all"), { replace: true, quiet: true })}
+    />
   );
 }
 

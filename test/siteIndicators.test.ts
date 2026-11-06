@@ -48,7 +48,6 @@ import { dataUrl } from "../site/src/lib/paths.ts";
 import { focusTargetId, indicatorPath, indicatorsPath, parseRoute, selfScrolls } from "../site/src/lib/routes.ts";
 import { createRemembered } from "../site/src/lib/storage.ts";
 import type { StorageLike } from "../site/src/lib/readMarks.ts";
-import { WEEK_BOX_KEY, parseWeekCollapsed } from "../site/src/lib/schedules.ts";
 import { DARK, LIGHT, contrast, iconPairs, textPairs } from "../site/src/lib/theme.ts";
 import { cleanupTemp, tempDir } from "./helpers.ts";
 
@@ -211,14 +210,12 @@ describe("4.7-1 브리프 위 '이번 주 일정 | 지표' 상자", () => {
     assert.equal(collapsedParts({ indicators: chips.slice(1) }).chip!.text, "가짜 지수 2,614.20");
   });
 
-  test("기억: 고른 탭은 새 키 하나(tidwyn.briefBoxTab), 접기는 5단계 키 그대로. 깨진 값·저장할 수 없음은 기본값", () => {
+  test("기억: 고른 탭은 새 키 하나(tidwyn.briefBoxTab). 깨진 값·저장할 수 없음은 기본값(상자 펼침은 저장하지 않는다, U2 S6)", () => {
     assert.equal(BOX_TAB_KEY, "tidwyn.briefBoxTab");
-    assert.equal(WEEK_BOX_KEY, "tidwyn.weekBox");
     assert.equal(parseBoxTab("indicators"), "indicators");
     assert.equal(parseBoxTab("week"), "week");
     assert.equal(parseBoxTab("깨짐"), null);
     assert.equal(parseBoxTab(null), null);
-    assert.equal(parseWeekCollapsed("closed"), true);
     const broken: StorageLike = {
       getItem: () => {
         throw new Error("막힘");

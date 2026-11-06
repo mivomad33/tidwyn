@@ -1,5 +1,6 @@
 // 이슈 목록(4.3-1): 흡수되지 않은 이슈를 최근 업데이트일 순으로, 대분류·상태로 거른다
 import { useMemo, useState } from "react";
+import { ALL_CHIP_TEXT, countChips } from "../lib/chips.ts";
 import { ALL_MAJORS, BriefBackLink, CategoryLine, ChipFilter, Empty, ErrorState, Layout, Loading, useFocusNewRow, useTitle } from "../components/common.tsx";
 import { retry, useResource } from "../data.ts";
 import { ISSUE_PAGE_SIZE, filterIssues, issueListLine, type StatusFilter } from "../lib/issues.ts";
@@ -21,13 +22,21 @@ export function IssuesPage() {
   const more = useFocusNewRow<HTMLUListElement>("li.item");
   const refYear = res.status === "ok" ? latestYear(res.data.issues.map((i) => i.latestDate)) : undefined;
   const items = useMemo(() => (res.status === "ok" ? filterIssues(res.data.issues, major, status) : []), [res, major, status]);
+  // U2 4.3-1: 두 줄 모두 다른 줄의 선택과 관계없이 전체 목록으로 센다(다른 줄을 바꿔도 칩이 사라지거나 나타나지 않는다)
+  const all = res.status === "ok" ? res.data.issues : [];
+  const majorChips = useMemo(() => countChips(all, (i) => i.category.major, ALL_MAJORS), [all]);
+  const statusChips = useMemo(() => countChips(all, (i) => i.status, STATUSES), [all]);
 
   return (
     <Layout left={<BriefBackLink />}>
       <h1 className="page-title pad">이슈 목록</h1>
+      {all.length > 0 && (
+        <>
       <ChipFilter
         label="대분류"
-        options={ALL_MAJORS}
+        allText={ALL_CHIP_TEXT.major}
+        total={all.length}
+        options={majorChips}
         value={major}
         onChange={(v) => {
           setMajor(v);
@@ -36,13 +45,17 @@ export function IssuesPage() {
       />
       <ChipFilter
         label="상태"
-        options={STATUSES}
+        allText={ALL_CHIP_TEXT.status}
+        total={all.length}
+        options={statusChips}
         value={status}
         onChange={(v) => {
           setStatus(v);
           setLimit(ISSUE_PAGE_SIZE);
         }}
       />
+        </>
+      )}
       {res.status === "error" && <ErrorState onRetry={() => retry([url])} />}
       {(res.status === "loading" || res.status === "idle") && <Loading />}
       {res.status === "ok" && items.length === 0 && <Empty>{res.data.issues.length ? "이 조건의 이슈가 없다." : "아직 이슈가 없다."}</Empty>}

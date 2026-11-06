@@ -307,11 +307,14 @@ test.describe("4.2-5·4.2-6 글 링크와 구역 제목의 한 모양", () => {
     expect(combo!.split(" | ")[2]).toContain("underline");
   });
 
-  test("일정 이름 링크(a.t)는 밑줄이 있다", async ({ page }) => {
+  // U2 S5: 일정 화면의 이름은 링크가 아닌 글자(span.t)이고, 처음 근거로 가는 출처 링크가 글 링크 모양(밑줄)으로 따로 있다
+  test("일정 이름은 글자이고 출처 링크는 밑줄이 있다", async ({ page }) => {
     await openScreen(page, "/schedules");
-    const t = page.locator(".ev a.t");
-    expect(await t.count()).toBeGreaterThan(0);
-    for (const a of await t.all()) expect(await css(a, "textDecorationLine")).toContain("underline");
+    await expect(page.locator(".ev a.t")).toHaveCount(0);
+    expect(await page.locator(".ev span.t").count()).toBeGreaterThan(0);
+    const src = page.locator(".ev a.text-link").filter({ hasText: /^(출처 뉴스|빌더 항목)/ });
+    expect(await src.count()).toBeGreaterThan(0);
+    for (const a of await src.all()) expect(await css(a, "textDecorationLine")).toContain("underline");
   });
 
   test("구역 제목의 (크기, 굵기, 색) 조합이 앱 전체에서 1종이다", async ({ browser }) => {
@@ -458,6 +461,8 @@ test.describe("4.2-9 같은 도착의 이름", () => {
 test.describe("4.3-2 지표 변화", () => {
   test("상자 지표 칸에 값 변화와 %가 함께 보인다", async ({ page }) => {
     await openScreen(page, `/${PAST}`);
+    // U2 S6: 상자는 접힌 채 시작한다
+    await page.locator(".week-toggle").click();
     const tab = page.getByRole("tab", { name: "지표" });
     if ((await tab.getAttribute("aria-selected")) !== "true") await tab.click();
     const chg = await page.locator(".ichips .chg [aria-hidden=true]").allTextContents();
@@ -640,7 +645,9 @@ test.describe("4.4-2·4.4-3 이슈 페이지의 되돌아가기", () => {
     await settle(page);
     await expect(back(page)).toHaveText("‹ 브리프");
     await back(page).click();
-    await expect(page).toHaveURL(/127\.0\.0\.1:\d+\/(#.*)?$/);
+    // U1 S1: 바로 앞 기록(최근 브리프)으로 되돌린다. 줄을 펼치면 주소가 '/<날짜>#키'로 바뀌는데, U2 4.1-1(d)로 그 기록에도 브리프 표시가 남아 그 주소로 돌아온다
+    await expect(page).toHaveURL(new RegExp(`127\\.0\\.0\\.1:\\d+\\/(${LATEST})?(#.*)?$`));
+    await expect(target.locator(".item-btn")).toHaveAttribute("aria-expanded", "true");
   });
 
   test("이슈 목록·검색에서 온 이슈 페이지와 주소로 바로 연 이슈 페이지는 '‹ 이슈'이고 이슈 목록으로 간다", async ({ page }) => {
@@ -750,7 +757,8 @@ test.describe("4.4-5 브라우저 뒤로", () => {
     await openPastWorld(page);
     const tops = listOf(PAST).sections.find((s) => s.name === "세계")!.stories.filter((s) => s.kind === "top" && s.issue);
     const major = tops[0]!.category.major;
-    const chip = page.getByRole("group", { name: "카테고리" }).getByRole("button", { name: major, exact: true });
+    // U2 4.3: 칩 글에 건수가 붙는다
+    const chip = page.getByRole("group", { name: "카테고리" }).getByRole("button", { name: new RegExp(`^${major} \\d+$`) });
     await chip.click();
     await expect(chip).toHaveAttribute("aria-pressed", "true");
     const card = page.locator(`[id="story-${tops[0]!.key}"]`);
@@ -759,6 +767,6 @@ test.describe("4.4-5 브라우저 뒤로", () => {
     await expect(page).toHaveURL(/\/issues\/\d+$/);
     await settle(page);
     await page.goBack();
-    await expect(page.getByRole("group", { name: "카테고리" }).getByRole("button", { name: major, exact: true })).toHaveAttribute("aria-pressed", "true");
+    await expect(page.getByRole("group", { name: "카테고리" }).getByRole("button", { name: new RegExp(`^${major} \\d+$`) })).toHaveAttribute("aria-pressed", "true");
   });
 });

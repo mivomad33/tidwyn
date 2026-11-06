@@ -32,10 +32,9 @@ import {
   monthUnitSchedules,
   monthsToShow,
   moveDay,
-  nameLink,
+  sourceLink,
   outcomeParts,
   parseScheduleView,
-  parseWeekCollapsed,
   resolveScheduleRef,
   selectionForMonth,
   sortForTab,
@@ -135,12 +134,12 @@ describe("4.7-1 결과 문구와 링크", () => {
     assert.equal(dueLabel("2026-11", TODAY), "11월 중");
   });
 
-  test("이름은 처음 근거 뉴스, 이슈는 이슈 페이지, 결과는 결과 뉴스, 연기는 새 일정으로 간다. 대표 이슈가 없으면 이슈 줄이 없다", () => {
-    assert.equal(nameLink(item(1, "2026-11-03")), "/2026-10-20#%ED%95%9C%EA%B5%AD-1");
-    assert.equal(nameLink(item(1, "2026-11-03", { first: null })), null);
+  test("이름은 글자이고 출처 링크는 처음 근거 뉴스, 이슈는 이슈 페이지, 결과는 결과 뉴스, 연기는 새 일정으로 간다. 대표 이슈가 없으면 이슈 줄이 없다", () => {
+    assert.equal(sourceLink(item(1, "2026-11-03"))?.to, "/2026-10-20#%ED%95%9C%EA%B5%AD-1");
+    assert.equal(sourceLink(item(1, "2026-11-03", { first: null })), null);
     const html = renderToStaticMarkup(h(ScheduleRow, { item: item(7, "2026-10-27", { outcome: { status: "result", news: [{ date: "2026-10-27", key: "한국-s2", title: "가짜 결과" }] } }), today: TODAY, Link, highlight: false }));
     assert.match(html, /^<li id="schedule-7" tabindex="-1" class="ev">/);
-    assert.match(html, /<a href="\/2026-10-20#%ED%95%9C%EA%B5%AD-7" class="t">가짜 일정 7<\/a>/);
+    assert.match(html, /<span class="t">가짜 일정 7<\/span><small><a href="\/2026-10-20#%ED%95%9C%EA%B5%AD-7" class="text-link">출처 뉴스<span class="mark" aria-hidden="true"> ›<\/span><\/a><\/small>/);
     assert.match(html, /이슈: <a href="\/issues\/107" class="text-link">가짜 이슈 7<\/a>/);
     assert.match(html, /<a href="\/2026-10-27#%ED%95%9C%EA%B5%AD-s2" class="text-link res ok">결과: 가짜 결과<span class="mark" aria-hidden="true"> ›<\/span><\/a>/);
     const noIssue = renderToStaticMarkup(h(ScheduleRow, { item: item(8, "2026-11-01", { issue: null, outcome: { status: "postponed", to: { id: 9, due: "2026-11-20" } } }), today: TODAY, Link, highlight: true }));
@@ -369,14 +368,7 @@ describe("4.7-3·4.7-4 화면 기억", () => {
     assert.equal(calls, 1);
   });
 
-  test("접기: 처음·깨진 값·저장할 수 없음은 펼침이고, 저장할 수 없어도 그 탭 안에서는 접은 상태가 이어진다", () => {
-    assert.equal(parseWeekCollapsed(null), false);
-    assert.equal(parseWeekCollapsed("true"), false);
-    assert.equal(parseWeekCollapsed("closed"), true);
-    const w = createRemembered(throwing, "tidwyn.weekBox", parseWeekCollapsed, (x) => (x ? "closed" : "open"));
-    assert.equal(w.get(), false);
-    w.set(true);
-    assert.equal(w.get(), true);
+  test("저장할 수 없는 저장소도 읽기·쓰기에서 오류가 나지 않는다(상자 접기는 U2 S6부터 저장하지 않는다)", () => {
     assert.equal(readStored(throwing, "x"), null);
     assert.doesNotThrow(() => writeStored(throwing, "x", "y"));
     assert.equal(readStored(null, "x"), null);

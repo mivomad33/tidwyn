@@ -919,8 +919,9 @@ li:focus {
   text-underline-offset: 2px;
 }
 
-/* 아래 섹션 탭 */
+/* 아래 섹션 탭. DOM에서는 머리글 바로 다음(키보드 순서, U2 S4)이고, #root의 flex order로 바닥글 뒤에 놓아 아래에 붙인다(S14) */
 .tabs {
+  order: 1;
   position: sticky;
   bottom: 0;
   z-index: 10;
@@ -1181,7 +1182,7 @@ button.short-text {
   font-weight: 700;
 }
 
-/* 상자가 overflow:hidden이라 포커스 윤곽을 칸 안쪽에 그린다 */
+/* 포커스 윤곽을 칸 안쪽에 그린다(둥근 상자 모양을 따르게) */
 .segmented button:focus-visible {
   outline-offset: -2px;
 }
@@ -1251,11 +1252,6 @@ button.short-text {
   font-size: var(--fs-base);
   font-weight: 600;
   line-height: 1.4;
-}
-
-.ev a.t {
-  text-decoration: underline;
-  text-underline-offset: 2px;
 }
 
 .ev small {
@@ -2242,9 +2238,8 @@ ul.isrc {
 .term-h { font-size: var(--fs-md); font-weight: 700; color: var(--fg); }
 .term-jump a { font-size: var(--fs-base); }
 .static-page .ev { border-radius: 0; }
-.static-page .ev .t { display: inline-block; min-width: 44px; padding-block: 12px; margin-block: -12px; }
 .static-page .rel { gap: 0 6px; }
-.static-page .rel a, .brel a { position: relative; display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; padding: 0 10px; border: none; }
+.static-page .rel a, .rel.brel a { margin: 0; box-shadow: none; background-clip: border-box; position: relative; display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; padding: 0 10px; border: none; }
 .static-page .rel a::before, .brel a::before { content: ""; position: absolute; inset: 7px 0; border: 1px solid var(--line); border-radius: 999px; pointer-events: none; }
 
 /* 본문 건너뛰기: 키보드로 닿을 때만 보인다 */
@@ -2255,8 +2250,9 @@ ul.isrc {
 /* 9.8단계 빌더 항목, 9.9단계 묶음(`docs/design.md`의 '빌더 항목'). 줄은 뉴스 줄이고 칸은 펼친 카드의 머리말과 문단을 그대로 쓴다 */
 .breminder { display: inline-flex; align-items: center; align-self: flex-start; min-height: 44px; margin-block: -8px -14px; }
 .bdue { display: inline-flex; align-items: center; min-height: 44px; margin-block: -13px; }
+/* 기한 링크는 min-height로 넓히므로 문장 안 링크의 위아래 여백을 더하지 않는다(문단이 한 줄 높이를 지킨다) */
+.p a.text-link.bdue, .p a.text-link.dcont { padding-block: 0; } /* 이미 44px 칸인 글 링크(기한, 이어짐)는 글 링크의 아래 여백을 더하지 않는다 */
 .bintro-l { display: inline-block; padding-block: 14px; margin-block: -14px; }
-.btitle { margin: 0; font: inherit; }
 .bgroup + .bgroup { margin-top: 24px; border-top: 1px solid var(--line); }
 /* 묶음 제목은 구역 제목 .h 모양이다(U1 4.2-6) */
 .bgroup-h { margin: 24px 0 0; padding: 0 18px; }
@@ -2302,4 +2298,108 @@ ul.isrc {
 @media (max-width: 359.98px) {
   .tabs:has(button:nth-child(7)) { font-size: var(--fs-sm); }
   .tabs:has(button:nth-child(7)) button { padding-inline: 1px; }
+}
+/* U2 4.2-1·2: 접힌 빌더·수요 줄. 제목 아래에 먼저 볼 칸만 흐린 칸 이름과 함께 한 줄씩, 줄 끝에 펼침 표시 */
+.fold { display: flex; flex-direction: column; gap: 4px; margin-top: 6px; font-size: var(--fs-sm); line-height: 1.5; color: var(--fg); }
+.fold:empty { display: none; }
+.fold-k { color: var(--muted); font-weight: 600; font-size: var(--fs-xs); }
+/* 접힌 줄의 칸은 두 줄까지(긴 글에서도 훑기 쉽게). 전체 글은 펼친 칸에 있다 */
+.fold-f { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; text-overflow: ellipsis; }
+/* 펼침 표시는 줄 끝, 읽음 버튼 아래 빈 칸에 둔다(글 칸을 한 줄 늘리지 않는다) */
+.bitem .item-btn { position: relative; }
+/* 짧은 줄에서는 펼침 표시가 읽음 버튼의 누를 칸에 겹친다. 겹친 자리는 읽음 버튼이 받고, 나머지 자리의 표시는 줄을 편다 */
+.bitem .rd-btn { position: relative; z-index: 1; }
+.fold-mark { position: absolute; right: -28px; bottom: 14px; width: 12px; text-align: center; font-size: var(--fs-xs); line-height: 1.5; color: var(--muted); }
+.bitem .detail > .breminder:first-child { margin-top: 0; margin-bottom: 4px; }
+
+/*
+ * U2 4.4(C7): 누를 곳 44px. 보이는 글자·모양·줄 높이는 그대로 두고 누를 칸만 넓힌다.
+ * - 바탕·테두리가 있는 부품(칩, 고르기, 관련 칩): 위아래에 투명 테두리를 더하고 바탕은 padding 칸까지만 칠한다(background-clip).
+ *   보이던 테두리는 안쪽 그림자로 그린다. 고르기와 관련 칩은 더한 높이를 음수 여백으로 상쇄하고, 거르기 칩 줄은 가로 스크롤 줄이라
+ *   음수 여백을 두지 않아 줄이 그만큼(약 18px) 높아진다(넘친 칩이 잘리지 않게).
+ * - 글 안의 링크(인라인): 아래쪽 padding만 더한다. 인라인 padding은 줄 배치를 바꾸지 않고, 아래로만 넓혀 바로 아랫줄의 링크(뒤에 그려져 위에 온다)를 가리지 않는다.
+ * - 블록 링크·줄: padding을 더하고 음수 여백으로 상쇄한다.
+ */
+.chips { padding-block: 2px; }
+.chips button {
+  border: 0 solid transparent;
+  border-block-width: 8px;
+  margin-block: 0;
+  min-height: 44px;
+  padding-inline: 11px;
+  background-clip: padding-box;
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+/* 고른 칩·버튼의 바탕도 보이는 크기만 칠한다(`background` 묶음이 background-clip을 되돌리므로 다시 정한다) */
+.chips button.on { border-color: transparent; background-clip: padding-box; box-shadow: inset 0 0 0 1px var(--fg); }
+.segmented button.on { background-clip: padding-box; }
+.chip-sep { align-self: center; }
+/* S11: 오른쪽 끝에 잘린 칩이 있는 동안 줄 끝 48px를 흐리게 한다(칩 사이 틈이 줄 끝에 걸리는 폭에서도 다음 칩이 보이게). 아래 구분선은 흐리지 않는다.
+   키보드로 간 칩은 흐린 자리 앞에 오게 스크롤한다 */
+.chips { scroll-padding-inline-end: 48px; }
+.chips[data-more] {
+  -webkit-mask: linear-gradient(to right, #000 calc(100% - 48px), transparent) border-box, linear-gradient(#000, #000) bottom / 100% 1px no-repeat border-box;
+  mask: linear-gradient(to right, #000 calc(100% - 48px), transparent) border-box, linear-gradient(#000, #000) bottom / 100% 1px no-repeat border-box;
+}
+
+.segmented { overflow: visible; }
+.segmented button {
+  border: 0 solid transparent;
+  border-block-width: 7px;
+  margin-block: -7px;
+  min-height: 46px;
+  background-clip: padding-box;
+}
+.segmented button:first-child { border-radius: 7px 0 0 7px / 14px 0 0 14px; }
+.segmented button:last-child { border-radius: 0 7px 7px 0 / 0 14px 14px 0; }
+.segmented button:first-child:last-child { border-radius: 7px / 14px; }
+
+.rel a,
+.rel button {
+  border: 0 solid transparent;
+  border-width: 8px 5px;
+  margin: -8px -5px;
+  padding: 6px 11px;
+  background-clip: padding-box;
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.rel .on { box-shadow: inset 0 0 0 1px var(--fg); }
+
+.week-toggle { min-height: 44px; margin-block: -6px; }
+.box-fold { min-width: 44px; min-height: 44px; margin-block: -6px; margin-right: -6px; }
+.wrow { padding-block: 12px; min-height: 44px; margin-block: -7px; position: relative; }
+.box-foot a { padding-block: 14px; margin-block: -8px; }
+/* 펼친 카드의 관련 줄만 여백이 없어 넓힌다(목록·타임라인의 줄은 이미 44px 이상) */
+.story li a.nrow:not(.row-link) { padding-block: 10px; margin-block: -10px; }
+.ev-link { padding-block: 12px; margin-block: -2px; }
+.res-row a.res { padding: 5px 0 27px; margin: -5px 0 -27px; }
+.cal .d { height: 44px; }
+
+/* 44px는 폰(767px 이하)에서만이다. 그 밖의 폭은 24px만 채워(글자 칸 15~17px) 위아래 줄의 링크와 거의 겹치지 않게 한다 */
+.p a.text-link,
+small a.text-link,
+.vsrc a.text-link,
+.isrc a.text-link { padding-bottom: 9px; }
+@media (max-width: 767.98px) {
+  .p a.text-link,
+  small a.text-link,
+  .vsrc a.text-link,
+  .isrc a.text-link { padding-bottom: 29px; }
+}
+/* 짧은 글 링크는 옆으로도 넓힌다(인라인 좌우 여백은 같은 크기로 상쇄해 글자 위치가 그대로다) */
+.p a.text-link { padding-inline: 9px; margin-inline: -9px; }
+
+/* 고대비(강제 색) 모드에서는 안쪽 그림자가 없어지고 투명 테두리가 시스템 색으로 칠해진다. 그래서 이 모드에서는 넓힌 누를 칸 전체를 1px 테두리 상자로 그리고
+   (줄어든 테두리 몫은 안쪽 여백으로 채워 누를 칸 크기를 지킨다), 고른 것은 시스템 강조색으로 칠한다. 포커스 윤곽은 고르지 않은 것은 공통 `:focus-visible` 그대로다 */
+@media (forced-colors: active) {
+  .chips button { border-width: 1px; padding: 11px 10px; }
+  .segmented button { border-width: 0; margin-block: 0; min-height: 44px; }
+  .rel a, .rel button { border-width: 1px; padding: 13px 15px; margin: 0; } /* 정적 페이지와 빌더의 알약(::before가 보이는 테두리)은 더 높은 특이도의 규칙이 이겨 그대로다 */
+  .segmented { overflow: hidden; }
+  .segmented button, .segmented button:first-child, .segmented button:last-child { border-radius: 0; }
+  .chips button.on, .segmented button.on, .rel .on { forced-color-adjust: none; background: Highlight; color: HighlightText; border-color: Highlight; box-shadow: none; }
+  .rel .on small { color: inherit; }
+  /* 고른 것은 시스템 색 조정을 끄므로 포커스 윤곽도 시스템 색으로 그린다 */
+  .chips button.on:focus-visible, .segmented button.on:focus-visible, .rel .on:focus-visible { outline: 2px solid CanvasText; outline-offset: 2px; }
+  .segmented button.on:focus-visible { outline-color: HighlightText; outline-offset: -4px; } /* 묶음이 잘라 내므로 안쪽에 */
 }

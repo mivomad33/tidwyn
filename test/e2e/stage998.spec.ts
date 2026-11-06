@@ -19,7 +19,16 @@ const d = JSON.parse(fs.readFileSync(E2E_DEMAND_INFO_FILE, "utf8")) as { [K in k
 const itemsOf = (date: string): SiteFlowItem[] => json<DemandMonth>(siteFiles.demandItems(date.slice(0, 7))).days[date]!;
 const demandOf = (date: string) => json<MonthList>(siteFiles.list(date.slice(0, 7))).days.find((x) => x.date === date)!.demand!;
 
-const rows = (page: Page) => page.locator("main .item:has(.detail h4)");
+/** 수요 항목 줄(U2 4.2-1: 처음에 접혀 있어 펼친 칸이 없다) */
+const rows = (page: Page) => page.locator("main li.bitem");
+/** 항목 줄을 펼친다(U2 4.2-1: 한 번에 하나) */
+async function expand(page: Page, key: string): Promise<Locator> {
+  const row = storyItem(page, key);
+  const btn = row.locator("button.item-btn");
+  await btn.click();
+  await expect(btn).toHaveAttribute("aria-expanded", "true");
+  return row;
+}
 const heads = (row: Locator) => row.locator(".detail h4.h");
 const field = (row: Locator, label: string) => row.locator(".detail h4.h", { hasText: new RegExp(`^${label}$`) }).locator("xpath=following-sibling::*[1]");
 
@@ -27,7 +36,7 @@ const field = (row: Locator, label: string) => row.locator(".detail h4.h", { has
 const wantHeads = (x: SiteFlowItem) => ["요지", "잇는 이유", "근거", ...(x.community?.length ? ["커뮤니티"] : []), "근거 수준", ...(x.aux.length ? ["보조 근거"] : []), ...(x.continues ? ["이어짐"] : []), ...(x.issue ? ["관련 이슈"] : []), "비교 기간", "출처"];
 
 async function expectItem(page: Page, x: SiteFlowItem): Promise<void> {
-  const row = storyItem(page, x.key);
+  const row = await expand(page, x.key);
   await expect(row.locator(".cat")).toHaveText(flowCategoryText(x));
   await expect(row.locator(".title")).toHaveText(x.title);
   await expect(heads(row)).toHaveText(wantHeads(x));
@@ -74,9 +83,12 @@ for (const width of [1440, 375]) {
       const intro = page.locator("main .flow.note").first();
       await expect(intro).toHaveText(`${DEMAND_INTRO} ${FLOW_CAVEAT} ${DEMAND_ABOUT_LINK}`);
       await expect(intro.getByRole("link", { name: DEMAND_ABOUT_LINK })).toHaveAttribute("href", `/about#${DEMAND_ABOUT_HASH}`);
-      for (const x of xs) await expectItem(page, x);
+      // 펼침은 한 번에 하나라 항목마다 펴서 가로 스크롤을 본다
+      for (const x of xs) {
+        await expectItem(page, x);
+        await expectNoHorizontalScroll(page, `커뮤니티 ${x.key}`);
+      }
       await expect(page.locator("main")).not.toContainText("이 날 비교에 넣지 못한 소스");
-      await expectNoHorizontalScroll(page, "커뮤니티");
     });
 
     test("커뮤니티를 받지 못한 날: 목록 끝 안내에 공식 묶음 다음 커뮤니티 소스와 사유가 있다", async ({ page }) => {

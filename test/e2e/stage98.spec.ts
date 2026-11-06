@@ -23,7 +23,16 @@ const monthFile = (date: string) => siteFiles.builderItems(date.slice(0, 7));
 const [first, second, third, fourth] = itemsOf(b.four) as [SiteBuilderItem, SiteBuilderItem, SiteBuilderItem, SiteBuilderItem];
 const tabs = (page: Page) => page.getByRole("navigation", { name: "섹션" });
 const builderTab = (page: Page, count: number) => tabs(page).getByRole("button", { name: `빌더 ${count}`, exact: true });
-const rows = (page: Page) => page.locator("main .item:has(.detail h4)");
+/** 빌더 항목 줄(U2 4.2-1: 처음에 접혀 있어 펼친 칸이 없다) */
+const rows = (page: Page) => page.locator("main li.bitem");
+/** 항목 줄을 눌러 편다(U2 4.2-1) */
+async function expand(page: Page, key: string): Promise<Locator> {
+  const row = storyItem(page, key);
+  const btn = row.locator("button.item-btn");
+  await btn.click();
+  await expect(btn).toHaveAttribute("aria-expanded", "true");
+  return row;
+}
 const heads = (row: Locator) => row.locator(".detail h4.h");
 const field = (row: Locator, label: string) => row.locator(".detail h4.h", { hasText: label }).locator("xpath=following-sibling::*[1]");
 
@@ -78,7 +87,7 @@ test.describe("4.6-1 탭", () => {
 test.describe("4.6-2 항목", () => {
   test("칸이 정해진 순서로 나오고, 확정 기한은 일정으로, 이슈와 출처는 링크로 간다", async ({ page }) => {
     await page.goto(`/${b.four}#builder`);
-    const row = storyItem(page, first.key);
+    const row = await expand(page, first.key);
     await expect(row.locator(".cat")).toHaveText(first.field);
     await expect(row.locator(".title")).toHaveText(first.title);
     await expect(heads(row)).toHaveText(["무엇이 바뀌었나", "누가 영향받나", "지금 할 일", "기한", "고른 이유", "관련 이슈", "출처"]);
@@ -101,30 +110,36 @@ test.describe("4.6-2 항목", () => {
 
   test("잠정 기한은 글자만이고, 이슈가 없으면 그 칸이 없고, 기한이 없으면 '없음'이다", async ({ page }) => {
     await page.goto(`/${b.four}#builder`);
-    const row = storyItem(page, second.key);
+    const row = await expand(page, second.key);
     await expect(field(row, "기한")).toHaveText(builderDueText(second.due!, yearOf(b.four)));
     await expect(field(row, "기한")).toContainText("잠정");
     await expect(field(row, "기한").getByRole("link")).toHaveCount(0);
     await expect(heads(row).filter({ hasText: "관련 이슈" })).toHaveCount(0);
-    await expect(field(storyItem(page, third.key), "기한")).toHaveText("없음");
-    await expect(field(storyItem(page, fourth.key), "기한")).toContainText("잠정");
+    // 펼침은 한 번에 하나(U2 4.2-1)라 하나씩 편다
+    await expect(field(await expand(page, third.key), "기한")).toHaveText("없음");
+    await expect(field(await expand(page, fourth.key), "기한")).toContainText("잠정");
   });
 
   test("다시 알림은 표시되고 원래 날짜를 보이며 원래 항목으로 간다", async ({ page }) => {
     await page.goto(`/${b.one}#builder`);
     const [x] = itemsOf(b.one) as [SiteBuilderItem];
-    const mark = storyItem(page, x.key).locator(".breminder");
+    // U2 4.2-2: 다시 알림 링크는 펼친 칸에 있다
+    const mark = (await expand(page, x.key)).locator(".breminder");
     await expect(mark).toHaveText(`다시 알림 · ${monthDay(x.reminderOf!.date)}에 처음 실렸다`);
     await mark.click();
     await expect(page).toHaveURL(`/${x.reminderOf!.date}#${x.reminderOf!.key}`);
     await expect(storyItem(page, x.reminderOf!.key)).toBeInViewport();
     await expect(storyItem(page, x.reminderOf!.key)).toBeFocused();
+    // U2 4.2-4: 링크로 들어온 원래 항목은 펼친 채다
+    await expect(storyItem(page, x.reminderOf!.key).locator("button.item-btn")).toHaveAttribute("aria-expanded", "true");
     await expect(storyItem(page, x.reminderOf!.key).locator(".breminder")).toHaveCount(0);
   });
 
-  test("항목 제목은 h3이고 다 확인하지 못한 날의 문구는 글자색이다", async ({ page }) => {
+  // U2 4.2-1: 항목은 뉴스 줄처럼 줄 전체가 펼침 버튼이라 제목은 버튼 안의 글이다(뉴스 줄처럼 제목 요소를 두지 않고, 묶음 소제목은 그대로 제목이다)
+  test("항목 제목은 펼침 버튼 안의 제목 글이고 다 확인하지 못한 날의 문구는 글자색이다", async ({ page }) => {
     await page.goto(`/${b.four}#builder`);
-    await expect(page.locator("main h3").first()).toHaveText((itemsOf(b.four)[0] as SiteBuilderItem).title);
+    await expect(page.locator("main li.bitem button.item-btn .title").first()).toHaveText((itemsOf(b.four)[0] as SiteBuilderItem).title);
+    await expect(page.locator("main li.bitem h3")).toHaveCount(0);
     await page.goto(`/${b.none}#builder`);
     await expect(page.locator(".state.empty")).toHaveText(BUILDER_NONE);
     await page.goto(`/${b.failed}#builder`);
@@ -157,11 +172,14 @@ test.describe("4.6-2 항목", () => {
 
   test("제보 링크는 항목을 가리키고, 읽음을 눌러도 날짜별 읽은 수는 그대로다", async ({ page }) => {
     await page.goto(`/${b.four}#builder`);
-    const row = storyItem(page, first.key);
+    const row = await expand(page, first.key);
     const report = row.getByRole("link", { name: /틀린 내용 알리기/ });
     await expect(report).toHaveAttribute("href", /^mailto:mivomad33@gmail\.com\?/);
     expect(decodeURIComponent((await report.getAttribute("href"))!)).toContain(first.title);
     const toggle = row.locator("button.rd-btn");
+    // U2 4.2-1: 펼치면 뉴스 줄처럼 주소가 #<키>가 되어 읽음이 된다. 읽음 버튼은 지금처럼 기록을 바꾼다
+    await expect(toggle).toHaveAttribute("aria-pressed", "true");
+    await toggle.click();
     await expect(toggle).toHaveAttribute("aria-pressed", "false");
     await toggle.click();
     await expect(toggle).toHaveAttribute("aria-pressed", "true");
@@ -179,6 +197,7 @@ test.describe("4.6-2 항목", () => {
   test("#builder-N 주소로 오면 탭이 열리고 그 항목이 보이며 읽음이 된다", async ({ page }) => {
     await page.goto(`/${b.four}#${fourth.key}`);
     await expect(storyItem(page, fourth.key)).toBeInViewport();
+    await expect(storyItem(page, fourth.key).locator("button.item-btn")).toHaveAttribute("aria-expanded", "true");
     await expect(storyItem(page, fourth.key).locator("button.rd-btn")).toHaveAttribute("aria-pressed", "true");
     await expect(storyItem(page, first.key).locator("button.rd-btn")).toHaveAttribute("aria-pressed", "false");
   });
@@ -304,10 +323,13 @@ test.describe("4.4-2 일정에서 항목으로", () => {
   test("이슈와 근거 뉴스가 없는 일정의 페이지에서 빌더 항목으로 간다", async ({ page }) => {
     await page.goto(`/schedules/${b.schedule.id}`);
     await expect(page.locator("main")).toContainText(b.schedule.name);
-    await page.locator("main").getByRole("link", { name: b.schedule.name }).first().click();
+    // U2 S5: 일정 화면의 이름은 글자이고, 근거 뉴스가 없는 일정은 '빌더 항목 ›' 링크로 간다(그 항목은 펼쳐진다, 4.2-4)
+    await expect(page.locator("main").getByRole("link", { name: b.schedule.name })).toHaveCount(0);
+    await page.locator("main .ev.hl").getByRole("link", { name: "빌더 항목", exact: true }).click();
     await expect(page).toHaveURL(`/${b.schedule.date}#${b.schedule.key}`);
     await expect(storyItem(page, b.schedule.key)).toBeInViewport();
     await expect(storyItem(page, b.schedule.key).locator(".title")).toHaveText(first.title);
+    await expect(storyItem(page, b.schedule.key).locator("button.item-btn")).toHaveAttribute("aria-expanded", "true");
   });
 });
 
@@ -316,7 +338,9 @@ test.describe("4.5-2 정정 표시", () => {
     await page.goto(`/${b.four}#builder`);
     const row = storyItem(page, third.key);
     const fix = third.corrections![0]!;
+    // U2 4.2-2: '정정됨'은 접힌 줄에도 있고, 사유는 펼친 칸에 있다
     await expect(row.locator(".fix-mark")).toHaveText(`정정됨 · ${monthDay(fix.on)}`);
+    await expand(page, third.key);
     await expect(row.locator(".detail")).toContainText(fix.reason);
     await expect(page.locator("main .fix-mark")).toHaveCount(1);
   });
@@ -343,10 +367,10 @@ test.describe("375px", () => {
     await expectNoHorizontalScroll(page, "긴 글");
     await expectTabsOneLine(page);
     await page.goto(`/${b.one}#builder`);
-    const reminder = await storyItem(page, itemsOf(b.one)[0]!.key).locator(".breminder").boundingBox();
+    const reminder = await (await expand(page, itemsOf(b.one)[0]!.key)).locator(".breminder").boundingBox();
     expect(reminder!.height).toBeGreaterThanOrEqual(44);
     await page.goto(`/${b.four}#builder`);
-    const due = await field(storyItem(page, first.key), "기한").getByRole("link").boundingBox();
+    const due = await field(await expand(page, first.key), "기한").getByRole("link").boundingBox();
     expect(due!.height).toBeGreaterThanOrEqual(44);
   });
 

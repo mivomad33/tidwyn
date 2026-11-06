@@ -43,16 +43,17 @@ test.describe("첫 화면과 날짜 이동", () => {
     await expect(tabs.getByRole("button", { name: info.latest.firstSection })).toHaveAttribute("aria-pressed", "false");
     await expect(page.getByRole("button", { name: info.latest.otherTopTitle, expanded: false })).toBeVisible();
 
-    // 분류 칩: 고른 대분류의 뉴스만 남는다(없으면 빈 상태 글)
+    // 분류 칩: 고른 대분류의 뉴스만 남는다. 첫 칩은 '모든 분야 N', 칩마다 건수(U2 4.3)
     const chips = page.getByRole("group", { name: "카테고리" });
-    await expect(chips.getByRole("button", { name: "전체" })).toHaveAttribute("aria-pressed", "true");
+    await expect(chips.getByRole("button", { name: /^모든 분야 \d+$/ })).toHaveAttribute("aria-pressed", "true");
     const firstCat = (await page.locator("ul.list > li.item .cat").first().innerText()).split(" · ")[0]!;
-    await chips.getByRole("button", { name: firstCat, exact: true }).click();
-    await expect(chips.getByRole("button", { name: firstCat, exact: true })).toHaveAttribute("aria-pressed", "true");
+    const catChip = chips.getByRole("button", { name: new RegExp(`^${firstCat} \\d+$`) });
+    await catChip.click();
+    await expect(catChip).toHaveAttribute("aria-pressed", "true");
     const cats = await page.locator("ul.list > li.item .cat, li.short .cat-inline").allInnerTexts();
     expect(cats.length).toBeGreaterThan(0);
     for (const c of cats) expect(c.startsWith(`${firstCat} · `), c).toBe(true);
-    await chips.getByRole("button", { name: "전체" }).click();
+    await chips.getByRole("button", { name: /^모든 분야/ }).click();
     await expect(page.locator("ul.list > li.item .cat, li.short .cat-inline")).not.toHaveCount(cats.length);
   });
 });
@@ -113,12 +114,12 @@ test.describe("날짜 목록·이슈 목록·이슈 페이지", () => {
     await expect(page.getByRole("heading", { level: 1, name: "이슈 목록" })).toBeVisible();
     await expect(page.locator("ul.list > li.item").first()).toContainText(info.issues.first.name);
     const status = page.getByRole("group", { name: "상태" });
-    await status.getByRole("button", { name: "종료" }).click();
-    await expect(status.getByRole("button", { name: "종료" })).toHaveAttribute("aria-pressed", "true");
+    await status.getByRole("button", { name: /^종료 \d+$/ }).click();
+    await expect(status.getByRole("button", { name: /^종료 \d+$/ })).toHaveAttribute("aria-pressed", "true");
     const conts = await page.locator("ul.list > li.item .cont").allInnerTexts();
     expect(conts.length).toBeGreaterThan(0);
     for (const c of conts) expect(c.startsWith("종료"), c).toBe(true);
-    await status.getByRole("button", { name: "전체" }).click();
+    await status.getByRole("button", { name: /^모든 상태 \d+$/ }).click();
     await page.getByRole("link", { name: new RegExp(info.issues.first.name) }).click();
     await expect(page).toHaveURL(`/issues/${info.issues.first.id}`);
     await expect(page.getByRole("heading", { level: 1, name: info.issues.first.name })).toBeVisible();

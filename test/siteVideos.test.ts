@@ -16,11 +16,11 @@ import { fixtureVideos } from "../site/dev/videoFixtures.ts";
 import { AboutVideos, VideoList, VideoRow, VideoSource } from "../site/src/components/videoView.ts";
 import { ALL_TAB, BRIEF_TAB_KEY, VIDEO_TAB, briefTabs, currentTab, parseBriefTab, stateForHash } from "../site/src/lib/brief.ts";
 import { BOX_TAB_KEY as BOX_KEY_FROM_INDICATORS } from "../site/src/lib/indicators.ts";
-import { BROWSER_KEYS, BOX_TAB_KEY, READ_MARKS_KEY, SCHEDULE_VIEW_KEY, WEEK_BOX_KEY } from "../site/src/lib/browserKeys.ts";
+import { BROWSER_KEYS, BOX_TAB_KEY, OLD_WEEK_BOX_KEY, READ_MARKS_KEY, SCHEDULE_VIEW_KEY } from "../site/src/lib/browserKeys.ts";
 import { CONSENT_TEXT, CONTACT_MAIL, PRIVACY_TITLE, mailHref } from "../site/src/lib/policy.ts";
 import { READ_MARKS_KEY as READ_KEY_FROM_MARKS } from "../site/src/lib/readMarks.ts";
 import { VIDEO_HASH, briefVideosPath, parseRoute, privacyPath } from "../site/src/lib/routes.ts";
-import { SCHEDULE_VIEW_KEY as VIEW_KEY_FROM_SCHEDULES, WEEK_BOX_KEY as WEEK_KEY_FROM_SCHEDULES } from "../site/src/lib/schedules.ts";
+import { SCHEDULE_VIEW_KEY as VIEW_KEY_FROM_SCHEDULES } from "../site/src/lib/schedules.ts";
 import { DARK, LIGHT, contrast, textPairs } from "../site/src/lib/theme.ts";
 import {
   GOOGLE_PRIVACY_URL,
@@ -115,8 +115,8 @@ describe("4.7-1 브리프의 '영상' 탭", () => {
     assert.deepEqual(shown.map((v) => v.bundle), ["kr", "kr", "ai-ko", "ai-en", "ai-en"]);
     assert.deepEqual(shown.map((v) => v.id), [vs[1]!.id, vs[3]!.id, vs[2]!.id, vs[0]!.id, vs[4]!.id], "묶음 안은 받은 순서");
     assert.deepEqual(videoChips(shown), [
-      { chip: "kr", label: "한국 2", count: 2 },
-      { chip: "ai", label: "AI 3", count: 3 },
+      { value: "kr", count: 2, label: "한국 2" },
+      { value: "ai", count: 3, label: "AI 3" },
     ]);
     assert.deepEqual(filterVideos(shown, "ai").map((v) => v.bundle), ["ai-ko", "ai-en", "ai-en"]);
     assert.deepEqual(filterVideos(shown, null).length, 5);
@@ -253,7 +253,7 @@ describe("4.7-4 개인정보 처리방침과 바닥글", () => {
       "YouTube(Google) 서버에서 바로 불러온다",
       "각 매체 서버에서 바로 불러온다",
       "제3자 광고를 싣지 않는다",
-      "바뀐 날짜: 2026년 11월 1일",
+      "바뀐 날짜: 2026년 11월 6일",
       "브라우저 설정에서",
       "추천 이유, 요약, 구간 정리는 Tidwyn이 쓴 글",
       "Google의 Gemini API",
@@ -273,10 +273,13 @@ describe("4.7-4 개인정보 처리방침과 바닥글", () => {
   test("브라우저에 두는 기록 목록은 키 정의(browserKeys.ts)로 만들고, 기존 키 상수도 거기서 온다", () => {
     const esc = (s: string) => s.replaceAll("&", "&amp;").replaceAll("'", "&#x27;");
     for (const k of BROWSER_KEYS) assert.ok(html.includes(`<li><code>${k.key}</code>: ${esc(k.what)}</li>`), k.key);
-    assert.deepEqual(BROWSER_KEYS.map((k) => k.key), ["tidwyn.read", "tidwyn.briefTab", "tidwyn.scheduleView", "tidwyn.weekBox", "tidwyn.briefBoxTab"]);
+    // U2 S6: 상자 펼침 키(tidwyn.weekBox)는 쓰지 않아 목록에 없고, 탭 기억의 설명은 지금 기억하는 탭에 맞다(S7)
+    assert.deepEqual(BROWSER_KEYS.map((k) => k.key), ["tidwyn.read", "tidwyn.briefTab", "tidwyn.scheduleView", "tidwyn.briefBoxTab"]);
+    assert.equal(OLD_WEEK_BOX_KEY, "tidwyn.weekBox");
+    const tabWhat = BROWSER_KEYS.find((k) => k.key === BRIEF_TAB_KEY)!.what;
+    for (const t of ["영상", "빌더", "수요"]) assert.ok(tabWhat.includes(t), t);
     assert.equal(READ_KEY_FROM_MARKS, READ_MARKS_KEY);
     assert.equal(VIEW_KEY_FROM_SCHEDULES, SCHEDULE_VIEW_KEY);
-    assert.equal(WEEK_KEY_FROM_SCHEDULES, WEEK_BOX_KEY);
     assert.equal(BOX_KEY_FROM_INDICATORS, BOX_TAB_KEY);
     assert.ok(BROWSER_KEYS.some((k) => k.key === BRIEF_TAB_KEY));
     // 사이트 코드에서 "tidwyn." 키 글자를 쓰는 곳은 이 정의 하나뿐이다(새 키를 따로 만들면 실패한다)
@@ -284,6 +287,13 @@ describe("4.7-4 개인정보 처리방침과 바닥글", () => {
     const files = (fs.readdirSync(root, { recursive: true }) as string[]).filter((f) => /\.tsx?$/.test(f));
     const defining = files.filter((f) => /"tidwyn\.[A-Za-z]+"/.test(fs.readFileSync(path.join(root, f), "utf8")));
     assert.deepEqual(defining, [path.join("lib", "browserKeys.ts")]);
+    // 예전 상자 키는 지우기만 하고(storage.ts), 읽거나 쓰지 않는다. 세션 스토리지도 쓰지 않는다
+    const uses = files.filter((f) => fs.readFileSync(path.join(root, f), "utf8").includes("OLD_WEEK_BOX_KEY")).sort();
+    assert.deepEqual(uses, [path.join("lib", "browserKeys.ts"), "storage.ts"]);
+    const storageSrc = fs.readFileSync(path.join(root, "storage.ts"), "utf8");
+    assert.match(storageSrc, /removeItem\(OLD_WEEK_BOX_KEY\)/);
+    assert.ok(!/(getItem|setItem|createRemembered)\([^)]*OLD_WEEK_BOX_KEY/.test(storageSrc));
+    assert.ok(files.every((f) => !fs.readFileSync(path.join(root, f), "utf8").includes("sessionStorage")), "sessionStorage를 쓰지 않는다");
   });
 
   test("바닥글에 동의 문구와 처리방침 링크가 있다(모든 화면이 같은 바닥글을 쓴다)", () => {

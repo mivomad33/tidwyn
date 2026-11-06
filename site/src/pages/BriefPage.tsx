@@ -1,12 +1,12 @@
 // 날짜별 브리프와 펼친 뉴스 카드(4.2). 4.5단계: 읽음 버튼, 펼침·글 누름·링크로 읽음, '안 읽은 것만' 거르기. 5단계: 카드의 일정 칩. 6단계: 브리프 위 '이번 주 일정 | 지표' 상자. 7단계: 섹션 탭 끝의 '영상' 탭(4.7-1). 9.8단계: 그 뒤의 '빌더' 탭(4.6). 9.97단계: 그 뒤의 '수요' 탭(4.4-1)
-import { useEffect, useMemo, useReducer, useRef, useState, type ReactNode } from "react";
+import { useEffect, useLayoutEffect, useMemo, useReducer, useRef, useState, type ReactNode } from "react";
 import { isBuilderTabKey } from "../../../src/builderTypes.ts";
 import { isFlowItemKey } from "../../../src/demandFlowTypes.ts";
 import { kstDate } from "../../../src/kst.ts";
 import { ALL_MAJORS, CategoryLine, Layout as Shell, Main, ChipFilter, Empty, ErrorState, Footer, Loading, NewsTitle, ReadCheck, ReadToggle, SectionChip, ToggleChip, TopBar, useFullTitle, VideoLoading, VIDEO_LOAD_ERROR } from "../components/common.tsx";
 import { BriefBox } from "../components/briefBox.ts";
-import { DemandBody, DemandCategoryLine, DemandIntro, DemandList } from "../components/demandView.ts";
-import { BuilderIntro, BuilderBody, BuilderFieldLine, BuilderGroups, BuilderReminder, DiscoveryBody, DiscoveryMark, DiscoveryName } from "../components/builderView.ts";
+import { DemandBody, DemandCategoryLine, DemandFolded, DemandIntro, DemandList } from "../components/demandView.ts";
+import { BuilderIntro, BuilderBody, BuilderFieldLine, BuilderFolded, BuilderGroups, BuilderReminder, DiscoveryBody, DiscoveryFolded, DiscoveryMark } from "../components/builderView.ts";
 import { FixMark, FixNotes } from "../components/correctionView.ts";
 import { ScheduleChips } from "../components/scheduleView.ts";
 import { VideoList, VideoSource } from "../components/videoView.ts";
@@ -25,13 +25,14 @@ import { adjacentDates, briefPath, BUILDER_HASH, DEMAND_HASH, hashKey, issuePath
 import { VIDEO_CHIPS, filterVideos, videoChips, videoTabLabel, visibleVideos, type VideoChip } from "../lib/videos.ts";
 import type { BuilderMonth, DayBuilder, DayDemand, DayList, DemandMonth, SiteFlowItem, ListStory, MonthDetail, MonthList, SiteBuilderItem, SiteDates, SiteDiscoveryItem, StoryDetail } from "../lib/types.ts";
 import { readStored, writeStored } from "../lib/storage.ts";
+import { ALL_CHIP_TEXT, countChips, keptChip } from "../lib/chips.ts";
 import { markRead, readStore, useReadVersion } from "../readMarks.ts";
 import { MoreMark } from "../components/moreMark.ts";
 import { ReportLink } from "../components/reportLink.ts";
 import { StorySources } from "../components/sourceView.ts";
 import { cameBackToEntry, Link, lastNavigation, navigate, updateEntry, useLocation } from "../router.tsx";
 import { briefMarkOf, navOf, withBriefMark, type BriefMark } from "../lib/navState.ts";
-import { boxTab, browserStorage, useRemembered, weekCollapsed } from "../storage.ts";
+import { boxTab, browserStorage, useRemembered } from "../storage.ts";
 import { NotFoundPage } from "./NotFoundPage.tsx";
 
 export function storyDomId(key: string): string {
@@ -124,6 +125,11 @@ function entryMark(state: unknown): BriefMark | null {
   return mark.tab ? { tab: mark.tab } : null;
 }
 
+/** 머리글(`.bar`) 아랫선의 화면 y. 펼침 스크롤이 줄 윗선을 그 아래에 둔다(`docs/design.md`의 '펼침 스크롤') */
+function barBottom(): number {
+  return document.querySelector(".bar")?.getBoundingClientRect().bottom ?? 0;
+}
+
 function tabViewOf(day: DayList, today: string, section: BriefTab) {
   const t = briefTabs(day, today);
   return { ...t, current: currentTab(day, t.tabs, section) };
@@ -135,16 +141,10 @@ function VideoTabBody({ date, res, count, today, picked, onPick, onRetry }: { da
   if (res.status !== "ok") return <VideoLoading rows={count} />;
   const videos = visibleVideos(res.data.videos, today);
   const chips = videoChips(videos);
-  const chip = chips.some((c) => c.chip === picked) ? picked : null;
+  const chip = keptChip(picked, chips);
   return (
     <>
-      <ChipFilter
-        label="영상 묶음"
-        options={VIDEO_CHIPS.filter((c) => chips.some((x) => x.chip === c))}
-        value={chip}
-        onChange={onPick}
-        labelOf={(c) => chips.find((x) => x.chip === c)!.label}
-      />
+      <ChipFilter label="영상 묶음" allText={ALL_CHIP_TEXT.video} total={videos.length} options={chips} value={chip} onChange={onPick} />
       <h2 className="sr-only">추천 영상</h2>
       <div className="vbox">
         <VideoList videos={filterVideos(videos, chip)} mode="brief" Link={Link} date={date} resetKey={String(chip)} />
@@ -154,39 +154,61 @@ function VideoTabBody({ date, res, count, today, picked, onPick, onRetry }: { da
   );
 }
 
-/** 빌더 탭의 항목 줄. 뉴스와 달리 칸을 늘 펼쳐 둔다. 읽음은 뉴스와 같은 기록을 쓴다 */
-function BuilderItemRow({ itemKey, date, title, titleNode, titleClass, mark, after, body }: { itemKey: string; date: string; title: string; titleNode?: ReactNode; titleClass: string; mark: ReactNode; after?: ReactNode; body: ReactNode }) {
+/** 펼침 상태와 누름. 빌더·수요 탭의 줄이 함께 받는다(한 번에 하나, 주소 `#<키>`) */
+interface Opener {
+  openKey: string | null;
+  onToggle: (key: string) => void;
+}
+
+/**
+ * 빌더·수요 탭의 항목 줄(U2 4.2-1). 뉴스 줄처럼 줄 전체가 펼침 버튼이고 처음엔 접혀 있다. 접힌 줄에는 먼저 볼 칸(folded)만 두고,
+ * 펼치면 나머지 칸을 정해진 순서로 보인다. 줄 끝에 펼침 표시를 둔다. 읽음은 뉴스와 같은 기록을 쓴다
+ */
+function BuilderItemRow({ itemKey, date, title, mark, folded, body, openKey, onToggle }: { itemKey: string; date: string; title: string; mark: ReactNode; folded: ReactNode; body: ReactNode } & Opener) {
+  const id = storyDomId(itemKey);
+  const open = openKey === itemKey;
   return (
-    <li id={storyDomId(itemKey)} tabIndex={-1} className="item">
+    <li id={id} tabIndex={-1} className={open ? "item bitem open" : "item bitem"}>
       <div className="item-row">
-        <div className="item-btn">
+        <button type="button" className="item-btn" aria-expanded={open} aria-controls={open ? `${id}-body` : undefined} onClick={() => onToggle(itemKey)}>
           {mark}
-          <h3 className="btitle">
-            <NewsTitle date={date} newsKey={itemKey} className={titleClass}>
-              {titleNode ?? title}
-            </NewsTitle>
-          </h3>
-          {after}
-        </div>
+          <NewsTitle date={date} newsKey={itemKey} className="title">
+            {title}
+          </NewsTitle>
+          {!open && <span className="fold">{folded}</span>}
+          <span className="fold-mark" aria-hidden="true">
+            {open ? "▴" : "▾"}
+          </span>
+        </button>
         <ReadToggle date={date} newsKey={itemKey} title={title} />
       </div>
-      <div className="detail">{body}</div>
+      {open && (
+        <div id={`${id}-body`} className="detail">
+          {body}
+        </div>
+      )}
     </li>
   );
 }
 
-/** 빌더 항목 하나 */
-function BuilderRow({ item, date }: { item: SiteBuilderItem; date: string }) {
-  return <BuilderItemRow itemKey={item.key} date={date} title={item.title} titleClass="title" mark={<BuilderFieldLine item={item} />} after={<BuilderReminder item={item} Link={Link} />} body={<BuilderBody item={item} date={date} Link={Link} />} />;
+/** 빌더 항목 하나. 다시 알림은 펼친 칸 맨 앞에 둔다(버튼 안에 링크를 넣지 않는다) */
+function BuilderRow({ item, date, ...o }: { item: SiteBuilderItem; date: string } & Opener) {
+  const body = (
+    <>
+      <BuilderReminder item={item} Link={Link} />
+      <BuilderBody item={item} date={date} Link={Link} />
+    </>
+  );
+  return <BuilderItemRow itemKey={item.key} date={date} title={item.title} mark={<BuilderFieldLine item={item} />} folded={<BuilderFolded item={item} date={date} />} body={body} {...o} />;
 }
 
-/** 새 제품·뜨는 저장소 항목 하나 */
-function DiscoveryRow({ item, date }: { item: SiteDiscoveryItem; date: string }) {
-  return <BuilderItemRow itemKey={item.key} date={date} title={item.name} titleNode={<DiscoveryName item={item} />} titleClass="title bname" mark={<DiscoveryMark item={item} />} body={<DiscoveryBody item={item} date={date} Link={Link} />} />;
+/** 새 제품·뜨는 저장소 항목 하나. 이름은 글자이고 원문은 펼친 칸의 출처로 연다(S9) */
+function DiscoveryRow({ item, date, ...o }: { item: SiteDiscoveryItem; date: string } & Opener) {
+  return <BuilderItemRow itemKey={item.key} date={date} title={item.name} mark={<DiscoveryMark item={item} />} folded={<DiscoveryFolded item={item} />} body={<DiscoveryBody item={item} date={date} Link={Link} />} {...o} />;
 }
 
 /** 빌더 탭 본문. 항목이 없는 날은 파일을 받지 않고 상태 문구만 보인다(B11) */
-function BuilderTabBody({ date, builder, res, onRetry }: { date: string; builder: DayBuilder; res: Resource<BuilderMonth>; onRetry: () => void }) {
+function BuilderTabBody({ date, builder, res, onRetry, ...o }: { date: string; builder: DayBuilder; res: Resource<BuilderMonth>; onRetry: () => void } & Opener) {
   const head = (
     <>
       <h2 className="sr-only">빌더</h2>
@@ -207,18 +229,18 @@ function BuilderTabBody({ date, builder, res, onRetry }: { date: string; builder
     <>
       {head}
       {builder.count > 0 && tools.length + discoveries.length === 0 && <Empty>이 날짜의 항목을 찾지 못했다.</Empty>}
-      <BuilderGroups builder={builder} tools={tools} discoveries={discoveries} toolRow={(x) => <BuilderRow key={x.key} item={x} date={date} />} discoveryRow={(x) => <DiscoveryRow key={x.key} item={x} date={date} />} />
+      <BuilderGroups builder={builder} tools={tools} discoveries={discoveries} toolRow={(x) => <BuilderRow key={x.key} item={x} date={date} {...o} />} discoveryRow={(x) => <DiscoveryRow key={x.key} item={x} date={date} {...o} />} />
     </>
   );
 }
 
 /** 수요 흐름 항목 하나. 줄과 읽음은 빌더 항목과 같다 */
-function DemandRow({ item, date }: { item: SiteFlowItem; date: string }) {
-  return <BuilderItemRow itemKey={item.key} date={date} title={item.title} titleClass="title" mark={<DemandCategoryLine item={item} />} body={<DemandBody item={item} date={date} Link={Link} />} />;
+function DemandRow({ item, date, ...o }: { item: SiteFlowItem; date: string } & Opener) {
+  return <BuilderItemRow itemKey={item.key} date={date} title={item.title} mark={<DemandCategoryLine item={item} />} folded={<DemandFolded item={item} />} body={<DemandBody item={item} date={date} Link={Link} />} {...o} />;
 }
 
 /** 수요 탭 본문. 항목이 없는 날은 파일을 받지 않고 상태 문구만 보인다(4.4-1) */
-function DemandTabBody({ date, demand, res, onRetry }: { date: string; demand: DayDemand; res: Resource<DemandMonth>; onRetry: () => void }) {
+function DemandTabBody({ date, demand, res, onRetry, ...o }: { date: string; demand: DayDemand; res: Resource<DemandMonth>; onRetry: () => void } & Opener) {
   const head = (
     <>
       <h2 className="sr-only">수요</h2>
@@ -238,7 +260,7 @@ function DemandTabBody({ date, demand, res, onRetry }: { date: string; demand: D
     <>
       {head}
       {demand.count > 0 && items.length === 0 && <Empty>이 날짜의 항목을 찾지 못했다.</Empty>}
-      <DemandList demand={demand} items={items} row={(x) => <DemandRow key={x.key} item={x} date={date} />} />
+      <DemandList demand={demand} items={items} row={(x) => <DemandRow key={x.key} item={x} date={date} {...o} />} />
     </>
   );
 }
@@ -262,6 +284,8 @@ export function BriefPage({ route }: { route: Route }) {
   const [view, setView] = useState<BriefViewState>(() => ({ section: restored.section ?? storedTab(), major: restored.major, expanded: null }));
   // 7단계: 영상 탭의 묶음 칩(날짜가 바뀌면 '전체'로 돌아간다. U1 S12: 기록에만 남긴다)과 30일 숨기기의 오늘(방문자 브라우저, KST)
   const [videoChip, setVideoChip] = useState<{ date: string | null; chip: VideoChip | null }>(restored.chip);
+  // U2 S6: 상자 펼침은 저장하지 않는다. 기록을 되돌려 왔을 때만 그 기록에 남긴 펼침을 되살리고, 그 밖의 진입은 접힌 채 시작한다
+  const [weekOpen, setWeekOpen] = useState(() => cameBackToEntry() && briefMarkOf(loc.state)?.weekOpen === true);
   const today = useMemo(() => kstDate(new Date()), []);
   // 되살릴 스크롤: 기록을 되돌려(또는 새로 고쳐) 이 기록에 왔고 떠날 때 스크롤을 남겼으면, 화면이 다 그려진 뒤 그 자리로 간다
   const nav = navOf(loc.state);
@@ -272,9 +296,11 @@ export function BriefPage({ route }: { route: Route }) {
   useEffect(() => {
     if (seenEntry.current === entryId) return;
     seenEntry.current = entryId;
+    const mark = briefMarkOf(loc.state);
+    // 새 기록이면 날짜 화살표가 넘긴 펼침만 잇는다(메뉴의 '최근 브리프' 등 다른 진입은 접힘, S6)
+    setWeekOpen(mark?.weekOpen === true);
     // 화면을 그대로 둔 채 다른 브리프 기록으로 되돌아온 경우(날짜 사이 이동 뒤 뒤로 등)
     if (lastNavigation().kind !== "pop") return;
-    const mark = briefMarkOf(loc.state);
     restoreScroll.current = nav?.scroll ?? null;
     if (!mark) return;
     const r = restoredView(mark);
@@ -298,9 +324,10 @@ export function BriefPage({ route }: { route: Route }) {
   const pickedChip = videoChip.date === date ? videoChip.chip : null;
   useEffect(() => {
     if (!date || !shownTab || !latestDate) return;
-    const mark: BriefMark = { date, tab: shownTab, latestDate, chip: pickedChip, major: view.major };
+    const mark: BriefMark = { date, tab: shownTab, latestDate, chip: pickedChip, major: view.major, ...(weekOpen ? { weekOpen } : {}) };
     updateEntry((s) => withBriefMark(s, mark));
-  }, [date, shownTab, latestDate, pickedChip, view.major]);
+    // 새 기록(같은 날짜의 '최근 브리프' 등)과, 경로를 바꾼 replace(`/` → `/<날짜>#키`, 표시가 빠진다)에도 다시 남긴다
+  }, [date, shownTab, latestDate, pickedChip, view.major, weekOpen, entryId, loc.pathname]);
   const videoUrl = date && tabView?.current === VIDEO_TAB ? dataUrl.videoDay(date) : null;
   const videoRes = useResource<DayVideos>(videoUrl);
   // 9.8단계: 빌더 파일도 빌더 탭을 열 때만, 항목이 있는 날만 받는다(4.6-5)
@@ -326,6 +353,28 @@ export function BriefPage({ route }: { route: Route }) {
 
   // 펼친 카드가 있을 때만 그 달의 본문 파일을 받는다(4.3-7)
   const expanded = day && view.expanded && findStoryTarget(day, view.expanded) ? view.expanded : null;
+  // U2 4.2-1: 펼친 빌더·수요 항목(주소 `#<항목 키>`를 따른다)
+  const itemOpen = view.expanded !== null && (isBuilderTabKey(view.expanded) || isFlowItemKey(view.expanded)) ? view.expanded : null;
+  const openKey = expanded ?? itemOpen;
+  // U2 S10: 줄을 누를 때 그 줄의 화면 위치를 적어 두고, 위의 줄이 접혀 줄이 움직이면 같은 자리로 되돌린다
+  const pressed = useRef<{ key: string; top: number } | null>(null);
+  useLayoutEffect(() => {
+    const p = pressed.current;
+    if (!p) return;
+    const el = document.getElementById(storyDomId(p.key));
+    if (!el) return;
+    pressed.current = null;
+    const delta = el.getBoundingClientRect().top - p.top;
+    if (Math.abs(delta) < 1) return;
+    const want = window.scrollY + delta;
+    if (want >= 0) {
+      window.scrollTo({ top: want });
+      return;
+    }
+    // 같은 자리를 지킬 수 없으면 줄 윗선을 머리글 바로 아래에 둔다
+    const bar = barBottom();
+    window.scrollTo({ top: Math.max(0, window.scrollY + el.getBoundingClientRect().top - bar) });
+  }, [openKey]);
   const detailUrl = month && expanded ? dataUrl.detail(month) : null;
   const detailRes = useResource<MonthDetail>(detailUrl);
 
@@ -379,7 +428,7 @@ export function BriefPage({ route }: { route: Route }) {
   }
   if (!date) return <NotFoundPage />;
   const { prev, next } = adjacentDates(datesRes.data.dates, date);
-  const center = <DateNav date={date} prev={prev} next={next} />;
+  const center = <DateNav date={date} prev={prev} next={next} weekOpen={weekOpen} />;
   if (listRes.status === "error") return <Shell center={center}><ErrorState onRetry={() => retry([listUrl])} /></Shell>;
   if (listRes.status !== "ok") return <Shell center={center}><Loading /></Shell>;
   if (!day) return <NotFoundPage />;
@@ -390,7 +439,14 @@ export function BriefPage({ route }: { route: Route }) {
   const onVideos = current === VIDEO_TAB;
   const onBuilder = current === BUILDER_TAB;
   const onDemand = current === DEMAND_TAB;
-  const sv = sectionView(day, current, view.major);
+  const onNews = !onVideos && !onBuilder && !onDemand;
+  // U2 4.3-1: 대분류 칩은 지금 탭의 뉴스(주요 뉴스와 짧은 소식)로 센다. '안 읽은 것만'은 건수를 바꾸지 않는다
+  const svAll = sectionView(day, current, null);
+  const majorChips = countChips([...svAll.top, ...svAll.short], (s) => s.category.major, ALL_MAJORS);
+  const major = keptChip(view.major, majorChips);
+  // S12: 고른 분야가 이 뉴스 탭·날짜에 없으면 첫 칩으로 돌아간다(대분류 칩이 없는 영상·빌더·수요 탭에서는 고른 값을 그대로 둔다)
+  if (onNews && major !== view.major) setView((v) => ({ ...v, major: null }));
+  const sv = sectionView(day, current, major);
   const hasStories = sv.top.length + sv.short.length > 0;
   const token = `${date}|${current}|${unread.round}`;
   if (unread.on && hidden.current?.token !== token) {
@@ -414,8 +470,10 @@ export function BriefPage({ route }: { route: Route }) {
     navigate(briefPath(date!, k ?? undefined), { replace: true, quiet: true });
   }
   function toggle(k: string) {
+    const el = document.getElementById(storyDomId(k));
+    pressed.current = el ? { key: k, top: el.getBoundingClientRect().top } : null;
     // 펼침 상태는 주소의 `#<뉴스 키>`를 따른다(stateForHash)
-    setHash(expanded === k ? null : k);
+    setHash(openKey === k ? null : k);
   }
   function chooseSection(s: BriefTab) {
     rememberTab(s);
@@ -433,31 +491,44 @@ export function BriefPage({ route }: { route: Route }) {
   return (
     <>
       <TopBar center={center} />
+      {/* U2 S4·S14: 섹션 탭은 키보드 순서에서 머리글 다음·본문 앞에 두고, 화면에서는 CSS order로 맨 아래에 붙인다 */}
+      <nav className="tabs" aria-label="섹션">
+        {tabs.map((s) => (
+          <button key={s} type="button" className={s === current ? "on" : ""} aria-pressed={s === current} onClick={() => chooseSection(s)}>
+            {s === VIDEO_TAB ? videoTabLabel(videoCount) : s === BUILDER_TAB ? builderTabLabel(day.builder!.count) : s === DEMAND_TAB ? demandTabLabel(day.demand!.count) : s}
+          </button>
+        ))}
+      </nav>
       <Main className="page has-tabs">
         <h1 className="sr-only">{monthDayWeekday(date)} 브리프</h1>
-        <div className="headline">
-          {day.headline}
-          {day.keywords.length > 0 && (
-            <div className="kw" aria-label="키워드">
-              {day.keywords.map((k) => (
-                <span key={k}>{k}</span>
-              ))}
-            </div>
-          )}
-        </div>
-        <TopBox day={day} />
+        {/* U2 4.1-3: 그날 요약·키워드는 뉴스 탭에만 둔다(영상·빌더·수요 탭은 탭 본문이 먼저 보이게) */}
+        {onNews && (
+          <div className="headline">
+            {day.headline}
+            {day.keywords.length > 0 && (
+              <div className="kw" aria-label="키워드">
+                {day.keywords.map((k) => (
+                  <span key={k}>{k}</span>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+        <TopBox day={day} open={weekOpen} onToggle={() => setWeekOpen((o) => !o)} />
         {onVideos ? (
           <VideoTabBody date={date} res={videoRes} count={videoCount} today={today} picked={videoChip.date === date ? videoChip.chip : null} onPick={(c) => setVideoChip({ date, chip: c })} onRetry={() => retry([videoUrl])} />
         ) : onBuilder ? (
-          <BuilderTabBody date={date} builder={day.builder!} res={builderRes} onRetry={() => retry([builderUrl])} />
+          <BuilderTabBody date={date} builder={day.builder!} res={builderRes} onRetry={() => retry([builderUrl])} openKey={itemOpen} onToggle={toggle} />
         ) : onDemand ? (
-          <DemandTabBody date={date} demand={day.demand!} res={demandRes} onRetry={() => retry([demandUrl])} />
+          <DemandTabBody date={date} demand={day.demand!} res={demandRes} onRetry={() => retry([demandUrl])} openKey={itemOpen} onToggle={toggle} />
         ) : (
           <>
         <ChipFilter
           label="카테고리"
-          options={ALL_MAJORS}
-          value={view.major}
+          allText={ALL_CHIP_TEXT.major}
+          total={svAll.top.length + svAll.short.length}
+          options={majorChips}
+          value={major}
           onChange={chooseMajor}
           after={
             <ToggleChip on={unread.on} onChange={chooseUnread}>
@@ -466,8 +537,8 @@ export function BriefPage({ route }: { route: Route }) {
           }
         />
         <h2 className="sr-only">{current} 뉴스</h2>
-        {sv.section?.flow && view.major === null && <p className="flow">{sv.section.flow}</p>}
-        {!hasStories && <Empty>{view.major ? "이 분류의 뉴스가 없다." : "이 섹션의 뉴스가 없다."}</Empty>}
+        {sv.section?.flow && major === null && <p className="flow">{sv.section.flow}</p>}
+        {!hasStories && <Empty>{major ? "이 분류의 뉴스가 없다." : "이 섹션의 뉴스가 없다."}</Empty>}
         {hasStories && tops.length + shorts.length === 0 && <Empty>안 읽은 뉴스가 없다.</Empty>}
         {tops.length > 0 && (
           <ul className="list">
@@ -502,35 +573,29 @@ export function BriefPage({ route }: { route: Route }) {
             </p>
           </section>
         )}
-        {sv.section?.unverified && view.major === null && <p className="flow note">확인되지 않은 내용: {sv.section.unverified}</p>}
+        {sv.section?.unverified && major === null && <p className="flow note">확인되지 않은 내용: {sv.section.unverified}</p>}
           </>
         )}
       </Main>
       <Footer />
-      <nav className="tabs" aria-label="섹션">
-        {tabs.map((s) => (
-          <button key={s} type="button" className={s === current ? "on" : ""} aria-pressed={s === current} onClick={() => chooseSection(s)}>
-            {s === VIDEO_TAB ? videoTabLabel(videoCount) : s === BUILDER_TAB ? builderTabLabel(day.builder!.count) : s === DEMAND_TAB ? demandTabLabel(day.demand!.count) : s}
-          </button>
-        ))}
-      </nav>
     </>
   );
 }
 
-/** '이번 주 일정 | 지표' 상자(6단계 4.7-1). 섹션 탭·대분류 칩과 관계없이 같고, 접은 상태와 고른 탭은 다른 날짜와 다음 방문에도 이어진다 */
-function TopBox({ day }: { day: DayList }) {
-  const collapsed = useRemembered(weekCollapsed);
+/** '이번 주 일정 | 지표' 상자(6단계 4.7-1). 섹션 탭·대분류 칩과 관계없이 같다. 고른 탭은 다음 방문에도 이어지고, 펼침은 이 브리프 화면에만 둔다(U2 S6) */
+function TopBox({ day, open, onToggle }: { day: DayList; open: boolean; onToggle: () => void }) {
   const tab = useRemembered(boxTab);
   const today = useMemo(() => kstDate(new Date()), []);
-  return <BriefBox day={day} tab={tab} collapsed={collapsed} onTab={(t) => boxTab.set(t)} onToggle={() => weekCollapsed.set(!collapsed)} today={today} Link={Link} />;
+  return <BriefBox day={day} tab={tab} collapsed={!open} onTab={(t) => boxTab.set(t)} onToggle={onToggle} today={today} Link={Link} />;
 }
 
-function DateNav({ date, prev, next }: { date: string; prev: string | null; next: string | null }) {
+/** 날짜 화살표. 같은 브리프 화면에서 날짜를 바꾸는 것이라 상자 펼침을 다음 기록으로 넘긴다(S6) */
+function DateNav({ date, prev, next, weekOpen }: { date: string; prev: string | null; next: string | null; weekOpen: boolean }) {
+  const carry = weekOpen ? { brief: { weekOpen: true } } : undefined;
   return (
     <span className="datebtn">
       {prev ? (
-        <Link to={briefPath(prev)} className="arrow" aria-label={`이전 날짜 ${monthDay(prev)}`}>
+        <Link to={briefPath(prev)} state={carry} className="arrow" aria-label={`이전 날짜 ${monthDay(prev)}`}>
           ‹
         </Link>
       ) : (
@@ -542,7 +607,7 @@ function DateNav({ date, prev, next }: { date: string; prev: string | null; next
         {monthDayWeekday(date)}
       </Link>
       {next ? (
-        <Link to={briefPath(next)} className="arrow" aria-label={`다음 날짜 ${monthDay(next)}`}>
+        <Link to={briefPath(next)} state={carry} className="arrow" aria-label={`다음 날짜 ${monthDay(next)}`}>
           ›
         </Link>
       ) : (
@@ -595,7 +660,7 @@ function TopItem({ story, date, open, onToggle, detail, onRetry, showSection, le
   useEffect(() => {
     const el = ref.current;
     if (!open || !hasBody || !fixed || !el) return;
-    const bar = document.querySelector(".bar")?.getBoundingClientRect().bottom ?? 0;
+    const bar = barBottom();
     const lastFix = [...el.querySelectorAll(".fix")].at(-1);
     if (el.getBoundingClientRect().top < bar || (lastFix?.getBoundingClientRect().bottom ?? 0) > window.innerHeight) el.scrollIntoView({ block: "start" });
   }, [open, hasBody, fixed, ref]);

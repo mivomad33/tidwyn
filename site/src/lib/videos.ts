@@ -3,6 +3,7 @@
 import { addDays } from "../../../src/kst.ts";
 import { VIDEO_BUNDLES, VIDEO_KEEP_DAYS, type DayVideos, type IssueVideo, type IssueVideoRef, type SiteVideo, type VideoBundle, type VideoGroup } from "../../../src/siteTypes.ts";
 import { monthDay } from "./format.ts";
+import { countChips, type ChipOption } from "./chips.ts";
 
 export { VIDEO_BUNDLES, VIDEO_KEEP_DAYS, type VideoBundle };
 
@@ -49,18 +50,9 @@ export function visibleVideoCount(groups: readonly VideoGroup[] | undefined, tod
   return (groups ?? []).reduce((n, g) => (isVideoVisible(g, today) ? n + g.count : n), 0);
 }
 
-export interface ChipCount {
-  chip: VideoChip;
-  label: string;
-  count: number;
-}
-
-/** 보이는 영상의 칩(0개인 묶음은 빼고, 한국 · 미국 · AI 순). 칩 글자는 "한국 3"처럼 수를 붙인다 */
-export function videoChips(videos: readonly SiteVideo[]): ChipCount[] {
-  return VIDEO_CHIPS.map((chip) => {
-    const count = videos.filter((v) => chipOf(v.bundle) === chip).length;
-    return { chip, label: `${CHIP_LABEL[chip]} ${count}`, count };
-  }).filter((c) => c.count > 0);
+/** 보이는 영상의 칩(0개인 묶음은 빼고, 한국 · 미국 · AI 순). 칩 글자는 "한국 3"처럼 수를 붙인다(공통 칩 함수, U2 S1) */
+export function videoChips(videos: readonly SiteVideo[]): ChipOption<VideoChip>[] {
+  return countChips(videos, (v) => chipOf(v.bundle), VIDEO_CHIPS, (c) => CHIP_LABEL[c]);
 }
 
 /** 고른 칩의 영상(null이면 전체) */

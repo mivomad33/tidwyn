@@ -34,6 +34,8 @@ export interface BriefMark {
   chip?: string | null;
   /** 대분류 칩 */
   major?: string | null;
+  /** U2 S6: 이번 주 일정|지표 상자를 펼쳤는지(이 기록에만 둔다. 날짜 화살표는 다음 기록으로 넘긴다) */
+  weekOpen?: boolean;
 }
 
 type StateObject = Record<string, unknown>;
@@ -73,6 +75,7 @@ export function briefMarkOf(state: unknown): BriefMark | null {
   if (isStr(o.latestDate)) mark.latestDate = o.latestDate;
   if (isStr(o.chip) || o.chip === null) mark.chip = o.chip;
   if (isStr(o.major) || o.major === null) mark.major = o.major;
+  if (o.weekOpen === true) mark.weekOpen = true;
   return mark;
 }
 

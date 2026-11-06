@@ -2,10 +2,11 @@
 // 목록은 '다가오는 일정 / 지난 일정' 두 탭이고 달 파일을 나눠 받는다(처음과 "더 보기"마다 몇 달씩, 4.6-2).
 // 일정 주소(`/schedules/<id>`)로 들어오면 기억한 보기와 관계없이 목록의 그 일정이 든 탭으로 가서 그 위치로 옮기고 잠깐 강조한다.
 // 흡수된 일정 주소는 남는 일정 주소로 바꾸고, 지운 일정과 없는 식별자는 없는 페이지다.
-import { useEffect, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from "react";
 import { kstDate } from "../../../src/kst.ts";
 import { scheduleRefChunkOf } from "../../../src/siteTypes.ts";
-import { BriefBackLink, ChipFilter, Empty, ErrorState, Layout, Loading, useFocusNewRow, useTitle } from "../components/common.tsx";
+import { ALL_MAJORS, BriefBackLink, ChipFilter, Empty, ErrorState, Layout, Loading, useFocusNewRow, useTitle } from "../components/common.tsx";
+import { ALL_CHIP_TEXT, chipOptions, countChips, keptChip, type ChipOption } from "../lib/chips.ts";
 import { ScheduleRow } from "../components/scheduleView.ts";
 import { Segmented } from "../components/segmented.ts";
 import { retry, useResource, useResources } from "../data.ts";
@@ -33,6 +34,7 @@ import {
   selectionForMonth,
   stepsToInclude,
   tabOf,
+  tabMajorCounts,
   type ScheduleTab,
   type ScheduleView,
 } from "../lib/schedules.ts";
@@ -120,19 +122,36 @@ export function SchedulesPage({ id, list }: { id: number | null; list: boolean }
     );
   }
   const index = indexRes.data;
-  const chips = <ChipFilter label="대분류" options={index.majors} value={major} onChange={setMajor} />;
   return (
     <Layout left={back}>
       {head}
       {index.total === 0 ? (
         <Empty>아직 모은 일정이 없다.</Empty>
       ) : view === "list" ? (
-        <ListView index={index} today={today} major={major} chips={chips} target={target.status === "ok" && target.id === id ? target : null} />
+        <ListView index={index} today={today} major={major} onMajor={setMajor} target={target.status === "ok" && target.id === id ? target : null} />
       ) : (
-        <CalendarView index={index} today={today} major={major} chips={chips} />
+        <CalendarView index={index} today={today} major={major} onMajor={setMajor} />
       )}
     </Layout>
   );
+}
+
+type MajorOptions = ChipOption<Major>[] | null;
+
+/** 고른 대분류가 지금 보이는 목록(탭·달)의 칩에 없으면 첫 칩으로 보고 상태도 돌린다(S12). 칩을 아직 모르면(null) 그대로 */
+function useKeptMajor(picked: Major | null, options: MajorOptions, onChange: (m: Major | null) => void): Major | null {
+  const major = options === null ? picked : keptChip(picked, options);
+  useEffect(() => {
+    if (major !== picked) onChange(null);
+  }, [major, picked, onChange]);
+  return major;
+}
+
+/** 일정 화면의 대분류 칩(U2 S2): 지금 보이는 목록으로 센 값만 건수와 함께 */
+function MajorChips({ options, major, onChange }: { options: MajorOptions; major: Major | null; onChange: (m: Major | null) => void }) {
+  if (!options?.length) return null;
+  const total = options.reduce((n, o) => n + o.count, 0);
+  return <ChipFilter label="대분류" allText={ALL_CHIP_TEXT.major} total={total} options={options} value={major} onChange={onChange} />;
 }
 
 /** 달 파일들을 받아 이어 붙인다. 앞에서부터 받은 달까지만 쓴다(중간이 비지 않게) */
@@ -152,13 +171,20 @@ function useMonths(index: ScheduleIndex, months: string[]) {
   return { items, state, urls };
 }
 
-function ListView({ index, today, major, chips, target }: { index: ScheduleIndex; today: string; major: Major | null; chips: ReactNode; target: { id: number; month: string } | null }) {
+function ListView({ index, today, major: picked, onMajor, target }: { index: ScheduleIndex; today: string; major: Major | null; onMajor: (m: Major | null) => void; target: { id: number; month: string } | null }) {
   // 일정 주소로 들어온 일정의 탭을 알려면 그 달 파일이 있어야 한다
   const targetMonth = useResource<ScheduleMonth>(target ? dataUrl.scheduleMonth(target.month) : null);
   const targetItem = target && targetMonth.status === "ok" ? (targetMonth.data.items.find((x) => x.id === target.id) ?? null) : null;
   const targetTab = targetItem ? tabOf(targetItem.due, today) : null;
   const [tabState, setTab] = useState<ScheduleTab | null>(null);
   const tab = tabState ?? targetTab ?? "upcoming";
+  // U2 S2: 칩 건수는 고른 탭 전체로 센다(이번 달은 그 달 파일로 나눈다)
+  const now = monthOfDue(today);
+  const nowRes = useResource<ScheduleMonth>(index.months.some((m) => m.month === now) ? dataUrl.scheduleMonth(now) : null);
+  const counts = tabMajorCounts(index, today, tab, nowRes.status === "ok" ? nowRes.data.items : nowRes.status === "idle" ? [] : null);
+  // 이번 달 파일을 받지 못하면 건수를 낼 수 없어 칩을 두지 않고, 고른 분야도 풀어 거르지 못한 채 남지 않게 한다
+  const options = counts ? chipOptions(counts, ALL_MAJORS) : nowRes.status === "error" ? [] : null;
+  const major = useKeptMajor(picked, options, onMajor);
   // 탭마다 "더 보기"를 누른 횟수 + 1. 대분류를 바꾸면 처음으로 돌린다
   const [steps, setSteps] = useState<Record<ScheduleTab, number>>({ upcoming: 1, past: 1 });
   const [stepsMajor, setStepsMajor] = useState(major);
@@ -206,7 +232,7 @@ function ListView({ index, today, major, chips, target }: { index: ScheduleIndex
   return (
     <>
       <Segmented<ScheduleTab> label="일정 구분" className="seg" options={TABS.map((t) => ({ value: t, label: SCHEDULE_TAB_LABEL[t] }))} value={tab} onChange={setTab} />
-      {chips}
+      <MajorChips options={options} major={major} onChange={onMajor} />
       <div className="sch-body" ref={more.ref}>
         <h2 className="sr-only">{label}</h2>
         {groups.map((g) =>
@@ -245,7 +271,7 @@ function ListView({ index, today, major, chips, target }: { index: ScheduleIndex
   );
 }
 
-function CalendarView({ index, today, major, chips }: { index: ScheduleIndex; today: string; major: Major | null; chips: ReactNode }) {
+function CalendarView({ index, today, major: pickedMajor, onMajor }: { index: ScheduleIndex; today: string; major: Major | null; onMajor: (m: Major | null) => void }) {
   const range = calendarRange(
     index.months.map((m) => m.month),
     today,
@@ -253,6 +279,12 @@ function CalendarView({ index, today, major, chips }: { index: ScheduleIndex; to
   const [month, setMonth] = useState(monthOfDue(today));
   const loaded = useMonths(index, [month]);
   const monthItems = loaded.state === "ok" ? loaded.items : [];
+  // U2 S2: 달력 보기의 칩은 보이는 달로 센다
+  const options = loaded.state === "ok" ? countChips(monthItems, (x) => x.major, ALL_MAJORS) : loaded.state === "error" ? [] : null;
+  const major = useKeptMajor(pickedMajor, options, onMajor);
+  // 달을 넘기며 다음 달 파일을 받는 동안에는 앞 달의 칩을 그대로 두어 칩 줄이 사라졌다 생기며 화면이 튀지 않게 한다
+  const shownOptions = useRef<MajorOptions>(null);
+  if (options !== null) shownOptions.current = options;
   const [picked, setPicked] = useState<{ month: string; day: string } | null>(null);
   const [announce, setAnnounce] = useState("");
   const [focusDay, setFocusDay] = useState<string | null>(null);
@@ -293,7 +325,7 @@ function CalendarView({ index, today, major, chips }: { index: ScheduleIndex; to
   const hasAny = marks.size > 0 || monthUnit.length > 0;
   return (
     <>
-      {chips}
+      <MajorChips options={shownOptions.current} major={major} onChange={onMajor} />
       <div className="sch-body">
         <div className="monthnav">
           <button type="button" aria-label="이전 달" disabled={month <= range.first} onClick={() => go(-1)}>

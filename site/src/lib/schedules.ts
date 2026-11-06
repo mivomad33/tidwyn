@@ -12,17 +12,12 @@ export type ScheduleView = "list" | "calendar";
 
 export const SCHEDULE_TAB_LABEL: Record<ScheduleTab, string> = { upcoming: "다가오는 일정", past: "지난 일정" };
 
-/** 일정 화면의 보기(4.7-3)와 '이번 주 일정' 접기(4.7-4)를 기억하는 로컬 스토리지 키(읽은 기록 지우기 대상이 아니다, 정의는 browserKeys.ts) */
-export { SCHEDULE_VIEW_KEY, WEEK_BOX_KEY } from "./browserKeys.ts";
+/** 일정 화면의 보기(4.7-3)를 기억하는 로컬 스토리지 키(읽은 기록 지우기 대상이 아니다, 정의는 browserKeys.ts) */
+export { SCHEDULE_VIEW_KEY } from "./browserKeys.ts";
 
 /** 기억한 보기. 없거나 모르는 값이면 목록 */
 export function parseScheduleView(raw: string | null): ScheduleView {
   return raw === "calendar" ? "calendar" : "list";
-}
-
-/** 기억한 접기 상태. "closed"일 때만 접는다(없거나 깨졌으면 펼침) */
-export function parseWeekCollapsed(raw: string | null): boolean {
-  return raw === "closed";
 }
 
 export function isMonthDue(due: string): boolean {
@@ -158,10 +153,11 @@ export function outcomeParts(outcome: ScheduleOutcomeView, today: string): Outco
 /** 일정 화면 머리의 출처 문구(앱과 정적 HTML이 같다) */
 export const SCHEDULE_META = "뉴스와 공식 문서에서 모은 예정 일정 · 날짜는 현지 기준";
 
-/** 이름을 누르면 갈 곳: 처음 근거 뉴스(그 날짜 브리프의 카드나 줄). 근거 뉴스가 없으면 이어진 빌더 항목, 둘 다 없으면 null */
-export function nameLink(item: Pick<ScheduleItem, "first" | "builder">): string | null {
-  const to = item.first ?? item.builder;
-  return to ? briefPath(to.date, to.key) : null;
+/** 일정 화면 줄의 출처 링크(S5): 처음 근거 뉴스면 '출처 뉴스', 근거 뉴스가 없고 빌더 항목이면 '빌더 항목', 둘 다 없으면 null */
+export function sourceLink(item: Pick<ScheduleItem, "first" | "builder">): { text: string; to: string } | null {
+  if (item.first) return { text: "출처 뉴스", to: briefPath(item.first.date, item.first.key) };
+  if (item.builder) return { text: "빌더 항목", to: briefPath(item.builder.date, item.builder.key) };
+  return null;
 }
 
 // ---- 이슈 페이지(4.7-5) ----
@@ -295,6 +291,25 @@ export const LIST_MONTH_STEP = 6;
 export function tabMonths(index: ScheduleIndex, today: string, tab: ScheduleTab): ScheduleIndex["months"] {
   const now = monthOfDue(today);
   return tab === "upcoming" ? index.months.filter((m) => m.month >= now) : index.months.filter((m) => m.month <= now).reverse();
+}
+
+/**
+ * U2 S2: 목록 보기의 고른 탭 전체('더 보기'로 아직 받지 않은 달 포함)를 대분류마다 센다. 다른 달은 색인의 수로 세고,
+ * 이번 달은 두 탭의 일정이 섞여 있어 그 달 파일(nowItems)로 나눈다. 이번 달 파일을 아직 받지 않았으면 null
+ */
+export function tabMajorCounts(index: ScheduleIndex, today: string, tab: ScheduleTab, nowItems: readonly { due: string; major: Major }[] | null): Map<Major, number> | null {
+  const now = monthOfDue(today);
+  const counts = new Map<Major, number>();
+  const add = (m: Major, n: number) => counts.set(m, (counts.get(m) ?? 0) + n);
+  for (const m of tabMonths(index, today, tab)) {
+    if (m.month !== now) {
+      for (const [major, n] of Object.entries(m.majors) as [Major, number][]) add(major, n);
+      continue;
+    }
+    if (nowItems === null) return null;
+    for (const x of nowItems) if (tabOf(x.due, today) === tab) add(x.major, 1);
+  }
+  return counts;
 }
 
 /**

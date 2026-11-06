@@ -2,8 +2,10 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type MouseEvent, type ReactNode, type RefObject } from "react";
 import { MAJORS } from "../../../src/categories.ts";
 import { pageTitle } from "../lib/format.ts";
+import { countLabel, keptChip, type ChipOption } from "../lib/chips.ts";
 import { MENU, SKIP_LABEL } from "../lib/menu.ts";
 import { resolveBriefBack } from "../lib/navState.ts";
+import { observeWidth } from "../lib/dom.ts";
 import { categoryVar } from "../lib/theme.ts";
 import { FooterView } from "./policyView.ts";
 import type { Major } from "../lib/types.ts";
@@ -292,18 +294,61 @@ export function CategoryLine({ major, minor, extra, isNewMinor, section }: { maj
 }
 
 /**
- * 칩 고르기(카테고리·상태 필터). value가 null이면 "전체". after는 칩 줄 끝에 구분선 뒤로 붙는다(4.5단계 '안 읽은 것만').
- * labelOf가 있으면 칩 글자를 그것으로 보인다(7단계 영상 묶음 칩의 "한국 3")
+ * 가로 스크롤 줄의 마지막 칩이 오른쪽 끝에 잘리는 동안 `data-more`를 둔다(U2 S11). 스타일이 줄 오른쪽 끝을 흐리게 해,
+ * 칩 사이 틈이 줄 끝에 걸려 일부만 보이는 칩이 없는 폭에서도 다음 칩이 있다는 것이 보인다.
+ * 끝 여백(padding)만 넘치는 것은 더 있는 칩이 아니므로, 넘침 폭이 아니라 마지막 칩의 자리로 잰다. 칩이 바뀔 수 있어 그릴 때마다 다시 잰다
  */
-export function ChipFilter<T extends string>({ label, options, value, onChange, after, labelOf }: { label: string; options: readonly T[]; value: T | null; onChange: (v: T | null) => void; after?: ReactNode; labelOf?: (v: T) => string }) {
+/** 키보드로 간 포커스인지. `:focus-visible`을 모르는 브라우저(iOS Safari 15.3 이하)에서는 거짓 */
+function focusVisible(el: HTMLElement): boolean {
+  try {
+    return el.matches(":focus-visible");
+  } catch {
+    return false;
+  }
+}
+
+function useMoreMark(ref: RefObject<HTMLElement | null>): void {
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const update = () => {
+      const last = el.lastElementChild;
+      el.toggleAttribute("data-more", !!last && last.getBoundingClientRect().right > el.getBoundingClientRect().right + 1);
+    };
+    update();
+    const stop = observeWidth(el, update);
+    // 키보드로 간 칩을 흐린 끝 앞으로 가져온다(브라우저의 포커스 스크롤은 scroll-padding을 따르지 않는다). 마우스로 누를 때는 줄을 밀지 않는다(누르는 동안 칩이 움직이면 눌리지 않는다)
+    const reveal = (ev: Event) => {
+      const target = ev.target as HTMLElement;
+      if (focusVisible(target)) target.scrollIntoView({ block: "nearest", inline: "nearest" });
+    };
+    el.addEventListener("scroll", update, { passive: true });
+    el.addEventListener("focusin", reveal);
+    return () => {
+      stop();
+      el.removeEventListener("scroll", update);
+      el.removeEventListener("focusin", reveal);
+    };
+  });
+}
+
+/**
+ * 칩 고르기(카테고리·상태·종류 거르기). value가 null이면 첫 칩. after는 칩 줄 끝에 구분선 뒤로 붙는다(4.5단계 '안 읽은 것만').
+ * U2 4.3: 칩은 지금 목록에 있는 값만(options, lib/chips.ts가 만든다) 건수와 함께 보이고, 첫 칩은 allText와 전체 건수다.
+ * value가 options에 없으면 첫 칩이 골라진 것으로 보인다(부르는 쪽이 keptChip으로 상태도 돌린다)
+ */
+export function ChipFilter<T extends string>({ label, allText, total, totalKnown = true, options, value, onChange, after }: { label: string; allText: string; total: number; totalKnown?: boolean; options: readonly ChipOption<T>[]; value: T | null; onChange: (v: T | null) => void; after?: ReactNode }) {
+  const picked = keptChip(value, options);
+  const ref = useRef<HTMLDivElement>(null);
+  useMoreMark(ref);
   return (
-    <div className="chips" role="group" aria-label={label}>
-      <button type="button" className={value === null ? "on" : ""} aria-pressed={value === null} onClick={() => onChange(null)}>
-        전체
+    <div ref={ref} className="chips" role="group" aria-label={label}>
+      <button type="button" className={picked === null ? "on" : ""} aria-pressed={picked === null} onClick={() => onChange(null)}>
+        {totalKnown ? countLabel(allText, total) : allText}
       </button>
       {options.map((o) => (
-        <button key={o} type="button" className={value === o ? "on" : ""} aria-pressed={value === o} onClick={() => onChange(o)}>
-          {labelOf ? labelOf(o) : o}
+        <button key={o.value} type="button" className={picked === o.value ? "on" : ""} aria-pressed={picked === o.value} onClick={() => onChange(o.value)}>
+          {o.label}
         </button>
       ))}
       {after && (

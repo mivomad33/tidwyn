@@ -24,6 +24,14 @@ const group = (page: Page, name: string) => page.locator("main .bgroup").filter(
 const heads = (row: Locator) => row.locator(".detail h4.h");
 const field = (row: Locator, label: string) => row.locator(".detail h4.h", { hasText: label }).locator("xpath=following-sibling::*[1]");
 const pick = (date: string, key: string) => found(date).find((x) => x.key === key)!;
+/** 항목 줄을 눌러 편다(U2 4.2-1: 처음에 접혀 있고 한 번에 하나만 펼친다) */
+async function expand(page: Page, key: string): Promise<Locator> {
+  const row = storyItem(page, key);
+  const btn = row.locator("button.item-btn");
+  await btn.click();
+  await expect(btn).toHaveAttribute("aria-expanded", "true");
+  return row;
+}
 
 test.describe("4.5-1 묶음", () => {
   test("세 묶음이 정해진 순서이고 탭 건수는 합이며 묶음마다 항목이 3건이다", async ({ page }) => {
@@ -71,8 +79,10 @@ test.describe("4.5-2 항목", () => {
   test("새 제품의 칸이 정해진 순서로 나오고 이슈와 출처가 링크로 간다", async ({ page }) => {
     const x = pick(b.three, "product-1");
     await page.goto(`/${b.three}#builder`);
-    const row = storyItem(page, x.key);
-    await expect(row.locator(".title")).toHaveText(`${x.name} ↗ (새 탭)`);
+    // U2 S9: 앱의 이름은 글자이고 원문은 펼친 칸의 출처로 연다
+    const row = await expand(page, x.key);
+    await expect(row.locator(".title")).toHaveText(x.name);
+    await expect(row.locator(".title a")).toHaveCount(0);
     await expect(heads(row)).toHaveText(["용도", "기존 도구와의 차이", "고른 이유", "관련 이슈", "출처"]);
     await expect(field(row, "용도")).toHaveText(x.purpose);
     await expect(field(row, "기존 도구와의 차이")).toHaveText(x.difference);
@@ -87,40 +97,46 @@ test.describe("4.5-2 항목", () => {
   test("뜨는 저장소는 라이선스, 관리 상태, 별 수와 증가량이 더해지고 값을 그대로 보인다", async ({ page }) => {
     const x = pick(b.three, "repo-1");
     await page.goto(`/${b.three}#builder`);
-    const row = storyItem(page, x.key);
+    const row = await expand(page, x.key);
     await expect(heads(row)).toHaveText(["용도", "기존 도구와의 차이", "고른 이유", "라이선스", "관리 상태", "별 수와 증가량", "출처"]);
     await expect(field(row, "라이선스")).toHaveText(x.repo!.license);
     await expect(field(row, "관리 상태")).toHaveText(repoUpkeepText(x.repo!));
     await expect(field(row, "별 수와 증가량")).toHaveText(repoStarsText(x.repo!));
     const link = field(row, "출처").getByRole("link");
     await expect(link).toHaveAttribute("href", `https://github.com/${x.name}`);
-    const name = row.getByRole("heading", { name: x.name }).getByRole("link");
-    await expect(name).toHaveAttribute("href", x.url);
-    await expect(name).toHaveAttribute("target", "_blank");
+    // U2 S9: 이름 링크 대신 출처 링크가 원문(지금 이름 링크와 같은 주소)을 새 탭으로 연다
+    await expect(row.locator(".title a")).toHaveCount(0);
+    await expect(link).toHaveAttribute("href", x.url);
     await expect(link).toContainText("GitHub");
     await expect(link).toHaveAttribute("target", "_blank");
   });
 
   test("라이선스 없음과 판별되지 않음을 그렇게 쓰고 경고색으로 칠하지 않는다. 릴리스 없음과 확인 못 함을 구별한다", async ({ page }) => {
     await page.goto(`/${b.three}#builder`);
-    const none = storyItem(page, "repo-2");
-    const unknown = storyItem(page, "repo-3");
-    await expect(field(none, "라이선스")).toHaveText("표시 없음");
-    await expect(field(unknown, "라이선스")).toHaveText("파일은 있으나 종류가 판별되지 않음");
-    await expect(field(none, "관리 상태")).toContainText("최근 릴리스 없음");
-    await expect(field(unknown, "관리 상태")).toContainText("최근 릴리스 확인 못 함");
+    // 펼침은 한 번에 하나(U2 4.2-1)라 하나씩 펴서 본다
+    await expand(page, "repo-1");
     const normal = await page.evaluate<string>(`getComputedStyle(document.querySelector('[id="story-repo-1"] .detail .p')).color`);
+    const none = await expand(page, "repo-2");
+    await expect(field(none, "라이선스")).toHaveText("표시 없음");
+    await expect(field(none, "관리 상태")).toContainText("최근 릴리스 없음");
     await expect(field(none, "라이선스")).toHaveCSS("color", normal);
+    const unknown = await expand(page, "repo-3");
+    await expect(field(unknown, "라이선스")).toHaveText("파일은 있으나 종류가 판별되지 않음");
+    await expect(field(unknown, "관리 상태")).toContainText("최근 릴리스 확인 못 함");
     await expect(field(unknown, "라이선스")).toHaveCSS("color", normal);
   });
 
   test("제보 링크는 항목을 가리키고, 읽음을 눌러도 날짜별 읽은 수는 그대로다", async ({ page }) => {
     const x = pick(b.three, "repo-1");
     await page.goto(`/${b.three}#builder`);
-    const row = storyItem(page, x.key);
+    const row = await expand(page, x.key);
     const report = row.getByRole("link", { name: /틀린 내용 알리기/ });
     expect(decodeURIComponent((await report.getAttribute("href"))!)).toContain(x.name);
     const toggle = row.locator("button.rd-btn");
+    // U2 4.2-1: 펼치면 뉴스 줄처럼 읽음이 된다. 읽음 버튼은 지금처럼 기록을 바꾼다
+    await expect(toggle).toHaveAttribute("aria-pressed", "true");
+    await toggle.click();
+    await expect(toggle).toHaveAttribute("aria-pressed", "false");
     await toggle.click();
     await expect(toggle).toHaveAttribute("aria-pressed", "true");
     await expect.poll(() => page.evaluate((k) => localStorage.getItem(k), READ_MARKS_KEY)).toContain(x.key);
@@ -133,6 +149,7 @@ test.describe("4.5-2 항목", () => {
   test("#repo-N 주소로 오면 탭이 열리고 그 항목이 보이며 읽음이 된다", async ({ page }) => {
     await page.goto(`/${b.three}#repo-3`);
     await expect(storyItem(page, "repo-3")).toBeInViewport();
+    await expect(storyItem(page, "repo-3").locator("button.item-btn")).toHaveAttribute("aria-expanded", "true");
     await expect(storyItem(page, "repo-3").locator("button.rd-btn")).toHaveAttribute("aria-pressed", "true");
     await expect(storyItem(page, "repo-2").locator("button.rd-btn")).toHaveAttribute("aria-pressed", "false");
   });
@@ -141,7 +158,9 @@ test.describe("4.5-2 항목", () => {
     const x = pick(b.three, "product-2");
     await page.goto(`/${b.three}#builder`);
     const fix = x.corrections![0]!;
+    // U2 4.2-2: '정정됨'은 접힌 줄에도 있고 사유는 펼친 칸에 있다
     await expect(storyItem(page, x.key).locator(".fix-mark")).toHaveText(`정정됨 · ${monthDay(fix.on)}`);
+    await expand(page, x.key);
     await expect(storyItem(page, x.key).locator(".detail")).toContainText(fix.reason);
     await expect(storyItem(page, "repo-1").locator(".fix-mark")).toHaveCount(1);
     await expect(page.locator("main .fix-mark")).toHaveCount(2);
@@ -213,10 +232,13 @@ test.describe("4.5-6 소개", () => {
 test.describe("4.5-7 좁은 폭", () => {
   test.use({ viewport: { width: 375, height: 812 } });
 
-  test("이름 링크는 누르는 높이가 44px 이상이다", async ({ page }) => {
+  // U2 S9: 앱에는 이름 링크가 없고 원문은 펼친 칸의 출처 링크로 연다. 그 링크의 누르는 높이가 44px 이상이다(C7)
+  test("원문으로 가는 출처 링크는 누르는 높이가 44px 이상이다", async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 800 });
     await page.goto(`/${b.three}#builder`);
-    const box = await page.locator(".bname-l").first().boundingBox();
+    await expect(page.locator("main .bname-l")).toHaveCount(0);
+    const x = pick(b.three, "product-1");
+    const box = await field(await expand(page, x.key), "출처").getByRole("link").first().boundingBox();
     expect(box!.height).toBeGreaterThanOrEqual(44);
   });
 
@@ -227,8 +249,8 @@ test.describe("4.5-7 좁은 폭", () => {
     await expectNoHorizontalScroll(page, "375px");
     const name = found(b.longKinds).find((x) => x.kind === "repo")!;
     const title = storyItem(page, name.key).locator(".title");
-    await expect(title).toHaveText(`${name.name} ↗ (새 탭)`);
-    const box = (await title.getByRole("link").boundingBox())!;
+    await expect(title).toHaveText(name.name);
+    const box = (await title.boundingBox())!;
     expect(box.x + box.width).toBeLessThanOrEqual(375);
     expect(box.height).toBeGreaterThan(60);
     await page.setViewportSize({ width: 320, height: 640 });

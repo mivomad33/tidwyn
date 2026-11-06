@@ -5,7 +5,7 @@
 import { createElement as h, Fragment } from "react";
 import { categoryVar } from "../lib/theme.ts";
 import { issuePath, schedulePath, schedulesPath } from "../lib/routes.ts";
-import { SCHEDULE_TAB_LABEL, chipDue, isUpcoming, issueRowDate, issueScheduleRows, nameLink, outcomeParts, scheduleDomId, weekRowDate } from "../lib/schedules.ts";
+import { SCHEDULE_TAB_LABEL, chipDue, isUpcoming, issueRowDate, issueScheduleRows, outcomeParts, sourceLink, scheduleDomId, weekRowDate } from "../lib/schedules.ts";
 import type { ScheduleChip, ScheduleItem, ScheduleLine, ScheduleOutcomeView, WeekSchedules } from "../lib/types.ts";
 import { yearOf } from "../lib/format.ts";
 import { MoreMark } from "./moreMark.ts";
@@ -26,14 +26,15 @@ export function OutcomeBadges({ outcome, today, Link }: { outcome: ScheduleOutco
   );
 }
 
-/** 일정 화면의 일정 한 줄: 대분류(색 글자), 이름(처음 근거 뉴스로), "이슈: <대표 이슈>"(이슈 페이지로), 결과 문구 */
+/** 일정 화면의 일정 한 줄: 대분류(색 글자), 이름(글자), 출처 링크(처음 근거로, S5), "이슈: <대표 이슈>"(이슈 페이지로), 결과 문구 */
 export function ScheduleRow({ item, today, Link, highlight }: { item: ScheduleItem; today: string; Link: LinkLike; highlight: boolean }) {
-  const to = nameLink(item);
+  const src = sourceLink(item);
   return h(
     "li",
     { id: scheduleDomId(item.id), tabIndex: -1, className: highlight ? "ev hl" : "ev" },
     h("div", { className: "cat", style: { color: categoryVar(item.major) } }, item.major),
-    to ? h(Link, { to, className: "t" }, item.name) : h("span", { className: "t" }, item.name),
+    h("span", { className: "t" }, item.name),
+    src ? h("small", null, h(Link, { to: src.to, className: "text-link" }, src.text, MoreMark())) : null,
     item.issue ? h("small", null, "이슈: ", h(Link, { to: issuePath(item.issue.id), className: "text-link" }, item.issue.name)) : null,
     h(OutcomeBadges, { outcome: item.outcome, today, Link }),
   );

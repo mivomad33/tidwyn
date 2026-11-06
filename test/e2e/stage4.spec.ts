@@ -126,39 +126,46 @@ test.describe("인물·기관·국가 목록", () => {
   test("종류 칩으로 거르면 주소의 kind가 바뀌고 그 종류만 남는다", async ({ page }) => {
     await page.goto("/entities");
     const kinds = page.getByRole("group", { name: "종류" });
-    await expect(kinds.getByRole("button", { name: "전체" })).toHaveAttribute("aria-pressed", "true");
+    // 첫 칩은 '모든 종류 N', 칩마다 건수(U2 4.3)
+    await expect(kinds.getByRole("button", { name: /^모든 종류 \d+$/ })).toHaveAttribute("aria-pressed", "true");
     await expect(page.locator("ul.list > li.item").first()).toBeVisible();
     for (const [label, kind, value] of [
       ["인물", "인물", "person"],
       ["기관", "기관", "org"],
       ["국가", "국가", "country"],
     ] as const) {
-      await kinds.getByRole("button", { name: label }).click();
+      await kinds.getByRole("button", { name: new RegExp(`^${label} \\d+$`) }).click();
       await expect(page).toHaveURL(`/entities?kind=${value}`);
-      await expect(kinds.getByRole("button", { name: label })).toHaveAttribute("aria-pressed", "true");
+      await expect(kinds.getByRole("button", { name: new RegExp(`^${label} \\d+$`) })).toHaveAttribute("aria-pressed", "true");
       await expect(page.locator("ul.list > li.item").first()).toBeVisible();
       const cats = await page.locator("ul.list > li.item .cat").allInnerTexts();
       for (const c of cats) expect(c.startsWith(`${kind} · `), c).toBe(true);
     }
-    await kinds.getByRole("button", { name: "전체" }).click();
+    await kinds.getByRole("button", { name: /^모든 종류/ }).click();
     await expect(page).toHaveURL("/entities");
   });
 
   test("주소의 kind로 직접 열면 그 종류로 걸러져 있고, 모르는 값은 전체다", async ({ page }) => {
     await page.goto("/entities?kind=country");
     const kinds = page.getByRole("group", { name: "종류" });
-    await expect(kinds.getByRole("button", { name: "국가" })).toHaveAttribute("aria-pressed", "true");
+    await expect(kinds.getByRole("button", { name: /^국가 \d+$/ })).toHaveAttribute("aria-pressed", "true");
     await expect(page.locator("ul.list > li.item").first()).toContainText(info.entities.country.name);
     await page.goto("/entities?kind=unknown");
-    await expect(kinds.getByRole("button", { name: "전체" })).toHaveAttribute("aria-pressed", "true");
+    await expect(kinds.getByRole("button", { name: /^모든 종류 \d+$/ })).toHaveAttribute("aria-pressed", "true");
     await page.getByRole("link", { name: new RegExp(info.entities.org.name) }).first().click();
     await expect(page).toHaveURL(`/entities/${info.entities.org.id}`);
   });
 
-  test("걸러진 결과가 없으면 빈 상태 글을 보인다", async ({ page }) => {
+  // U2 4.3-3(S12): 0건인 종류로 들어오면 빈 상태 대신 첫 칩으로 돌아가고 주소도 바뀐다. 0건인 종류는 칩이 없다
+  test("걸러진 결과가 없는 종류로 들어오면 첫 칩으로 돌아가고 그 종류 칩은 없다", async ({ page }) => {
     await fulfillData(page, "entity-list-person-0.json", { filter: "person", page: 0, pages: 1, total: 0, items: [] });
     await page.goto("/entities?kind=person");
-    await expect(page.getByText("이 종류에 해당하는 항목이 없다.")).toBeVisible();
+    const kinds = page.getByRole("group", { name: "종류" });
+    await expect(page).toHaveURL("/entities");
+    await expect(kinds.getByRole("button", { name: /^모든 종류 \d+$/ })).toHaveAttribute("aria-pressed", "true");
+    await expect(kinds.getByRole("button", { name: /^인물/ })).toHaveCount(0);
+    await expect(page.locator("ul.list > li.item").first()).toBeVisible();
+    await expect(page.getByText("이 종류에 해당하는 항목이 없다.")).toHaveCount(0);
   });
 
   test("대상이 하나도 없으면 전체 목록이 빈 상태 글을 보인다", async ({ page }) => {

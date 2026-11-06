@@ -67,7 +67,7 @@ import { groupCards, indicatorRefYear, readingDateText, readingValueText } from 
 import { MENU, SKIP_LABEL } from "./src/lib/menu.ts";
 import { PRIVACY_TITLE, PRIVACY_UPDATED, SITE_URL, shortReportHref, storyReportHref } from "./src/lib/policy.ts";
 import { BUILDER_HASH, DEMAND_HASH, adjacentDates, briefPath, entityPath, indicatorPath, issuePath, privacyPath } from "./src/lib/routes.ts";
-import { SCHEDULE_META, chipDue, nameLink } from "./src/lib/schedules.ts";
+import { SCHEDULE_META, chipDue, sourceLink } from "./src/lib/schedules.ts";
 import { categoryVar } from "./src/lib/theme.ts";
 
 // ---- 사이트 데이터 읽기 ----
@@ -430,12 +430,13 @@ function TermsBody({ input }: { input: SiteInput }) {
 }
 
 function ScheduleRow({ item }: { item: ScheduleItem }) {
-  const to = nameLink(item);
+  const src = sourceLink(item);
   return h(
     "li",
     { className: "ev" },
     h(CategoryText, { major: item.major }, `${item.major} · ${chipDue(item.due)}`),
-    to ? h("a", { href: to, className: "t" }, item.name) : h("span", { className: "t" }, item.name),
+    h("span", { className: "t" }, item.name),
+    src ? h("small", null, h("a", { href: src.to, className: "text-link" }, src.text, h(MoreMark))) : null,
     item.issue ? h("small", null, "이슈: ", h("a", { href: issuePath(item.issue.id), className: "text-link" }, item.issue.name)) : null,
   );
 }

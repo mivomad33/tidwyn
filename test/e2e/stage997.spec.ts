@@ -21,7 +21,16 @@ const dayOf = (date: string): DayList => json<MonthList>(siteFiles.list(date.sli
 
 const tabs = (page: Page) => page.getByRole("navigation", { name: "섹션" });
 const demandTab = (page: Page, count: number) => tabs(page).getByRole("button", { name: `수요 ${count}`, exact: true });
-const rows = (page: Page) => page.locator("main .item:has(.detail h4)");
+/** 수요 항목 줄(U2 4.2-1: 처음에 접혀 있어 펼친 칸이 없다) */
+const rows = (page: Page) => page.locator("main li.bitem");
+/** 항목 줄을 펼친다(U2 4.2-1: 한 번에 하나). 이미 펼쳐져 있으면(링크로 들어온 항목, 4.2-4) 그대로 둔다 */
+async function expand(page: Page, key: string): Promise<Locator> {
+  const row = storyItem(page, key);
+  const btn = row.locator("button.item-btn");
+  if ((await btn.getAttribute("aria-expanded")) !== "true") await btn.click();
+  await expect(btn).toHaveAttribute("aria-expanded", "true");
+  return row;
+}
 const heads = (row: Locator) => row.locator(".detail h4.h");
 const field = (row: Locator, label: string) => row.locator(".detail h4.h", { hasText: new RegExp(`^${label}$`) }).locator("xpath=following-sibling::*[1]");
 
@@ -29,7 +38,7 @@ const field = (row: Locator, label: string) => row.locator(".detail h4.h", { has
 const wantHeads = (x: SiteFlowItem) => ["요지", "잇는 이유", "근거", "근거 수준", ...(x.aux.length ? ["보조 근거"] : []), ...(x.continues ? ["이어짐"] : []), ...(x.issue ? ["관련 이슈"] : []), "비교 기간", "출처"];
 
 async function expectItem(page: Page, x: SiteFlowItem): Promise<void> {
-  const row = storyItem(page, x.key);
+  const row = await expand(page, x.key);
   await expect(row.locator(".cat")).toHaveText(flowCategoryText(x));
   await expect(row.locator(".title")).toHaveText(x.title);
   await expect(heads(row)).toHaveText(wantHeads(x));
@@ -66,9 +75,11 @@ for (const width of [1440, 375]) {
       await expect(rows(page)).toHaveCount(3);
       await expect(page.locator("main .flow.note").first()).toContainText(FLOW_CAVEAT);
       await expect(page.getByRole("link", { name: DEMAND_ABOUT_LINK })).toHaveAttribute("href", `/about#${DEMAND_ABOUT_HASH}`);
-      for (const x of itemsOf(d.three)) await expectItem(page, x);
+      for (const x of itemsOf(d.three)) {
+        await expectItem(page, x);
+        await expectNoHorizontalScroll(page, `3건 ${x.key}`);
+      }
       await expect(page.locator("main")).not.toContainText("이 날 비교에 넣지 못한 소스");
-      await expectNoHorizontalScroll(page, "3건");
     });
 
     test("0건, 기준 부족, 받지 못함은 상태 문구 하나이고 받지 못함만 오류 글자색이다", async ({ page }) => {
@@ -96,17 +107,24 @@ for (const width of [1440, 375]) {
       const link = field(storyItem(page, x.key), "이어짐").getByRole("link");
       await expect(link).toHaveText(flowContinuesText(d.origin));
       await expect(link).toContainText(monthDay(d.origin));
+      // U2 design-check: 이미 44px 칸인 링크라 글 링크의 아래 여백을 더하지 않아, 문단은 한 줄 높이 그대로다
+      const para = (await link.evaluate(new Function("e", 'const p = e.closest("p"); return { h: p.getBoundingClientRect().height, lh: parseFloat(getComputedStyle(p).lineHeight) };') as () => unknown)) as { h: number; lh: number };
+      expect(para.h).toBeLessThanOrEqual(para.lh + 1);
       await link.click();
       await expect(page).toHaveURL(`/${d.origin}#demand-1`);
       await expect(storyItem(page, "demand-1")).toBeInViewport();
       await expect(storyItem(page, "demand-1")).toBeFocused();
+      // U2 4.2-4: 링크로 들어온 앞 항목은 펼친 채다
+      await expect(storyItem(page, "demand-1").locator("button.item-btn")).toHaveAttribute("aria-expanded", "true");
     });
 
     test("정정된 항목은 대분류 줄에 정정됨과 요지 아래 바뀐 내용이 있다", async ({ page }) => {
       await page.goto(`/${d.corrected}#demand`);
       const [x] = itemsOf(d.corrected) as [SiteFlowItem];
       const row = storyItem(page, x.key);
+      // U2 4.2-2: '정정됨'은 접힌 줄에도 있고 바뀐 내용은 펼친 칸에 있다
       await expect(row.locator(".fix-mark")).toHaveText(`정정됨 · ${monthDay(x.corrections![0]!.on)}`);
+      await expand(page, x.key);
       await expect(row.locator(".detail .fix")).toContainText(x.corrections![0]!.reason);
       await expectItem(page, x);
     });
@@ -114,8 +132,11 @@ for (const width of [1440, 375]) {
     test("긴 글: 상한 길이의 글과 긴 이름이 잘리지 않고 가로 스크롤이 없다", async ({ page }) => {
       await page.goto(`/${d.long}#demand`);
       await expect(rows(page)).toHaveCount(3);
-      for (const x of itemsOf(d.long)) await expectItem(page, x);
-      await expectNoHorizontalScroll(page, "긴 글");
+      // 펼침은 한 번에 하나라(U2 4.2-1) 항목마다 펴서 가로 스크롤을 본다
+      for (const x of itemsOf(d.long)) {
+        await expectItem(page, x);
+        await expectNoHorizontalScroll(page, `긴 글 ${x.key}`);
+      }
     });
 
     test("탭 일곱 개인 날: 한 줄에 들어가고 가로 스크롤이 없다", async ({ page }) => {
@@ -139,8 +160,10 @@ test.describe("주소와 탭 없음", () => {
     await expect(demandTab(page, 3)).toHaveAttribute("aria-pressed", "true");
     await expect(storyItem(page, "demand-2")).toBeInViewport();
     await expect(storyItem(page, "demand-2")).toBeFocused();
+    await expect(storyItem(page, "demand-2").locator("button.item-btn")).toHaveAttribute("aria-expanded", "true");
     await page.reload();
     await expect(storyItem(page, "demand-2")).toBeInViewport();
+    await expect(storyItem(page, "demand-2").locator("button.item-btn")).toHaveAttribute("aria-expanded", "true");
   });
 
   test("기록이 없는 날과 꺼짐만 있는 날은 탭이 없고, 기억된 탭이 수요면 기본 탭으로 간다", async ({ page }) => {

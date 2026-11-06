@@ -377,7 +377,7 @@ test.describe("4.4 '안 읽은 것만'", () => {
 
     // 카테고리 + 안 읽은 것만: 안 읽은 그 분류 뉴스만
     const major = firstSection.stories.find((s) => s.key === firstTops[0]!.key)!.category.major;
-    await page.getByRole("group", { name: "카테고리" }).getByRole("button", { name: major, exact: true }).click();
+    await page.getByRole("group", { name: "카테고리" }).getByRole("button", { name: new RegExp(`^${major} \\d+$`) }).click();
     await unreadChip(page).click();
     const expected = firstSection.stories.filter((s) => s.category.major === major && !read.includes(s)).map((s) => `story-${s.key}`).sort();
     const rows = page.locator("main li[id^=story-]");

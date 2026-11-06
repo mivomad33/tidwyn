@@ -93,12 +93,28 @@ export function BuilderBody({ item, date, Link }: { item: SiteBuilderItem; date:
   );
 }
 
+/** 접힌 줄의 칸 하나(U2 4.2-2): 흐린 칸 이름과 값을 한 줄로. 값이 '없음'이면 그리지 않는다(S8) */
+export function FoldField({ label, children }: { label: string; children?: ReactNode }) {
+  if (children === null || children === undefined || children === "없음") return null;
+  return h("span", { className: "fold-f" }, h("span", { className: "fold-k" }, label), " ", children);
+}
+
+/** 도구 변화의 접힌 줄 칸: '지금 할 일', 기한(글자만, 링크는 펼친 칸) */
+export function BuilderFolded({ item, date }: { item: SiteBuilderItem; date: string }) {
+  return h(Fragment, null, h(FoldField, { label: "지금 할 일" }, item.action), h(FoldField, { label: "기한" }, item.due ? builderDueText(item.due, yearOf(date)) : null));
+}
+
+/** 새 제품·뜨는 저장소의 접힌 줄 칸: 용도(S9) */
+export function DiscoveryFolded({ item }: { item: SiteDiscoveryItem }) {
+  return h(FoldField, { label: "용도" }, item.purpose);
+}
+
 /** 새 제품·뜨는 저장소의 정정 표시 자리. 정정이 없으면 그리지 않는다 */
 export function DiscoveryMark({ item }: { item: SiteDiscoveryItem }) {
   return item.corrections ? h("span", { className: "cat-row bmark" }, h(FixMark, { fixes: item.corrections })) : null;
 }
 
-/** 항목 이름. 칸에서 가장 큰 글자라 누르면 출처로 간다 */
+/** 항목 이름(정적 HTML). 칸에서 가장 큰 글자라 누르면 출처로 간다. 앱은 줄 전체가 펼침 버튼이라 이름을 글자로 쓰고 출처는 펼친 칸에 있다(U2 S9) */
 export function DiscoveryName({ item }: { item: SiteDiscoveryItem }) {
   return h("a", { className: "bname-l", href: item.url, target: "_blank", rel: "noopener noreferrer" }, item.name, h(NewTabMark));
 }

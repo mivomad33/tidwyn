@@ -101,9 +101,10 @@ export function stateForHash(day: DayList, key: string | null, current: BriefVie
   // 그 날짜에 보이는 영상이 없으면 화면이 첫 섹션 탭을 보인다(방문자의 오늘 날짜로 정하므로 여기서는 알 수 없다)
   if (key === VIDEO_HASH) return { ...current, section: VIDEO_TAB, expanded: null };
   // 9.8단계: `#builder`와 빌더 탭 항목 키(`#builder-<순서>`, 9.9단계 `#product-<순서>`, `#repo-<순서>`)는 빌더 탭으로 연다. 기록이 없는 날짜면 화면이 첫 섹션 탭을 보인다
-  if (key === BUILDER_HASH || isBuilderTabKey(key)) return { ...current, section: BUILDER_TAB, expanded: null };
+  // U2 4.2-4: 항목 키면 그 항목을 펼쳐 연다(항목이 그 날짜에 있는지는 화면이 파일을 받은 뒤 본다)
+  if (key === BUILDER_HASH || isBuilderTabKey(key)) return { ...current, section: BUILDER_TAB, expanded: isBuilderTabKey(key) ? key : null };
   // 9.97단계: `#demand`와 `#demand-<순서>`는 수요 탭으로 연다
-  if (key === DEMAND_HASH || isFlowItemKey(key)) return { ...current, section: DEMAND_TAB, expanded: null };
+  if (key === DEMAND_HASH || isFlowItemKey(key)) return { ...current, section: DEMAND_TAB, expanded: isFlowItemKey(key) ? key : null };
   const sections = daySections(day);
   const keep = current.section === ALL_TAB || current.section === VIDEO_TAB || current.section === BUILDER_TAB || current.section === DEMAND_TAB || sections.includes(current.section);
   const base = keep ? current : { ...current, section: sections[0]! };

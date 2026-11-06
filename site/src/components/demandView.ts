@@ -3,7 +3,7 @@
 import { createElement as h, Fragment, type ReactNode } from "react";
 import { COVERAGE_COLUMNS, FIELD_COVERAGE } from "../../../src/demandCoverage.ts";
 import { COMMUNITY_GROUPS, COMMUNITY_INFO, COMMUNITY_LEVEL_MEANINGS, COMMUNITY_MISSING_MEANINGS, COMMUNITY_MISSING_NAMES, COMMUNITY_MISSING_REASONS, FLOW_AI_NOTE, FLOW_AI_NOTE_COMMUNITY, FLOW_CAVEAT, SOURCE_STATE_NAMES, type SourceState, FLOW_TURNING_TEXT, GROUP_INFO, LEVEL_LABELS, LEVEL_MEANINGS, OFFICIAL_GROUPS, AUX_GROUPS, FLOW_LEVELS, fieldLabel } from "../../../src/demandFlowTypes.ts";
-import { Field, IssueField, MutedCatLine, SourcesAndReport, zeroState } from "./builderView.ts";
+import { Field, FoldField, IssueField, MutedCatLine, SourcesAndReport, zeroState } from "./builderView.ts";
 import { FixNotes } from "./correctionView.ts";
 import type { LinkLike } from "./termView.ts";
 import { DEMAND_ABOUT_HASH, DEMAND_ABOUT_LINK, DEMAND_INTRO, DEMAND_MISSING_LABEL, TOP_LIST_NOTE, demandMissingText, demandZeroText, flowAuxText, flowCategoryText, flowCommunityHead, flowCommunityNumbers, flowContinuesText, flowLevelText, flowPeriod, flowUnitHead, flowUnitNumbers, flowUnitPeriod } from "../lib/demand.ts";
@@ -18,6 +18,11 @@ export function DemandIntro({ Link }: { Link: LinkLike }) {
 /** 갈래·분야 줄과 정정 표시 */
 export function DemandCategoryLine({ item }: { item: SiteFlowItem }) {
   return h(MutedCatLine, { text: flowCategoryText(item), fixes: item.corrections });
+}
+
+/** 수요 흐름의 접힌 줄 칸: 요지, 근거 수준(U2 4.2-2) */
+export function DemandFolded({ item }: { item: SiteFlowItem }) {
+  return h(Fragment, null, h(FoldField, { label: "요지" }, item.summary), h(FoldField, { label: "근거 수준" }, flowLevelText(item.level, item.communityConfirmed === true)));
 }
 
 /** 근거 줄: 소스마다 한 줄로 이름, 숫자, 창 기간 */

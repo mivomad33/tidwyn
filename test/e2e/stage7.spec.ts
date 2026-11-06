@@ -50,8 +50,8 @@ test.describe("4.7-1 브리프의 '영상' 탭", () => {
     const kr = count((x) => x.bundle === "kr");
     const us = count((x) => x.bundle === "us");
     const ai = count((x) => x.bundle.startsWith("ai"));
-    await expect(chipGroup(page).getByRole("button")).toHaveText(["전체", `한국 ${kr}`, `미국 ${us}`, `AI ${ai}`]);
-    await expect(chipGroup(page).getByRole("button", { name: "전체" })).toHaveAttribute("aria-pressed", "true");
+    await expect(chipGroup(page).getByRole("button")).toHaveText([`모든 영상 ${vids.length}`, `한국 ${kr}`, `미국 ${us}`, `AI ${ai}`]);
+    await expect(chipGroup(page).getByRole("button", { name: /^모든 영상/ })).toHaveAttribute("aria-pressed", "true");
     await expect(rows(page)).toHaveCount(vids.length);
     // 전체는 한국 → 미국 → AI 한국어 → AI 영어 순
     await expect(rows(page).locator(".tag")).toHaveText(vids.map((x) => ({ kr: "한국", us: "미국", "ai-ko": "AI · 한국어", "ai-en": "AI · 영어" })[x.bundle]));
@@ -73,14 +73,14 @@ test.describe("4.7-1 브리프의 '영상' 탭", () => {
     await expect(rows(page)).toHaveCount(0);
   });
 
-  test("영상 탭은 새로 고쳐도 이어지고(칩은 '전체'로), 영상이 없는 날짜는 첫 섹션 탭을, 한 묶음 날짜는 그 칩만 보인다", async ({ page }) => {
+  test("영상 탭은 새로 고쳐도 이어지고(칩은 첫 칩 '모든 영상'으로, U2 4.3-2), 영상이 없는 날짜는 첫 섹션 탭을, 한 묶음 날짜는 그 칩만 보인다", async ({ page }) => {
     await page.goto(`/${LATEST}`);
     await videoTab(page).click();
     await chipGroup(page).getByRole("button", { name: /^한국/ }).click();
     expect(await page.evaluate((k) => localStorage.getItem(k), BRIEF_TAB_KEY)).toBe("영상");
     await page.reload();
     await expect(videoTab(page)).toHaveAttribute("aria-pressed", "true");
-    await expect(chipGroup(page).getByRole("button", { name: "전체" })).toHaveAttribute("aria-pressed", "true");
+    await expect(chipGroup(page).getByRole("button", { name: /^모든 영상/ })).toHaveAttribute("aria-pressed", "true");
     await expect(rows(page)).toHaveCount(vids.length);
 
     const none = days.get(v.noVideoDate!)!;
@@ -93,7 +93,7 @@ test.describe("4.7-1 브리프의 '영상' 탭", () => {
     const single = json<DayVideos>(`videos-${v.oneBundleDate}.json`).videos;
     await page.goto(`/${v.oneBundleDate}`);
     await expect(videoTab(page, single.length)).toHaveAttribute("aria-pressed", "true");
-    await expect(chipGroup(page).getByRole("button")).toHaveText(["전체", `한국 ${single.length}`]);
+    await expect(chipGroup(page).getByRole("button")).toHaveText([`모든 영상 ${single.length}`, `한국 ${single.length}`]);
     const zero = json<DayVideos>(`videos-${v.zeroBundleDate}.json`).videos;
     await page.goto(`/${v.zeroBundleDate}`);
     await expect(chipGroup(page).getByRole("button", { name: /^미국/ })).toHaveCount(0);
@@ -142,7 +142,7 @@ test.describe("4.7-1 브리프의 '영상' 탭", () => {
     await videoTab(page).focus();
     await page.keyboard.press("Enter");
     await expect(videoTab(page)).toHaveAttribute("aria-pressed", "true");
-    await chipGroup(page).getByRole("button", { name: "전체" }).focus();
+    await chipGroup(page).getByRole("button", { name: /^모든 영상/ }).focus();
     await page.keyboard.press("Tab");
     await expect(chipGroup(page).getByRole("button", { name: /^한국/ })).toBeFocused();
     await page.keyboard.press("Space");

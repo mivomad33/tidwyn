@@ -120,15 +120,15 @@ export function isPlainClick(e: MouseEvent<HTMLAnchorElement>): boolean {
   return !target || target === "_self";
 }
 
-type LinkProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "href"> & { to: string; replace?: boolean };
+type LinkProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "href"> & { to: string; replace?: boolean; state?: unknown };
 
-export function Link({ to, replace, onClick, ...rest }: LinkProps) {
+export function Link({ to, replace, state, onClick, ...rest }: LinkProps) {
   function handle(e: MouseEvent<HTMLAnchorElement>) {
     onClick?.(e);
     // onClick이 이동을 맡았으면(preventDefault) 다시 옮기지 않는다(isPlainClick이 본다)
     if (!isPlainClick(e)) return;
     e.preventDefault();
-    navigate(to, { replace });
+    navigate(to, { replace, state });
   }
   return <a href={to} onClick={handle} {...rest} />;
 }

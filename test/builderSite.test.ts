@@ -11,7 +11,7 @@ import { FIRST_SCREEN_BUDGET, measureBuilderScreens, measureOutput } from "../si
 import { BUILDER_TAB, briefTabs, parseBriefTab, stateForHash } from "../site/src/lib/brief.ts";
 import { dataUrl } from "../site/src/lib/paths.ts";
 import { createReadStore } from "../site/src/lib/readMarks.ts";
-import { nameLink } from "../site/src/lib/schedules.ts";
+import { sourceLink } from "../site/src/lib/schedules.ts";
 import { matchBuilderItems, parseHit } from "../site/src/lib/search.ts";
 import { addEmitted, insertBuilderItem, linkItemSchedule, setBuilderStatus } from "../src/builderStore.ts";
 import { builderItemKey } from "../src/builderTypes.ts";
@@ -109,12 +109,12 @@ describe("4.6 화면 규칙", () => {
     assert.equal(store.readCount(TARGET), 1);
   });
 
-  test("일정 이름 링크: 뉴스가 먼저고, 뉴스가 없으면 빌더 항목이다", () => {
+  test("일정 출처 링크: 뉴스가 먼저고, 뉴스가 없으면 빌더 항목이다", () => {
     const news = { date: "2026-10-01", key: "한국-top-1" };
     const item = { date: TARGET, key: "builder-1" };
-    assert.equal(nameLink({ first: null, builder: item }), `/${TARGET}#builder-1`);
-    assert.equal(nameLink({ first: news, builder: item }), `/2026-10-01#${encodeURIComponent(news.key)}`);
-    assert.equal(nameLink({ first: null }), null);
+    assert.equal(sourceLink({ first: null, builder: item })?.to, `/${TARGET}#builder-1`);
+    assert.equal(sourceLink({ first: news, builder: item })?.to, `/2026-10-01#${encodeURIComponent(news.key)}`);
+    assert.equal(sourceLink({ first: null }), null);
   });
 
   test("검색: 달 파일에서 맞는 항목을 고른다", () => {

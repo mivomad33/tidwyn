@@ -315,7 +315,7 @@ export function graphFromText(from: string, refYear?: string): string {
 // ---- 브리프 위 '이번 주 일정 | 지표' 상자(4.7-1) ----
 
 export type BoxTab = "week" | "indicators";
-/** 고른 탭을 기억하는 로컬 스토리지 키(읽은 기록 지우기 대상이 아니다, 정의는 browserKeys.ts). 접은 상태는 5단계 키(tidwyn.weekBox)를 그대로 쓴다 */
+/** 고른 탭을 기억하는 로컬 스토리지 키(읽은 기록 지우기 대상이 아니다, 정의는 browserKeys.ts). 상자의 펼침은 저장하지 않는다(U2 S6) */
 export { BOX_TAB_KEY } from "./browserKeys.ts";
 
 /** 기억한 탭. 없거나 모르는 값이면 null(그 날짜의 기본 탭) */

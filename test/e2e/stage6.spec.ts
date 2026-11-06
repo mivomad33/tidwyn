@@ -8,7 +8,6 @@ import type { Page } from "@playwright/test";
 import { INDICATOR_SITE_DATA, expect, expectNoHorizontalScroll, fulfillData, serverError, test, useIndicatorData } from "./base.ts";
 import { E2E_INDICATOR_INFO_FILE } from "./paths.ts";
 import { BOX_TAB_KEY, FRED_AGREEMENT, FRED_NOTICE, FRED_TERMS_URL, RELATED_FIRST, formatValue, visibleCards } from "../../site/src/lib/indicators.ts";
-import { WEEK_BOX_KEY } from "../../site/src/lib/schedules.ts";
 import type { DayList, IndicatorList, IssueChunk, IssueDetail, MonthList } from "../../src/siteTypes.ts";
 
 const TODAY = "2026-10-28";
@@ -50,6 +49,8 @@ const toggle = (page: Page) => page.locator(".week .box-toggle");
 test.describe("브리프 위 '이번 주 일정 | 지표' 상자", () => {
   test("탭을 바꾸면 지표 칩(브리프 날짜의 기준값)이 보이고, 칩·'지표 전체'를 누르면 지표 화면으로 간다", async ({ page }) => {
     await page.goto(`/${LATEST}`);
+    // U2 S6: 상자는 접힌 채 시작한다
+    await toggle(page).click();
     await expect(box(page)).toHaveAccessibleName("이번 주 일정과 지표");
     await expect(tab(page, `이번 주 일정 ${latest.week!.total}`)).toHaveAttribute("aria-selected", "true");
     await expect(box(page).locator(".wrow")).toHaveCount(Math.min(5, latest.week!.total));
@@ -67,12 +68,14 @@ test.describe("브리프 위 '이번 주 일정 | 지표' 상자", () => {
     await expect(page).toHaveURL(`/indicators/${first.id}`);
     await expect(page.getByRole("heading", { level: 1, name: first.name })).toBeVisible();
     await page.goto(`/${LATEST}`);
+    await toggle(page).click();
     await box(page).getByRole("link", { name: "지표 전체" }).click();
     await expect(page).toHaveURL("/indicators");
   });
 
   test("휴장일의 칩에는 그 값의 날짜가 작게 붙는다", async ({ page }) => {
     await page.goto(`/${iinfo.krHoliday}`);
+    await toggle(page).click();
     await expect(tab(page, "지표")).toBeVisible();
     if (await tab(page, "지표").getAttribute("aria-selected") !== "true") await tab(page, "지표").click();
     const usd = box(page).locator('a.ichip[href="/indicators/usdkrw"]');
@@ -80,8 +83,10 @@ test.describe("브리프 위 '이번 주 일정 | 지표' 상자", () => {
     await expect(usd.locator("small")).toHaveText(`${c.date.slice(5)} 값`);
   });
 
-  test("접고 펴며, 고른 탭과 접은 상태가 새로 고침·다른 날짜·읽은 기록 지우기 뒤에도 이어진다. 사이트 소개에 새 키 설명이 있다", async ({ page }) => {
+  // U2 S6: 펼침은 저장하지 않아 새로 고치거나 다른 날짜를 새로 열면 접힌 채 시작한다. 고른 탭은 그대로 이어진다
+  test("접고 펴며, 고른 탭은 새로 고침·다른 날짜·읽은 기록 지우기 뒤에도 이어지고 펼침은 새로 열면 접힘이다. 사이트 소개에 키 설명이 있다", async ({ page }) => {
     await page.goto(`/${LATEST}`);
+    await toggle(page).click();
     await tab(page, "지표").click();
     expect(await page.evaluate((k) => localStorage.getItem(k), BOX_TAB_KEY)).toBe("indicators");
     await toggle(page).click();
@@ -89,11 +94,11 @@ test.describe("브리프 위 '이번 주 일정 | 지표' 상자", () => {
     const c = latest.indicators![0]!;
     await expect(toggle(page)).toContainText(`이번 주 일정 ${latest.week!.total} · ${c.name} ${formatValue(c, c.value)}`);
     await expect(page.locator(".week.closed")).toHaveCount(1);
-    expect(await page.evaluate((k) => localStorage.getItem(k), WEEK_BOX_KEY)).toBe("closed");
+    await toggle(page).click();
     await page.reload();
     await expect(toggle(page)).toHaveAttribute("aria-expanded", "false");
     await page.goto("/about");
-    await expect(page.getByText("그 상자에서 고른 탭(일정·지표)도 이 브라우저에만 기억한다")).toBeVisible();
+    await expect(page.getByText("상자에서 고른 탭(일정·지표)도 이 브라우저에만 기억한다")).toBeVisible();
     page.once("dialog", (d) => void d.accept());
     await page.getByRole("button", { name: "읽은 기록 지우기" }).click();
     await page.goto(`/${otherDate}`);
@@ -105,6 +110,7 @@ test.describe("브리프 위 '이번 주 일정 | 지표' 상자", () => {
 
   test("키보드: 화살표로 탭을 고르고(보조 기술에 고른 탭을 알린다) Enter·Space로 접고 편다", async ({ page }) => {
     await page.goto(`/${LATEST}`);
+    await toggle(page).click();
     const weekTab = tab(page, /^이번 주 일정/);
     await weekTab.focus();
     await page.keyboard.press("ArrowRight");
@@ -124,6 +130,7 @@ test.describe("브리프 위 '이번 주 일정 | 지표' 상자", () => {
 
   test("일정이 없는 날짜에는 지표 탭만 보이고, 칩도 일정도 없으면 상자가 없다", async ({ page }) => {
     await page.goto(`/${noWeekDate}`);
+    await toggle(page).click();
     await expect(page.getByRole("tab")).toHaveCount(1);
     await expect(tab(page, "지표")).toHaveAttribute("aria-selected", "true");
     await expect(box(page)).toHaveAccessibleName("지표");
@@ -339,6 +346,7 @@ test.describe("375px 폭", () => {
   test.use({ viewport: { width: 375, height: 812 } });
   test("새 화면에 가로 스크롤이 없다(넘기는 칩은 상자 안에서만 넘긴다)", async ({ page }) => {
     await page.goto(`/${LATEST}`);
+    await toggle(page).click();
     await tab(page, "지표").click();
     await expect(page.locator(".ichip").first()).toBeVisible();
     const [sw, cw] = (await page.evaluate(`(() => { const el = document.querySelector(".ichips"); return [el.scrollWidth, el.clientWidth]; })()`)) as [number, number];

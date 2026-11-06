@@ -7,7 +7,7 @@ import path from "node:path";
 import type { Page, Route } from "@playwright/test";
 import { expect, expectNoHorizontalScroll, serverError, storyItem, storyUrl, test } from "./base.ts";
 import { E2E_SCHEDULE_DATA_DIR, E2E_SCHEDULE_INFO_FILE } from "./paths.ts";
-import { WEEK_BOX_KEY, SCHEDULE_VIEW_KEY, dayHeading, isUpcoming, outcomeParts } from "../../site/src/lib/schedules.ts";
+import { SCHEDULE_VIEW_KEY, dayHeading, isUpcoming, outcomeParts } from "../../site/src/lib/schedules.ts";
 import type { DayList, IssueChunk, MonthDetail, MonthList, ScheduleIndex, ScheduleItem, ScheduleMonth } from "../../src/siteTypes.ts";
 
 const TODAY = "2026-10-28";
@@ -65,12 +65,17 @@ test.describe("일정 화면: 목록", () => {
     await expect(page.getByText("날짜는 현지 기준")).toBeVisible();
     await expect(viewBtn(page, "목록")).toHaveAttribute("aria-pressed", "true");
     await expect(tabBtn(page, "다가오는 일정")).toHaveAttribute("aria-pressed", "true");
-    await expect(page.getByRole("group", { name: "대분류" }).getByRole("button")).toHaveText(["전체", ...index.majors]);
+    // U2 4.3: 첫 칩은 '모든 분야 N', 칩마다 건수(지금 목록에 있는 분야만)
+    const chipTexts = await page.getByRole("group", { name: "대분류" }).getByRole("button").allInnerTexts();
+    expect(chipTexts[0]).toMatch(/^모든 분야 \d+$/);
+    expect(chipTexts.slice(1).map((t) => t.replace(/ \d+$/, ""))).toEqual(index.majors.filter((m) => chipTexts.some((t) => t.startsWith(`${m} `))));
+    for (const t of chipTexts.slice(1)) expect(t).toMatch(/ \d+$/);
     const first = items.filter((x) => isUpcoming(x.due, TODAY) && x.due.length === 10).sort((a, b) => (a.due < b.due ? -1 : a.due > b.due ? 1 : a.id - b.id))[0]!;
     await expect(page.locator(".dh").first()).toHaveText(dayHeading(first.due, TODAY));
     await expect(page.locator(".ev").first()).toHaveId(`schedule-${first.id}`);
-    // 이름은 처음 근거 뉴스로 간다
-    await row(page, first.id).getByRole("link", { name: first.name }).click();
+    // U2 S5: 이름은 글자이고, '출처 뉴스 ›'가 처음 근거 뉴스로 간다
+    await expect(row(page, first.id).getByRole("link", { name: first.name })).toHaveCount(0);
+    await row(page, first.id).getByRole("link", { name: "출처 뉴스", exact: true }).click();
     await expect(page).toHaveURL(storyUrl(first.first!.date, first.first!.key));
   });
 
@@ -95,15 +100,17 @@ test.describe("일정 화면: 목록", () => {
   test("대분류 칩으로 거르고, 거른 결과가 없으면 빈 상태를 보인다", async ({ page }) => {
     const major = index.majors[0]!;
     await page.goto("/schedules");
-    await page.getByRole("group", { name: "대분류" }).getByRole("button", { name: major }).click();
+    await page.getByRole("group", { name: "대분류" }).getByRole("button", { name: new RegExp(`^${major} \\d+$`) }).click();
     await loadAll(page);
     await expect(page.locator(".ev .cat").filter({ hasNotText: major })).toHaveCount(0);
-    // 없는 대분류만 있는 색인으로 바꾸면 빈 상태
+    // 없는 대분류만 있는 색인으로 바꾸면 빈 상태(칩 건수는 색인으로 센다, U2 S2)
     await page.route("**/site-data/schedule-month-*.json", (route) => route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ month: "x", items: [] }) }));
     await page.goto("/schedules");
     await loadAll(page);
     await expect(page.getByText("다가오는 일정이 없다.")).toBeVisible();
-    await page.getByRole("group", { name: "대분류" }).getByRole("button", { name: major }).click();
+    // 이번 달은 그 달 파일로 세므로(0건이면 칩이 없다, U2 S12), 다음 달 이후에 있다고 색인이 세는 분야로 본다
+    const later = index.majors.find((m) => index.months.some((x) => x.month > TODAY.slice(0, 7) && (x.majors[m] ?? 0) > 0))!;
+    await page.getByRole("group", { name: "대분류" }).getByRole("button", { name: new RegExp(`^${later} \\d+$`) }).click();
     await loadAll(page);
     await expect(page.getByText("이 분류의 다가오는 일정이 없다.")).toBeVisible();
   });
@@ -303,6 +310,8 @@ test.describe("일정 주소", () => {
 test.describe("브리프 위 '이번 주 일정'", () => {
   test("한 문장 아래·칩 위에 최대 5줄, 줄을 누르면 그 일정으로 가고, '일정 전체'는 목록으로 간다", async ({ page }) => {
     await page.goto(`/${LATEST}`);
+    // U2 S6: 상자는 접힌 채 시작한다
+    await page.locator(".week-toggle").click();
     const box = page.getByRole("region", { name: "이번 주 일정" });
     await expect(box.locator(".wrow")).toHaveCount(Math.min(5, latestWeek.total));
     expect(latestWeek.total).toBeGreaterThan(5);
@@ -320,15 +329,19 @@ test.describe("브리프 위 '이번 주 일정'", () => {
     await page.goto(`/schedules`);
     await viewBtn(page, "달력").click();
     await page.goto(`/${LATEST}`);
+    await page.locator(".week-toggle").click();
     await box.getByRole("link", { name: "일정 전체" }).click();
     await expect(page).toHaveURL("/schedules?view=list");
     await expect(viewBtn(page, "목록")).toHaveAttribute("aria-pressed", "true");
   });
 
   // 6단계 4.7-1: '이번 주 일정' 상자가 '이번 주 일정 | 지표' 상자로 바뀌어, 제목 대신 오른쪽 접기 버튼(▴)으로 접고 접은 줄을 눌러 편다(지표가 없는 데이터)
-  test("접기 버튼으로 접고 접은 줄로 펴고(Enter·Space 포함), 접은 상태가 새로 고침·다른 날짜·읽은 기록 지우기 뒤에도 이어진다", async ({ page }) => {
+  // U2 S6: 상자는 접힌 채 시작하고 펼침은 저장하지 않는다(새로 고치면 다시 접힘)
+  test("접은 줄로 펴고 접기 버튼으로 접으며(Enter·Space 포함), 새로 고치면 접힌 채 시작한다", async ({ page }) => {
     await page.goto(`/${LATEST}`);
     const toggle = page.locator(".week .box-toggle");
+    await expect(toggle).toHaveAttribute("aria-expanded", "false");
+    await toggle.click();
     await expect(toggle).toHaveAttribute("aria-expanded", "true");
     await expect(page.getByRole("tab", { name: `이번 주 일정 ${latestWeek.total}` })).toHaveAttribute("aria-selected", "true");
     await toggle.click();
@@ -336,15 +349,11 @@ test.describe("브리프 위 '이번 주 일정'", () => {
     await expect(toggle).toHaveText(`이번 주 일정 ${latestWeek.total} ▾`);
     await expect(page.locator(".week.closed")).toHaveCount(1);
     await expect(page.locator(".wrow")).toHaveCount(0);
-    expect(await page.evaluate((k) => localStorage.getItem(k), WEEK_BOX_KEY)).toBe("closed");
+    await toggle.click();
+    await expect(toggle).toHaveAttribute("aria-expanded", "true");
     await page.reload();
     await expect(toggle).toHaveAttribute("aria-expanded", "false");
     await page.goto(`/${otherWeekDate}`);
-    await expect(toggle).toHaveAttribute("aria-expanded", "false");
-    await page.goto("/about");
-    page.once("dialog", (d) => void d.accept());
-    await page.getByRole("button", { name: "읽은 기록 지우기" }).click();
-    await page.goto(`/${LATEST}`);
     await expect(toggle).toHaveAttribute("aria-expanded", "false");
     await toggle.focus();
     await page.keyboard.press("Enter");
@@ -357,7 +366,8 @@ test.describe("브리프 위 '이번 주 일정'", () => {
     await expect(toggle).toHaveAttribute("aria-expanded", "true");
   });
 
-  test("그 주 일정이 없는 날짜에는 상자도 접은 줄도 없고, 저장할 수 없으면 펼친 채 오류가 없다", async ({ page }) => {
+  // U2 S6: 저장할 수 없어도 접힌 채 시작하고, 펴고 접는 데 오류가 없다
+  test("그 주 일정이 없는 날짜에는 상자도 접은 줄도 없고, 저장할 수 없어도 오류 없이 펴고 접는다", async ({ page }) => {
     expect(days.get(OLDEST)!.week).toBeUndefined();
     await page.goto(`/${OLDEST}`);
     await expect(page.locator(".headline")).toBeVisible();
@@ -367,6 +377,8 @@ test.describe("브리프 위 '이번 주 일정'", () => {
     });
     await page.goto(`/${LATEST}`);
     const toggle = page.locator(".week .box-toggle");
+    await expect(toggle).toHaveAttribute("aria-expanded", "false");
+    await toggle.click();
     await expect(toggle).toHaveAttribute("aria-expanded", "true");
     await toggle.click();
     await expect(toggle).toHaveAttribute("aria-expanded", "false");
