@@ -27,3 +27,7 @@ docs/specs/*/design/explore/research/refs/
 !/docs/specs/*/design/explore/round-*/summary.md
 !/docs/specs/*/design/explore/research/
 !/docs/specs/*/design/explore/research/research.md
+
+# UI/UX 감사의 촬영 결과와 조사 원본(지어낸 데이터라도 용량이 크고 레퍼런스 사본이 섞인다)
+docs/ui-ux-audit/*/shots/
+docs/ui-ux-audit/*/raw/
