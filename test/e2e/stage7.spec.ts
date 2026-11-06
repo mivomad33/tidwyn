@@ -1,5 +1,5 @@
 // 7단계 화면(E2E): 브리프의 '영상' 탭(칩 거르기, 새로 고침·영상 없는 날짜, 링크, 썸네일 실패, 키보드), 이슈 페이지의 '관련 영상'
-// ("M월 D일 추천", 더 보기, 흡수된 이슈), 바닥글의 개인정보 처리방침과 그 페이지(직접 열기·새로 고침), 30일 지난 영상 숨기기(시계 고정), 375px 폭.
+// ("M월 D일 브리프 영상", 더 보기, 흡수된 이슈), 바닥글의 개인정보 처리방침과 그 페이지(직접 열기·새로 고침), 30일 지난 영상 숨기기(시계 고정), 375px 폭.
 // 데이터는 모두 지어낸 것이다(test/e2e/prepare.ts, 영상의 받은 날은 끝 날짜 기준). 브라우저 시계는 base.ts가 끝 날짜에 고정한다.
 import fs from "node:fs";
 import path from "node:path";
@@ -57,7 +57,7 @@ test.describe("4.7-1 브리프의 '영상' 탭", () => {
     await expect(rows(page).locator(".tag")).toHaveText(vids.map((x) => ({ kr: "한국", us: "미국", "ai-ko": "AI · 한국어", "ai-en": "AI · 영어" })[x.bundle]));
     await expect(rows(page).first().locator(".why")).toContainText("추천 이유");
     const src = page.locator("main p.vsrc");
-    await expect(src).toHaveText("영상 정보: YouTube · YouTube 이용약관 (새 탭) · 추천 이유, 요약, 구간 정리는 Tidwyn이 썼습니다.");
+    await expect(src).toHaveText("영상 정보: YouTube · YouTube 이용약관 ↗ (새 탭) · 추천 이유, 요약, 구간 정리는 Tidwyn이 썼습니다.");
     await expect(src.getByRole("link")).toHaveAttribute("href", YOUTUBE_TERMS_URL);
 
     await chipGroup(page).getByRole("button", { name: `AI ${ai}` }).click();
@@ -165,7 +165,7 @@ test.describe("4.7-2 이슈 페이지의 '관련 영상'", () => {
     const section = page.locator("section", { has: page.getByRole("heading", { name: "관련 영상" }) });
     await expect(section.locator("li.vrow")).toHaveCount(5);
     await expect(section.locator(".tag")).toHaveCount(0);
-    await expect(section.locator(".vrec").first()).toHaveText(`${Number(many.videoRefs![0]!.date.slice(5, 7))}월 ${Number(many.videoRefs![0]!.date.slice(8))}일 추천`);
+    await expect(section.locator(".vrec").first()).toHaveText(`${Number(many.videoRefs![0]!.date.slice(5, 7))}월 ${Number(many.videoRefs![0]!.date.slice(8))}일 브리프 영상`);
     await expect(section.locator("p.vsrc").getByRole("link", { name: /YouTube 이용약관/ })).toHaveAttribute("href", YOUTUBE_TERMS_URL);
     const more = section.getByRole("button", { name: `더 보기 (${many.videoRefs!.length - 5})` });
     await more.focus();
@@ -174,7 +174,7 @@ test.describe("4.7-2 이슈 페이지의 '관련 영상'", () => {
     await expect(section.locator("li.vrow").nth(5).locator("a.vlink")).toBeFocused();
   });
 
-  test("'M월 D일 추천'을 누르면 그 날짜 브리프의 영상 탭이 열린다", async ({ page }) => {
+  test("'M월 D일 브리프 영상'을 누르면 그 날짜 브리프의 영상 탭이 열린다", async ({ page }) => {
     await page.goto(`/issues/${one.id}`);
     const date = one.videoRefs![0]!.date;
     await page.locator("main .vrec").first().click();

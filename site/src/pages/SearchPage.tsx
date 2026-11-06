@@ -1,7 +1,7 @@
 // 검색(4.3-3, P6, 4단계 4.6-4). Pagefind가 고른 묶음 레코드(날짜·이슈·대상·용어 묶음)에서 맞는 것을 하나씩 되찾아
 // "인물·기관·국가", "용어", "이슈", "뉴스", "빌더", "수요"로 나눠 보인다.
 import { useEffect, useRef, useState, type FormEvent } from "react";
-import { BackLink, Empty, ErrorState, Layout, Loading, NewsTitle, ReadCheck, useFocusNewRow, useTitle } from "../components/common.tsx";
+import { BriefBackLink, Empty, ErrorState, Layout, Loading, NewsTitle, ReadCheck, useFocusNewRow, useTitle } from "../components/common.tsx";
 import { loadJson } from "../data.ts";
 import { monthDayWeekday } from "../lib/format.ts";
 import { dataUrl } from "../lib/paths.ts";
@@ -143,7 +143,7 @@ export function SearchPage({ q }: { q: string }) {
   }
 
   return (
-    <Layout left={<BackLink to="/" label="브리프" />}>
+    <Layout left={<BriefBackLink />}>
       <h1 className="page-title pad">검색</h1>
       <form role="search" className="search-form" onSubmit={submit}>
         <label htmlFor="q" className="sr-only">

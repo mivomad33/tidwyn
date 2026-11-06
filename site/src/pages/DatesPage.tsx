@@ -1,5 +1,5 @@
 // 날짜 목록(4.2-1): 저장된 모든 날짜를 최근 순, 달별로 묶어 보인다. 4.5단계: 날짜마다 읽은 정도(4.5-1)
-import { BackLink, Empty, ErrorState, Layout, Loading, useTitle } from "../components/common.tsx";
+import { BriefBackLink, Empty, ErrorState, Layout, Loading, useTitle } from "../components/common.tsx";
 import { retry, useResource } from "../data.ts";
 import { groupDatesByMonth, monthDayWeekday, monthLabel } from "../lib/format.ts";
 import { dataUrl } from "../lib/paths.ts";
@@ -16,7 +16,7 @@ export function DatesPage() {
   useReadVersion();
   const totals = new Map(res.status === "ok" ? res.data.dates.map((d, i) => [d, res.data.storyCounts?.[i]] as const) : []);
   return (
-    <Layout left={<BackLink to="/" label="브리프" />}>
+    <Layout left={<BriefBackLink />}>
       <h1 className="page-title pad">날짜 목록</h1>
       {res.status === "error" && <ErrorState onRetry={() => retry([url])} />}
       {(res.status === "loading" || res.status === "idle") && <Loading />}

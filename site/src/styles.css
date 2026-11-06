@@ -7,6 +7,16 @@
   box-sizing: border-box;
 }
 
+/* 글자 크기 여섯 단계(design.md "글자 크기"). font-size는 이 토큰만 쓴다(test/siteFontTokens.test.ts) */
+:root {
+  --fs-xl: 22px;
+  --fs-lg: 19px;
+  --fs-md: 17px;
+  --fs-base: 16px;
+  --fs-sm: 14px;
+  --fs-xs: 12px;
+}
+
 html {
   -webkit-text-size-adjust: 100%;
   --bar-clear: 60px;
@@ -33,6 +43,37 @@ body {
   font-family: Pretendard, "Pretendard Variable", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", system-ui, sans-serif;
   word-break: keep-all;
   overflow-wrap: anywhere;
+  font-size: var(--fs-base);
+}
+
+/* 브라우저 기본 크기(제목 2em·1.5em, small 'smaller', 입력·버튼 13.33px, 고정폭 13px)가 단계 밖 값이 되지 않게 한다. 클래스 규칙이 있으면 그쪽이 이긴다 */
+h1,
+h2,
+h3,
+h5,
+h6 {
+  font-size: var(--fs-base);
+}
+
+h4 {
+  font-size: inherit;
+}
+
+small,
+sub,
+sup {
+  font-size: var(--fs-xs);
+}
+
+button,
+input,
+select,
+textarea,
+code,
+kbd,
+samp,
+pre {
+  font-size: inherit;
 }
 
 #root {
@@ -113,11 +154,11 @@ li:focus {
 .brand {
   font-weight: 800;
   letter-spacing: -0.3px;
-  font-size: 19px;
+  font-size: var(--fs-lg);
 }
 
 .datebtn {
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--muted);
   display: inline-flex;
   gap: 4px;
@@ -130,19 +171,22 @@ li:focus {
   justify-content: center;
   min-width: 32px;
   min-height: 32px;
-  font-size: 18px;
+  font-size: var(--fs-md);
 }
 
 .datebtn .arrow.off {
   opacity: 0.35;
 }
 
+/* 머리 날짜는 날짜 목록으로 간다: 밑줄이 다른 화면으로 가는 표시다(U1 4.2-9) */
 .datebtn .date-link {
   padding: 6px 2px;
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
 .back {
-  font-size: 14px;
+  font-size: var(--fs-sm);
   padding: 6px 0;
 }
 
@@ -176,7 +220,7 @@ li:focus {
 .menu a {
   display: block;
   padding: 12px 18px;
-  font-size: 15px;
+  font-size: var(--fs-base);
 }
 
 /* 본문 */
@@ -189,7 +233,7 @@ li:focus {
 }
 
 .page-title {
-  font-size: 22px;
+  font-size: var(--fs-xl);
   font-weight: 800;
   letter-spacing: -0.3px;
   line-height: 1.3;
@@ -207,24 +251,23 @@ li:focus {
 
 .headline {
   padding: 14px 18px;
-  font-size: 14px;
+  font-size: var(--fs-sm);
   line-height: 1.55;
   color: var(--muted);
   border-bottom: 1px solid var(--line);
 }
 
+/* 키워드는 누를 수 없는 표시라 알약·면 없이 글자로 쓴다(U1 4.2-1) */
 .kw {
   display: flex;
-  gap: 6px;
+  gap: 2px 12px;
   flex-wrap: wrap;
   margin-top: 8px;
 }
 
 .kw span {
-  font-size: 12px;
-  padding: 3px 8px;
-  border-radius: 999px;
-  background: var(--chip);
+  font-size: var(--fs-xs);
+  font-weight: 600;
   color: var(--fg);
 }
 
@@ -242,7 +285,7 @@ li:focus {
 }
 
 .chips button {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   padding: 4px 10px;
   min-height: 28px;
   border-radius: 999px;
@@ -261,7 +304,7 @@ li:focus {
 .flow {
   margin: 0;
   padding: 12px 18px;
-  font-size: 13.5px;
+  font-size: var(--fs-sm);
   line-height: 1.6;
   color: var(--muted);
   border-bottom: 1px solid var(--line);
@@ -274,7 +317,7 @@ li:focus {
 .count {
   margin: 0;
   padding: 10px 18px 0;
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--muted);
 }
 
@@ -303,7 +346,7 @@ li:focus {
 }
 
 .cat {
-  font-size: 11.5px;
+  font-size: var(--fs-xs);
   font-weight: 600;
   letter-spacing: 0.2px;
   margin-bottom: 4px;
@@ -314,24 +357,24 @@ li:focus {
 }
 
 .title {
-  font-size: 17px;
+  font-size: var(--fs-md);
   font-weight: 700;
   line-height: 1.4;
   letter-spacing: -0.2px;
 }
 
 .title.small {
-  font-size: 15px;
+  font-size: var(--fs-base);
   font-weight: 600;
 }
 
 .item.open .title {
-  font-size: 21px;
+  font-size: var(--fs-xl);
 }
 
 .cont {
   margin-top: 6px;
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--muted);
   display: flex;
   gap: 6px;
@@ -340,7 +383,7 @@ li:focus {
 }
 
 .badge {
-  font-size: 11px;
+  font-size: var(--fs-xs);
   padding: 2px 7px;
   border-radius: 4px;
   background: var(--accentbg);
@@ -361,7 +404,7 @@ li:focus {
 
 .short-text {
   margin: 0;
-  font-size: 15px;
+  font-size: var(--fs-base);
   line-height: 1.55;
 }
 
@@ -371,7 +414,7 @@ li:focus {
   gap: 8px;
   flex-wrap: wrap;
   align-items: center;
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--muted);
 }
 
@@ -404,7 +447,7 @@ li:focus {
   padding: 12px;
   border-radius: 10px;
   background: var(--chip);
-  font-size: 13px;
+  font-size: var(--fs-sm);
   line-height: 1.5;
 }
 
@@ -413,8 +456,7 @@ li:focus {
   gap: 6px;
   align-items: center;
   flex-wrap: wrap;
-  font-size: 12px;
-  color: var(--accent);
+  font-size: var(--fs-xs);
   margin-bottom: 4px;
 }
 
@@ -445,20 +487,20 @@ li:focus {
 }
 
 .sum {
-  font-size: 15.5px;
+  font-size: var(--fs-base);
   line-height: 1.65;
   margin: 0;
 }
 
 .h {
-  font-size: 12.5px;
+  font-size: var(--fs-xs);
   font-weight: 700;
   color: var(--muted);
   margin: 14px 0 4px;
 }
 
 .p {
-  font-size: 14px;
+  font-size: var(--fs-sm);
   line-height: 1.65;
   margin: 0;
 }
@@ -489,7 +531,7 @@ li:focus {
 }
 
 .src a {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   padding: 4px 8px;
   border: 1px solid var(--line);
   border-radius: 6px;
@@ -497,7 +539,7 @@ li:focus {
 
 .src small {
   color: var(--muted);
-  font-size: 11px;
+  font-size: var(--fs-xs);
 }
 
 .rel {
@@ -509,7 +551,7 @@ li:focus {
 
 .rel a,
 .rel button {
-  font-size: 13px;
+  font-size: var(--fs-sm);
   padding: 5px 10px;
   border-radius: 999px;
   border: 1px solid var(--line);
@@ -517,7 +559,7 @@ li:focus {
 
 .rel small {
   color: var(--muted);
-  font-size: 11px;
+  font-size: var(--fs-xs);
   margin-left: 4px;
 }
 
@@ -552,21 +594,20 @@ li:focus {
   padding: 10px 12px;
   border-radius: 8px;
   background: var(--chip);
-  font-size: 13px;
+  font-size: var(--fs-sm);
   line-height: 1.55;
 }
 
 .tbox b {
   display: block;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   margin-bottom: 2px;
 }
 
 .tbox a {
   display: block;
   margin-top: 4px;
-  font-size: 12px;
-  color: var(--accent);
+  font-size: var(--fs-xs);
 }
 
 .facts .tbox {
@@ -591,12 +632,12 @@ li:focus {
 
 .rows small {
   display: block;
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--muted);
 }
 
 .rows span {
-  font-size: 14.5px;
+  font-size: var(--fs-sm);
   font-weight: 600;
   line-height: 1.45;
 }
@@ -609,18 +650,15 @@ li:focus {
   padding: 12px 0;
 }
 
-/* 4단계: 용어 사전 */
+/* 4단계: 용어 사전. 색인 제목은 구역 제목 .h 모양이다(U1 4.2-6) */
 .idx {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--accent);
   margin: 12px 0 0;
 }
 
 .gl {
   padding: 12px 0;
   border-bottom: 1px solid var(--line);
-  font-size: 13.5px;
+  font-size: var(--fs-sm);
   line-height: 1.55;
 }
 
@@ -631,7 +669,7 @@ li:focus {
 }
 
 .gl h3 {
-  font-size: 15px;
+  font-size: var(--fs-base);
   margin: 0 0 2px;
 }
 
@@ -640,14 +678,14 @@ li:focus {
 }
 
 .gl .aliases {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--muted);
 }
 
 .gl small {
   display: block;
   color: var(--muted);
-  font-size: 12px;
+  font-size: var(--fs-xs);
   margin-top: 4px;
 }
 
@@ -666,7 +704,7 @@ li:focus {
 }
 
 .iss .name {
-  font-size: 22px;
+  font-size: var(--fs-xl);
   font-weight: 800;
   letter-spacing: -0.3px;
   line-height: 1.3;
@@ -674,19 +712,19 @@ li:focus {
 }
 
 .iss .aliases {
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--muted);
   margin: 4px 0 0;
 }
 
 .iss .meta {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--muted);
   margin: 6px 0 12px;
 }
 
 .iss .summary {
-  font-size: 14px;
+  font-size: var(--fs-sm);
   line-height: 1.7;
   padding: 12px 14px;
   border-left: 3px solid var(--accent);
@@ -697,7 +735,7 @@ li:focus {
 .notice {
   margin: 0 0 12px;
   padding: 10px 12px;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   border-radius: 8px;
   background: var(--accentbg);
   color: var(--fg);
@@ -743,12 +781,12 @@ li:focus {
 
 .tl small {
   display: block;
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--muted);
 }
 
 .tl span {
-  font-size: 14.5px;
+  font-size: var(--fs-sm);
   font-weight: 600;
   line-height: 1.45;
 }
@@ -761,7 +799,7 @@ li:focus {
 .row-link {
   display: block;
   padding: 13px 18px;
-  font-size: 16px;
+  font-size: var(--fs-base);
 }
 
 /* 검색 */
@@ -776,7 +814,7 @@ li:focus {
   flex: 1;
   min-width: 0;
   font: inherit;
-  font-size: 16px;
+  font-size: var(--fs-base);
   padding: 8px 12px;
   border-radius: 8px;
   border: 1px solid var(--line);
@@ -788,7 +826,7 @@ li:focus {
 .state {
   padding: 32px 18px;
   text-align: center;
-  font-size: 14px;
+  font-size: var(--fs-sm);
   color: var(--muted);
   margin: 0;
 }
@@ -796,6 +834,12 @@ li:focus {
 .state.error p {
   margin: 0 0 12px;
   color: var(--fg);
+}
+
+/* 목록·묶음 안의 빈 상태 변형(빌더·수요 묶음, 달력의 날, 타임라인, U1 4.2-7) */
+.state.inline {
+  padding: 10px 0 14px;
+  text-align: left;
 }
 
 .spinner {
@@ -824,7 +868,7 @@ li:focus {
 
 .retry {
   min-height: 44px;
-  font-size: 14px;
+  font-size: var(--fs-sm);
   padding: 8px 16px;
   border-radius: 8px;
   border: 1px solid var(--line);
@@ -838,16 +882,23 @@ li:focus {
   text-align: center;
 }
 
+/* 다른 화면으로 가는 글 링크의 한 모양(U1 4.2-5): 흐린 글자색, 보통 굵기, 밑줄. 크기는 자리마다 글자 크기 단계 안에서 다르다 */
 .text-link {
-  color: var(--accent);
+  color: var(--muted);
+  font-weight: 400;
   text-decoration: underline;
   text-underline-offset: 2px;
+}
+
+/* 문장 안 링크: 줄은 그대로 두고 누르는 자리만 위아래로 넓힌다(U1 4.5-4) */
+.p a.text-link {
+  padding-block: 4px;
 }
 
 /* 바닥글 */
 .footer {
   padding: 20px 18px 24px;
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--muted);
   border-top: 1px solid var(--line);
 }
@@ -878,7 +929,7 @@ li:focus {
   border-top: 1px solid var(--line);
   padding: 6px 0 calc(10px + env(safe-area-inset-bottom));
   background: var(--bg);
-  font-size: 15px;
+  font-size: var(--fs-base);
   color: var(--muted);
 }
 
@@ -923,7 +974,7 @@ li:focus {
 /* 브리프 밖 목록의 줄 끝 체크 */
 .read-mk {
   flex: none;
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--check);
   margin-left: 6px;
 }
@@ -970,7 +1021,7 @@ a.nrow:not(.row-link) {
   align-items: center;
   justify-content: center;
   font-style: normal;
-  font-size: 11px;
+  font-size: var(--fs-xs);
   line-height: 1;
   color: transparent;
 }
@@ -1028,7 +1079,7 @@ button.short-text {
 
 .read-prog {
   flex: none;
-  font-size: 12.5px;
+  font-size: var(--fs-xs);
   color: var(--muted);
   display: flex;
   align-items: center;
@@ -1046,7 +1097,7 @@ button.short-text {
 
 .plain .done {
   margin-top: 8px;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--muted);
 }
 
@@ -1054,6 +1105,11 @@ button.short-text {
 .tl a.nrow,
 .rows a.nrow {
   display: flex;
+}
+
+/* 제목이 한 줄로 끝나도 누르는 자리는 44px(U1 4.5-4) */
+.tl a.nrow {
+  min-height: 44px;
 }
 
 .nrow > .nt {
@@ -1065,23 +1121,17 @@ button.short-text {
 .rows .read-mk,
 .tl .read-mk span,
 .rows .read-mk span {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   font-weight: 400;
 }
 
-/* 4.5단계 '전체' 탭: 줄마다 섹션 칩(시안 all-tab.html 안 1) */
+/* 4.5단계 '전체' 탭: 줄마다 섹션 표시. 누를 수 없는 표시라 면·테두리 없이 글자로 쓴다(U1 4.2-2) */
 .sec {
-  display: inline-block;
-  font-size: 10.5px;
+  font-size: var(--fs-xs);
   font-weight: 600;
-  line-height: 1.4;
-  padding: 0 6px;
   margin-right: 6px;
-  border-radius: 4px;
-  border: 1px solid var(--line);
   color: var(--muted);
   letter-spacing: 0;
-  vertical-align: 1px;
 }
 
 .short-meta .sec {
@@ -1101,68 +1151,67 @@ button.short-text {
 }
 
 .ptitle h1 {
-  font-size: 22px;
+  font-size: var(--fs-xl);
   font-weight: 800;
   letter-spacing: -0.3px;
   line-height: 1.3;
   margin: 0;
 }
 
-.view {
+/* 고르기 부품 Segmented(U1 4.2-4, components/segmented.ts): 테두리 묶음, 고른 것 = 상자 바탕 + 700 글자색. 자리 클래스(.view, .seg, .box-tabs)는 배치만 더한다 */
+.segmented {
   display: flex;
-  flex: none;
   border: 1px solid var(--line);
   border-radius: 8px;
   overflow: hidden;
-  font-size: 12.5px;
+  font-size: var(--fs-sm);
 }
 
-.view button {
-  padding: 6px 12px;
+.segmented button {
   min-height: 32px;
+  padding: 6px 12px;
+  font-weight: 400;
   color: var(--muted);
 }
 
-.view button.on {
-  background: var(--fg);
-  color: var(--bg);
+/* 고른 것의 바탕. 바탕이 상자 바탕인 곳은 --segmented-on만 다시 정한다 */
+.segmented button.on {
+  background: var(--segmented-on, var(--chip));
+  color: var(--fg);
+  font-weight: 700;
+}
+
+/* 상자가 overflow:hidden이라 포커스 윤곽을 칸 안쪽에 그린다 */
+.segmented button:focus-visible {
+  outline-offset: -2px;
+}
+
+.view {
+  flex: none;
 }
 
 .sch-head .meta {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--muted);
   line-height: 1.5;
   margin: 4px 0 10px;
 }
 
 .seg {
-  display: flex;
   margin: 0 18px 4px;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  overflow: hidden;
 }
 
 .seg button {
   flex: 1;
-  font-size: 13px;
   padding: 8px 0;
-  color: var(--muted);
-}
-
-.seg button.on {
-  background: var(--chip);
-  color: var(--fg);
-  font-weight: 700;
 }
 
 .sch-body {
   padding: 0 18px 16px;
 }
 
+/* 날짜 머리는 구역 제목 .h 모양이다(U1 4.2-6) */
 .dh {
-  font-size: 13px;
-  font-weight: 700;
   margin: 16px 0 2px;
 }
 
@@ -1199,14 +1248,19 @@ button.short-text {
 
 .ev .t {
   display: block;
-  font-size: 15px;
+  font-size: var(--fs-base);
   font-weight: 600;
   line-height: 1.4;
 }
 
+.ev a.t {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
 .ev small {
   display: block;
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--muted);
   margin-top: 2px;
 }
@@ -1216,27 +1270,21 @@ button.short-text {
   text-underline-offset: 2px;
 }
 
+/* 결과 문구: 다른 화면으로 가면 글 링크(.text-link), 누를 수 없으면 글자다. 면을 쓰지 않는다(U1 4.2-2) */
 .res-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px;
+  gap: 4px 12px;
   margin-top: 4px;
 }
 
 .res {
-  display: inline-block;
-  font-size: 12px;
+  font-size: var(--fs-xs);
   line-height: 1.45;
-  padding: 2px 7px;
-  border-radius: 4px;
-  background: var(--chip);
-  color: var(--fg);
 }
 
-.res.ok {
-  background: var(--accentbg);
-  color: var(--accent);
-  font-weight: 600;
+span.res {
+  color: var(--fg);
 }
 
 /* 달 단위 일정의 "N월 중 (날짜 미정)" 상자 */
@@ -1248,23 +1296,12 @@ button.short-text {
 }
 
 .mon-h {
-  font-size: 12.5px;
-  font-weight: 700;
-  color: var(--muted);
   margin: 0 0 2px;
 }
 
 .mon .ev {
   border-bottom: none;
   padding: 6px 0;
-}
-
-.mon .res {
-  background: var(--bg);
-}
-
-.mon .res.ok {
-  background: var(--accentbg);
 }
 
 /* 달력 */
@@ -1276,7 +1313,7 @@ button.short-text {
 }
 
 .monthnav h2 {
-  font-size: 15px;
+  font-size: var(--fs-base);
   font-weight: 700;
   margin: 0;
 }
@@ -1284,7 +1321,7 @@ button.short-text {
 .monthnav button {
   min-width: 44px;
   min-height: 44px;
-  font-size: 20px;
+  font-size: var(--fs-lg);
   color: var(--muted);
   border-radius: 8px;
 }
@@ -1298,12 +1335,12 @@ button.short-text {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
   text-align: center;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   row-gap: 2px;
 }
 
 .cal .w {
-  font-size: 11px;
+  font-size: var(--fs-xs);
   color: var(--muted);
   padding-bottom: 4px;
 }
@@ -1327,9 +1364,11 @@ button.short-text {
   font-weight: 700;
 }
 
+/* 고른 날은 Segmented의 고른 것과 같은 표시(상자 바탕 + 700 글자색, U1 4.2-4) */
 .cal .d.sel {
-  background: var(--fg);
-  color: var(--bg);
+  background: var(--chip);
+  color: var(--fg);
+  font-weight: 700;
 }
 
 .cal .d i {
@@ -1344,20 +1383,14 @@ button.short-text {
   background: var(--muted);
 }
 
-.cal .d.sel i {
-  background: var(--bg);
-}
-
-.day-empty {
-  padding: 6px 0;
-}
-
 /* 브리프 위 '이번 주 일정'(C10). 접으면 배경 없는 한 줄 */
 .week {
   margin: 10px 18px 4px;
   padding: 8px 12px 6px;
   border-radius: 10px;
   background: var(--chip);
+  /* 바탕이 상자 바탕이라 안의 고르기 부품은 고른 것을 화면 바탕으로 둔다(상자 바탕과 구별되게) */
+  --segmented-on: var(--bg);
 }
 
 .week.closed {
@@ -1370,7 +1403,7 @@ button.short-text {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 12.5px;
+  font-size: var(--fs-xs);
   font-weight: 700;
   color: var(--muted);
 }
@@ -1397,14 +1430,14 @@ button.short-text {
   display: flex;
   gap: 10px;
   padding: 5px 0;
-  font-size: 14px;
+  font-size: var(--fs-sm);
   line-height: 1.4;
 }
 
 .wrow b {
   flex: none;
   width: 56px;
-  font-size: 12.5px;
+  font-size: var(--fs-xs);
   color: var(--muted);
   font-weight: 600;
   padding-top: 1px;
@@ -1416,9 +1449,10 @@ button.short-text {
 }
 
 .wrow small {
+  /* 일정 화면의 결과 글(span.res)과 같은 색. 뉴스 목록 화면은 강조색을 쓰지 않는다 */
   display: block;
-  font-size: 11.5px;
-  color: var(--accent);
+  font-size: var(--fs-xs);
+  color: var(--fg);
 }
 
 /* 펼친 카드의 일정 칩: 예정일을 강조색으로 앞에 */
@@ -1440,20 +1474,20 @@ button.short-text {
 
 .ev-link small {
   display: block;
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--muted);
 }
 
 .ev-link .t {
   display: block;
-  font-size: 14.5px;
+  font-size: var(--fs-sm);
   font-weight: 600;
   line-height: 1.45;
 }
 
 .ev-more {
   margin: 10px 0 0;
-  font-size: 13px;
+  font-size: var(--fs-sm);
 }
 
 /* 6단계: 지표(확정 시안 design/site.html). 오르면 빨강, 내리면 파랑(국내 관례, X8) */
@@ -1472,30 +1506,14 @@ button.short-text {
 
 /* 브리프 위 '이번 주 일정 | 지표' 상자(X7): 위 줄의 탭과 접기 버튼 */
 .box-tabs {
-  display: flex;
-  gap: 14px;
   min-width: 0;
-}
-
-.box-tabs button {
-  font-weight: 700;
-  color: var(--muted);
-  min-width: 24px;
-  min-height: 32px;
-  padding: 0;
-  border-bottom: 2px solid transparent;
-}
-
-.box-tabs button.on {
-  color: var(--fg);
-  border-bottom-color: var(--fg);
 }
 
 .box-fold {
   margin-left: auto;
   min-width: 32px;
   min-height: 32px;
-  font-size: 15px;
+  font-size: var(--fs-base);
   color: var(--muted);
 }
 
@@ -1509,12 +1527,11 @@ button.short-text {
 
 .box-foot {
   margin: 2px 0 2px;
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--muted);
 }
 
 .box-foot a {
-  color: var(--accent);
   display: inline-block;
   padding: 6px 0;
 }
@@ -1546,7 +1563,7 @@ button.short-text {
   align-items: baseline;
   gap: 5px;
   white-space: nowrap;
-  font-size: 12.5px;
+  font-size: var(--fs-xs);
   padding: 6px 0;
   min-height: 32px;
 }
@@ -1557,11 +1574,11 @@ button.short-text {
 }
 
 .ichip .chg {
-  font-size: 11.5px;
+  font-size: var(--fs-xs);
 }
 
 .ichip small {
-  font-size: 11px;
+  font-size: var(--fs-xs);
   color: var(--muted);
 }
 
@@ -1571,14 +1588,14 @@ button.short-text {
 }
 
 .ind-meta {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--muted);
   line-height: 1.6;
   margin: 0 0 6px;
 }
 
 .ind-meta .ind-v {
-  font-size: 15px;
+  font-size: var(--fs-base);
   color: var(--fg);
 }
 
@@ -1607,13 +1624,13 @@ button.short-text {
 
 .icard .n {
   display: block;
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--muted);
 }
 
 .icard .v {
   display: block;
-  font-size: 17px;
+  font-size: var(--fs-md);
   font-weight: 700;
   margin-top: 1px;
   font-variant-numeric: tabular-nums;
@@ -1621,7 +1638,7 @@ button.short-text {
 
 .icard .c {
   display: block;
-  font-size: 11.5px;
+  font-size: var(--fs-xs);
   min-height: 16px;
 }
 
@@ -1638,7 +1655,7 @@ button.short-text {
 
 .ind-note {
   margin: 0;
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--muted);
 }
 
@@ -1647,7 +1664,7 @@ button.short-text {
 }
 
 .isrc {
-  font-size: 11.5px;
+  font-size: var(--fs-xs);
   color: var(--muted);
   line-height: 1.6;
   margin: 6px 0 0;
@@ -1667,7 +1684,7 @@ ul.isrc {
 .chart-read {
   margin: 0 0 2px;
   min-height: 18px;
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--muted);
   font-variant-numeric: tabular-nums;
 }
@@ -1688,7 +1705,7 @@ ul.isrc {
 }
 
 .chart .ax {
-  font-size: 10px;
+  font-size: var(--fs-xs);
   fill: var(--muted);
   paint-order: stroke;
   stroke: var(--bg);
@@ -1709,7 +1726,7 @@ ul.isrc {
   justify-content: space-between;
   align-items: baseline;
   gap: 8px;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   font-weight: 700;
 }
 
@@ -1720,13 +1737,13 @@ ul.isrc {
 .igh small {
   font-weight: 400;
   color: var(--muted);
-  font-size: 12px;
+  font-size: var(--fs-xs);
   text-align: right;
 }
 
 .legend {
   margin: 2px 0 0;
-  font-size: 11px;
+  font-size: var(--fs-xs);
   color: var(--muted);
 }
 
@@ -1793,7 +1810,7 @@ ul.isrc {
   position: absolute;
   right: 4px;
   bottom: 4px;
-  font-size: 10.5px;
+  font-size: var(--fs-xs);
   line-height: 1.4;
   padding: 0 4px;
   border-radius: 3px;
@@ -1805,7 +1822,7 @@ ul.isrc {
 .vt {
   grid-column: 2;
   grid-row: 1;
-  font-size: 14px;
+  font-size: var(--fs-sm);
   font-weight: 600;
   line-height: 1.35;
 }
@@ -1815,20 +1832,17 @@ ul.isrc {
   grid-row: 2;
   align-self: start;
   margin-top: 3px;
-  font-size: 11.5px;
+  font-size: var(--fs-xs);
   line-height: 1.5;
   color: var(--muted);
 }
 
+/* 묶음 표시는 누를 수 없는 표시라 면 없이 굵은 글자로 쓴다(U1 4.2-2) */
 .vm .tag {
-  display: inline-block;
-  font-size: 10.5px;
+  font-size: var(--fs-xs);
   font-weight: 700;
-  color: var(--accent);
-  background: var(--accentbg);
-  padding: 1px 6px;
-  border-radius: 4px;
-  margin-right: 4px;
+  color: var(--fg);
+  margin-right: 6px;
 }
 
 .vm .nw {
@@ -1842,8 +1856,6 @@ ul.isrc {
   display: inline-flex;
   min-height: 24px;
   margin-bottom: -6px;
-  text-decoration: underline;
-  text-underline-offset: 2px;
 }
 
 @media (pointer: coarse) {
@@ -1868,7 +1880,7 @@ ul.isrc {
   grid-column: 1 / -1;
   grid-row: 3;
   margin: 8px 0 0;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   line-height: 1.5;
   background: var(--chip);
   border-radius: 8px;
@@ -1876,7 +1888,7 @@ ul.isrc {
 }
 
 .why b {
-  font-size: 11px;
+  font-size: var(--fs-xs);
   color: var(--accent);
   margin-right: 6px;
 }
@@ -1888,21 +1900,22 @@ ul.isrc {
   scroll-margin-block: var(--bar-clear) calc(64px + env(safe-area-inset-bottom));
 }
 
+/* 제자리에서 여는 버튼이라 '구간별로 보기 ›'와 같은 색·굵기에 밑줄 없이 끝 ▾로 가른다(U1 4.2-5) */
 .vsumbtn {
   min-height: 44px;
   padding: 0 2px;
   border: 0;
   background: none;
-  color: var(--accent);
+  color: var(--muted);
   font: inherit;
-  font-size: 13px;
-  font-weight: 600;
+  font-size: var(--fs-sm);
+  font-weight: 400;
   cursor: pointer;
 }
 
 .vsumtext {
   margin: 0 0 2px;
-  font-size: 13.5px;
+  font-size: var(--fs-sm);
   line-height: 1.6;
   background: var(--chip);
   border-radius: 8px;
@@ -1921,9 +1934,7 @@ ul.isrc {
   align-items: center;
   min-height: 44px;
   padding: 0 2px;
-  color: var(--accent);
-  font-size: 13px;
-  font-weight: 600;
+  font-size: var(--fs-sm);
   white-space: pre;
 }
 
@@ -1947,7 +1958,7 @@ ul.isrc {
 
 .vpagesum {
   margin: 0;
-  font-size: 14px;
+  font-size: var(--fs-sm);
   line-height: 1.65;
 }
 
@@ -1960,7 +1971,7 @@ ul.isrc {
 .vsecrow {
   position: relative;
   display: grid;
-  grid-template-columns: 64px minmax(0, 1fr);
+  grid-template-columns: 84px minmax(0, 1fr);
   column-gap: 8px;
   padding: 6px 0;
   border-bottom: 1px solid var(--line);
@@ -1973,7 +1984,7 @@ ul.isrc {
   min-height: 44px;
   padding-top: 11px;
   color: var(--accent);
-  font-size: 14px;
+  font-size: var(--fs-sm);
   font-weight: 600;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
@@ -2006,7 +2017,7 @@ ul.isrc {
 
 .vsectitle {
   margin: 0;
-  font-size: 14px;
+  font-size: var(--fs-sm);
   font-weight: 700;
   line-height: 1.5;
 }
@@ -2016,7 +2027,7 @@ ul.isrc {
 .vsecpoints {
   position: relative;
   z-index: 1;
-  font-size: 14px;
+  font-size: var(--fs-sm);
   line-height: 1.65;
 }
 
@@ -2036,7 +2047,7 @@ ul.isrc {
 
 .vsecnote {
   margin: 0 0 4px;
-  font-size: 14px;
+  font-size: var(--fs-sm);
   line-height: 1.65;
   color: var(--muted);
 }
@@ -2044,7 +2055,7 @@ ul.isrc {
 .vsrc {
   margin: 8px 0 0;
   padding-bottom: 6px;
-  font-size: 11.5px;
+  font-size: var(--fs-xs);
   line-height: 1.6;
   color: var(--muted);
 }
@@ -2086,7 +2097,7 @@ ul.isrc {
   }
 
   .vt {
-    font-size: 16px;
+    font-size: var(--fs-base);
   }
 
   .why {
@@ -2114,7 +2125,7 @@ ul.isrc {
 }
 
 .plain .keys code {
-  font-size: 12.5px;
+  font-size: var(--fs-xs);
 }
 
 /* 9.5단계: 정정 표시, 제보 링크, 없는 페이지, 메일 상자, 누를 곳 넓히기(`docs/design.md`, 시안 design/final/site.css) */
@@ -2124,7 +2135,7 @@ ul.isrc {
 /* 폭이 모자라면 표시가 다음 줄로 내려간다. 대분류를 누르지 않는다 */
 .cat-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; margin-bottom: 4px; }
 .cat-row .cat { flex: 0 1 auto; min-width: 0; max-width: 100%; margin-bottom: 0; }
-.fix-mark { flex: none; color: var(--fg); font-size: 12px; line-height: 14px; font-weight: 700; white-space: nowrap; }
+.fix-mark { flex: none; color: var(--fg); font-size: var(--fs-xs); line-height: 14px; font-weight: 700; white-space: nowrap; }
 /* 좁은 폭에서는 읽음 동그라미 왼쪽 한 세로줄에 모아, 고친 뉴스만 훑을 때 눈이 곧게 내려가게 한다. 대분류가 길면 다음 줄로 내려가도 같은 세로줄이다 */
 @media (max-width: 767.98px) {
   .fix-mark { margin-left: auto; }
@@ -2134,41 +2145,38 @@ ul.isrc {
 }
 
 /* 펼친 카드의 바뀐 내용: 선과 면 없이 16px 띄운다. 머리말은 굵기로만 가른다. 한 건이면 날짜는 표시에만 두고 머리말은 '바뀐 내용:', 여러 건이면 최신순으로 쌓고 머리말에 날짜를 붙인다 */
-.fix { margin: 16px 0 0; font-size: 14px; line-height: 1.65; }
+.fix { margin: 16px 0 0; font-size: var(--fs-sm); line-height: 1.65; }
 .fix + .fix { margin-top: 8px; }
 .fix strong, .short-fix strong { font-weight: 700; color: var(--fg); }
 
 /* 짧은 소식의 정정: 펼침이 없어 메타 줄 아래에 사유까지 늘 보인다. 목록 안에 늘 보이는 글이라 본문만 낮춰 훑기를 막지 않는다. 펼친 카드의 .fix는 일반 글자색이다 */
-.short-fix { margin: 6px 0 0; font-size: 14px; line-height: 1.65; color: var(--muted); }
+.short-fix { margin: 6px 0 0; font-size: var(--fs-sm); line-height: 1.65; color: var(--muted); }
 /* 짧은 소식은 펼침이 없어 목록 끝에 제보 줄을 하나 둔다 */
 .short-report { margin: 0; padding: 0 18px; }
 
-/* 조용한 링크: 강조색을 쓰지 않는다 */
-.quiet { color: var(--muted); text-decoration: underline; text-underline-offset: 2px; }
 /* 제보 링크: 메일 앱이 없어도 주소를 볼 수 있게 글에 함께 쓴다. 넘치면 주소를 통째로 다음 줄로 내린다 */
-.report { display: inline-block; padding-block: 12px; margin-top: 6px; font-size: 14px; line-height: 20px; color: var(--muted); }
+.report { display: inline-block; padding-block: 12px; margin-top: 6px; font-size: var(--fs-sm); line-height: 20px; color: var(--muted); }
 .report-l, .report .addr-nb { text-decoration: underline; text-underline-offset: 2px; }
 .addr-nb { white-space: nowrap; }
 
 /* 없는 페이지 */
 .nf .p { max-width: 34em; }
-.btn { display: flex; align-items: center; justify-content: center; width: 100%; min-height: 48px; margin-top: 20px; padding: 0 24px; background: var(--accent); color: var(--on-accent); border-radius: 8px; font-size: 15px; font-weight: 700; }
+.btn { display: flex; align-items: center; justify-content: center; width: 100%; min-height: 48px; margin-top: 20px; padding: 0 24px; background: var(--accent); color: var(--on-accent); border-radius: 8px; font-size: var(--fs-base); font-weight: 700; }
 .btn:focus-visible { outline-color: var(--fg); }
 @media (min-width: 768px) { .btn { display: inline-flex; width: auto; } }
 /* 버튼 묶음은 어느 폭에서나 안내 바로 아래에 붙인다. 남는 높이는 보조 링크와 푸터 사이로 간다 */
 .nf-act { margin-top: 24px; }
 .nf-act .btn { margin-top: 0; }
-.nf-act .more { display: flex; flex-wrap: wrap; gap: 4px 16px; margin: 12px 0 0 -10px; padding: 0; font-size: 15px; }
+.nf-act .more { display: flex; flex-wrap: wrap; gap: 4px 16px; margin: 12px 0 0 -10px; padding: 0; font-size: var(--fs-base); }
 .nf-act .more a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 10px; }
-.nf .req { margin: 12px 0 0; word-break: break-all; font-size: 14px; line-height: 1.5; color: var(--muted); }
+.nf .req { margin: 12px 0 0; word-break: break-all; font-size: var(--fs-sm); line-height: 1.5; color: var(--muted); }
 
 /* 소개: 메일 상자. 상자 전체가 링크다 */
-.about h2.h, .plain h2.h { margin-top: 30px; font-size: 14px; font-weight: 700; color: var(--fg); }
-.vpage h2.h { font-size: 15px; }
+.about h2.h, .plain h2.h { margin-top: 30px; }
 .mailbar { display: block; margin: 8px 0 16px; padding: 12px; background: var(--chip); border-radius: 10px; }
 .mailbar span { display: block; }
-.mailbar .lbl { margin-bottom: 4px; font-size: 14px; line-height: 1.5; color: var(--fg); }
-.mailbar .addr { font-size: 17px; line-height: 1.4; font-weight: 700; color: var(--accent); text-decoration: underline; text-underline-offset: 2px; overflow-wrap: anywhere; }
+.mailbar .lbl { margin-bottom: 4px; font-size: var(--fs-sm); line-height: 1.5; color: var(--fg); }
+.mailbar .addr { font-size: var(--fs-md); line-height: 1.4; font-weight: 700; color: var(--accent); text-decoration: underline; text-underline-offset: 2px; overflow-wrap: anywhere; }
 
 /* 누를 곳 넓히기: 보이는 글자·칸과 줄 높이는 그대로 두고, padding·min 크기를 음수 여백으로 상쇄한다.
    24px(전체)·44px(모바일) 관문을 맞춘다 */
@@ -2181,6 +2189,8 @@ ul.isrc {
 .short-text { padding-block: 11px; margin-block: -11px; }
 .short-meta { position: relative; }
 .short-meta a { display: inline-flex; align-items: center; min-height: 44px; margin-block: -14px; }
+/* 줄을 넓히려고 inline-flex로 둔 링크 안에서도 끝 표시(.mark: ' ›', ' ↗', '‹ ')와 출처 날짜 앞 공백이 사라지지 않게 한다 */
+.mark, .src small { white-space: pre; }
 .story b a { display: inline-flex; align-items: center; min-height: 44px; margin-block: -13px; }
 .src a { position: relative; display: inline-flex; align-items: center; min-height: 44px; margin-block: -9px; padding: 0 8px; border: none; }
 .src a::before { content: ""; position: absolute; inset: 9px 0; border: 1px solid var(--line); border-radius: 6px; pointer-events: none; }
@@ -2212,25 +2222,25 @@ ul.isrc {
 .static-menu { border-bottom: 1px solid var(--line); padding: 0 8px; }
 .static-page { flex: 1; display: flex; flex-direction: column; }
 .static-page > main { flex: 1; }
-.static-menu ul { display: flex; flex-wrap: wrap; margin: 0; padding: 0; list-style: none; font-size: 14px; }
+.static-menu ul { display: flex; flex-wrap: wrap; margin: 0; padding: 0; list-style: none; font-size: var(--fs-sm); }
 .static-menu a { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; padding: 0 10px; color: var(--muted); white-space: nowrap; }
 .static-brief .brief-section + .brief-section { margin-top: 18px; }
 .static-brief .item { padding: 14px 18px; }
 .static-brief .short { padding: 12px 18px; }
 .static-brief .detail { padding: 8px 0 0; }
 .static-brief .title { display: block; margin: 0; }
-.static-terms dt { margin-top: 12px; font-size: 15px; font-weight: 700; }
-.static-terms dd { margin: 2px 0 0; font-size: 14px; line-height: 1.65; }
-.static-more { display: flex; justify-content: space-between; gap: 16px; padding: 18px; font-size: 15px; }
+.static-terms dt { margin-top: 12px; font-size: var(--fs-base); font-weight: 700; }
+.static-terms dd { margin: 2px 0 0; font-size: var(--fs-sm); line-height: 1.65; }
+.static-more { display: flex; justify-content: space-between; gap: 16px; padding: 18px; font-size: var(--fs-base); }
 .static-more a { display: inline-flex; align-items: center; min-height: 44px; }
 .static-jump { padding: 0 18px; }
-.static-brief .brief-section > h2.list-h { margin: 0; padding-top: 24px; border-top: 1px solid var(--line); font-size: 17px; color: var(--fg); }
-.static-brief .bgroup-h { font-size: 15px; }
+.static-brief .brief-section > h2.list-h { margin: 0; padding-top: 24px; border-top: 1px solid var(--line); font-size: var(--fs-md); color: var(--fg); }
+.static-brief .bgroup-h { font-size: var(--fs-base); color: var(--fg); }
 .static-brief .cat-row, .static-brief .short-meta { padding-right: 0; }
 .static-page a.nrow:not(.row-link) { min-height: 44px; margin-block: -4px; }
 .brel { margin-block: -7px; }
-.term-h { font-size: 17px; font-weight: 700; color: var(--fg); }
-.term-jump a { font-size: 15px; }
+.term-h { font-size: var(--fs-md); font-weight: 700; color: var(--fg); }
+.term-jump a { font-size: var(--fs-base); }
 .static-page .ev { border-radius: 0; }
 .static-page .ev .t { display: inline-block; min-width: 44px; padding-block: 12px; margin-block: -12px; }
 .static-page .rel { gap: 0 6px; }
@@ -2238,18 +2248,19 @@ ul.isrc {
 .static-page .rel a::before, .brel a::before { content: ""; position: absolute; inset: 7px 0; border: 1px solid var(--line); border-radius: 999px; pointer-events: none; }
 
 /* 본문 건너뛰기: 키보드로 닿을 때만 보인다 */
-.skip { position: fixed; top: 8px; left: 8px; z-index: 30; transform: translateY(-200%); padding: 12px 16px; background: var(--accent); color: var(--on-accent); border-radius: 8px; font-size: 15px; font-weight: 700; }
+.skip { position: fixed; top: 8px; left: 8px; z-index: 30; transform: translateY(-200%); padding: 12px 16px; background: var(--accent); color: var(--on-accent); border-radius: 8px; font-size: var(--fs-base); font-weight: 700; }
 .skip:focus { transform: none; }
 .skip:focus-visible { outline-color: var(--fg); }
 
 /* 9.8단계 빌더 항목, 9.9단계 묶음(`docs/design.md`의 '빌더 항목'). 줄은 뉴스 줄이고 칸은 펼친 카드의 머리말과 문단을 그대로 쓴다 */
-.breminder { display: inline-flex; align-items: center; align-self: flex-start; min-height: 44px; margin-block: -8px -14px; color: var(--muted); text-decoration: underline; text-underline-offset: 2px; }
+.breminder { display: inline-flex; align-items: center; align-self: flex-start; min-height: 44px; margin-block: -8px -14px; }
 .bdue { display: inline-flex; align-items: center; min-height: 44px; margin-block: -13px; }
-.bintro-l { display: inline-block; padding-block: 14px; margin-block: -14px; text-decoration: underline; text-underline-offset: 2px; }
+.bintro-l { display: inline-block; padding-block: 14px; margin-block: -14px; }
 .btitle { margin: 0; font: inherit; }
 .bgroup + .bgroup { margin-top: 24px; border-top: 1px solid var(--line); }
-.bgroup-h { margin: 24px 0 0; padding: 0 18px; font-size: 22px; font-weight: 800; color: var(--fg); }
-.bgroup .state { padding: 10px 18px 14px; text-align: left; }
+/* 묶음 제목은 구역 제목 .h 모양이다(U1 4.2-6) */
+.bgroup-h { margin: 24px 0 0; padding: 0 18px; }
+.bgroup .state { padding-inline: 18px; }
 .bgroup .state.error p { margin-bottom: 0; }
 .bname { overflow-wrap: anywhere; }
 .bname-l { display: inline-block; padding-block: 12px; margin-block: -12px; color: inherit; text-decoration: underline; text-underline-offset: 2px; }
@@ -2267,18 +2278,18 @@ ul.isrc {
 .dlines li + li { margin-top: 8px; }
 .dlines span { display: block; }
 .dhead { font-weight: 600; overflow-wrap: anywhere; }
-.dwin { font-size: 12px; color: var(--muted); }
-.dnote { margin: 4px 0 0; font-size: 12px; line-height: 1.6; color: var(--muted); }
+.dwin { font-size: var(--fs-xs); color: var(--muted); }
+.dnote { margin: 4px 0 0; font-size: var(--fs-xs); line-height: 1.6; color: var(--muted); }
 /* 9.98단계 커뮤니티 근거 줄의 첫 줄(소스 · 표본 설명)과 꺾임 표시, 소개의 분야별 사각지대 표. 표는 세 칸이라 좁은 폭에서도 칸 안에서 줄을 바꾼다 */
 .dsrc { overflow-wrap: anywhere; }
 .dturn { margin-top: 2px; }
 .demand-community li + li { margin-top: 4px; }
 .dcover-h { margin-top: 20px; }
 .plain .dcover-note { margin-top: 16px; }
-.dcover { width: 100%; margin: 8px 0 0; border-collapse: collapse; table-layout: fixed; font-size: 14px; line-height: 1.5; }
+.dcover { width: 100%; margin: 8px 0 0; border-collapse: collapse; table-layout: fixed; font-size: var(--fs-sm); line-height: 1.5; }
 .dcover th, .dcover td { padding: 8px 8px 8px 0; text-align: left; vertical-align: top; border-top: 1px solid var(--line); overflow-wrap: anywhere; }
 .dcover th:last-child, .dcover td:last-child { padding-right: 0; }
-.dcover thead th { border-top: none; font-size: 12px; font-weight: 700; color: var(--muted); }
+.dcover thead th { border-top: none; font-size: var(--fs-xs); font-weight: 700; color: var(--muted); }
 .dcover tbody th { font-weight: 600; }
 .dcover-n { display: inline-block; max-width: 100%; }
 .dcover thead th:first-child { width: 28%; }
@@ -2289,6 +2300,6 @@ ul.isrc {
   .tabs:has(button:nth-child(7)) button { flex: 1 1 auto; min-width: 44px; padding-inline: 3px; }
 }
 @media (max-width: 359.98px) {
-  .tabs:has(button:nth-child(7)) { font-size: 14px; }
+  .tabs:has(button:nth-child(7)) { font-size: var(--fs-sm); }
   .tabs:has(button:nth-child(7)) button { padding-inline: 1px; }
 }

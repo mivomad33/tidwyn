@@ -3,20 +3,16 @@
 // termView.ts처럼 JSX와 화면 이동기(router.tsx)를 쓰지 않는다: 링크 컴포넌트는 부르는 쪽이 넘긴다.
 // 제목·채널·길이·썸네일은 YouTube가 준 그대로 보이고(V8), 추천 이유는 Tidwyn이 쓴 글로 따로 표시한다.
 import { createElement as h, Fragment, useEffect, useId, useRef, useState, type ReactNode } from "react";
-import { MoreMark } from "./moreMark.ts";
+import { MoreMark, NewTabMark } from "./moreMark.ts";
 import { CONSENT_TEXT, PRIVACY_TITLE } from "../lib/policy.ts";
 import { privacyPath, briefVideosPath, videoPath } from "../lib/routes.ts";
 import { YOUTUBE_TERMS_LABEL, YOUTUBE_TERMS_URL, bundleLabel, durationClock, durationText, recommendedOnText, videoAtUrl, videoUrl } from "../lib/videos.ts";
 import type { IssueVideo, SiteVideo, VideoSection } from "../../../src/siteTypes.ts";
 import type { LinkLike } from "./termView.ts";
 
-function newTab() {
-  return h("span", { className: "sr-only" }, " (새 탭)");
-}
-
-/** 바깥 링크(새 탭). 보조 기술에는 "(새 탭)"을 붙여 알린다(원문 링크와 같은 방식) */
+/** 바깥 링크(새 탭). 끝에 ↗를 두고 보조 기술에는 "(새 탭)"을 붙여 알린다(원문 링크와 같은 방식, U1 4.2-8) */
 export function ExternalLink({ href, label, className = "text-link" }: { href: string; label: string; className?: string }) {
-  return h("a", { href, className, target: "_blank", rel: "noopener noreferrer" }, label, newTab());
+  return h("a", { href, className, target: "_blank", rel: "noopener noreferrer" }, label, h(NewTabMark));
 }
 
 /** 썸네일. 불러오지 못하면 이미지를 빼고 같은 크기의 빈 상자와 길이만 남는다 */
@@ -51,7 +47,7 @@ function VideoSummary({ text, children }: { text: string; children?: ReactNode }
 
 export interface VideoRowProps {
   video: SiteVideo | IssueVideo;
-  /** 브리프: 묶음 표시를 붙인다. 이슈 페이지: 붙인 브리프 날짜("M월 D일 추천", 그 날짜 브리프의 영상 탭)를 붙인다 */
+  /** 브리프: 묶음 표시를 붙인다. 이슈 페이지: 붙인 브리프 날짜("M월 D일 브리프 영상", 그 날짜 브리프의 영상 탭)를 붙인다 */
   mode: "brief" | "issue";
   Link: LinkLike;
   /** 영상이 붙은 브리프 날짜(영상별 페이지 주소에 쓴다). 이슈 페이지는 영상에 있다 */
@@ -65,18 +61,18 @@ export interface VideoRowProps {
 export function VideoRow({ video, mode, Link, date: briefDate }: VideoRowProps) {
   const date = mode === "issue" && "date" in video ? video.date : null;
   const pageDate = date ?? briefDate;
-  const sectionLink = video.hasSections && pageDate ? h(Link, { to: videoPath(pageDate, video.id), className: "vseclink" }, "구간별로 보기", h("span", { className: "sr-only" }, `: ${video.title}`), h(MoreMark)) : null;
+  const sectionLink = video.hasSections && pageDate ? h(Link, { to: videoPath(pageDate, video.id), className: "text-link vseclink" }, "구간별로 보기", h("span", { className: "sr-only" }, `: ${video.title}`), h(MoreMark)) : null;
   return h(
     "li",
     { className: "vrow", "data-video": video.id },
-    h("a", { href: videoUrl(video.id), className: "vlink", target: "_blank", rel: "noopener noreferrer" }, h(Thumb, { src: video.thumb, seconds: video.seconds }), h("span", { className: "vt" }, video.title), newTab()),
+    h("a", { href: videoUrl(video.id), className: "vlink", target: "_blank", rel: "noopener noreferrer" }, h(Thumb, { src: video.thumb, seconds: video.seconds }), h("span", { className: "vt" }, video.title, h(NewTabMark))),
     h(
       "div",
       { className: "vm" },
       mode === "brief" ? h("span", { className: "tag" }, bundleLabel(video.bundle)) : null,
       `${video.channel} · `,
       h("span", { className: "nw" }, durationText(video.seconds)),
-      date ? h("span", { className: "nw" }, " · ", h(Link, { to: briefVideosPath(date), className: "vrec" }, recommendedOnText(date))) : null,
+      date ? h("span", { className: "nw" }, " · ", h(Link, { to: briefVideosPath(date), className: "text-link vrec" }, recommendedOnText(date))) : null,
     ),
     h("p", { className: "why" }, h("b", null, "추천 이유"), video.reason),
     video.videoSummary ? h(VideoSummary, { text: video.videoSummary }, sectionLink) : sectionLink ? h("div", { className: "vsum" }, sectionLink) : null,
@@ -97,7 +93,7 @@ function SectionList({ id, sections }: { id: string; sections: readonly VideoSec
       h(
         "li",
         { key: s.start, className: "vsecrow" },
-        h("a", { href: videoAtUrl(id, s.start), className: "vsectime", target: "_blank", rel: "noopener noreferrer", "aria-label": `${durationClock(s.start)} ${s.title} (새 탭)` }, durationClock(s.start)),
+        h("a", { href: videoAtUrl(id, s.start), className: "vsectime", target: "_blank", rel: "noopener noreferrer", "aria-label": `${durationClock(s.start)} ${s.title} (새 탭)` }, durationClock(s.start), h(NewTabMark, { spoken: false })),
         h("div", { className: "vsecbody" }, h("h3", { className: "vsectitle" }, s.title), h("p", { className: "vsecgist" }, s.gist), h("ul", { className: "vsecpoints" }, ...s.points.map((p, i) => h("li", { key: i }, p)))),
       ),
     ),
@@ -110,7 +106,7 @@ export function VideoDetail({ video, sections }: { video: SiteVideo; sections: r
     "article",
     { className: "plain vpage" },
     h("a", { href: videoUrl(video.id), className: "vpagethumb", target: "_blank", rel: "noopener noreferrer", tabIndex: -1, "aria-hidden": true }, h(Thumb, { src: video.thumb, seconds: video.seconds })),
-    h("h1", { className: "page-title" }, h("a", { href: videoUrl(video.id), target: "_blank", rel: "noopener noreferrer" }, video.title, newTab())),
+    h("h1", { className: "page-title" }, h("a", { href: videoUrl(video.id), target: "_blank", rel: "noopener noreferrer" }, video.title, h(NewTabMark))),
     h("div", { className: "vm" }, `${video.channel} · `, h("span", { className: "nw" }, durationText(video.seconds))),
     h("p", { className: "why" }, h("b", null, "추천 이유"), video.reason),
     ...(video.videoSummary ? [h("h2", { key: "sum", className: "h" }, "요약"), h("p", { key: "text", className: "vpagesum" }, video.videoSummary)] : []),

@@ -3,6 +3,7 @@
 // 예정일은 현지 날짜 문자열 그대로 쓰고 시간대를 바꾸지 않는다(C4).
 import { addDays } from "../../../src/kst.ts";
 import { ISSUE_SCHEDULE_LIMIT } from "../../../src/siteTypes.ts";
+import { dateText, dateTextWeekday, dayOrMonthText, shortDate, weekdayOf, yearOf } from "./format.ts";
 import { briefPath, schedulePath } from "./routes.ts";
 import type { Major, ScheduleIndex, ScheduleItem, ScheduleLine, ScheduleOutcomeView, ScheduleRefChunk } from "./types.ts";
 
@@ -24,19 +25,12 @@ export function parseWeekCollapsed(raw: string | null): boolean {
   return raw === "closed";
 }
 
-const WEEKDAYS = ["일", "월", "화", "수", "목", "금", "토"];
-
 export function isMonthDue(due: string): boolean {
   return due.length === 7;
 }
 
 export function monthOfDue(due: string): string {
   return due.slice(0, 7);
-}
-
-function weekday(date: string): string {
-  const [y, m, d] = date.split("-").map(Number) as [number, number, number];
-  return WEEKDAYS[new Date(Date.UTC(y, m - 1, d)).getUTCDay()]!;
 }
 
 function ymd(date: string): [number, number, number] {
@@ -95,15 +89,12 @@ export function groupSchedules<T extends { due: string }>(sorted: T[]): Schedule
 
 /** 날짜 머리: "10월 30일 (금)". 오늘과 해가 다르면 "2025년 10월 30일 (목)" */
 export function dayHeading(date: string, today: string): string {
-  const [y, m, d] = ymd(date);
-  const head = `${m}월 ${d}일 (${weekday(date)})`;
-  return date.slice(0, 4) === today.slice(0, 4) ? head : `${y}년 ${head}`;
+  return dateTextWeekday(date, yearOf(today));
 }
 
 /** 달 이름: "11월", 해가 다르면 "2027년 1월" */
 function monthName(month: string, today: string): string {
-  const [y, m] = ymd(month);
-  return month.slice(0, 4) === today.slice(0, 4) ? `${m}월` : `${y}년 ${m}월`;
+  return dayOrMonthText(month, yearOf(today));
 }
 
 /** 달 단위 상자 머리: "11월 중 (날짜 미정)" */
@@ -114,25 +105,24 @@ export function monthBoxHeading(month: string, today: string): string {
 /** 새 예정일(연기): "11월 10일" 또는 "12월 중". 해가 다르면 해를 붙인다 */
 export function dueLabel(due: string, today: string): string {
   if (isMonthDue(due)) return `${monthName(due, today)} 중`;
-  const [y, m, d] = ymd(due);
-  return due.slice(0, 4) === today.slice(0, 4) ? `${m}월 ${d}일` : `${y}년 ${m}월 ${d}일`;
+  return dateText(due, yearOf(today));
 }
 
-/** '이번 주 일정' 줄의 날짜: "10-30 금" */
-export function weekRowDate(date: string): string {
-  return `${date.slice(5)} ${weekday(date)}`;
+/** '이번 주 일정' 줄의 날짜: "10-30 금". 기준 해와 다르면 "'27 01-01 금" */
+export function weekRowDate(date: string, refYear?: string): string {
+  return `${shortDate(date, refYear)} ${weekdayOf(date)}`;
 }
 
-/** 펼친 카드의 일정 칩 날짜: "11-04" 또는 "11월 중" */
-export function chipDue(due: string): string {
-  return isMonthDue(due) ? `${ymd(due)[1]}월 중` : due.slice(5);
+/** 펼친 카드의 일정 칩 날짜: "11-04" 또는 "11월 중". 기준 해와 다르면 "'27 01-04", "2027년 1월 중" */
+export function chipDue(due: string, refYear?: string): string {
+  if (isMonthDue(due)) return `${dayOrMonthText(due, refYear)} 중`;
+  return shortDate(due, refYear);
 }
 
-/** 이슈 페이지의 일정 줄 날짜: "11-26 (목)" 또는 "11월 중". 해가 다르면 "2025-10-28 (화)", "2025년 11월 중" */
+/** 이슈 페이지의 일정 줄 날짜: "11-26 (목)" 또는 "11월 중". 해가 다르면 "'25 10-28 (화)", "2025년 11월 중" */
 export function issueRowDate(due: string, today: string): string {
-  const sameYear = due.slice(0, 4) === today.slice(0, 4);
   if (isMonthDue(due)) return `${monthName(due, today)} 중`;
-  return `${sameYear ? due.slice(5) : due} (${weekday(due)})`;
+  return `${shortDate(due, yearOf(today))} (${weekdayOf(due)})`;
 }
 
 // ---- 결과 문구와 링크(4.7-1) ----

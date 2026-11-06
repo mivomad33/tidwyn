@@ -2,12 +2,13 @@
 import { useMemo, type ReactNode } from "react";
 import { kstDate } from "../../../src/kst.ts";
 import type { DaySections, DayVideos, SiteVideo, VideoSection } from "../../../src/siteTypes.ts";
-import { BackLink, ErrorState, Layout, Loading, VIDEO_LOAD_ERROR, useTitle } from "../components/common.tsx";
+import type { SiteDates } from "../lib/types.ts";
+import { BriefBackLink, ErrorState, Layout, Loading, VIDEO_LOAD_ERROR, useTitle } from "../components/common.tsx";
 import { NotFoundView } from "../components/notFoundView.ts";
 import { VideoDetail } from "../components/videoView.ts";
 import { retry, useResource } from "../data.ts";
 import { dataUrl } from "../lib/paths.ts";
-import { briefVideosPath, isValidDate } from "../lib/routes.ts";
+import { isValidDate } from "../lib/routes.ts";
 import { sectionVideo } from "../lib/videos.ts";
 import { Link } from "../router.tsx";
 
@@ -36,7 +37,9 @@ export function VideoPage({ date, id }: { date: string; id: string }) {
   const video = res.status === "ok" ? sectionVideo(res.data, id, today) : null;
   const sectionsUrl = video ? dataUrl.videoSections(date) : null;
   const sectionsRes = useResource<DaySections>(sectionsUrl);
-  const back = <BackLink to={briefVideosPath(date)} label="브리프" />;
+  // 들어온 브리프를 모르면 그 영상 날짜의 영상 탭으로 가고, 글도 영상 날짜로 정한다(U1 4.4-1)
+  const datesRes = useResource<SiteDates>(dataUrl.dates());
+  const back = <BriefBackLink fallback={{ date, latestDate: datesRes.status === "ok" ? datesRes.data.latestDate : null }} />;
   if (url === null || (res.status === "error" && res.notFound)) return <Missing />;
   const failed = res.status === "error" ? url : sectionsRes.status === "error" && !sectionsRes.notFound ? sectionsUrl : null;
   if (failed !== null) {

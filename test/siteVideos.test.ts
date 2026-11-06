@@ -132,7 +132,7 @@ describe("4.7-1 브리프의 '영상' 탭", () => {
     assert.match(link[2]!, /\bnoopener\b/);
     assert.match(link[3]!, /<img src="\/t.svg" alt=""/);
     assert.match(link[3]!, /<small class="vdur" aria-hidden="true">1:05:03<\/small>/);
-    assert.match(link[3]!, /<span class="vt">Example: a made-up talk<\/span><span class="sr-only"> \(새 탭\)<\/span>$/);
+    assert.match(link[3]!, /<span class="vt">Example: a made-up talk<span class="mark" aria-hidden="true"> ↗<\/span><span class="sr-only"> \(새 탭\)<\/span><\/span>$/);
     assert.match(html, /<div class="vm"><span class="tag">AI · 영어<\/span>Example Lab · <span class="nw">1시간 5분<\/span><\/div>/);
     assert.match(html, /<p class="why"><b>추천 이유<\/b>가짜 추천 이유다\.<\/p>/);
     assert.equal(videoUrl("a b"), "https://www.youtube.com/watch?v=a%20b");
@@ -167,7 +167,7 @@ describe("4.7-1 브리프의 '영상' 탭", () => {
     const html = renderToStaticMarkup(h(VideoSource));
     assert.equal(
       html,
-      `<p class="vsrc">영상 정보: YouTube · <a href="${YOUTUBE_TERMS_URL}" class="text-link" target="_blank" rel="noopener noreferrer">YouTube 이용약관<span class="sr-only"> (새 탭)</span></a> · 추천 이유, 요약, 구간 정리는 Tidwyn이 썼습니다.</p>`,
+      `<p class="vsrc">영상 정보: YouTube · <a href="${YOUTUBE_TERMS_URL}" class="text-link" target="_blank" rel="noopener noreferrer">YouTube 이용약관<span class="mark" aria-hidden="true"> ↗</span><span class="sr-only"> (새 탭)</span></a> · 추천 이유, 요약, 구간 정리는 Tidwyn이 썼습니다.</p>`,
     );
   });
 });
@@ -188,13 +188,13 @@ describe("4.7-2 이슈 페이지의 '관련 영상'", () => {
     assert.deepEqual(issueVideoRows(list.slice(0, 5), TODAY), { rows: issueVideoRows(list.slice(0, 5), TODAY, true).rows, more: 0 }, "5개면 더 보기가 없다");
   });
 
-  test("같은 영상 줄 컴포넌트를 쓰고, 채널·길이 뒤에 'M월 D일 추천'(그 날짜 브리프의 영상 탭)이 붙는다", () => {
+  test("같은 영상 줄 컴포넌트를 쓰고, 채널·길이 뒤에 'M월 D일 브리프 영상'(그 날짜 브리프의 영상 탭)이 붙는다", () => {
     const v = iv("2026-10-29", "us");
     const html = renderToStaticMarkup(h(VideoList, { videos: [v], mode: "issue", Link }));
     assert.match(html, /^<ul class="vlist"><li class="vrow"/);
-    assert.match(html, /<div class="vm">예시 채널 · <span class="nw">44분<\/span><span class="nw"> · <a href="\/2026-10-29#videos" class="vrec">10월 29일 추천<\/a><\/span><\/div>/);
+    assert.match(html, /<div class="vm">예시 채널 · <span class="nw">44분<\/span><span class="nw"> · <a href="\/2026-10-29#videos" class="text-link vrec">10월 29일 브리프 영상<\/a><\/span><\/div>/);
     assert.ok(!html.includes('class="tag"'), "이슈 페이지에는 묶음 표시를 붙이지 않는다(확정 시안)");
-    assert.equal(recommendedOnText("2026-01-05"), "1월 5일 추천");
+    assert.equal(recommendedOnText("2026-01-05"), "1월 5일 브리프 영상");
   });
 
   test("지어낸 데이터: 흡수된 이슈의 영상은 남는 이슈에 들어가고, 6개 이상인 이슈와 영상 없는 이슈가 있다", () => {

@@ -4,15 +4,15 @@
 // 일정과 지표가 있는 지어낸 데이터(indicator-data/)로 바꿔 준다. 브라우저 시계는 가장 최근 브리프의 다음 날(2026-10-28, KST)로 고정한다.
 import fs from "node:fs";
 import path from "node:path";
-import type { Page, Route } from "@playwright/test";
-import { expect, expectNoHorizontalScroll, fulfillData, serverError, test } from "./base.ts";
-import { E2E_INDICATOR_DATA_DIR, E2E_INDICATOR_INFO_FILE } from "./paths.ts";
+import type { Page } from "@playwright/test";
+import { INDICATOR_SITE_DATA, expect, expectNoHorizontalScroll, fulfillData, serverError, test, useIndicatorData } from "./base.ts";
+import { E2E_INDICATOR_INFO_FILE } from "./paths.ts";
 import { BOX_TAB_KEY, FRED_AGREEMENT, FRED_NOTICE, FRED_TERMS_URL, RELATED_FIRST, formatValue, visibleCards } from "../../site/src/lib/indicators.ts";
 import { WEEK_BOX_KEY } from "../../site/src/lib/schedules.ts";
 import type { DayList, IndicatorList, IssueChunk, IssueDetail, MonthList } from "../../src/siteTypes.ts";
 
 const TODAY = "2026-10-28";
-const SITE_DATA = path.join(E2E_INDICATOR_DATA_DIR, "site-data");
+const SITE_DATA = INDICATOR_SITE_DATA;
 const json = <T>(name: string) => JSON.parse(fs.readFileSync(path.join(SITE_DATA, name), "utf8")) as T;
 const files = fs.readdirSync(SITE_DATA);
 const iinfo = JSON.parse(fs.readFileSync(E2E_INDICATOR_INFO_FILE, "utf8")) as {
@@ -37,16 +37,6 @@ const latest = days.get(LATEST)!;
 const noWeekDate = iinfo.dates.find((d) => !days.get(d)!.week && days.get(d)!.indicators)!;
 const otherDate = iinfo.dates.find((d) => d !== LATEST && days.get(d)!.week && days.get(d)!.indicators)!;
 const noIndicatorIssue = issues.find((i) => !i.indicators && i.schedules?.length)!;
-
-/** 사이트 데이터 요청을 일정·지표가 있는 지어낸 데이터로 바꾼다(뒤에 단 page.route가 먼저 걸리므로 오류 주입은 이 뒤에 단다) */
-async function useIndicatorData(page: Page): Promise<void> {
-  await page.route("**/site-data/**", (route: Route) => {
-    const name = decodeURIComponent(new URL(route.request().url()).pathname.split("/").pop()!);
-    const file = path.join(SITE_DATA, name);
-    if (!fs.existsSync(file)) return route.fulfill({ status: 404, contentType: "text/plain", body: "Not Found" });
-    return route.fulfill({ status: 200, contentType: "application/json", body: fs.readFileSync(file, "utf8") });
-  });
-}
 
 test.beforeEach(async ({ page }) => {
   await page.clock.setFixedTime(new Date(`${TODAY}T12:00:00+09:00`));
@@ -191,7 +181,8 @@ test.describe("지표 하나의 페이지", () => {
     await expect(page.locator(".chart-read")).toHaveText("그래프를 누르거나 끌면 그날 값이 보인다.");
     const boxRect = (await slider.boundingBox())!;
     await page.mouse.click(boxRect.x + boxRect.width / 2, boxRect.y + boxRect.height / 2);
-    await expect(page.locator(".chart-read.on")).toHaveText(/^\d{4}년 \d{1,2}월 \d{1,2}일 [\d,.]+원$/);
+    // 1개월 안의 값은 기준 해(목록의 기준일 2026-10-27의 해)와 같아 해를 쓰지 않는다(U1 4.3-1)
+    await expect(page.locator(".chart-read.on")).toHaveText(/^\d{1,2}월 \d{1,2}일 [\d,.]+원$/);
     const before = await slider.getAttribute("aria-valuetext");
     await slider.focus();
     await page.keyboard.press("ArrowLeft");
@@ -290,7 +281,8 @@ test.describe("터치 화면", () => {
     await expect(slider).toBeVisible();
     const r = (await slider.boundingBox())!;
     await page.touchscreen.tap(r.x + r.width * 0.3, r.y + r.height / 2);
-    await expect(page.locator(".chart-read.on")).toHaveText(/^\d{4}년 \d{1,2}월 \d{1,2}일 /);
+    // 1년 그래프는 지난해 값일 수 있다. 해는 기준 해(2026)와 다를 때만 쓴다(U1 4.3-1)
+    await expect(page.locator(".chart-read.on")).toHaveText(/^(?:(?!2026년)\d{4}년 )?\d{1,2}월 \d{1,2}일 /);
     await expect(page.locator(".chart-plot svg line[stroke-dasharray]")).toHaveCount(1);
   });
 });

@@ -1,6 +1,9 @@
 // E2E 공통 도우미: 바깥 네트워크 막기, 화면 오류 모으기, 가로 스크롤 확인, 사이트 데이터 요청 바꾸기.
+import fs from "node:fs";
+import path from "node:path";
 import { test as base, expect, type Page, type Route } from "@playwright/test";
 import { readInfo, type E2eInfo } from "./info.ts";
+import { E2E_INDICATOR_DATA_DIR } from "./paths.ts";
 
 export { expect };
 
@@ -92,4 +95,17 @@ export async function serverError(page: Page, name: string): Promise<void> {
 /** 그 파일 요청에 주어진 JSON을 준다(빈 상태 확인용) */
 export async function fulfillData(page: Page, name: string, json: unknown): Promise<void> {
   await page.route(dataFile(name), (route: Route) => route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(json) }));
+}
+
+/** 일정·지표가 있는 지어낸 데이터(indicator-data/)의 site-data 폴더 */
+export const INDICATOR_SITE_DATA = path.join(E2E_INDICATOR_DATA_DIR, "site-data");
+
+/** 사이트 데이터 요청을 일정·지표가 있는 지어낸 데이터로 바꾼다(뒤에 단 page.route가 먼저 걸리므로 오류 주입은 이 뒤에 단다) */
+export async function useIndicatorData(page: Page): Promise<void> {
+  await page.route("**/site-data/**", (route: Route) => {
+    const name = decodeURIComponent(new URL(route.request().url()).pathname.split("/").pop()!);
+    const file = path.join(INDICATOR_SITE_DATA, name);
+    if (!fs.existsSync(file)) return route.fulfill({ status: 404, contentType: "text/plain", body: "Not Found" });
+    return route.fulfill({ status: 200, contentType: "application/json", body: fs.readFileSync(file, "utf8") });
+  });
 }

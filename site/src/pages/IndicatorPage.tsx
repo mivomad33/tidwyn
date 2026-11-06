@@ -3,8 +3,9 @@
 import { useState } from "react";
 import { BackLink, Empty, ErrorState, Layout, Loading, useFocusNewRow, useTitle } from "../components/common.tsx";
 import { ChangeText, LineChart, SourceNote } from "../components/indicatorView.ts";
+import { Segmented } from "../components/segmented.ts";
 import { retry, useResource } from "../data.ts";
-import { DEFAULT_PERIOD, PERIODS, changeLabel, changePrefix, periodPoints, readingDateText, readingValueText, relatedShown, type Period } from "../lib/indicators.ts";
+import { DEFAULT_PERIOD, PERIODS, changeLabel, changePrefix, indicatorRefYear, periodPoints, readingDateText, readingValueText, relatedShown, type Period } from "../lib/indicators.ts";
 import { dataUrl } from "../lib/paths.ts";
 import { issuePath } from "../lib/routes.ts";
 import type { IndicatorCard, IndicatorList, IndicatorSeries } from "../lib/types.ts";
@@ -37,18 +38,19 @@ export function IndicatorPage({ id }: { id: string }) {
     );
   }
   if (!card) return <NotFoundPage />;
+  const refYear = indicatorRefYear(listRes.data);
   return (
     <Layout left={back}>
       <article className="ind">
         <h1 className="page-title">{card.name}</h1>
-        <Header card={card} />
+        <Header card={card} refYear={refYear} />
         {card.last ? (
           seriesRes.status === "error" ? (
             <ErrorState onRetry={() => retry([seriesUrl])} />
           ) : seriesRes.status !== "ok" ? (
             <Loading />
           ) : (
-            <Chart card={card} series={seriesRes.data} />
+            <Chart card={card} series={seriesRes.data} refYear={refYear} />
           )
         ) : (
           <Empty>{NO_VALUES_TEXT}</Empty>
@@ -62,30 +64,24 @@ export function IndicatorPage({ id }: { id: string }) {
   );
 }
 
-function Header({ card }: { card: IndicatorCard }) {
+function Header({ card, refYear }: { card: IndicatorCard; refYear: string | undefined }) {
   const last = card.last;
   // 값이 없으면 출처는 아래 출처 줄에만 둔다(같은 줄을 두 번 쓰지 않는다)
   if (!last) return null;
   return (
     <p className="ind-meta">
-      <b className="ind-v">{readingValueText(card, last)}</b> <ChangeText label={changeLabel(card, last.value, last.change, false)} prefix={changePrefix(card)} /> · {readingDateText(last.date)} · {card.credit}
+      <b className="ind-v">{readingValueText(card, last, refYear)}</b> <ChangeText label={changeLabel(card, last.value, last.change)} prefix={changePrefix(card)} /> · {readingDateText(last.date, refYear)} · {card.credit}
     </p>
   );
 }
 
-function Chart({ card, series }: { card: IndicatorCard; series: IndicatorSeries }) {
+function Chart({ card, series, refYear }: { card: IndicatorCard; series: IndicatorSeries; refYear: string | undefined }) {
   const [period, setPeriod] = useState<Period>(DEFAULT_PERIOD);
   const points = periodPoints(series.points, period);
   return (
     <>
-      <div className="seg ind-seg" role="group" aria-label="기간">
-        {PERIODS.map((p) => (
-          <button key={p.id} type="button" className={p.id === period ? "on" : ""} aria-pressed={p.id === period} onClick={() => setPeriod(p.id)}>
-            {p.label}
-          </button>
-        ))}
-      </div>
-      {points.length === 0 ? <Empty>이 기간에 값이 없다.</Empty> : <LineChart meta={card} points={points} height={220} grid />}
+      <Segmented<Period> label="기간" className="seg ind-seg" options={PERIODS.map((p) => ({ value: p.id, label: p.label }))} value={period} onChange={setPeriod} />
+      {points.length === 0 ? <Empty>이 기간에 값이 없다.</Empty> : <LineChart meta={card} points={points} height={220} grid refYear={refYear} />}
       {points.length === 1 && <p className="ind-note">이 기간에는 값이 하나뿐이다.</p>}
     </>
   );

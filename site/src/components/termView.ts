@@ -2,6 +2,7 @@
 // 상태는 부르는 쪽(카드)이 갖고, 여기는 그리기만 한다. 테스트가 react-dom/server로 그려 보도록
 // JSX와 화면 이동기(router.tsx)를 쓰지 않는다: 링크 컴포넌트는 부르는 쪽이 넘긴다.
 import { createElement as h, Fragment, type ComponentType, type ReactNode } from "react";
+import { MoreMark } from "./moreMark.ts";
 import { issueEntityChips } from "../lib/entities.ts";
 import { entityPath, termPath } from "../lib/routes.ts";
 import type { Segment } from "../lib/terms.ts";
@@ -51,6 +52,9 @@ export function TermChips({ terms, openId, onToggle, boxId }: ToggleProps & { te
         "button",
         { key: t.id, type: "button", className: open ? "on" : undefined, "aria-expanded": open, "aria-controls": open ? boxId : undefined, onClick: () => onToggle(t.id) },
         t.name,
+        // 제자리에서 여는 칩이라 끝에 ▾를 둔다(다른 화면으로 가는 알약 칩과 가른다, U1 4.2-1)
+        h("span", { "aria-hidden": true }, open ? " ▴" : " ▾"),
+
       );
     }),
   );
@@ -63,7 +67,7 @@ export function TermBox({ term, id, Link }: { term: TermRef; id: string; Link: L
     { id, className: "tbox", role: "region", "aria-label": `${term.name} 설명` },
     h("b", null, term.name),
     term.description,
-    h(Link, { to: termPath(term.id) }, "용어 사전에서 보기 ", h("span", { "aria-hidden": true }, "›")),
+    h(Link, { to: termPath(term.id), className: "text-link" }, "용어 사전에서 보기", h(MoreMark)),
   );
 }
 

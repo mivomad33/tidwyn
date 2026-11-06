@@ -12,10 +12,10 @@ import { ScheduleChips } from "../components/scheduleView.ts";
 import { VideoList, VideoSource } from "../components/videoView.ts";
 import { EntityChips, TermBox, TermChips, TermText } from "../components/termView.ts";
 import { retry, useResource, type Resource } from "../data.ts";
-import { ALL_TAB, BRIEF_TAB_KEY, BUILDER_TAB, DEMAND_TAB, VIDEO_TAB, briefTabs, currentTab, findDay, findStoryTarget, orderSources, parseBriefTab, sectionView, stateForHash, storyImage, type BriefTab, type BriefViewState } from "../lib/brief.ts";
+import { ALL_TAB, BRIEF_TAB_KEY, BUILDER_TAB, DEMAND_TAB, VIDEO_TAB, briefTabs, currentTab, findDay, findStoryTarget, parseBriefTab, sectionView, stateForHash, storyImage, type BriefTab, type BriefViewState } from "../lib/brief.ts";
 import { builderTabLabel } from "../lib/builder.ts";
 import { demandTabLabel } from "../lib/demand.ts";
-import { briefTitle, latestTitle, monthDay, monthDayWeekday, pageTitle, shortDate } from "../lib/format.ts";
+import { briefTitle, latestTitle, monthDay, monthDayWeekday, pageTitle, shortDate, yearOf } from "../lib/format.ts";
 import { dataUrl } from "../lib/paths.ts";
 import type { DayVideos } from "../../../src/siteTypes.ts";
 import { SITE_URL, shortReportHref, storyReportHref } from "../lib/policy.ts";
@@ -26,8 +26,11 @@ import { VIDEO_CHIPS, filterVideos, videoChips, videoTabLabel, visibleVideos, ty
 import type { BuilderMonth, DayBuilder, DayDemand, DayList, DemandMonth, SiteFlowItem, ListStory, MonthDetail, MonthList, SiteBuilderItem, SiteDates, SiteDiscoveryItem, StoryDetail } from "../lib/types.ts";
 import { readStored, writeStored } from "../lib/storage.ts";
 import { markRead, readStore, useReadVersion } from "../readMarks.ts";
+import { MoreMark } from "../components/moreMark.ts";
 import { ReportLink } from "../components/reportLink.ts";
-import { Link, lastNavigation, navigate, useLocation } from "../router.tsx";
+import { StorySources } from "../components/sourceView.ts";
+import { cameBackToEntry, Link, lastNavigation, navigate, updateEntry, useLocation } from "../router.tsx";
+import { briefMarkOf, navOf, withBriefMark, type BriefMark } from "../lib/navState.ts";
 import { boxTab, browserStorage, useRemembered, weekCollapsed } from "../storage.ts";
 import { NotFoundPage } from "./NotFoundPage.tsx";
 
@@ -98,6 +101,27 @@ function storedTab(): BriefTab {
 function rememberTab(tab: BriefTab): void {
   // 기억하지 못해도 이 화면에서는 고른 탭을 보인다
   writeStored(browserStorage(), BRIEF_TAB_KEY, tab);
+}
+
+/** 기록의 브리프 상태(S12)에서 되살릴 탭·대분류 칩·영상 묶음 칩. 깨진 값은 버린다 */
+function restoredView(mark: BriefMark | null): { section: BriefTab | null; major: BriefViewState["major"]; chip: { date: string | null; chip: VideoChip | null } } {
+  const major = ALL_MAJORS.find((m) => m === mark?.major) ?? null;
+  const chip = VIDEO_CHIPS.find((c) => c === mark?.chip) ?? null;
+  return { section: mark?.tab ? parseBriefTab(mark.tab) : null, major, chip: { date: mark?.date ?? null, chip } };
+}
+
+/** 주소의 `#`가 탭을 정하는지(영상·빌더·수요 탭의 `#`와 항목 키, 뉴스 키). 그렇게 연 탭도 고른 탭으로 기억한다(U1 4.4-4) */
+function hashPicksTab(day: DayList, key: string | null): boolean {
+  if (key === null) return false;
+  if (key === VIDEO_HASH || key === BUILDER_HASH || key === DEMAND_HASH || isBuilderTabKey(key) || isFlowItemKey(key)) return true;
+  return findStoryTarget(day, key) !== null;
+}
+
+/** 이 기록에서 되살릴 브리프 상태. 새로 고침이면 탭만 되살린다(칩은 '전체'로, 스크롤은 브라우저가 맡는다) */
+function entryMark(state: unknown): BriefMark | null {
+  const mark = briefMarkOf(state);
+  if (!mark || cameBackToEntry()) return mark;
+  return mark.tab ? { tab: mark.tab } : null;
 }
 
 function tabViewOf(day: DayList, today: string, section: BriefTab) {
@@ -233,15 +257,50 @@ export function BriefPage({ route }: { route: Route }) {
   // 읽음이 바뀌면 다시 그려 '안 읽은 것만'의 숨길 줄을 다시 정한다
   useReadVersion();
   const [, refresh] = useReducer((n: number) => n + 1, 0);
-  const [view, setView] = useState<BriefViewState>(() => ({ section: storedTab(), major: null, expanded: null }));
-  // 7단계: 영상 탭의 묶음 칩(기억하지 않는다. 날짜가 바뀌면 '전체'로 돌아간다)과 30일 숨기기의 오늘(방문자 브라우저, KST)
-  const [videoChip, setVideoChip] = useState<{ date: string | null; chip: VideoChip | null }>({ date: null, chip: null });
+  // U1 S12: 기록을 되돌려 돌아오면 그 기록에 남긴 탭·칩으로 연다(새 기록이면 기억한 탭. '‹ 브리프'가 새 기록으로 올 때는 그 기록에 담은 탭)
+  const [restored] = useState(() => restoredView(entryMark(loc.state)));
+  const [view, setView] = useState<BriefViewState>(() => ({ section: restored.section ?? storedTab(), major: restored.major, expanded: null }));
+  // 7단계: 영상 탭의 묶음 칩(날짜가 바뀌면 '전체'로 돌아간다. U1 S12: 기록에만 남긴다)과 30일 숨기기의 오늘(방문자 브라우저, KST)
+  const [videoChip, setVideoChip] = useState<{ date: string | null; chip: VideoChip | null }>(restored.chip);
   const today = useMemo(() => kstDate(new Date()), []);
+  // 되살릴 스크롤: 기록을 되돌려(또는 새로 고쳐) 이 기록에 왔고 떠날 때 스크롤을 남겼으면, 화면이 다 그려진 뒤 그 자리로 간다
+  const nav = navOf(loc.state);
+  const entryId = nav?.id ?? null;
+  const [firstScroll] = useState(() => (cameBackToEntry() ? (nav?.scroll ?? null) : null));
+  const restoreScroll = useRef<number | null>(firstScroll);
+  const seenEntry = useRef(entryId);
   useEffect(() => {
-    if (day) setView((v) => stateForHash(day, key, v));
+    if (seenEntry.current === entryId) return;
+    seenEntry.current = entryId;
+    // 화면을 그대로 둔 채 다른 브리프 기록으로 되돌아온 경우(날짜 사이 이동 뒤 뒤로 등)
+    if (lastNavigation().kind !== "pop") return;
+    const mark = briefMarkOf(loc.state);
+    restoreScroll.current = nav?.scroll ?? null;
+    if (!mark) return;
+    const r = restoredView(mark);
+    setView((v) => ({ ...v, section: r.section ?? v.section, major: r.major }));
+    setVideoChip(r.chip);
+  }, [entryId, loc.state]);
+  useEffect(() => {
+    if (!day) return;
+    setView((v) => stateForHash(day, key, v));
   }, [day, key]);
   // 9.6단계: 영상 파일은 영상 탭을 열 때만 받는다(4.3-1). 주소의 `#`가 정할 탭까지 보고 정해 첫 그리기에 잘못 받지 않게 한다
-  const tabView = day ? tabViewOf(day, today, stateForHash(day, key, view).section) : null;
+  const hashView = day ? stateForHash(day, key, view) : null;
+  const tabView = day && hashView ? tabViewOf(day, today, hashView.section) : null;
+  const shownTab = tabView?.current ?? null;
+  useEffect(() => {
+    if (day && shownTab && hashPicksTab(day, key) && shownTab === hashView?.section) rememberTab(shownTab);
+    // 주소의 `#`가 바뀔 때만 본다(탭 단추는 chooseSection이 기억한다)
+  }, [day, key, shownTab]);
+  // U1 S8·S12: 이 브리프 기록에 날짜·보이는 탭·그때의 최근 날짜·고른 칩을 남긴다. 다른 화면으로 갈 때 들어온 브리프가 되고, 돌아올 때 되살린다
+  const latestDate = datesRes.status === "ok" ? datesRes.data.latestDate : null;
+  const pickedChip = videoChip.date === date ? videoChip.chip : null;
+  useEffect(() => {
+    if (!date || !shownTab || !latestDate) return;
+    const mark: BriefMark = { date, tab: shownTab, latestDate, chip: pickedChip, major: view.major };
+    updateEntry((s) => withBriefMark(s, mark));
+  }, [date, shownTab, latestDate, pickedChip, view.major]);
   const videoUrl = date && tabView?.current === VIDEO_TAB ? dataUrl.videoDay(date) : null;
   const videoRes = useResource<DayVideos>(videoUrl);
   // 9.8단계: 빌더 파일도 빌더 탭을 열 때만, 항목이 있는 날만 받는다(4.6-5)
@@ -275,7 +334,8 @@ export function BriefPage({ route }: { route: Route }) {
   useEffect(() => {
     if (!day || !key || !date) return;
     const token = `${date}#${key}`;
-    if (scrolledFor.current === token || lastNavigation().quiet) return;
+    // 되살릴 스크롤이 있으면 카드 위치 대신 그 자리로 간다(아래 효과)
+    if (scrolledFor.current === token || lastNavigation().quiet || restoreScroll.current !== null) return;
     if (key === VIDEO_HASH || key === BUILDER_HASH || key === DEMAND_HASH) {
       scrolledFor.current = token;
       window.scrollTo({ top: 0 });
@@ -293,6 +353,18 @@ export function BriefPage({ route }: { route: Route }) {
     el.scrollIntoView({ block: "start" });
     el.focus({ preventScroll: true });
   }, [day, key, date, view, detailRes.status, hashItem]);
+
+  // U1 S12: 되돌아온 기록의 스크롤을 되살린다. 보이는 탭의 파일(펼친 카드 본문, 영상·빌더·수요)이 다 온 뒤 한 번만 한다
+  const settled = (r: Resource<unknown>) => r.status !== "loading";
+  // 주소의 `#`가 정한 펼침이 화면 상태에 들어온 뒤여야 한다(첫 그리기에는 아직 접혀 있다)
+  const ready = !!day && !!tabView && view.expanded === hashView?.expanded && settled(detailRes) && settled(videoRes) && settled(builderRes) && settled(demandRes);
+  useEffect(() => {
+    const y = restoreScroll.current;
+    if (!ready || y === null) return;
+    restoreScroll.current = null;
+    if (date && key) scrolledFor.current = `${date}#${key}`;
+    window.scrollTo({ top: y });
+  }, [ready, date, key, entryId]);
 
   useFullTitle(route.name === "latest" ? latestTitle() : route.name === "brief" ? briefTitle(route.date, datesRes.status === "ok" ? datesRes.data.dates : [route.date]) : pageTitle());
 
@@ -494,12 +566,14 @@ function StoryCategory({ story, open, showSection }: { story: ListStory; open: b
   );
 }
 
+/** 닫힌 줄의 이어짐 표시. 줄 전체가 펼침 버튼이라 다른 대상(이슈 이름)은 쓰지 않고, 이슈 링크는 펼친 카드에만 둔다(U1 4.2-3) */
 function ContLine({ story }: { story: ListStory }) {
-  if (!story.continues && !story.issue) return null;
+  const fresh = story.issue && story.newIssue;
+  if (!story.continues && !fresh) return null;
   return (
     <span className="cont">
       {story.continues && <span className="badge">{story.continues.label}</span>}
-      {story.issue && <span>{story.newIssue ? "새 이슈" : `이어지는 이야기: ${story.issue.name}`}</span>}
+      {fresh && <span>새 이슈</span>}
     </span>
   );
 }
@@ -561,7 +635,7 @@ function StoryImage({ src }: { src: string }) {
 
 function StoryBody({ story, detail, date }: { story: ListStory; detail: StoryDetail; date: string }) {
   const image = storyImage(detail.sources);
-  const year = date.slice(0, 4);
+  const year = yearOf(date);
   const terms = useMemo(() => detail.terms ?? [], [detail]);
   const entities = detail.entities ?? [];
   const placement = useMemo(() => placeTerms(storyBodyParts(detail), terms), [detail, terms]);
@@ -579,8 +653,9 @@ function StoryBody({ story, detail, date }: { story: ListStory; detail: StoryDet
       {story.issue && (
         <div className="story">
           <b>
-            <Link to={issuePath(story.issue.id)}>
-              이어지는 이야기 · {story.issue.name} <span aria-hidden="true">›</span>
+            <Link to={issuePath(story.issue.id)} className="text-link">
+              이어지는 이야기 · {story.issue.name}
+              <MoreMark />
             </Link>
             {story.continues && <span className="badge">{story.continues.label}</span>}
           </b>
@@ -640,7 +715,7 @@ function StoryBody({ story, detail, date }: { story: ListStory; detail: StoryDet
       {(detail.schedules?.length ?? 0) > 0 && (
         <>
           <h4 className="h">일정</h4>
-          <ScheduleChips schedules={detail.schedules} Link={Link} />
+          <ScheduleChips schedules={detail.schedules} refYear={yearOf(date)} Link={Link} />
         </>
       )}
       {entities.length > 0 && (
@@ -673,20 +748,7 @@ function StoryBody({ story, detail, date }: { story: ListStory; detail: StoryDet
       {detail.sources.length > 0 && (
         <>
           <h4 className="h">출처</h4>
-          <div className="src">
-            {orderSources(detail.sources).map((s, i) => (
-              <a key={`${s.url}-${i}`} href={s.url} target="_blank" rel="noopener noreferrer">
-                {s.name}
-                <small>
-                  {" "}
-                  · {shortDate(s.publishedAt, year)}
-                  {s.publishedAtEstimated ? " 추정" : ""}
-                </small>{" "}
-                <span aria-hidden="true">↗</span>
-                <span className="sr-only"> (새 탭)</span>
-              </a>
-            ))}
-          </div>
+          <StorySources sources={detail.sources} year={year} />
         </>
       )}
       <ReportLink href={storyReportHref(monthDay(date), story.title, `${SITE_URL}${briefPath(date, story.key)}`)} label="틀린 내용 알리기" />
@@ -711,7 +773,11 @@ function ShortItem({ story, date, targeted, showSection, leaving, onGone }: { st
             {story.category.major} · {story.category.minor}
           </span>
           {story.continues && <span className="badge">{story.continues.label}</span>}
-          {story.issue && <Link to={issuePath(story.issue.id)}>{story.issue.name}</Link>}
+          {story.issue && (
+            <Link to={issuePath(story.issue.id)} className="text-link">
+              {story.issue.name}
+            </Link>
+          )}
           <FixMark fixes={story.corrections} />
         </div>
         <FixNotes fixes={story.corrections} className="short-fix" />

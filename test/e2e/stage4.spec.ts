@@ -47,7 +47,7 @@ test.describe("펼친 카드의 용어 밑줄과 칩", () => {
     const word = item.locator("button.term", { hasText: under.surface! });
     const chips = item.getByRole("group", { name: "용어" });
     // 칩 줄에는 본문 표기가 없는 용어도 있다
-    await expect(chips.getByRole("button")).toHaveText([under, chipOnly].sort((a, b) => a.id - b.id).map((t) => t.name));
+    await expect(chips.getByRole("button")).toHaveText([under, chipOnly].sort((a, b) => a.id - b.id).map((t) => `${t.name} ▾`));
     await word.click();
     await expect(termBox(item, under.name)).toBeVisible();
     const other = chips.getByRole("button", { name: chipOnly.name });

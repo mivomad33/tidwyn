@@ -2,11 +2,11 @@
 // 지표 카드, 출처 표시와 FRED 고지. 테스트가 react-dom/server로 그려 보도록 termView.ts처럼 JSX와 화면 이동기(router.tsx)를 쓰지 않는다:
 // 링크 컴포넌트는 부르는 쪽이 넘긴다.
 import { createElement as h, useEffect, useId, useRef, useState, type KeyboardEvent, type PointerEvent } from "react";
+import { NewTabMark } from "./moreMark.ts";
 import {
   FRED_NOTICE,
   FRED_TERMS_LABEL,
   FRED_TERMS_URL,
-  axisDateText,
   changeLabel,
   changePrefix,
   chartGeometry,
@@ -14,13 +14,14 @@ import {
   creditsOf,
   fmtNumber,
   formatValue,
-  longDateText,
   moveIndex,
   nearestIndex,
+  readingDateText,
   readingValueText,
   type ChangeLabel,
   type ChartBox,
 } from "../lib/indicators.ts";
+import { axisDates } from "../lib/format.ts";
 import { capturePointer, observeWidth, rectOf } from "../lib/dom.ts";
 import { indicatorPath } from "../lib/routes.ts";
 import type { IndicatorCard, IndicatorMetaInfo, IndicatorPoint } from "../lib/types.ts";
@@ -52,7 +53,7 @@ export function Sparkline({ points }: { points: IndicatorPoint[] }) {
 }
 
 /** 지표 페이지의 카드 하나: 이름, 마지막 값, 전날(월별은 전달) 대비, 1년 작은 그래프. 누르면 지표 하나의 페이지 */
-export function IndicatorCardView({ card, Link }: { card: IndicatorCard; Link: LinkLike }) {
+export function IndicatorCardView({ card, refYear, Link }: { card: IndicatorCard; refYear?: string; Link: LinkLike }) {
   const last = card.last!;
   return h(
     "li",
@@ -61,8 +62,8 @@ export function IndicatorCardView({ card, Link }: { card: IndicatorCard; Link: L
       Link,
       { to: indicatorPath(card.id), className: "icard" },
       h("span", { className: "n" }, card.name),
-      h("b", { className: "v" }, readingValueText(card, last)),
-      h("span", { className: "c" }, h(ChangeText, { label: changeLabel(card, last.value, last.change, false), prefix: changePrefix(card) })),
+      h("b", { className: "v" }, readingValueText(card, last, refYear)),
+      h("span", { className: "c" }, h(ChangeText, { label: changeLabel(card, last.value, last.change), prefix: changePrefix(card) })),
       h(Sparkline, { points: card.spark }),
     ),
   );
@@ -83,7 +84,7 @@ export function FredNotice() {
     { className: "isrc fred", lang: "en" },
     FRED_NOTICE,
     " ",
-    h("a", { href: FRED_TERMS_URL, className: "text-link", target: "_blank", rel: "noopener noreferrer", lang: "ko" }, FRED_TERMS_LABEL, h("span", { className: "sr-only" }, " (새 탭)")),
+    h("a", { href: FRED_TERMS_URL, className: "text-link", target: "_blank", rel: "noopener noreferrer", lang: "ko" }, FRED_TERMS_LABEL, h(NewTabMark)),
   );
 }
 
@@ -95,6 +96,8 @@ export interface ChartProps {
   grid?: boolean;
   /** 강조색 점을 찍을 값의 위치(이슈 뉴스가 있는 날) */
   dots?: number[];
+  /** 읽기 줄·요약 날짜의 기준 해(4.3-1, indicatorRefYear) */
+  refYear?: string;
 }
 
 /** 그래프의 그리기 영역 크기. 서버에서 그릴 때(테스트)와 너비를 재기 전의 너비 */
@@ -117,7 +120,7 @@ function useWidth(fallback: number) {
  * 선 그래프(4.7-3·4.7-4). 처음·끝 날짜 축, 가로 눈금선(grid), 그래프 위를 누르거나 끌면(마우스는 올리면) 그 날짜와 값이 위 줄에 보인다.
  * 키보드: 그래프에 초점을 두고 ←→(하루), PageUp·PageDown(10분의 1), Home·End, Esc(지우기). 보조 기술용 요약(기간, 처음·마지막, 최고·최저)이 있다.
  */
-export function LineChart({ meta, points, height, grid = false, dots = [] }: ChartProps) {
+export function LineChart({ meta, points, height, grid = false, dots = [], refYear }: ChartProps) {
   const { ref, width } = useWidth(CHART_FALLBACK_WIDTH);
   const [sel, setSel] = useState<number | null>(null);
   const pinned = useRef(false);
@@ -130,9 +133,9 @@ export function LineChart({ meta, points, height, grid = false, dots = [] }: Cha
   }, [points]);
   const box: ChartBox = { width, height, padX: 4, padTop: grid ? 14 : 8, padBottom: 18 };
   const g = chartGeometry(points, box);
-  const summary = chartSummary(meta, points);
+  const summary = chartSummary(meta, points, refYear);
   const cur = sel !== null && sel < n ? sel : null;
-  const pointText = (i: number) => `${longDateText(points[i]![0])} ${formatValue(meta, points[i]![1])}`;
+  const pointText = (i: number) => `${readingDateText(points[i]![0], refYear)} ${formatValue(meta, points[i]![1])}`;
   const readout = cur !== null ? pointText(cur) : "그래프를 누르거나 끌면 그날 값이 보인다.";
 
   function pick(e: PointerEvent) {
@@ -185,8 +188,9 @@ export function LineChart({ meta, points, height, grid = false, dots = [] }: Cha
     parts.push(h("circle", { key: "sel-c", cx: g.xs[cur], cy: g.ys[cur], r: 4.5, fill: "var(--accent)", stroke: "var(--bg)", strokeWidth: 2 }));
   }
   if (n > 0) {
-    parts.push(h("text", { key: "a0", x: box.padX, y: height - 4, className: "ax" }, axisDateText(points[0]![0])));
-    if (n > 1) parts.push(h("text", { key: "a1", x: width - box.padX, y: height - 4, textAnchor: "end", className: "ax" }, axisDateText(points[n - 1]![0])));
+    const [a0, a1] = axisDates(points[0]![0], points[n - 1]![0]);
+    parts.push(h("text", { key: "a0", x: box.padX, y: height - 4, className: "ax" }, a0));
+    if (n > 1) parts.push(h("text", { key: "a1", x: width - box.padX, y: height - 4, textAnchor: "end", className: "ax" }, a1));
   }
 
   return h(

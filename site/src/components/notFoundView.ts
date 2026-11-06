@@ -10,8 +10,8 @@ export function RecoverLinks({ Link, noSearch = false }: { Link: LinkLike; noSea
   return h(
     "div",
     { className: "nf-act" },
-    h(Link, { to: "/", className: "btn" }, "최근 뉴스 브리프 보기"),
-    h("div", { className: "more" }, h(Link, { to: "/issues", className: "quiet" }, "이슈 목록"), noSearch ? h(Link, { to: "/dates", className: "quiet" }, "날짜 목록") : h(Link, { to: searchPath(""), className: "quiet" }, "검색")),
+    h(Link, { to: "/", className: "btn" }, "최근 브리프"),
+    h("div", { className: "more" }, h(Link, { to: "/issues", className: "text-link" }, "이슈 목록"), noSearch ? h(Link, { to: "/dates", className: "text-link" }, "날짜 목록") : h(Link, { to: searchPath(""), className: "text-link" }, "검색")),
   );
 }
 

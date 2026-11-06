@@ -72,7 +72,7 @@ test.describe("4.5-2 항목", () => {
     const x = pick(b.three, "product-1");
     await page.goto(`/${b.three}#builder`);
     const row = storyItem(page, x.key);
-    await expect(row.locator(".title")).toHaveText(`${x.name} (새 탭)`);
+    await expect(row.locator(".title")).toHaveText(`${x.name} ↗ (새 탭)`);
     await expect(heads(row)).toHaveText(["용도", "기존 도구와의 차이", "고른 이유", "관련 이슈", "출처"]);
     await expect(field(row, "용도")).toHaveText(x.purpose);
     await expect(field(row, "기존 도구와의 차이")).toHaveText(x.difference);
@@ -227,7 +227,7 @@ test.describe("4.5-7 좁은 폭", () => {
     await expectNoHorizontalScroll(page, "375px");
     const name = found(b.longKinds).find((x) => x.kind === "repo")!;
     const title = storyItem(page, name.key).locator(".title");
-    await expect(title).toHaveText(`${name.name} (새 탭)`);
+    await expect(title).toHaveText(`${name.name} ↗ (새 탭)`);
     const box = (await title.getByRole("link").boundingBox())!;
     expect(box.x + box.width).toBeLessThanOrEqual(375);
     expect(box.height).toBeGreaterThan(60);
@@ -240,7 +240,7 @@ test.describe("JS 없는 묶음", () => {
   test.use({ javaScriptEnabled: false });
   test("앱과 같은 소제목과 상태 문구를 보이고 꺼진 묶음이 없다", async ({ page }) => {
     await page.goto(`/${b.allFailed}`);
-    await expect(page.locator(".bgroup-h").first()).toHaveCSS("font-size", "15px");
+    await expect(page.locator(".bgroup-h").first()).toHaveCSS("font-size", "16px");
     await expect(groups(page)).toHaveText(["도구 변화", "새 제품", "뜨는 저장소"]);
     await expect(page.locator(".state.error p").nth(2)).toHaveText(discoverZeroText("repo", "failed")!);
     await page.goto(`/${b.onlyProduct}`);

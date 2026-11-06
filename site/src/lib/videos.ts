@@ -106,9 +106,9 @@ export function durationText(seconds: number): string {
   return m % 60 ? `${h}시간 ${m % 60}분` : `${h}시간`;
 }
 
-/** 이슈 페이지 줄의 "M월 D일 추천"(붙은 브리프 날짜) */
+/** 이슈 페이지 줄의 "M월 D일 브리프 영상"(붙은 브리프 날짜, 그 날짜 브리프의 영상 탭으로 간다. U1 4.2-9) */
 export function recommendedOnText(date: string): string {
-  return `${monthDay(date)} 추천`;
+  return `${monthDay(date)} 브리프 영상`;
 }
 
 /**

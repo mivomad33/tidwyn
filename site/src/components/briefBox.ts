@@ -1,14 +1,16 @@
 // 브리프 위 '이번 주 일정 | 지표' 상자(6단계 4.7-1, X7. 5단계 '이번 주 일정' 상자를 바꿨다, 확정 시안 design/site.html).
 // 위 줄에 탭('이번 주 일정 N', '지표')과 오른쪽 접기 버튼(▴). 접으면 배경 없는 한 줄 "이번 주 일정 N · 원/달러 <값> <변화> ▾"만 남는다.
 // 상태(고른 탭, 접음)는 부르는 쪽이 갖고, 여기는 그리기와 키보드 처리만 한다. 테스트가 react-dom/server로 그려 보도록 JSX를 쓰지 않는다.
-import { createElement as h, useEffect, useRef, type KeyboardEvent } from "react";
-import { focusById, focusIn } from "../lib/dom.ts";
+import { createElement as h, useEffect, useRef } from "react";
+import { focusIn } from "../lib/dom.ts";
+import { yearOf } from "../lib/format.ts";
 import { boxTabText, boxValuesDate, briefBoxModel, changeLabel, chipDateNote, collapsedParts, formatValue, type BoxTab } from "../lib/indicators.ts";
 import { indicatorPath, indicatorsPath } from "../lib/routes.ts";
 import type { DayList } from "../lib/types.ts";
 import { ChangeText } from "./indicatorView.ts";
 import { WeekAllLink, WeekRows } from "./scheduleView.ts";
 import { MoreMark } from "./moreMark.ts";
+import { Segmented } from "./segmented.ts";
 import type { LinkLike } from "./termView.ts";
 
 export const BOX_PANEL_ID = "brief-box-panel";
@@ -65,23 +67,9 @@ export function BriefBox({ day, tab, collapsed, onTab, onToggle, today, Link }: 
     );
   }
 
-  function onKey(e: KeyboardEvent) {
-    const tabs = model!.tabs;
-    const i = tabs.indexOf(model!.tab);
-    let next: BoxTab | null = null;
-    if (e.key === "ArrowRight") next = tabs[(i + 1) % tabs.length]!;
-    else if (e.key === "ArrowLeft") next = tabs[(i - 1 + tabs.length) % tabs.length]!;
-    else if (e.key === "Home") next = tabs[0]!;
-    else if (e.key === "End") next = tabs.at(-1)!;
-    if (next === null) return;
-    e.preventDefault();
-    onTab(next);
-    focusById(tabId(next));
-  }
-
   const panel =
     model.tab === "week" && day.week
-      ? [h(WeekRows, { key: "rows", week: day.week, today, Link }), h("p", { key: "foot", className: "box-foot" }, h(WeekAllLink, { Link }))]
+      ? [h(WeekRows, { key: "rows", week: day.week, today, refYear: yearOf(day.date), Link }), h("p", { key: "foot", className: "box-foot" }, h(WeekAllLink, { Link }))]
       : [
           h(
             "ul",
@@ -96,13 +84,13 @@ export function BriefBox({ day, tab, collapsed, onTab, onToggle, today, Link }: 
                   { to: indicatorPath(c.id), className: "ichip" },
                   h("span", { className: "n" }, c.name),
                   h("b", null, formatValue(c, c.value)),
-                  h(ChangeText, { label: changeLabel({ change: c.kind, decimals: c.decimals }, c.value, c.change, true) }),
+                  h(ChangeText, { label: changeLabel({ change: c.kind, decimals: c.decimals }, c.value, c.change) }),
                   note ? h("small", null, note, h("span", { className: "sr-only" }, " 값")) : null,
                 ),
               );
             }),
           ),
-          h("p", { key: "foot", className: "box-foot" }, `${boxValuesDate(day.date)} · `, h(Link, { to: indicatorsPath() }, "지표 전체", MoreMark())),
+          h("p", { key: "foot", className: "box-foot" }, `${boxValuesDate(day.date)} · `, h(Link, { to: indicatorsPath(), className: "text-link" }, "지표 전체", MoreMark())),
         ];
 
   return h(
@@ -111,27 +99,14 @@ export function BriefBox({ day, tab, collapsed, onTab, onToggle, today, Link }: 
     h(
       "div",
       { className: "week-h" },
-      h(
-        "div",
-        { role: "tablist", className: "box-tabs", "aria-label": model.label, onKeyDown: onKey },
-        ...model.tabs.map((t) =>
-          h(
-            "button",
-            {
-              key: t,
-              type: "button",
-              role: "tab",
-              id: tabId(t),
-              className: t === model.tab ? "on" : undefined,
-              "aria-selected": t === model.tab,
-              "aria-controls": BOX_PANEL_ID,
-              tabIndex: t === model.tab ? 0 : -1,
-              onClick: () => onTab(t),
-            },
-            boxTabText(t, day),
-          ),
-        ),
-      ),
+      h(Segmented<BoxTab>, {
+        options: model.tabs.map((t) => ({ value: t, label: boxTabText(t, day) })),
+        value: model.tab,
+        onChange: onTab,
+        label: model.label,
+        className: "box-tabs",
+        tabs: { idOf: tabId, panelId: BOX_PANEL_ID },
+      }),
       h("button", { type: "button", className: "box-toggle box-fold", "aria-expanded": true, "aria-controls": BOX_PANEL_ID, "aria-label": "상자 접기", onClick: toggle }, h("span", { "aria-hidden": true }, "▴")),
     ),
     h("div", { id: BOX_PANEL_ID, role: "tabpanel", "aria-labelledby": tabId(model.tab), className: `box-panel tab-${model.tab}` }, ...panel),

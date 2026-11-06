@@ -276,7 +276,7 @@ describe("4.3-6 화면 공통", () => {
     assert.equal(monthDayWeekday("2026-10-27"), "10월 27일 (화)");
     assert.equal(monthDayWeekday("2026-11-01"), "11월 1일 (일)");
     assert.equal(shortDate("2026-10-21", "2026"), "10-21");
-    assert.equal(shortDate("2025-12-30", "2026"), "2025-12-30");
+    assert.equal(shortDate("2025-12-30", "2026"), "'25 12-30");
     assert.deepEqual(groupDatesByMonth(["2026-11-01", "2026-10-27", "2026-10-26"]), [
       { month: "2026-11", dates: ["2026-11-01"] },
       { month: "2026-10", dates: ["2026-10-27", "2026-10-26"] },

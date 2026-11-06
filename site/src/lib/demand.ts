@@ -15,9 +15,9 @@ export function demandTabLabel(count: number): string {
 
 /** 항목이 없는 날의 상태 문구(4.4-1). 받지 못한 날은 오류 글자색으로 보인다 */
 export function demandZeroText(status: DayDemand["status"]): string {
-  if (status === "failed") return "이날의 수요 흐름을 정리하지 못했다.";
+  if (status === "failed") return "이 날의 수요 흐름을 정리하지 못했다.";
   if (status === "short") return "비교할 기록이 아직 모자라 흐름을 정리하지 않았다.";
-  return "이날은 서로 다른 소스 두 곳 이상에서 함께 보인 흐름이 없다.";
+  return "이 날은 서로 다른 소스 두 곳 이상에서 함께 보인 흐름이 없다.";
 }
 
 /** 탭 머리의 흐름 인정 문장(9.98 S1)과 커뮤니티 표본 안내(S5). 고정 문구(FLOW_CAVEAT)와 소개 링크는 뒤에 붙는다 */
@@ -27,7 +27,7 @@ export const DEMAND_ABOUT_HASH = "demand-coverage";
 export const DEMAND_ABOUT_LINK = "수요 탭 소개와 분야별 소스";
 
 /** 목록 끝 안내의 머리말. 소개의 설명도 같은 말을 쓴다 */
-export const DEMAND_MISSING_LABEL = "이날 비교에 넣지 못한 소스";
+export const DEMAND_MISSING_LABEL = "이 날 비교에 넣지 못한 소스";
 
 /** 항목이 있는 날의 목록 끝 안내: 비교에 넣지 못한 공식 묶음, 그다음 커뮤니티 소스(사유를 괄호로, 9.98 4.4-2) */
 export function demandMissingText(missing: readonly OfficialGroup[] | undefined, community: DayDemand["communityMissing"] = undefined): string | null {

@@ -67,7 +67,7 @@ for (const width of [1440, 375]) {
       await expect(page.locator("main .flow.note").first()).toContainText(FLOW_CAVEAT);
       await expect(page.getByRole("link", { name: DEMAND_ABOUT_LINK })).toHaveAttribute("href", `/about#${DEMAND_ABOUT_HASH}`);
       for (const x of itemsOf(d.three)) await expectItem(page, x);
-      await expect(page.locator("main")).not.toContainText("이날 비교에 넣지 못한 소스");
+      await expect(page.locator("main")).not.toContainText("이 날 비교에 넣지 못한 소스");
       await expectNoHorizontalScroll(page, "3건");
     });
 
@@ -86,7 +86,7 @@ for (const width of [1440, 375]) {
     test("빠진 묶음이 있는 날은 목록 끝에 안내가 있다", async ({ page }) => {
       await page.goto(`/${d.missing}#demand`);
       await expect(rows(page)).toHaveCount(1);
-      await expect(page.locator("main .flow.note").last()).toHaveText("이날 비교에 넣지 못한 소스: 국회 청원, SEC Form D");
+      await expect(page.locator("main .flow.note").last()).toHaveText("이 날 비교에 넣지 못한 소스: 국회 청원, SEC Form D");
     });
 
     test("이어짐 링크는 앞 날짜를 보이고 앞 항목으로 간다", async ({ page }) => {

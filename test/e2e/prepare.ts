@@ -6,7 +6,7 @@ import path from "node:path";
 import { buildSite } from "../../site/build.ts";
 import { writeFixtures } from "../../site/dev/fixtures.ts";
 import type { E2eInfo } from "./info.ts";
-import { E2E_BUILDER_DATA_DIR, E2E_BUILDER_INFO_FILE, E2E_BUILDER_OUT_DIR, E2E_DEMAND_DATA_DIR, E2E_DEMAND_INFO_FILE, E2E_DEMAND_OUT_DIR, E2E_DATA_DIR, E2E_INDICATOR_DATA_DIR, E2E_INDICATOR_INFO_FILE, E2E_INFO_FILE, E2E_OUT_DIR, E2E_ROOT, E2E_SCHEDULE_DATA_DIR, E2E_SCHEDULE_INFO_FILE, E2E_VIDEO_DATA_DIR, E2E_VIDEO_INFO_FILE } from "./paths.ts";
+import { E2E_BUILDER_DATA_DIR, E2E_BUILDER_INFO_FILE, E2E_BUILDER_OUT_DIR, E2E_DEMAND_DATA_DIR, E2E_DEMAND_INFO_FILE, E2E_DEMAND_OUT_DIR, E2E_DATA_DIR, E2E_U1_DATA_DIR, E2E_U1_OUT_DIR, E2E_INDICATOR_DATA_DIR, E2E_INDICATOR_INFO_FILE, E2E_INFO_FILE, E2E_OUT_DIR, E2E_ROOT, E2E_SCHEDULE_DATA_DIR, E2E_SCHEDULE_INFO_FILE, E2E_VIDEO_DATA_DIR, E2E_VIDEO_INFO_FILE } from "./paths.ts";
 import type { DayList, EntityChunk, EntityListPage, EntityNewsChunk, IssueChunk, MonthDetail, MonthList, SiteIssueList, StoryDetail, TermGroupFile, TermIndex } from "../../src/siteTypes.ts";
 
 /** 고정 날짜(같은 데이터로 매번 같은 결과가 나오게) */
@@ -120,6 +120,10 @@ async function main(): Promise<void> {
   const dfx = writeFixtures(E2E_DEMAND_DATA_DIR, { end: END, days: 18, contiguous: true, schedules: 12, videos: true, builder: true, demand: true });
   await buildSite({ dataDir: E2E_DEMAND_DATA_DIR, outDir: E2E_DEMAND_OUT_DIR });
   fs.writeFileSync(E2E_DEMAND_INFO_FILE, JSON.stringify(dfx.info.demand, null, 2) + "\n");
+
+  // U1단계: 측정 데이터(명세서 용어, 감사 report.md '실행 조건'의 정상 데이터)로 빌드한다. 끝 날짜가 고정이라 테스트의 기대값(11월 3일 '세계', 11월 5일 영상)이 그대로다
+  writeFixtures(E2E_U1_DATA_DIR, { end: "2026-11-06", days: 18, contiguous: true, videos: true, builder: true, demand: true, corrections: true, schedules: 12, indicators: 8, entities: 30, terms: 30, hub: true });
+  await buildSite({ dataDir: E2E_U1_DATA_DIR, outDir: E2E_U1_OUT_DIR });
   console.log(`E2E 준비 완료: ${E2E_OUT_DIR}`);
 }
 

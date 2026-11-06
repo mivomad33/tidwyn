@@ -222,7 +222,7 @@ test.describe("없는 페이지", () => {
 
   test("없는 페이지의 첫 화면 링크로 돌아간다", async ({ page }) => {
     await page.goto("/no-such-page");
-    await page.getByRole("link", { name: "최근 뉴스 브리프 보기" }).click();
+    await page.getByRole("link", { name: "최근 브리프" }).click();
     await expect(page).toHaveURL("/");
     await expect(page.getByRole("link", { name: dateLinkName(latest) })).toBeVisible();
   });

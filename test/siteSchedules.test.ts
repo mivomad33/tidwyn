@@ -141,12 +141,12 @@ describe("4.7-1 결과 문구와 링크", () => {
     const html = renderToStaticMarkup(h(ScheduleRow, { item: item(7, "2026-10-27", { outcome: { status: "result", news: [{ date: "2026-10-27", key: "한국-s2", title: "가짜 결과" }] } }), today: TODAY, Link, highlight: false }));
     assert.match(html, /^<li id="schedule-7" tabindex="-1" class="ev">/);
     assert.match(html, /<a href="\/2026-10-20#%ED%95%9C%EA%B5%AD-7" class="t">가짜 일정 7<\/a>/);
-    assert.match(html, /이슈: <a href="\/issues\/107">가짜 이슈 7<\/a>/);
-    assert.match(html, /<a href="\/2026-10-27#%ED%95%9C%EA%B5%AD-s2" class="res ok">결과: 가짜 결과<span aria-hidden="true"> ›<\/span><\/a>/);
+    assert.match(html, /이슈: <a href="\/issues\/107" class="text-link">가짜 이슈 7<\/a>/);
+    assert.match(html, /<a href="\/2026-10-27#%ED%95%9C%EA%B5%AD-s2" class="text-link res ok">결과: 가짜 결과<span class="mark" aria-hidden="true"> ›<\/span><\/a>/);
     const noIssue = renderToStaticMarkup(h(ScheduleRow, { item: item(8, "2026-11-01", { issue: null, outcome: { status: "postponed", to: { id: 9, due: "2026-11-20" } } }), today: TODAY, Link, highlight: true }));
     assert.doesNotMatch(noIssue, /이슈:/);
     assert.match(noIssue, /class="ev hl"/);
-    assert.match(noIssue, /<a href="\/schedules\/9" class="res">연기 → 11월 20일/);
+    assert.match(noIssue, /<a href="\/schedules\/9" class="text-link res">연기 → 11월 20일/);
     const unknown = renderToStaticMarkup(h(OutcomeBadges, { outcome: { status: "postponed", to: null }, today: TODAY, Link }));
     assert.equal(unknown, '<span class="res-row"><span class="res">연기(새 날짜 모름)</span></span>', "새 날짜 모름은 링크가 아니다");
     assert.equal(renderToStaticMarkup(h(OutcomeBadges, { outcome: pending, today: TODAY, Link })), "");
@@ -243,7 +243,7 @@ describe("4.7-4 '이번 주 일정' 상자", () => {
     const html = renderToStaticMarkup(box(false));
     assert.match(html, /<button type="button" class="box-toggle box-fold" aria-expanded="true" aria-controls="brief-box-panel" aria-label="상자 접기"><span aria-hidden="true">▴<\/span><\/button>/);
     assert.match(html, /role="tab"[^>]*aria-selected="true"[^>]*>이번 주 일정 7<\/button>/);
-    assert.match(html, /<a href="\/schedules\?view=list">일정 전체/);
+    assert.match(html, /<a href="\/schedules\?view=list" class="text-link">일정 전체/);
     assert.equal(html.match(/class="wrow"/g)?.length, 5);
     assert.match(html, /<a href="\/schedules\/1" class="wrow"><b>10-28 수<\/b><span>가짜 주간 일정 1<\/span><\/a>/);
     assert.match(html, /<a href="\/schedules\/2" class="wrow"><b>10-29 목<\/b><span>가짜 주간 일정 2<small>취소<\/small><\/span><\/a>/);
@@ -285,7 +285,7 @@ describe("4.7-5 펼친 카드의 일정 칩과 이슈 페이지", () => {
     assert.match(html, /<a href="\/schedules" class="text-link">일정 전체/);
     assert.ok(html.indexOf("/schedules/4") < html.indexOf("/schedules/17"), "다가오는 일정이 먼저");
     assert.equal(renderToStaticMarkup(h(IssueSchedules, { lines: undefined, today: TODAY, Link })), "");
-    assert.equal(issueRowDate("2025-10-28", TODAY), "2025-10-28 (화)");
+    assert.equal(issueRowDate("2025-10-28", TODAY), "'25 10-28 (화)");
   });
 });
 

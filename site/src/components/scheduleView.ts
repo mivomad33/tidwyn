@@ -7,6 +7,7 @@ import { categoryVar } from "../lib/theme.ts";
 import { issuePath, schedulePath, schedulesPath } from "../lib/routes.ts";
 import { SCHEDULE_TAB_LABEL, chipDue, isUpcoming, issueRowDate, issueScheduleRows, nameLink, outcomeParts, scheduleDomId, weekRowDate } from "../lib/schedules.ts";
 import type { ScheduleChip, ScheduleItem, ScheduleLine, ScheduleOutcomeView, WeekSchedules } from "../lib/types.ts";
+import { yearOf } from "../lib/format.ts";
 import { MoreMark } from "./moreMark.ts";
 import type { LinkLike } from "./termView.ts";
 
@@ -18,8 +19,9 @@ export function OutcomeBadges({ outcome, today, Link }: { outcome: ScheduleOutco
     "span",
     { className: "res-row" },
     ...parts.map((p, i) => {
+      // 다른 화면으로 가는 결과는 글 링크, 누를 수 없는 결과는 글자다(U1 4.2-2)
       const className = p.ok ? "res ok" : "res";
-      return Link && p.to ? h(Link, { key: i, to: p.to, className }, p.text, MoreMark()) : h("span", { key: i, className }, p.text);
+      return Link && p.to ? h(Link, { key: i, to: p.to, className: `text-link ${className}` }, p.text, MoreMark()) : h("span", { key: i, className }, p.text);
     }),
   );
 }
@@ -32,18 +34,18 @@ export function ScheduleRow({ item, today, Link, highlight }: { item: ScheduleIt
     { id: scheduleDomId(item.id), tabIndex: -1, className: highlight ? "ev hl" : "ev" },
     h("div", { className: "cat", style: { color: categoryVar(item.major) } }, item.major),
     to ? h(Link, { to, className: "t" }, item.name) : h("span", { className: "t" }, item.name),
-    item.issue ? h("small", null, "이슈: ", h(Link, { to: issuePath(item.issue.id) }, item.issue.name)) : null,
+    item.issue ? h("small", null, "이슈: ", h(Link, { to: issuePath(item.issue.id), className: "text-link" }, item.issue.name)) : null,
     h(OutcomeBadges, { outcome: item.outcome, today, Link }),
   );
 }
 
 /** 펼친 카드의 '일정' 칩 줄(예정일 "MM-DD" 또는 "N월 중"과 이름). 누르면 일정 화면의 그 일정. 일정이 없으면 그리지 않는다 */
-export function ScheduleChips({ schedules, Link }: { schedules: ScheduleChip[] | undefined; Link: LinkLike }) {
+export function ScheduleChips({ schedules, refYear, Link }: { schedules: ScheduleChip[] | undefined; refYear?: string; Link: LinkLike }) {
   if (!schedules?.length) return null;
   return h(
     "div",
     { className: "rel" },
-    ...schedules.map((s) => h(Link, { key: s.id, to: schedulePath(s.id), className: "evc" }, h("small", null, chipDue(s.due)), s.name)),
+    ...schedules.map((s) => h(Link, { key: s.id, to: schedulePath(s.id), className: "evc" }, h("small", null, chipDue(s.due, refYear)), s.name)),
   );
 }
 
@@ -52,8 +54,9 @@ export const WEEK_LIST_ID = "week-list";
 /**
  * 브리프 위 상자(6단계 4.7-1, components/briefBox.ts)의 일정 탭 목록: 그 주 일정 최대 5줄(5단계 4.7-4).
  * 줄마다 "MM-DD 요일"과 이름, 작은 결과 문구(링크 아님). 줄 전체가 일정 화면의 그 일정으로 가는 링크다(링크 안에 링크를 두지 않는다).
+ * 날짜의 기준 해는 refYear(브리프 날짜의 해, 펼친 카드의 일정 칩과 같다), 없으면 오늘의 해다.
  */
-export function WeekRows({ week, today, Link }: { week: WeekSchedules; today: string; Link: LinkLike }) {
+export function WeekRows({ week, today, refYear, Link }: { week: WeekSchedules; today: string; refYear?: string; Link: LinkLike }) {
   return h(
     "ul",
     { id: WEEK_LIST_ID },
@@ -65,7 +68,7 @@ export function WeekRows({ week, today, Link }: { week: WeekSchedules; today: st
         h(
           Link,
           { to: schedulePath(x.id), className: "wrow" },
-          h("b", null, weekRowDate(x.due)),
+          h("b", null, weekRowDate(x.due, refYear ?? yearOf(today))),
           h("span", null, x.name, parts.length ? h("small", null, parts.map((p) => p.text).join(" · ")) : null),
         ),
       );
@@ -75,7 +78,7 @@ export function WeekRows({ week, today, Link }: { week: WeekSchedules; today: st
 
 /** 일정 탭 아래 줄의 '일정 전체 ›'(기억한 보기와 관계없이 목록으로) */
 export function WeekAllLink({ Link }: { Link: LinkLike }) {
-  return h(Link, { to: schedulesPath({ list: true }) }, "일정 전체", MoreMark());
+  return h(Link, { to: schedulesPath({ list: true }), className: "text-link" }, "일정 전체", MoreMark());
 }
 
 function IssueScheduleRow({ line, today, Link }: { line: ScheduleLine; today: string; Link: LinkLike }) {

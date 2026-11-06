@@ -1,13 +1,15 @@
 // 여러 화면이 함께 쓰는 컴포넌트(시안 A의 머리 줄, 칩, 분류 줄, 대기·오류 상태, 4.5단계 읽음 표시)
-import { useCallback, useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode, type RefObject } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type MouseEvent, type ReactNode, type RefObject } from "react";
 import { MAJORS } from "../../../src/categories.ts";
 import { pageTitle } from "../lib/format.ts";
 import { MENU, SKIP_LABEL } from "../lib/menu.ts";
+import { resolveBriefBack } from "../lib/navState.ts";
 import { categoryVar } from "../lib/theme.ts";
 import { FooterView } from "./policyView.ts";
 import type { Major } from "../lib/types.ts";
 import { readStore, useIsRead } from "../readMarks.ts";
-import { Link, useLocation } from "../router.tsx";
+import { goBack, isPlainClick, Link, navigate, useLocation } from "../router.tsx";
+import { BackMark } from "./moreMark.ts";
 
 export function useTitle(label: string | undefined): void {
   useFullTitle(pageTitle(label));
@@ -165,12 +167,34 @@ export function TopBar({ left, center }: { left?: ReactNode; center?: ReactNode 
   );
 }
 
-export function BackLink({ to, label }: { to: string; label: string }) {
+/** 되돌아가기 '‹ 이름'. onClick이 기본 이동을 막으면(preventDefault) 그쪽이 이동을 맡는다 */
+export function BackLink({ to, label, onClick }: { to: string; label: string; onClick?: (e: MouseEvent<HTMLAnchorElement>) => void }) {
   return (
-    <Link to={to} className="datebtn back">
-      <span aria-hidden="true">‹ </span>
+    <Link to={to} className="datebtn back" onClick={onClick}>
+      <BackMark />
       {label}
     </Link>
+  );
+}
+
+/**
+ * 브리프가 아닌 화면의 되돌아가기 '‹ 브리프'(U1 4.4-1·3, S1·S2). 바로 앞 기록이 들어온 그 브리프면 기록을 되돌려 탭·펼친 카드·칩·스크롤을 되살리고,
+ * 아니면 들어온 날짜·탭의 브리프로 간다(모르면 fallback, 그것도 없으면 최근 브리프). 들어온 브리프는 history.state에만 있다(S8)
+ */
+export function BriefBackLink({ fallback }: { fallback?: { date: string; latestDate: string | null } }) {
+  const loc = useLocation();
+  const r = resolveBriefBack({ state: loc.state, fallback });
+  return (
+    <BackLink
+      to={r.to}
+      label={r.label}
+      onClick={(e) => {
+        if (!isPlainClick(e)) return;
+        e.preventDefault();
+        if (r.back) goBack();
+        else navigate(r.to, r.tab ? { state: { brief: { tab: r.tab } } } : {});
+      }}
+    />
   );
 }
 
@@ -249,11 +273,9 @@ export function ErrorState({ onRetry, message = "데이터를 불러오지 못�
   );
 }
 
-export function Empty({ children }: { children: ReactNode }) {
-  return <p className="state empty">{children}</p>;
-}
+export { Empty } from "./emptyView.ts";
 
-/** 4.5단계 '전체' 탭에서 줄마다 보이는 섹션 칩(한국·세계·IT·AI) */
+/** 4.5단계 '전체' 탭에서 줄마다 보이는 섹션 표시(한국·세계·IT·AI). 누를 수 없어 면 없이 글자로 쓴다(U1 4.2-2) */
 export function SectionChip({ section }: { section: string }) {
   return <span className="sec">{section}</span>;
 }

@@ -12,7 +12,7 @@ import type { DayDemand, SiteFlowItem } from "../lib/types.ts";
 
 /** 탭 머리의 한 줄 안내(흐름 인정과 커뮤니티 표본, 9.98 S1·S5), 고정 문구(S7), 소개의 분야별 사각지대 표 링크(S6) */
 export function DemandIntro({ Link }: { Link: LinkLike }) {
-  return h("p", { className: "flow note" }, DEMAND_INTRO, " ", FLOW_CAVEAT, " ", h(Link, { to: `/about#${DEMAND_ABOUT_HASH}`, className: "bintro-l" }, DEMAND_ABOUT_LINK));
+  return h("p", { className: "flow note" }, DEMAND_INTRO, " ", FLOW_CAVEAT, " ", h(Link, { to: `/about#${DEMAND_ABOUT_HASH}`, className: "text-link bintro-l" }, DEMAND_ABOUT_LINK));
 }
 
 /** 갈래·분야 줄과 정정 표시 */
@@ -87,7 +87,7 @@ export function DemandBody({ item, date, Link }: { item: SiteFlowItem; date: str
     h(CommunityEvidence, { item }),
     h(LevelField, { item }),
     item.aux.length > 0 ? h(Field, { label: "보조 근거" }, flowAuxText(item.aux)) : null,
-    from ? h(Fragment, null, h("h4", { className: "h" }, "이어짐"), h("p", { className: "p" }, h(Link, { to: briefPath(from.date, from.key), className: "quiet dcont" }, flowContinuesText(from.date)))) : null,
+    from ? h(Fragment, null, h("h4", { className: "h" }, "이어짐"), h("p", { className: "p" }, h(Link, { to: briefPath(from.date, from.key), className: "text-link dcont" }, flowContinuesText(from.date)))) : null,
     h(IssueField, { issue: item.issue, Link }),
     h(Field, { label: "비교 기간" }, flowPeriod(item.units)),
     h(SourcesAndReport, { sources: item.sources, reportTitle: item.title, date, itemKey: item.key }),

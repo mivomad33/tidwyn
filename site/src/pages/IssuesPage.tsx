@@ -1,8 +1,9 @@
 // 이슈 목록(4.3-1): 흡수되지 않은 이슈를 최근 업데이트일 순으로, 대분류·상태로 거른다
 import { useMemo, useState } from "react";
-import { ALL_MAJORS, BackLink, CategoryLine, ChipFilter, Empty, ErrorState, Layout, Loading, useFocusNewRow, useTitle } from "../components/common.tsx";
+import { ALL_MAJORS, BriefBackLink, CategoryLine, ChipFilter, Empty, ErrorState, Layout, Loading, useFocusNewRow, useTitle } from "../components/common.tsx";
 import { retry, useResource } from "../data.ts";
-import { ISSUE_PAGE_SIZE, filterIssues, type StatusFilter } from "../lib/issues.ts";
+import { ISSUE_PAGE_SIZE, filterIssues, issueListLine, type StatusFilter } from "../lib/issues.ts";
+import { latestYear } from "../lib/format.ts";
 import { dataUrl } from "../lib/paths.ts";
 import { issuePath } from "../lib/routes.ts";
 import type { Major, SiteIssueList } from "../lib/types.ts";
@@ -18,10 +19,11 @@ export function IssuesPage() {
   const [status, setStatus] = useState<StatusFilter>(null);
   const [limit, setLimit] = useState(ISSUE_PAGE_SIZE);
   const more = useFocusNewRow<HTMLUListElement>("li.item");
+  const refYear = res.status === "ok" ? latestYear(res.data.issues.map((i) => i.latestDate)) : undefined;
   const items = useMemo(() => (res.status === "ok" ? filterIssues(res.data.issues, major, status) : []), [res, major, status]);
 
   return (
-    <Layout left={<BackLink to="/" label="브리프" />}>
+    <Layout left={<BriefBackLink />}>
       <h1 className="page-title pad">이슈 목록</h1>
       <ChipFilter
         label="대분류"
@@ -53,10 +55,7 @@ export function IssuesPage() {
                 <Link to={issuePath(i.id)} className="item-btn">
                   <CategoryLine major={i.category.major} minor={i.category.minor} />
                   <span className="title">{i.name}</span>
-                  <span className="cont">
-                    {i.status}
-                    {i.latestDate ? ` · 최근 ${i.latestDate}` : ""} · 전개 {i.count}건
-                  </span>
+                  <span className="cont">{issueListLine(i, refYear)}</span>
                 </Link>
               </li>
             ))}

@@ -1,9 +1,9 @@
 // 인물·기관·국가 목록(4.7-3): 최근 등장일 순, 종류로 거른다. 거르기마다 0쪽만 먼저 받고 나머지 쪽은 "더 보기"로 받는다(4.6-2).
 import { useState } from "react";
-import { BackLink, Empty, ErrorState, Layout, Loading, useFocusNewRow, useTitle } from "../components/common.tsx";
+import { BriefBackLink, Empty, ErrorState, Layout, Loading, useFocusNewRow, useTitle } from "../components/common.tsx";
+import { yearOf } from "../lib/format.ts";
 import { retry, useResource } from "../data.ts";
-import { ENTITY_FILTER_LABEL } from "../lib/entities.ts";
-import { shortDate } from "../lib/format.ts";
+import { ENTITY_FILTER_LABEL, entityListLine } from "../lib/entities.ts";
 import { dataUrl } from "../lib/paths.ts";
 import { entitiesPath, entityPath } from "../lib/routes.ts";
 import type { EntityFilter, EntityListPage } from "../lib/types.ts";
@@ -13,7 +13,7 @@ import { Link, navigate } from "../router.tsx";
 export function EntitiesPage({ filter }: { filter: EntityFilter }) {
   useTitle("인물·기관·국가");
   return (
-    <Layout left={<BackLink to="/" label="브리프" />}>
+    <Layout left={<BriefBackLink />}>
       <h1 className="page-title pad">인물·기관·국가</h1>
       <p className="count">최근 등장 순</p>
       <div className="chips" role="group" aria-label="종류">
@@ -66,7 +66,8 @@ function EntityPageRows({ filter, page, last, hasNext, onMore }: { filter: Entit
   const res = useResource<EntityListPage>(url);
   if (res.status === "error") return <ErrorState onRetry={() => retry([url])} />;
   if (res.status !== "ok") return <Loading />;
-  const year = res.data.items[0]?.latestDate.slice(0, 4);
+  const first = res.data.items[0];
+  const year = first ? yearOf(first.latestDate) : undefined;
   return (
     <>
       <ul className="list">
@@ -74,7 +75,7 @@ function EntityPageRows({ filter, page, last, hasNext, onMore }: { filter: Entit
           <li key={e.id} className="item">
             <Link to={entityPath(e.id)} className="item-btn">
               <span className="cat muted-cat">
-                {e.kind} · 최근 {shortDate(e.latestDate, year)} · 뉴스 {e.count.toLocaleString("ko-KR")}건
+                {entityListLine(e, year)}
               </span>
               <span className="title small">{e.name}</span>
               {e.description && <span className="cont">{e.description}</span>}

@@ -31,3 +31,9 @@ export const E2E_DEMAND_OUT_DIR = path.join(E2E_ROOT, "demand-out");
 export const E2E_DEMAND_INFO_FILE = path.join(E2E_ROOT, "demand-info.json");
 export const E2E_DEMAND_PORT = 4321;
 export const E2E_DEMAND_BASE_URL = `http://127.0.0.1:${E2E_DEMAND_PORT}`;
+/** U1단계: 측정 데이터(감사·명세서의 정상 데이터, 2026-11-06까지 18일)로 빌드한 사이트. 화면 18곳을 감사와 같은 데이터로 보려고 따로 빌드해 다른 포트로 띄운다(명세서 용어 '측정 데이터 E2E') */
+export const E2E_U1_DATA_DIR = path.join(E2E_ROOT, "u1-data");
+export const E2E_U1_OUT_DIR = path.join(E2E_ROOT, "u1-out");
+export const E2E_U1_PORT = 4322;
+/** 옛 코드(기능이 없을 때)의 결과물로 같은 테스트를 돌려 실패를 볼 때만 바꾼다(`E2E_U1_BASE_URL=http://127.0.0.1:<포트> pnpm e2e test/e2e/stageU1.spec.ts`) */
+export const E2E_U1_BASE_URL = process.env.E2E_U1_BASE_URL ?? `http://127.0.0.1:${E2E_U1_PORT}`;

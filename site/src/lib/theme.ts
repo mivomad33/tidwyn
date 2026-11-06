@@ -135,7 +135,7 @@ export function textPairs(p: Palette): { name: string; fg: string; bg: string }[
   ];
   for (const m of MAJORS) pairs.push({ name: `분류 ${m}`, fg: p.categories[m], bg: p.bg });
   // 5단계: 일정 주소로 강조된 일정 줄(강조 바탕), 달 단위 "날짜 미정" 상자(상자 바탕), 달력의 고른 날
-  pairs.push({ name: "흐린 글자/강조된 일정", fg: p.muted, bg: p.accentbg }, { name: "고른 날짜", fg: p.bg, bg: p.fg });
+  pairs.push({ name: "흐린 글자/강조된 일정", fg: p.muted, bg: p.accentbg }, { name: "고른 날짜", fg: p.fg, bg: p.chip });
   for (const m of MAJORS) pairs.push({ name: `분류 ${m}/강조된 일정`, fg: p.categories[m], bg: p.accentbg }, { name: `분류 ${m}/상자`, fg: p.categories[m], bg: p.chip });
   // 6단계: 지표의 오름·내림 글자(카드·페이지는 바탕, 브리프 위 상자의 칩은 상자 바탕)
   pairs.push({ name: "오름", fg: p.up, bg: p.bg }, { name: "오름/상자", fg: p.up, bg: p.chip }, { name: "내림", fg: p.down, bg: p.bg }, { name: "내림/상자", fg: p.down, bg: p.chip });

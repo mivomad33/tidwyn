@@ -116,19 +116,20 @@ describe("4.5 화면 규칙", () => {
   });
 
   test("0건 문구는 상태마다 하나이고 꺼짐은 없다. 기준값은 저장소 문구다", () => {
-    assert.equal(discoverZeroText("product", "checked"), "이날은 실을 만한 새 제품이 없다.");
-    assert.equal(discoverZeroText("repo", "checked"), "이날은 실을 만한 뜨는 저장소가 없다.");
-    assert.equal(discoverZeroText("product", "failed"), "이날의 새 제품을 받지 못했다.");
-    assert.equal(discoverZeroText("repo", "failed"), "이날의 뜨는 저장소를 받지 못했다.");
+    assert.equal(discoverZeroText("product", "checked"), "이 날은 실을 만한 새 제품이 없다.");
+    assert.equal(discoverZeroText("repo", "checked"), "이 날은 실을 만한 뜨는 저장소가 없다.");
+    assert.equal(discoverZeroText("product", "failed"), "이 날의 새 제품을 받지 못했다.");
+    assert.equal(discoverZeroText("repo", "failed"), "이 날의 뜨는 저장소를 받지 못했다.");
     assert.match(discoverZeroText("repo", "baseline")!, /다음 날부터/);
     assert.equal(discoverZeroText("repo", "off"), null);
-    assert.equal(discoverEndNotice("product", "failed"), "이날 새 제품은 다 받지 못했다.");
+    assert.equal(discoverEndNotice("product", "failed"), "이 날 새 제품은 다 받지 못했다.");
     assert.equal(discoverEndNotice("repo", "checked"), null);
   });
 
   test("관리 상태는 릴리스의 세 경우를 구별하고 별 수는 받은 값 그대로 쓴다", () => {
-    assert.equal(repoUpkeepText({ pushedOn: "2026-10-20", release: { state: "found", date: "2026-09-01" } }), "마지막 push 2026년 10월 20일 · 최근 릴리스 2026년 9월 1일");
-    assert.equal(repoUpkeepText({ pushedOn: "2026-10-20", release: { state: "none" } }), "마지막 push 2026년 10월 20일 · 최근 릴리스 없음");
+    // 날짜는 브리프 날짜의 해와 다를 때만 해를 쓴다(U1 4.3-1)
+    assert.equal(repoUpkeepText({ pushedOn: "2026-10-20", release: { state: "found", date: "2025-09-01" } }, "2026"), "마지막 push 10월 20일 · 최근 릴리스 2025년 9월 1일");
+    assert.equal(repoUpkeepText({ pushedOn: "2026-10-20", release: { state: "none" } }, "2026"), "마지막 push 10월 20일 · 최근 릴리스 없음");
     assert.equal(repoUpkeepText({ pushedOn: null, release: { state: "unknown" } }), "마지막 push 확인 못 함 · 최근 릴리스 확인 못 함");
     assert.equal(repoStarsText({ stars: 12345, growth: 678.5 }), "별 12,345개 · 하루 평균 +678.5개");
     assert.equal(repoStarsText({ stars: 2500, growth: 40 }), "별 2,500개 · 하루 평균 +40개");

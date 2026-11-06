@@ -230,10 +230,10 @@ describe("4.4-1 화면 규칙", () => {
   });
 
   test("날짜 상태 문구와 빠진 묶음 안내", () => {
-    assert.equal(demandZeroText("checked"), "이날은 서로 다른 소스 두 곳 이상에서 함께 보인 흐름이 없다.");
+    assert.equal(demandZeroText("checked"), "이 날은 서로 다른 소스 두 곳 이상에서 함께 보인 흐름이 없다.");
     assert.equal(demandZeroText("short"), "비교할 기록이 아직 모자라 흐름을 정리하지 않았다.");
-    assert.equal(demandZeroText("failed"), "이날의 수요 흐름을 정리하지 못했다.");
-    assert.equal(demandMissingText(["assembly", "sec"]), "이날 비교에 넣지 못한 소스: 국회 청원, SEC Form D");
+    assert.equal(demandZeroText("failed"), "이 날의 수요 흐름을 정리하지 못했다.");
+    assert.equal(demandMissingText(["assembly", "sec"]), "이 날 비교에 넣지 못한 소스: 국회 청원, SEC Form D");
     assert.equal(demandMissingText(undefined), null);
   });
 
@@ -349,7 +349,7 @@ describe("4.4-3 정적 HTML·RSS·검색", () => {
     assert.ok(read(`${d.zero}.html`).includes(demandZeroText("checked")));
     assert.ok(read(`${d.short}.html`).includes(demandZeroText("short")));
     assert.ok(read(`${d.failed}.html`).includes(`<div class="state error"><p>${demandZeroText("failed")}</p></div>`));
-    assert.ok(read(`${d.missing}.html`).includes("이날 비교에 넣지 못한 소스: 국회 청원, SEC Form D"));
+    assert.ok(read(`${d.missing}.html`).includes("이 날 비교에 넣지 못한 소스: 국회 청원, SEC Form D"));
     assert.ok(read(`${d.continues}.html`).includes(`href="/${d.origin}#demand-1"`));
     assert.ok(read(`${d.corrected}.html`).includes("정정됨"));
     assert.ok(!read(`${d.noRecord}.html`).includes('id="demand"'));

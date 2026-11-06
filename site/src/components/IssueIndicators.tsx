@@ -3,13 +3,14 @@
 // 값이 하나도 없는 지표는 빼고, 남는 것이 없으면 '관련 지표'를 보이지 않는다.
 import { Fragment } from "react";
 import { retry, useResource, useResources } from "../data.ts";
-import { dotIndexes, graphFromText, issueGraphPoints, readingValueText } from "../lib/indicators.ts";
+import { dotIndexes, graphFromText, indicatorRefYear, issueGraphPoints, readingValueText } from "../lib/indicators.ts";
 import { dataUrl } from "../lib/paths.ts";
 import { indicatorPath } from "../lib/routes.ts";
 import type { IndicatorList, IndicatorSeries, IssueIndicator } from "../lib/types.ts";
 import { Link } from "../router.tsx";
 import { ErrorState, Loading } from "./common.tsx";
 import { LineChart, SourceNote } from "./indicatorView.ts";
+import { MoreMark } from "./moreMark.ts";
 
 export function IssueIndicators({ indicators, newsDates }: { indicators: IssueIndicator[] | undefined; newsDates: string[] }) {
   const chosen = indicators ?? [];
@@ -48,6 +49,7 @@ export function IssueIndicators({ indicators, newsDates }: { indicators: IssueIn
     return [{ ii, card, points, dots: dotIndexes(points, newsDates) }];
   });
   if (!graphs.length) return null;
+  const refYear = indicatorRefYear(listRes.data);
   return (
     <section aria-labelledby="iss-ind">
       {heading}
@@ -57,13 +59,13 @@ export function IssueIndicators({ indicators, newsDates }: { indicators: IssueIn
             <div className="igh">
               <Link to={indicatorPath(card.id)}>
                 {card.name}
-                <span aria-hidden="true"> ›</span>
+                <MoreMark />
               </Link>
               <small>
-                {readingValueText(card, card.last!)} · {graphFromText(ii.from)}
+                {readingValueText(card, card.last!, refYear)} · {graphFromText(ii.from, refYear)}
               </small>
             </div>
-            <LineChart meta={card} points={points} height={130} dots={dots} />
+            <LineChart meta={card} points={points} height={130} dots={dots} refYear={refYear} />
             {dots.length > 0 && (
               <p className="legend">
                 <i aria-hidden="true" />이 이슈 뉴스가 있는 날

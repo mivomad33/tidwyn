@@ -64,9 +64,9 @@ describe("4.5-1 글자", () => {
   test("빠진 소스 안내: 공식 묶음 다음에 커뮤니티 소스와 사유", () => {
     assert.equal(
       demandMissingText(["assembly"], [{ group: "bluesky", reason: "failed" }, { group: "github", reason: "robots" }]),
-      `이날 비교에 넣지 못한 소스: 국회 청원, Bluesky(${COMMUNITY_MISSING_NAMES.failed}), GitHub Issues(${COMMUNITY_MISSING_NAMES.robots})`,
+      `이 날 비교에 넣지 못한 소스: 국회 청원, Bluesky(${COMMUNITY_MISSING_NAMES.failed}), GitHub Issues(${COMMUNITY_MISSING_NAMES.robots})`,
     );
-    assert.equal(demandMissingText(undefined, [{ group: "github", reason: "off" }]), "이날 비교에 넣지 못한 소스: GitHub Issues(꺼짐)");
+    assert.equal(demandMissingText(undefined, [{ group: "github", reason: "off" }]), "이 날 비교에 넣지 못한 소스: GitHub Issues(꺼짐)");
     assert.equal(demandMissingText(undefined, []), null);
   });
 });
@@ -188,8 +188,8 @@ describe("4.5-1 정적 HTML", () => {
     const plain = read(`${d.three}.html`);
     assert.equal(plain.split(`<p class="dnote">${FLOW_AI_NOTE}</p>`).length - 1, items(d.three!).length, "일반 흐름의 숫자 안내");
     assert.ok(!plain.includes(FLOW_AI_NOTE_COMMUNITY));
-    assert.ok(read(`${d.communityMissing}.html`).includes(`<p class="flow note">이날 비교에 넣지 못한 소스: 국회 청원, Bluesky(받지 못함), GitHub Issues(robots 막힘)</p>`));
-    assert.ok(!html.includes("이날 비교에 넣지 못한 소스"));
+    assert.ok(read(`${d.communityMissing}.html`).includes(`<p class="flow note">이 날 비교에 넣지 못한 소스: 국회 청원, Bluesky(받지 못함), GitHub Issues(robots 막힘)</p>`));
+    assert.ok(!html.includes("이 날 비교에 넣지 못한 소스"));
   });
 
   test("정적 소개에 사각지대 표가 있다", () => {

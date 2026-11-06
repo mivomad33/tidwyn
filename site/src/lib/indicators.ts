@@ -1,7 +1,7 @@
 // 6단계 지표 화면(4.7)의 DOM 없는 로직: 값·변화 표기, 카드 묶기, 기간 거르기, 그래프 좌표, 요약 글, 이슈 그래프의 점,
 // 브리프 위 '이번 주 일정 | 지표' 상자의 탭 규칙과 접은 줄. 화면(DOM) 없이 테스트한다.
 // 지표 정의(src/indicators.ts)는 가져오지 않는다. 표시에 필요한 정보(단위, 소수 자리, 변화 방식, 출처 문구)는 사이트 데이터에 실려 온다.
-import { fullKoreanDate, monthDay, monthLabel } from "./format.ts";
+import { dayOrMonthText, latestYear, monthDay, shortDate, yearOf } from "./format.ts";
 import type { DayList, IndicatorCard, IndicatorChip, IndicatorList, IndicatorMetaInfo, IndicatorPoint, IssueRef } from "./types.ts";
 
 // ---- 값과 변화 표기 ----
@@ -51,10 +51,10 @@ export interface ChangeLabel {
 }
 
 /**
- * 앞 값 대비 변화 글자. compact면 칩처럼 좁은 곳: abs·pct 방식은 퍼센트 변화, pp 방식은 %p.
- * 아니면 카드·지표 하나의 페이지: abs·pct 방식은 "차이 (퍼센트)", pp 방식은 %p.
+ * 앞 값 대비 변화 글자. 어느 자리든(칩·접은 줄·카드·지표 하나의 페이지) 같은 단위다(U1 4.3-2):
+ * abs·pct 방식은 "차이 (퍼센트)"(앞 값이 0이라 퍼센트를 낼 수 없으면 차이만), pp 방식은 %p.
  */
-export function changeLabel(meta: { change: ChangeKind; decimals: number }, value: number, change: number | null, compact: boolean): ChangeLabel | null {
+export function changeLabel(meta: { change: ChangeKind; decimals: number }, value: number, change: number | null): ChangeLabel | null {
   const dir = direction(change);
   if (dir === null || change === null) return null;
   if (dir === "flat") return { dir, text: "변동 없음", spoken: "변동 없음" };
@@ -68,22 +68,13 @@ export function changeLabel(meta: { change: ChangeKind; decimals: number }, valu
   const abs = meta.change === "abs" ? change : absFromPct(value, change);
   const pctText = pct === null ? null : `${fmtNumber(Math.abs(pct), PCT_DECIMALS)}%`;
   const absText = fmtNumber(Math.abs(abs), meta.decimals);
-  if (compact) {
-    const t = pctText ?? absText;
-    return { dir, text: `${arrow}${t}`, spoken: `${t} ${verb}` };
-  }
   return { dir, text: pctText ? `${arrow}${absText} (${pctText})` : `${arrow}${absText}`, spoken: pctText ? `${absText} ${verb}(${pctText})` : `${absText} ${verb}` };
 }
 
-/** 월별 값의 달 이름: "2026-09" → "9월" */
-export function monthName(month: string): string {
-  return `${Number(month.slice(5, 7))}월`;
-}
-
-/** 카드·제목 줄의 값 글자. 월별 물가는 "9월 2.1%"처럼 그 달과 상승률 */
-export function readingValueText(meta: IndicatorMetaInfo, reading: { date: string; value: number }): string {
+/** 카드·제목 줄의 값 글자. 월별 물가는 "9월 2.1%"처럼 그 달과 상승률(달의 해는 readingDateText와 같다) */
+export function readingValueText(meta: IndicatorMetaInfo, reading: { date: string; value: number }, refYear?: string): string {
   const v = formatValue(meta, reading.value);
-  return meta.freq === "month" ? `${monthName(reading.date)} ${v}` : v;
+  return meta.freq === "month" ? `${dayOrMonthText(reading.date, refYear)} ${v}` : v;
 }
 
 /** 변화 앞에 붙이는 말: 월별은 "전달 대비", 일별은 없음(카드의 자리가 좁다) */
@@ -91,19 +82,14 @@ export function changePrefix(meta: { freq: IndicatorMetaInfo["freq"] }): string 
   return meta.freq === "month" ? "전달 대비 " : "";
 }
 
-/** 값의 날짜 글자: 일별 "10월 27일", 월별 "2026년 9월" */
-export function readingDateText(date: string): string {
-  return date.length === 7 ? monthLabel(date) : monthDay(date);
+/** 지표 화면의 기준 해(4.3-1): 목록의 기준일(가장 최근 값의 날짜)의 해 */
+export function indicatorRefYear(list: IndicatorList): string | undefined {
+  return list.asOf ? yearOf(list.asOf) : latestYear(list.indicators.map((c) => c.last?.date));
 }
 
-/** 그래프·요약에 쓰는 긴 날짜 글자: "2026년 10월 27일", 월별 "2026년 9월" */
-export function longDateText(date: string): string {
-  return date.length === 7 ? monthLabel(date) : fullKoreanDate(date);
-}
-
-/** 축 글자: "2025.10.28", 월별 "2025.10" */
-export function axisDateText(date: string): string {
-  return date.replaceAll("-", ".");
+/** 값의 날짜 글자(머리 줄·그래프 읽기 줄·요약): 일별 "10월 27일", 월별 "9월", 기준 해와 다르면 해를 붙인다 */
+export function readingDateText(date: string, refYear?: string): string {
+  return dayOrMonthText(date, refYear);
 }
 
 // ---- 지표 페이지 ----
@@ -187,19 +173,20 @@ export function relatedShown(issues: IssueRef[], expanded: boolean): { shown: Is
 // ---- 그래프 ----
 
 /** 보조 기술용 그래프 요약(기간, 처음·마지막 값, 최고·최저) */
-export function chartSummary(meta: { name: string; unit: string; decimals: number }, points: IndicatorPoint[]): string {
+export function chartSummary(meta: { name: string; unit: string; decimals: number }, points: IndicatorPoint[], refYear?: string): string {
   if (points.length === 0) return `${meta.name}: 이 기간에 값이 없다.`;
   const v = (p: IndicatorPoint) => formatValue(meta, p[1]);
+  const day = (date: string) => readingDateText(date, refYear);
   const first = points[0]!;
   const last = points.at(-1)!;
-  if (points.length === 1) return `${meta.name}: ${longDateText(first[0])} 값 하나, ${v(first)}.`;
+  if (points.length === 1) return `${meta.name}: ${day(first[0])} 값 하나, ${v(first)}.`;
   let hi = first;
   let lo = first;
   for (const p of points) {
     if (p[1] > hi[1]) hi = p;
     if (p[1] < lo[1]) lo = p;
   }
-  return `${meta.name}: ${longDateText(first[0])}부터 ${longDateText(last[0])}까지. 처음 ${v(first)}, 마지막 ${v(last)}, 최고 ${v(hi)}(${longDateText(hi[0])}), 최저 ${v(lo)}(${longDateText(lo[0])}).`;
+  return `${meta.name}: ${day(first[0])}부터 ${day(last[0])}까지. 처음 ${v(first)}, 마지막 ${v(last)}, 최고 ${v(hi)}(${day(hi[0])}), 최저 ${v(lo)}(${day(lo[0])}).`;
 }
 
 export interface ChartBox {
@@ -320,9 +307,9 @@ export function dotIndexes(points: IndicatorPoint[], newsDates: string[]): numbe
   return [...out].sort((a, b) => a - b);
 }
 
-/** 이슈 그래프 제목 줄의 시작: "9월 14일부터", 월별 "2026년 9월부터" */
-export function graphFromText(from: string): string {
-  return `${readingDateText(from)}부터`;
+/** 이슈 그래프 제목 줄의 시작: "9월 14일부터", 월별 "9월부터"(기준 해와 다르면 해를 붙인다) */
+export function graphFromText(from: string, refYear?: string): string {
+  return `${readingDateText(from, refYear)}부터`;
 }
 
 // ---- 브리프 위 '이번 주 일정 | 지표' 상자(4.7-1) ----
@@ -375,14 +362,14 @@ export function collapsedParts(day: Pick<DayList, "week" | "indicators">): { wee
   const c = collapsedChip(day.indicators ?? []);
   return {
     week: day.week ? boxTabText("week", day) : null,
-    chip: c ? { text: `${c.name} ${formatValue(c, c.value)}`, change: changeLabel({ change: c.kind, decimals: c.decimals }, c.value, c.change, true) } : null,
+    chip: c ? { text: `${c.name} ${formatValue(c, c.value)}`, change: changeLabel({ change: c.kind, decimals: c.decimals }, c.value, c.change) } : null,
   };
 }
 
-/** 칩의 날짜 표시: 기준값의 날짜가 브리프 날짜와 다르면 "10-26"(해가 다르면 그대로), 같으면 null */
+/** 칩의 날짜 표시: 기준값의 날짜가 브리프 날짜와 다르면 좁은 자리 날짜("10-26", 해가 다르면 "'25 12-31"), 같으면 null */
 export function chipDateNote(chip: { date: string }, briefDate: string): string | null {
   if (chip.date === briefDate) return null;
-  return chip.date.slice(0, 4) === briefDate.slice(0, 4) ? chip.date.slice(5) : chip.date;
+  return shortDate(chip.date, yearOf(briefDate));
 }
 
 /** 지표 탭 아래 줄의 날짜 글자: "10월 27일 값" */

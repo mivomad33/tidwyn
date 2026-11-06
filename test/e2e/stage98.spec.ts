@@ -8,6 +8,7 @@ import { E2E_BUILDER_BASE_URL, E2E_BUILDER_DATA_DIR, E2E_BUILDER_INFO_FILE } fro
 import type { BuilderFixtureInfo } from "../../site/dev/builderFixtures.ts";
 import { BUILDER_NONE, builderDueText, builderEndNotice, builderNotice } from "../../site/src/lib/builder.ts";
 import { BRIEF_TAB_KEY, READ_MARKS_KEY } from "../../site/src/lib/browserKeys.ts";
+import { yearOf } from "../../site/src/lib/format.ts";
 import { siteFiles, type BuilderMonth, type DayList, type MonthList, type SiteBuilderItem } from "../../src/siteTypes.ts";
 
 test.use({ baseURL: E2E_BUILDER_BASE_URL });
@@ -86,7 +87,7 @@ test.describe("4.6-2 항목", () => {
     await expect(field(row, "지금 할 일")).toHaveText(first.action);
     await expect(field(row, "고른 이유")).toHaveText(first.why);
     const due = field(row, "기한").getByRole("link");
-    await expect(due).toHaveText(builderDueText(first.due!));
+    await expect(due).toHaveText(builderDueText(first.due!, yearOf(b.four)));
     await expect(due).toContainText("확정");
     await expect(due).toHaveAttribute("href", `/schedules/${first.schedule}`);
     await expect(field(row, "관련 이슈").getByRole("link")).toHaveAttribute("href", `/issues/${first.issue!.id}`);
@@ -101,7 +102,7 @@ test.describe("4.6-2 항목", () => {
   test("잠정 기한은 글자만이고, 이슈가 없으면 그 칸이 없고, 기한이 없으면 '없음'이다", async ({ page }) => {
     await page.goto(`/${b.four}#builder`);
     const row = storyItem(page, second.key);
-    await expect(field(row, "기한")).toHaveText(builderDueText(second.due!));
+    await expect(field(row, "기한")).toHaveText(builderDueText(second.due!, yearOf(b.four)));
     await expect(field(row, "기한")).toContainText("잠정");
     await expect(field(row, "기한").getByRole("link")).toHaveCount(0);
     await expect(heads(row).filter({ hasText: "관련 이슈" })).toHaveCount(0);

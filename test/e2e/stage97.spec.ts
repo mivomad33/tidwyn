@@ -96,7 +96,7 @@ test.describe("4.4-1·3 영상별 페이지", () => {
     const items = page.locator("main li.vsecrow");
     for (const [i, sec] of sectionsOf(s.date, eight.id).entries()) {
       const a = items.nth(i).getByRole("link");
-      await expect(a).toHaveText(durationClock(sec.start));
+      await expect(a).toHaveText(`${durationClock(sec.start)} ↗`);
       await expect(a).toHaveAttribute("href", `https://www.youtube.com/watch?v=${eight.id}&t=${sec.start}s`);
       await expect(a).toHaveAttribute("target", "_blank");
       await expect(a).toHaveAccessibleName(new RegExp(`^${durationClock(sec.start)} `));
@@ -112,7 +112,7 @@ test.describe("4.4-1·3 영상별 페이지", () => {
     await page.goto(videoPath(h.date, h.id));
     const late = sectionsOf(h.date, h.id).at(-1)!;
     expect(late.start).toBeGreaterThanOrEqual(3600);
-    await expect(page.locator("main li.vsecrow").last().getByRole("link")).toHaveText(durationClock(late.start));
+    await expect(page.locator("main li.vsecrow").last().getByRole("link")).toHaveText(`${durationClock(late.start)} ↗`);
     await expect(page.locator("main a.vpagethumb")).toHaveAttribute("href", `https://www.youtube.com/watch?v=${v.id}`);
     await expect(page.getByRole("heading", { level: 1 }).getByRole("link")).toHaveAttribute("target", "_blank");
     await page.getByRole("link", { name: "브리프" }).first().click();
@@ -134,7 +134,7 @@ test.describe("4.4-4 없는 영상", () => {
     for (const p of [videoPath(s.date, "NoSuchVideo"), videoPath("2001-01-01", s.eight), videoPath("2026-99-99", s.eight), videoPath(s.date, s.none)]) {
       await page.goto(p);
       await expect(page.getByRole("heading", { level: 1, name: MISSING })).toBeVisible();
-      await expect(page.getByRole("link", { name: "최근 뉴스 브리프 보기" })).toBeVisible();
+      await expect(page.getByRole("link", { name: "최근 브리프" })).toBeVisible();
     }
   });
 

@@ -1,10 +1,10 @@
 // 인물·기관·국가 페이지(4.7-4). 그 식별자의 상세 묶음을 받고, 흡수된 식별자면 남는 대상의 묶음을 받아 남는 대상 주소로 바꾼다.
 // 지웠거나 없는 식별자(묶음에 없거나 묶음 파일이 없음)는 없는 페이지다. 등장 뉴스의 나머지는 "더 보기"를 눌렀을 때 받는다.
 import { useEffect, useState } from "react";
-import { BackLink, ErrorState, Layout, Loading, NewsTitle, ReadCheck, useFocusNewRow, useTitle } from "../components/common.tsx";
+import { BackLink, Empty, ErrorState, Layout, Loading, NewsTitle, ReadCheck, useFocusNewRow, useTitle } from "../components/common.tsx";
 import { retry, useResource, type Resource } from "../data.ts";
-import { ENTITY_FIRST_ISSUES, ENTITY_MORE_STEP, resolveEntity } from "../lib/entities.ts";
-import { entityLabel, monthDay, shortDate } from "../lib/format.ts";
+import { ENTITY_FIRST_ISSUES, ENTITY_MORE_STEP, entityMetaLine, resolveEntity } from "../lib/entities.ts";
+import { entityLabel, monthDay, shortDate, yearOf } from "../lib/format.ts";
 import { dataUrl } from "../lib/paths.ts";
 import { briefPath, entitiesPath, entityPath, issuePath } from "../lib/routes.ts";
 import type { EntityChunk, EntityDetail, EntityNews, EntityNewsChunk } from "../lib/types.ts";
@@ -65,7 +65,7 @@ export function EntityPage({ id }: { id: number }) {
 }
 
 function EntityView({ entity, merged }: { entity: EntityDetail; merged: MergedState["mergedFrom"] | null }) {
-  const year = entity.latestDate.slice(0, 4);
+  const year = yearOf(entity.latestDate);
   const [issueLimit, setIssueLimit] = useState(ENTITY_FIRST_ISSUES);
   const moreIssues = useFocusNewRow<HTMLDivElement>("a");
   const moreNews = useFocusNewRow<HTMLDivElement>(".rows > li");
@@ -73,9 +73,7 @@ function EntityView({ entity, merged }: { entity: EntityDetail; merged: MergedSt
   const [extra, setExtra] = useState(0);
   const newsUrl = extra > 0 && entity.moreNews > 0 ? dataUrl.entityNews(entityChunkOf(entity.id)) : null;
   const newsRes = useResource<EntityNewsChunk>(newsUrl);
-  const meta = [entity.aliases.length ? `별칭: ${entity.aliases.join(", ")}` : null, `처음 ${shortDate(entity.firstDate, year)}`, `최근 ${shortDate(entity.latestDate, year)}`, `뉴스 ${entity.count.toLocaleString("ko-KR")}건`]
-    .filter(Boolean)
-    .join(" · ");
+  const meta = entityMetaLine(entity);
   return (
     <article className="iss">
       {merged && (
@@ -163,7 +161,7 @@ function MoreNews({ id, res, extra, total, year, onMore, onRetry }: { id: number
 }
 
 function NewsRows({ news, year }: { news: EntityNews[]; year: string }) {
-  if (!news.length) return <p className="p muted">아직 등장한 뉴스가 없다.</p>;
+  if (!news.length) return <Empty inline>아직 등장한 뉴스가 없다.</Empty>;
   return (
     <ul className="rows">
       {news.map((n) => (

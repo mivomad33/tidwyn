@@ -1,8 +1,8 @@
 // 6단계 지표 페이지(4.7-2): 한국 / 미국·국제 묶음의 카드(값, 전날 대비, 1년 작은 그래프). 바닥에 출처 표시와 FRED 고지(4.7-6)
-import { BackLink, Empty, ErrorState, Layout, Loading, useTitle } from "../components/common.tsx";
+import { BriefBackLink, Empty, ErrorState, Layout, Loading, useTitle } from "../components/common.tsx";
 import { FredNotice, IndicatorCardView, SourceNote } from "../components/indicatorView.ts";
 import { retry, useResource } from "../data.ts";
-import { asOfLine, groupCards, visibleCards } from "../lib/indicators.ts";
+import { asOfLine, groupCards, indicatorRefYear, visibleCards } from "../lib/indicators.ts";
 import { dataUrl } from "../lib/paths.ts";
 import type { IndicatorList } from "../lib/types.ts";
 import { Link } from "../router.tsx";
@@ -11,7 +11,7 @@ export function IndicatorsPage() {
   useTitle("지표");
   const url = dataUrl.indicatorList();
   const res = useResource<IndicatorList>(url);
-  const back = <BackLink to="/" label="브리프" />;
+  const back = <BriefBackLink />;
   if (res.status === "error") {
     return (
       <Layout left={back}>
@@ -27,6 +27,7 @@ export function IndicatorsPage() {
     );
   }
   const cards = visibleCards(res.data);
+  const refYear = indicatorRefYear(res.data);
   return (
     <Layout left={back}>
       <div className="ind">
@@ -40,7 +41,7 @@ export function IndicatorsPage() {
             </h2>
             <ul className="icards">
               {g.cards.map((c) => (
-                <IndicatorCardView key={c.id} card={c} Link={Link} />
+                <IndicatorCardView key={c.id} card={c} refYear={refYear} Link={Link} />
               ))}
             </ul>
           </section>

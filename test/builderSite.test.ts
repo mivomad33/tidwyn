@@ -188,9 +188,9 @@ describe("4.6-4 정적 HTML·RSS·검색", () => {
     assert.ok(html.includes(">빌더<"));
     assert.ok(html.includes("정정됨"));
     assert.ok(html.includes(`href="/schedules/${b.schedule!.id}"`));
-    assert.ok(read(`${b.none}.html`).includes("이날은 실을 만한 도구 변화가 없다."));
+    assert.ok(read(`${b.none}.html`).includes("이 날은 실을 만한 도구 변화가 없다."));
     assert.ok(read(`${b.partial}.html`).includes("일부 소스를 받지 못해"));
-    assert.ok(read(`${b.failed}.html`).includes("이날의 도구 변화를 받지 못했다."));
+    assert.ok(read(`${b.failed}.html`).includes("이 날의 도구 변화를 받지 못했다."));
     assert.ok(read(`${b.one}.html`).includes("다시 알림"));
     assert.ok(!read(`${b.noRecord}.html`).includes('id="builder"'));
   });
@@ -234,8 +234,8 @@ describe("4.6-4 정적 HTML·RSS·검색", () => {
     }
     assert.ok(html.includes("판별되지 않음") && html.includes("최근 릴리스 없음") && html.includes("최근 릴리스 확인 못 함"));
     assert.ok(html.includes("정정됨"));
-    assert.ok(read(`${b.allNone}.html`).includes("이날은 실을 만한 뜨는 저장소가 없다."));
-    assert.ok(read(`${b.allFailed}.html`).includes("이날의 새 제품을 받지 못했다."));
+    assert.ok(read(`${b.allNone}.html`).includes("이 날은 실을 만한 뜨는 저장소가 없다."));
+    assert.ok(read(`${b.allFailed}.html`).includes("이 날의 새 제품을 받지 못했다."));
     assert.ok(read(`${b.mixed}.html`).includes("다음 날부터"));
     assert.ok(!read(`${b.onlyProduct}.html`).includes(">도구 변화<"));
     assert.ok(!read(`${b.noRecord}.html`).includes(">새 제품<"));

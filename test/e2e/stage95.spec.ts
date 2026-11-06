@@ -59,7 +59,8 @@ test.describe("4.1-5 자바스크립트를 끈 방문자", () => {
     test(`앱 전용 주소 ${url}에는 안내와 갈 곳이 보인다`, async ({ page }) => {
       await page.goto(url);
       await expect(page.getByRole("heading", { level: 1, name: "이 화면을 열지 못했다" })).toBeVisible();
-      await expect(page.getByRole("link", { name: "최근 뉴스 브리프 보기" })).toBeVisible();
+      // 메뉴에도 같은 이름(최근 브리프)의 링크가 있어 안내 안의 갈 곳으로 좁힌다(U1 4.2-9)
+      await expect(page.locator("main").getByRole("link", { name: "최근 브리프" })).toBeVisible();
       await expectNoHorizontalScroll(page, url);
     });
   }

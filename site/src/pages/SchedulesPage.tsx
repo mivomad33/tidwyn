@@ -5,8 +5,9 @@
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
 import { kstDate } from "../../../src/kst.ts";
 import { scheduleRefChunkOf } from "../../../src/siteTypes.ts";
-import { BackLink, ChipFilter, Empty, ErrorState, Layout, Loading, useFocusNewRow, useTitle } from "../components/common.tsx";
+import { BriefBackLink, ChipFilter, Empty, ErrorState, Layout, Loading, useFocusNewRow, useTitle } from "../components/common.tsx";
 import { ScheduleRow } from "../components/scheduleView.ts";
+import { Segmented } from "../components/segmented.ts";
 import { retry, useResource, useResources } from "../data.ts";
 import { monthLabel } from "../lib/format.ts";
 import { dataUrl } from "../lib/paths.ts";
@@ -39,6 +40,11 @@ import type { Major, ScheduleIndex, ScheduleItem, ScheduleMonth, ScheduleRefChun
 import { Link, navigate } from "../router.tsx";
 import { scheduleView, useRemembered } from "../storage.ts";
 import { NotFoundPage } from "./NotFoundPage.tsx";
+
+const VIEW_OPTIONS = [
+  { value: "list", label: "목록" },
+  { value: "calendar", label: "달력" },
+] as const satisfies readonly { value: ScheduleView; label: string }[];
 
 /** 일정 주소로 들어온 일정을 강조해 두는 시간 */
 const HIGHLIGHT_MS = 4000;
@@ -86,19 +92,13 @@ export function SchedulesPage({ id, list }: { id: number | null; list: boolean }
     if (id !== null || list) navigate(schedulesPath(), { replace: true, quiet: true });
   }
 
-  const back = <BackLink to="/" label="브리프" />;
+  const back = <BriefBackLink />;
   if (target.status === "notFound") return <NotFoundPage />;
   const head = (
     <div className="sch-head">
       <div className="ptitle">
         <h1>일정</h1>
-        <div className="view" role="group" aria-label="보기">
-          {(["list", "calendar"] as const).map((v) => (
-            <button key={v} type="button" className={view === v ? "on" : ""} aria-pressed={view === v} onClick={() => chooseView(v)}>
-              {v === "list" ? "목록" : "달력"}
-            </button>
-          ))}
-        </div>
+        <Segmented<ScheduleView> label="보기" className="view" options={VIEW_OPTIONS} value={view} onChange={chooseView} />
       </div>
       <p className="meta">{SCHEDULE_META}</p>
     </div>
@@ -205,20 +205,14 @@ function ListView({ index, today, major, chips, target }: { index: ScheduleIndex
   const label = SCHEDULE_TAB_LABEL[tab];
   return (
     <>
-      <div className="seg" role="group" aria-label="일정 구분">
-        {TABS.map((t) => (
-          <button key={t} type="button" className={t === tab ? "on" : ""} aria-pressed={t === tab} onClick={() => setTab(t)}>
-            {SCHEDULE_TAB_LABEL[t]}
-          </button>
-        ))}
-      </div>
+      <Segmented<ScheduleTab> label="일정 구분" className="seg" options={TABS.map((t) => ({ value: t, label: SCHEDULE_TAB_LABEL[t] }))} value={tab} onChange={setTab} />
       {chips}
       <div className="sch-body" ref={more.ref}>
         <h2 className="sr-only">{label}</h2>
         {groups.map((g) =>
           g.kind === "day" ? (
             <section key={g.date} aria-label={dayHeading(g.date, today)}>
-              <h3 className="dh">{dayHeading(g.date, today)}</h3>
+              <h3 className="h dh">{dayHeading(g.date, today)}</h3>
               <ul className="evs">
                 {g.items.map((x) => (
                   <ScheduleRow key={x.id} item={x} today={today} Link={Link} highlight={hl === x.id} />
@@ -227,7 +221,7 @@ function ListView({ index, today, major, chips, target }: { index: ScheduleIndex
             </section>
           ) : (
             <section key={g.month} className="mon" aria-label={monthBoxHeading(g.month, today)}>
-              <h3 className="mon-h">{monthBoxHeading(g.month, today)}</h3>
+              <h3 className="h mon-h">{monthBoxHeading(g.month, today)}</h3>
               <ul className="evs">
                 {g.items.map((x) => (
                   <ScheduleRow key={x.id} item={x} today={today} Link={Link} highlight={hl === x.id} />
@@ -350,7 +344,7 @@ function CalendarView({ index, today, major, chips }: { index: ScheduleIndex; to
             {!hasAny && <Empty>{major ? "이 달에는 이 분류의 일정이 없다." : "이 달에는 일정이 없다."}</Empty>}
             {hasAny && day && (
               <section aria-label={dayHeading(day, today)}>
-                <h3 className="dh">{dayHeading(day, today)}</h3>
+                <h3 className="h dh">{dayHeading(day, today)}</h3>
                 {dayItems.length ? (
                   <ul className="evs">
                     {dayItems.map((x) => (
@@ -358,13 +352,13 @@ function CalendarView({ index, today, major, chips }: { index: ScheduleIndex; to
                     ))}
                   </ul>
                 ) : (
-                  <p className="p muted day-empty">이 날에는 일정이 없다.</p>
+                  <Empty inline>이 날에는 일정이 없다.</Empty>
                 )}
               </section>
             )}
             {monthUnit.length > 0 && (
               <section className="mon" aria-label={monthBoxHeading(month, today)}>
-                <h3 className="mon-h">{monthBoxHeading(month, today)}</h3>
+                <h3 className="h mon-h">{monthBoxHeading(month, today)}</h3>
                 <ul className="evs">
                   {monthUnit.map((x) => (
                     <ScheduleRow key={x.id} item={x} today={today} Link={Link} highlight={false} />

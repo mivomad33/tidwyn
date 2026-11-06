@@ -1,6 +1,7 @@
 // 인물·기관·국가(대상) 목록·페이지와 이슈 페이지의 등장 대상(4단계 4.7-3·4.7-4·4.7-7). 화면(DOM) 없이 테스트한다.
 import { ENTITY_FILTERS } from "../../../src/siteTypes.ts";
-import type { EntityChunk, EntityFilter, EntityListItem, EntityListPage } from "./types.ts";
+import { dateText, yearOf } from "./format.ts";
+import type { EntityChunk, EntityDetail, EntityFilter, EntityListItem, EntityListPage } from "./types.ts";
 
 export const ENTITY_FILTER_LABEL: Record<EntityFilter, string> = { all: "전체", person: "인물", org: "기관", country: "국가" };
 
@@ -45,3 +46,14 @@ export { issueEntityChips } from "../../../src/siteTypes.ts";
 export const ENTITY_MORE_STEP = 100;
 /** 대상 페이지가 처음 보이는 등장 이슈 수(나머지는 더 보기) */
 export const ENTITY_FIRST_ISSUES = 20;
+
+/** 대상 목록 줄의 머리: "인물 · 최근 10월 27일 · 뉴스 3건"(앱과 정적 HTML이 같이 쓴다, U1 4.3-1). 기준 해는 목록이 정한다 */
+export function entityListLine(e: Pick<EntityListItem, "kind" | "latestDate" | "count">, refYear: string | undefined): string {
+  return `${e.kind} · 최근 ${dateText(e.latestDate, refYear)} · 뉴스 ${e.count.toLocaleString("ko-KR")}건`;
+}
+
+/** 대상 페이지 제목 아래 줄: "별칭: … · 처음 10월 1일 · 최근 10월 27일 · 뉴스 3건". 기준 해는 최근 등장일의 해 */
+export function entityMetaLine(e: Pick<EntityDetail, "aliases" | "firstDate" | "latestDate" | "count">): string {
+  const ref = yearOf(e.latestDate);
+  return [e.aliases.length ? `별칭: ${e.aliases.join(", ")}` : null, `처음 ${dateText(e.firstDate, ref)}`, `최근 ${dateText(e.latestDate, ref)}`, `뉴스 ${e.count.toLocaleString("ko-KR")}건`].filter(Boolean).join(" · ");
+}

@@ -2,11 +2,13 @@
 // 읽음 버튼은 브라우저 기록을 보므로 앱이 넘기고, 링크 컴포넌트는 부르는 쪽이 넘긴다.
 import { createElement as h, Fragment, type ReactNode } from "react";
 import { FixMark, FixNotes } from "./correctionView.ts";
+import { Empty } from "./emptyView.ts";
+import { NewTabMark } from "./moreMark.ts";
 import { ReportLink } from "./reportLink.ts";
 import type { LinkLike } from "./termView.ts";
 import { ExternalLink } from "./videoView.ts";
 import { BUILDER_GROUP_NAMES, BUILDER_NONE, builderDueText, builderEndNotice, builderGroups, builderNotice, builderReminderText, discoverEndNotice, discoverySourceName, discoverZeroText, repoStarsText, repoLicenseText, repoUpkeepText, type BuilderGroup } from "../lib/builder.ts";
-import { monthDay } from "../lib/format.ts";
+import { monthDay, yearOf } from "../lib/format.ts";
 import { SITE_URL, storyReportHref } from "../lib/policy.ts";
 import { briefPath, issuePath, schedulePath } from "../lib/routes.ts";
 import type { BuilderItemSource } from "../../../src/builderTypes.ts";
@@ -30,24 +32,24 @@ export function BuilderFieldLine({ item }: { item: SiteBuilderItem }) {
 
 /** 탭 머리의 한 줄 안내. 뜻은 소개의 빌더 절로 잇는다 */
 export function BuilderIntro({ Link }: { Link: LinkLike }) {
-  return h("p", { className: "flow note" }, "코딩 도구, 모델, 보안, 플랫폼의 바뀐 점을 모았다. 새 제품과 뜨는 저장소는 실린 날에 함께 나온다. ", h(Link, { to: "/about#builder", className: "bintro-l" }, "빌더 탭 소개"));
+  return h("p", { className: "flow note" }, "코딩 도구, 모델, 보안, 플랫폼의 바뀐 점을 모았다. 새 제품과 뜨는 저장소는 실린 날에 함께 나온다. ", h(Link, { to: "/about#builder", className: "text-link bintro-l" }, "빌더 탭 소개"));
 }
 
-/** 항목이 없는 날의 상태 문구. 다 확인하지 못한 날은 확인하고 없는 날과 달리 글자색으로 보인다. 수요 탭도 쓴다 */
-export function zeroState(text: string, error: boolean) {
-  return error ? h("div", { className: "state error" }, h("p", null, text)) : h("p", { className: "state empty" }, text);
+/** 항목이 없는 날의 상태 문구. 다 확인하지 못한 날은 확인하고 없는 날과 달리 글자색으로 보인다. 수요 탭도 쓴다. 묶음 안이면 왼쪽 정렬 변형이다 */
+export function zeroState(text: string, error: boolean, inline = false) {
+  return error ? h("div", { className: inline ? "state error inline" : "state error" }, h("p", null, text)) : h(Empty, { inline }, text);
 }
 
 /** 다시 알림 표시. 누르면 원래 항목으로 간다. 아니면 그리지 않는다 */
 export function BuilderReminder({ item, Link }: { item: SiteBuilderItem; Link: LinkLike }) {
   const from = item.reminderOf;
-  return from ? h(Link, { to: briefPath(from.date, from.key), className: "cont breminder" }, builderReminderText(from.date)) : null;
+  return from ? h(Link, { to: briefPath(from.date, from.key), className: "cont text-link breminder" }, builderReminderText(from.date)) : null;
 }
 
 /** 기한: 확정이고 일정이 있으면 일정으로 가고, 없으면 글자만이다 */
-function Due({ item, Link }: { item: SiteBuilderItem; Link: LinkLike }) {
+function Due({ item, date, Link }: { item: SiteBuilderItem; date: string; Link: LinkLike }) {
   if (!item.due) return "없음";
-  const text = builderDueText(item.due);
+  const text = builderDueText(item.due, yearOf(date));
   return item.schedule === null ? text : h(Link, { to: schedulePath(item.schedule), className: "text-link bdue" }, text);
 }
 
@@ -65,7 +67,7 @@ export function SourcesAndReport({ sources, reportTitle, date, itemKey }: { sour
     h(
       "div",
       { className: "src" },
-      sources.map((s) => h("a", { key: s.url, href: s.url, target: "_blank", rel: "noopener noreferrer" }, s.name, " ", h("span", { "aria-hidden": true }, "↗"), h("span", { className: "sr-only" }, " (새 탭)"))),
+      sources.map((s) => h("a", { key: s.url, href: s.url, target: "_blank", rel: "noopener noreferrer" }, s.name, h(NewTabMark))),
     ),
     h(ReportLink, { href: storyReportHref(monthDay(date), reportTitle, `${SITE_URL}${briefPath(date, itemKey)}`), label: "틀린 내용 알리기" }),
   );
@@ -85,7 +87,7 @@ export function BuilderBody({ item, date, Link }: { item: SiteBuilderItem; date:
     h(FixNotes, { fixes: item.corrections, className: "fix" }),
     h(Field, { label: "누가 영향받나" }, item.who),
     h(Field, { label: "지금 할 일" }, item.action),
-    h(Field, { label: "기한" }, h(Due, { item, Link })),
+    h(Field, { label: "기한" }, h(Due, { item, date, Link })),
     h(Field, { label: "고른 이유" }, item.why),
     h(ItemEnd, { issue: item.issue, sources: item.sources, reportTitle: item.title, date, itemKey: item.key, Link }),
   );
@@ -98,7 +100,7 @@ export function DiscoveryMark({ item }: { item: SiteDiscoveryItem }) {
 
 /** 항목 이름. 칸에서 가장 큰 글자라 누르면 출처로 간다 */
 export function DiscoveryName({ item }: { item: SiteDiscoveryItem }) {
-  return h("a", { className: "bname-l", href: item.url, target: "_blank", rel: "noopener noreferrer" }, item.name, h("span", { className: "sr-only" }, " (새 탭)"));
+  return h("a", { className: "bname-l", href: item.url, target: "_blank", rel: "noopener noreferrer" }, item.name, h(NewTabMark));
 }
 
 /** 새 제품·뜨는 저장소의 칸(N5). 저장소는 고른 이유 뒤에 사실 칸이 더해지고, 출처와 제보는 도구 변화처럼 끝에 둔다 */
@@ -111,7 +113,7 @@ export function DiscoveryBody({ item, date, Link }: { item: SiteDiscoveryItem; d
     h(FixNotes, { fixes: item.corrections, className: "fix" }),
     h(Field, { label: "기존 도구와의 차이" }, item.difference),
     h(Field, { label: "고른 이유" }, item.reason),
-    repo ? h(Fragment, null, h(Field, { label: "라이선스" }, repoLicenseText(repo)), h(Field, { label: "관리 상태" }, repoUpkeepText(repo)), h(Field, { label: "별 수와 증가량" }, repoStarsText(repo))) : null,
+    repo ? h(Fragment, null, h(Field, { label: "라이선스" }, repoLicenseText(repo)), h(Field, { label: "관리 상태" }, repoUpkeepText(repo, yearOf(date))), h(Field, { label: "별 수와 증가량" }, repoStarsText(repo))) : null,
     h(ItemEnd, { issue: item.issue, sources: [{ name: discoverySourceName(item.kind), url: item.url }], reportTitle: item.name, date, itemKey: item.key, Link }),
   );
 }
@@ -128,10 +130,10 @@ function GroupZero({ group }: { group: BuilderGroup }) {
   if (group.status === null) return null;
   if (group.kind === "tools") {
     const notice = builderNotice(group.status);
-    return zeroState(notice ?? BUILDER_NONE, notice !== null);
+    return zeroState(notice ?? BUILDER_NONE, notice !== null, true);
   }
   const text = discoverZeroText(group.kind, group.status);
-  return text === null ? null : zeroState(text, group.status === "failed");
+  return text === null ? null : zeroState(text, group.status === "failed", true);
 }
 
 /** 묶음을 정해진 순서로 그린다. 줄은 앱과 정적 HTML이 달라 부르는 쪽이 넘긴다 */
@@ -141,7 +143,7 @@ export function BuilderGroups({ builder, tools, discoveries, toolRow, discoveryR
     return h(
       "section",
       { key: group.kind, className: "bgroup" },
-      h("h2", { className: "bgroup-h" }, BUILDER_GROUP_NAMES[group.kind]),
+      h("h2", { className: "h bgroup-h" }, BUILDER_GROUP_NAMES[group.kind]),
       rows.length > 0 ? h("ul", { className: "list blist" }, rows) : group.count === 0 ? h(GroupZero, { group }) : null,
       h(GroupEndNote, { group }),
     );

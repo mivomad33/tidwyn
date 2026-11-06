@@ -75,7 +75,7 @@ for (const width of [1440, 375]) {
       await expect(intro).toHaveText(`${DEMAND_INTRO} ${FLOW_CAVEAT} ${DEMAND_ABOUT_LINK}`);
       await expect(intro.getByRole("link", { name: DEMAND_ABOUT_LINK })).toHaveAttribute("href", `/about#${DEMAND_ABOUT_HASH}`);
       for (const x of xs) await expectItem(page, x);
-      await expect(page.locator("main")).not.toContainText("이날 비교에 넣지 못한 소스");
+      await expect(page.locator("main")).not.toContainText("이 날 비교에 넣지 못한 소스");
       await expectNoHorizontalScroll(page, "커뮤니티");
     });
 
@@ -85,7 +85,7 @@ for (const width of [1440, 375]) {
       await expectItem(page, x);
       const day = demandOf(d.communityMissing);
       await expect(page.locator("main .flow.note").last()).toHaveText(demandMissingText(day.missing, day.communityMissing)!);
-      await expect(page.locator("main .flow.note").last()).toHaveText("이날 비교에 넣지 못한 소스: 국회 청원, Bluesky(받지 못함), GitHub Issues(robots 막힘)");
+      await expect(page.locator("main .flow.note").last()).toHaveText("이 날 비교에 넣지 못한 소스: 국회 청원, Bluesky(받지 못함), GitHub Issues(robots 막힘)");
       await expectNoHorizontalScroll(page, "커뮤니티 받지 못함");
     });
 

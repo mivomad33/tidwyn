@@ -30,13 +30,16 @@ import {
   creditsOf,
   dotIndexes,
   formatValue,
+  graphFromText,
   groupCards,
+  indicatorRefYear,
   issueGraphPoints,
   moveIndex,
   nearestIndex,
   parseBoxTab,
   periodPoints,
   periodStart,
+  readingDateText,
   readingValueText,
   relatedShown,
   visibleCards,
@@ -89,25 +92,41 @@ describe("4.7-2 값·변화 표기", () => {
     assert.equal(formatValue({ unit: "%", decimals: 3 }, 2.6105), "2.611%");
   });
 
-  test("abs·pct 방식은 차이와 퍼센트, pp 방식은 %p. 칩(좁은 곳)은 퍼센트나 %p만", () => {
-    assert.deepEqual(changeLabel({ change: "abs", decimals: 1 }, 1392.5, 3.1, false), { dir: "up", text: "▲3.1 (0.22%)", spoken: "3.1 올라(0.22%)" });
-    assert.equal(changeLabel({ change: "abs", decimals: 1 }, 1392.5, 3.1, true)!.text, "▲0.22%");
+  test("abs·pct 방식은 차이와 퍼센트, pp 방식은 %p(U1 4.3-2: 자리와 관계없이 같은 단위)", () => {
+    assert.deepEqual(changeLabel({ change: "abs", decimals: 1 }, 1392.5, 3.1), { dir: "up", text: "▲3.1 (0.22%)", spoken: "3.1 올라(0.22%)" });
     // pct: 앞 값 2,635.2 → 2,614.2(약 -0.80%)
-    assert.deepEqual(changeLabel({ change: "pct", decimals: 2 }, 2614.2, -0.7969, false), { dir: "down", text: "▼21.00 (0.80%)", spoken: "21.00 내려(0.80%)" });
-    assert.equal(changeLabel({ change: "pct", decimals: 2 }, 2614.2, -0.7969, true)!.text, "▼0.80%");
-    assert.equal(changeLabel({ change: "pp", decimals: 2 }, 4.21, 0.03, false)!.text, "▲0.03%p");
-    assert.equal(changeLabel({ change: "pp", decimals: 2 }, 4.21, 0.03, true)!.text, "▲0.03%p");
-    assert.equal(changeLabel({ change: "pp", decimals: 3 }, 2.61, -0.02, false)!.text, "▼0.020%p");
+    assert.deepEqual(changeLabel({ change: "pct", decimals: 2 }, 2614.2, -0.7969), { dir: "down", text: "▼21.00 (0.80%)", spoken: "21.00 내려(0.80%)" });
+    assert.equal(changeLabel({ change: "pp", decimals: 2 }, 4.21, 0.03)!.text, "▲0.03%p");
+    assert.equal(changeLabel({ change: "pp", decimals: 3 }, 2.61, -0.02)!.text, "▼0.020%p");
+    // 앞 값이 0이면 퍼센트를 낼 수 없어 차이만
+    assert.deepEqual(changeLabel({ change: "abs", decimals: 1 }, 3.1, 3.1), { dir: "up", text: "▲3.1", spoken: "3.1 올라" });
   });
 
   test("변동 없음과 앞 값 없음", () => {
-    assert.deepEqual(changeLabel({ change: "pp", decimals: 2 }, 2.5, 0, false), { dir: "flat", text: "변동 없음", spoken: "변동 없음" });
-    assert.equal(changeLabel({ change: "abs", decimals: 1 }, 1392.5, null, false), null);
+    assert.deepEqual(changeLabel({ change: "pp", decimals: 2 }, 2.5, 0), { dir: "flat", text: "변동 없음", spoken: "변동 없음" });
+    assert.equal(changeLabel({ change: "abs", decimals: 1 }, 1392.5, null), null);
     assert.equal(renderToStaticMarkup(h(ChangeText, { label: null })), "");
     assert.equal(
-      renderToStaticMarkup(h(ChangeText, { label: changeLabel({ change: "abs", decimals: 1 }, 1392.5, -3.1, false) })),
+      renderToStaticMarkup(h(ChangeText, { label: changeLabel({ change: "abs", decimals: 1 }, 1392.5, -3.1) })),
       '<span class="chg down"><span aria-hidden="true">▼3.1 (0.22%)</span><span class="sr-only">3.1 내려(0.22%)</span></span>',
     );
+  });
+
+  test("지표 화면의 날짜 글(4.3-1): 기준 해는 목록의 기준일 해, 같은 해는 해를 빼고 다른 해는 붙인다", () => {
+    const daily = card({ id: "a", last: { date: "2026-10-27", value: 1, change: 0 } });
+    const old = card({ id: "b", last: { date: "2025-12-30", value: 1, change: 0 } });
+    assert.equal(indicatorRefYear({ asOf: "2026-10-28", indicators: [old] }), "2026");
+    assert.equal(indicatorRefYear({ asOf: null, indicators: [old, daily] }), "2026");
+    assert.equal(indicatorRefYear({ asOf: null, indicators: [] }), undefined);
+    assert.equal(readingDateText("2026-10-27", "2026"), "10월 27일");
+    assert.equal(readingDateText("2025-12-30", "2026"), "2025년 12월 30일");
+    assert.equal(readingDateText("2026-09", "2026"), "9월");
+    assert.equal(readingDateText("2025-12", "2026"), "2025년 12월");
+    assert.equal(graphFromText("2026-09-14", "2026"), "9월 14일부터");
+    assert.equal(graphFromText("2025-12-01", "2026"), "2025년 12월 1일부터");
+    const cpi = card({ id: "krcpi", unit: "%", freq: "month", change: "pp", yoy: true, last: { date: "2025-12", value: 2.1, change: 0.1 } });
+    assert.equal(readingValueText(cpi, cpi.last!, "2026"), "2025년 12월 2.1%");
+    assert.match(renderToStaticMarkup(h(IndicatorCardView, { card: cpi, refYear: "2026", Link })), /<b class="v">2025년 12월 2\.1%<\/b>/);
   });
 
   test("월별 물가는 '9월 2.1%'와 '전달 대비'", () => {
@@ -167,25 +186,25 @@ describe("4.7-1 브리프 위 '이번 주 일정 | 지표' 상자", () => {
     assert.match(html, /role="tablist"/);
     assert.match(html, /role="tab" id="brief-box-tab-week" aria-selected="false"[^>]*tabindex="-1">이번 주 일정 3<\/button>/);
     assert.match(html, /role="tab" id="brief-box-tab-indicators" class="on" aria-selected="true"[^>]*tabindex="0">지표<\/button>/);
-    assert.match(html, /<a href="\/indicators\/usdkrw" class="ichip"><span class="n">가짜 원\/달러<\/span><b>1,392\.5원<\/b><span class="chg up"><span aria-hidden="true">▲0\.22%<\/span>/);
+    assert.match(html, /<a href="\/indicators\/usdkrw" class="ichip"><span class="n">가짜 원\/달러<\/span><b>1,392\.5원<\/b><span class="chg up"><span aria-hidden="true">▲3\.1 \(0\.22%\)<\/span>/);
     assert.match(html, /<a href="\/indicators\/wti" class="ichip">.*?<small>10-26<span class="sr-only"> 값<\/span><\/small><\/a>/);
     assert.doesNotMatch(html.split('href="/indicators/wti"')[0]!, /<small>/, "브리프 날짜의 값에는 날짜를 붙이지 않는다");
-    assert.match(html, /<p class="box-foot">10월 27일 값 · <a href="\/indicators">지표 전체<span aria-hidden="true"> ›<\/span><\/a><\/p>/);
+    assert.match(html, /<p class="box-foot">10월 27일 값 · <a href="\/indicators" class="text-link">지표 전체<span class="mark" aria-hidden="true"> ›<\/span><\/a><\/p>/);
     assert.match(html, /aria-expanded="true" aria-controls="brief-box-panel" aria-label="상자 접기"/);
-    assert.equal(chipDateNote({ date: "2025-12-31" }, "2026-01-02"), "2025-12-31");
+    assert.equal(chipDateNote({ date: "2025-12-31" }, "2026-01-02"), "'25 12-31", "해가 다르면 해를 붙이되 YYYY-MM-DD는 쓰지 않는다");
     assert.equal(boxValuesDate("2026-10-07"), "10월 7일 값");
   });
 
   test("일정 탭: 일정 줄과 아래 줄 '일정 전체 ›'", () => {
     const html = renderToStaticMarkup(h(BriefBox, { day: { date: "2026-10-27", week, indicators: chips }, tab: null, collapsed: false, onTab: () => {}, onToggle: () => {}, today: "2026-10-28", Link }));
     assert.match(html, /<ul id="week-list"><li><a href="\/schedules\/1" class="wrow">/);
-    assert.match(html, /<p class="box-foot"><a href="\/schedules\?view=list">일정 전체/);
+    assert.match(html, /<p class="box-foot"><a href="\/schedules\?view=list" class="text-link">일정 전체/);
     assert.doesNotMatch(html, /class="ichip"/);
   });
 
   test("접은 줄: '이번 주 일정 N · 원/달러 <값> <전날 대비> ▾'. 없는 쪽은 빠지고, 원/달러가 없으면 칩 순서의 첫 지표", () => {
     const both = renderToStaticMarkup(h(BriefBox, { day: { date: "2026-10-27", week, indicators: chips }, tab: null, collapsed: true, onTab: () => {}, onToggle: () => {}, today: "2026-10-28", Link }));
-    assert.match(both, /^<section class="week closed" aria-label="이번 주 일정과 지표"><div class="week-h"><button type="button" class="box-toggle week-toggle" aria-expanded="false">이번 주 일정 3<span class="dot-sep" aria-hidden="true"> · <\/span><span class="fold-chip">가짜 원\/달러 1,392\.5원 <span class="chg up"><span aria-hidden="true">▲0\.22%<\/span>/);
+    assert.match(both, /^<section class="week closed" aria-label="이번 주 일정과 지표"><div class="week-h"><button type="button" class="box-toggle week-toggle" aria-expanded="false">이번 주 일정 3<span class="dot-sep" aria-hidden="true"> · <\/span><span class="fold-chip">가짜 원\/달러 1,392\.5원 <span class="chg up"><span aria-hidden="true">▲3\.1 \(0\.22%\)<\/span>/);
     assert.match(both, /<span aria-hidden="true"> ▾<\/span><\/button><\/div><\/section>$/);
     assert.deepEqual(collapsedParts({ week }).chip, null);
     assert.equal(collapsedParts({ indicators: chips.slice(1) }).week, null);
@@ -253,8 +272,11 @@ describe("4.7-3 지표 하나의 페이지: 기간, 그래프, 요약, 관련 �
       ["2026-10-22", 9.25],
       ["2026-10-23", 11],
     ];
-    assert.equal(chartSummary(meta, pts), "가짜 지수: 2026년 10월 20일부터 2026년 10월 23일까지. 처음 10.00, 마지막 11.00, 최고 14.50(2026년 10월 21일), 최저 9.25(2026년 10월 22일).");
-    assert.equal(chartSummary({ ...meta, unit: "%" }, [["2026-09", 2.1]]), "가짜 지수: 2026년 9월 값 하나, 2.10%.");
+    // 날짜는 4.3-1의 날짜 글: 기준 해와 같으면 해를 빼고, 다르면 붙인다
+    assert.equal(chartSummary(meta, pts, "2026"), "가짜 지수: 10월 20일부터 10월 23일까지. 처음 10.00, 마지막 11.00, 최고 14.50(10월 21일), 최저 9.25(10월 22일).");
+    assert.equal(chartSummary(meta, pts, "2027"), "가짜 지수: 2026년 10월 20일부터 2026년 10월 23일까지. 처음 10.00, 마지막 11.00, 최고 14.50(2026년 10월 21일), 최저 9.25(2026년 10월 22일).");
+    assert.equal(chartSummary({ ...meta, unit: "%" }, [["2026-09", 2.1]], "2026"), "가짜 지수: 9월 값 하나, 2.10%.");
+    assert.equal(chartSummary({ ...meta, unit: "%" }, [["2025-09", 2.1]], "2026"), "가짜 지수: 2025년 9월 값 하나, 2.10%.");
     assert.equal(chartSummary(meta, []), "가짜 지수: 이 기간에 값이 없다.");
   });
 
@@ -264,12 +286,16 @@ describe("4.7-3 지표 하나의 페이지: 기간, 그래프, 요약, 관련 �
       ["2026-10-21", 14.5],
       ["2026-10-23", 11],
     ];
-    const html = renderToStaticMarkup(h(LineChart, { meta: { name: "가짜 지수", unit: "", decimals: 2 }, points: pts, height: 200, grid: true }));
-    assert.match(html, /role="slider" tabindex="0" aria-label="가짜 지수 그래프, 날짜 고르기" aria-valuemin="0" aria-valuemax="2" aria-valuenow="2" aria-valuetext="2026년 10월 23일 11.00"/);
-    assert.match(html, />2026\.10\.20<\/text>/);
-    assert.match(html, />2026\.10\.23<\/text>/);
+    const html = renderToStaticMarkup(h(LineChart, { meta: { name: "가짜 지수", unit: "", decimals: 2 }, points: pts, height: 200, grid: true, refYear: "2026" }));
+    assert.match(html, /role="slider" tabindex="0" aria-label="가짜 지수 그래프, 날짜 고르기" aria-valuemin="0" aria-valuemax="2" aria-valuenow="2" aria-valuetext="10월 23일 11.00"/);
+    // 축은 좁은 자리라 'MM-DD'(U1 4.3-1). 해를 넘는 축은 components 쪽 axisDates 테스트(siteDates.test.ts)가 본다
+    assert.match(html, />10-20<\/text>/);
+    assert.match(html, />10-23<\/text>/);
     assert.equal(html.match(/<line /g)?.length, 4, "가로 눈금선 4개");
-    assert.match(html, /<p id="[^"]+" class="sr-only">가짜 지수: 2026년 10월 20일부터/);
+    assert.match(html, /<p id="[^"]+" class="sr-only">가짜 지수: 10월 20일부터/);
+    const other = renderToStaticMarkup(h(LineChart, { meta: { name: "가짜 지수", unit: "", decimals: 2 }, points: pts, height: 200, refYear: "2027" }));
+    assert.match(other, /aria-valuetext="2026년 10월 23일 11.00"/);
+    assert.match(other, /class="sr-only">가짜 지수: 2026년 10월 20일부터/);
     const g = chartGeometry(pts, { width: 300, height: 200, padX: 4, padTop: 14, padBottom: 18 });
     assert.equal(g.xs[0], 4);
     assert.equal(g.xs[2], 296);

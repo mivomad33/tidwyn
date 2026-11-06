@@ -172,13 +172,18 @@ describe("E8·4.7-1 용어 밑줄과 토글", () => {
     nodes.push(h(TermChips, { key: "chips", terms, openId, onToggle, boxId }), open && at === "chips" ? h(TermBox, { key: "box", term: open, id: boxId, Link }) : null);
     return renderToStaticMarkup(h(Fragment, null, ...nodes));
   }
-  const buttons = (html: string) => [...html.matchAll(/<button([^>]*)>([^<]*)<\/button>/g)].map((m) => ({ attrs: m[1]!, text: m[2]! }));
+  // 글(text)은 눈에만 보이는 끝 표시(aria-hidden)를 뺀 것이고, 끝 표시는 mark로 따로 본다(U1 4.2-1: 용어 칩 끝의 ▾)
+  const hiddenRe = /<span aria-hidden="true">([^<]*)<\/span>/g;
+  const buttons = (html: string) =>
+    [...html.matchAll(/<button([^>]*)>([\s\S]*?)<\/button>/g)].map((m) => ({ attrs: m[1]!, text: m[2]!.replace(hiddenRe, "").replace(/<[^>]*>/g, ""), mark: [...m[2]!.matchAll(hiddenRe)].map((x) => x[1]!.trim()).join("") }));
 
   test("닫힌 카드: 밑줄 낱말과 칩은 단추이고 aria-expanded가 false다", () => {
     const html = card(null);
     const bs = buttons(html);
     assert.deepEqual(bs.filter((b) => b.attrs.includes('class="term"')).map((b) => b.text).sort(), ["금리", "기준금리", "양적긴축"]);
     assert.deepEqual(bs.filter((b) => !b.attrs.includes("term")).map((b) => b.text), ["양적긴축", "기준금리", "테이퍼링", "금리"], "칩 줄에는 표기가 없는 용어도 있다");
+    assert.deepEqual(bs.filter((b) => !b.attrs.includes("term")).map((b) => b.mark), ["▾", "▾", "▾", "▾"], "제자리에서 여는 칩은 끝에 ▾를 둔다");
+    assert.deepEqual(bs.filter((b) => b.attrs.includes("term")).map((b) => b.mark), ["", "", ""], "본문 밑줄 낱말에는 끝 표시가 없다");
     for (const b of bs) {
       assert.match(b.attrs, /type="button"/);
       assert.match(b.attrs, /aria-expanded="false"/);
@@ -190,9 +195,10 @@ describe("E8·4.7-1 용어 밑줄과 토글", () => {
     const html = card(1);
     const open = buttons(html).filter((b) => b.attrs.includes('aria-expanded="true"'));
     assert.deepEqual(open.map((b) => [b.text, /class="(term open|on)"/.exec(b.attrs)?.[1]]), [["양적긴축", "term open"], ["양적긴축", "on"]]);
+    assert.equal(open[1]!.mark, "▴", "연 칩은 끝 표시가 ▴로 바뀐다");
     for (const b of open) assert.match(b.attrs, /aria-controls="story-한국-1-term"/);
     assert.equal(html.match(/class="tbox"/g)?.length, 1);
-    assert.match(html, /양적긴축은 다시 논의된다\.<\/p><div id="story-한국-1-term" class="tbox"[^>]*><b>양적긴축<\/b>가짜 설명 1<a href="\/terms\/1">용어 사전에서 보기/);
+    assert.match(html, /양적긴축은 다시 논의된다\.<\/p><div id="story-한국-1-term" class="tbox"[^>]*><b>양적긴축<\/b>가짜 설명 1<a href="\/terms\/1" class="text-link">용어 사전에서 보기/);
   });
   test("표기가 없는 용어를 칩으로 연 카드: 칩만 강조되고 설명 상자는 칩 줄 아래다", () => {
     const html = card(3);
