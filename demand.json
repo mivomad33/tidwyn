@@ -61,6 +61,15 @@
         "sec"
       ],
       "communityMissing": []
+    },
+    {
+      "date": "2026-11-06",
+      "status": "checked",
+      "missing": [
+        "assembly",
+        "acrc"
+      ],
+      "communityMissing": []
     }
   ],
   "flowCorrections": []

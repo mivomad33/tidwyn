@@ -4400,6 +4400,1222 @@
       },
       "collectedAt": "2026-11-06T06:19:10+09:00",
       "late": false
+    },
+    {
+      "brief": {
+        "targetDate": "2026-11-06",
+        "headline": "AI 매도가 세계로 번져 코스피가 이틀 새 11% 빠지고 장중 5,000선이 무너졌으며, 트럼프 대통령은 중간선거 패배 뒤 비서실장을 스티븐 밀러로 바꿨다.",
+        "keywords": [
+          "코스피 5천 붕괴",
+          "AI 매도",
+          "조작기소 특검법",
+          "백악관 비서실장 교체",
+          "데이터센터 반대"
+        ],
+        "sections": [
+          {
+            "name": "한국",
+            "flow": "미국발 AI 매도에 코스피가 이틀 새 11% 빠지며 장중 5,000선이 무너졌고, 국회는 여당 주도로 조작기소 특검법을 통과시켰으며, 대통령은 새 법무부 장관 후보자로 비검찰 출신 이용철 방사청장을 지명했다.",
+            "topStories": [
+              {
+                "rank": 1,
+                "title": "코스피가 장중 8% 넘게 떨어져 서킷브레이커가 발동됐고, 이틀간 11% 폭락해 5,059로 마쳤다",
+                "summary": "미국 중간선거 뒤 AI 데이터센터 규제 우려가 이어지며 코스피가 6.02% 내렸고, 장중에는 9개월 만에 5,000선 아래로 떨어졌다.",
+                "whyItMatters": "반도체 두 대형주에 기댄 한국 증시가 미국 정치 변화에 얼마나 크게 흔들리는지 드러났다. 퇴직연금과 레버리지 상품에 돈을 넣은 개인 투자자 피해가 커 정부와 여야가 모두 대응에 나섰다.",
+                "background": "4일 미국 중간선거에서 민주당이 상·하원을 모두 되찾고, 텍사스 등에서 데이터센터 건설을 막겠다는 후보들이 당선됐다. 이 때문에 AI 투자가 줄어들 것이라는 걱정이 번져 5일 나스닥과 필라델피아 반도체지수가 크게 떨어졌다. 코스피는 5일에도 5% 넘게 내렸고, 6일 개장 직후 다시 무너졌다. 서킷브레이커는 지수가 전날보다 8% 넘게 떨어진 상태가 1분 이상 이어지면 20분 동안 매매를 멈추는 장치다.",
+                "keyFacts": [
+                  "코스피는 324.11포인트(6.02%) 내린 5,059.69로 마쳐 3월 말 이후 7개월여 만에 가장 낮았고, 장중에는 8.78% 내린 4,911.28까지 밀렸다.",
+                  "5일과 6일 이틀 동안 코스피는 624포인트(약 11%) 떨어졌고, 외국인은 6일 하루 약 2조 7,700억 원어치를 팔았다.",
+                  "삼성전자는 6.35% 내린 18만 8,700원, SK하이닉스는 10.44% 내린 113만 2,000원에 마쳤다.",
+                  "경제·금융당국 수장들이 긴급 회의를 열었고, 증권사의 신용융자 담보비율 140% 유지 의무를 3개월 면제하기로 했다.",
+                  "원/달러 환율은 14.5원 오른 1,356.6원(오후 3시 30분 기준)으로 마감했다."
+                ],
+                "outlook": "미국 민주당 의회의 데이터센터 규제 법안 움직임, 주말 미국 증시 흐름, 외국인 매도가 이어지는지와 정부의 추가 시장 안정 조치를 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "경제",
+                  "minor": "금융·증시"
+                },
+                "sources": [
+                  {
+                    "name": "국민일보",
+                    "url": "https://www.kmib.co.kr/article/20261106500572",
+                    "publishedAt": "2026-11-06",
+                    "primary": true
+                  },
+                  {
+                    "name": "The Korea Herald",
+                    "url": "https://www.koreaherald.com/article/10928857",
+                    "publishedAt": "2026-11-06"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261106080451008",
+                    "publishedAt": "2026-11-06",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/11/06/PYH2026110603190001300_P2.jpg"
+                  },
+                  {
+                    "name": "디지털데일리",
+                    "url": "https://www.ddaily.co.kr/page/view/2026110610165670172",
+                    "publishedAt": "2026-11-06"
+                  },
+                  {
+                    "name": "YTN",
+                    "url": "https://www.ytn.co.kr/_ln/0102_202611060901545309",
+                    "publishedAt": "2026-11-06"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261106092000002",
+                    "publishedAt": "2026-11-06",
+                    "imageUrl": "https://img.yna.co.kr/photo/cms/2026/11/06/18/PCM20261106000018990_P2.jpg"
+                  }
+                ],
+                "analogy": "한 바구니에 달걀을 거의 다 담아 둔 상황에서 바구니를 든 손이 흔들린 셈이다. 지수에서 반도체 두 종목의 비중이 커서 이 두 종목이 흔들리면 시장 전체가 같이 흔들린다."
+              },
+              {
+                "rank": 2,
+                "title": "공소취소 조항을 뺀 조작기소 특검법이 여당 주도로 국회를 통과했다",
+                "summary": "윤석열 정부 검찰의 조작기소 의혹을 수사하는 특검법이 국민의힘 불참 속에 찬성 167표로 가결돼 이재명 정부의 7번째 특검이 된다.",
+                "whyItMatters": "이재명 대통령 관련 사건을 비롯한 과거 검찰 수사가 특검의 수사 대상이 되면서, 진행 중인 재판과 정국에 큰 영향을 줄 수 있다. 여야 대립이 장외로 번지며 예산 심사에도 부담이 된다.",
+                "background": "민주당은 윤석열 정부 검찰이 야권 인사를 상대로 무리하게 기소했다며 특검을 추진해 왔다. 가장 논란이 된 특검의 공소취소 권한은 대통령이 9월에 빼 달라고 요청해 빠졌다. 국민의힘은 5일 본회의 상정에 맞서 필리버스터(무제한 토론)를 벌였지만, 민주당이 표결로 토론을 끝내고 법안을 처리했다.",
+                "keyFacts": [
+                  "재석 168명 중 찬성 167명, 반대 1명으로 가결됐고 국민의힘 의원들은 표결에 참여하지 않았다.",
+                  "특검은 파견검사 20명, 특별수사관 70명 등 최대 309명 규모이며, 준비 기간을 포함해 최장 200일 동안 수사한다.",
+                  "특검 후보는 민주당, 국민의힘, 조국혁신당이 1명씩 추천하고 대통령이 그중 1명을 임명한다.",
+                  "다른 수사기관에 사건 이첩을 요구하는 조항과 영장 전담 법관을 두는 내용도 빠졌다.",
+                  "국민의힘은 대통령 죄를 지우는 법이라며 7일 서울 도심 장외집회를 예고했고, 조국혁신당도 위헌 소지를 지적했다."
+                ],
+                "outlook": "법안 공포 뒤 정당 추천을 거쳐 이르면 21~22일께 특검이 임명될 전망이며, 헌법소원 등 위헌 다툼과 국민의힘 장외투쟁의 강도를 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "정치",
+                  "minor": "국회·정당"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261106131151001",
+                    "publishedAt": "2026-11-06",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/11/06/PYH2026110614570001300_P2.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "파이낸셜뉴스",
+                    "url": "https://www.fnnews.com/news/202611061802265727",
+                    "publishedAt": "2026-11-06"
+                  },
+                  {
+                    "name": "아주경제",
+                    "url": "https://www.ajunews.com/view/20261106173104337",
+                    "publishedAt": "2026-11-06"
+                  },
+                  {
+                    "name": "오마이뉴스",
+                    "url": "https://www.ohmynews.com/NWS_Web/View/at_pg.aspx?CNTN_CD=A0003282535&PAGE_CD=ET001&BLCK_NO=1&CMPT_CD=T0016",
+                    "publishedAt": "2026-11-06"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261105166700004",
+                    "publishedAt": "2026-11-06",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/11/06/PYH2026110614580001300_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 3,
+                "title": "이재명 대통령이 새 법무부 장관 후보자로 비검찰 출신 이용철 방위사업청장을 지명했다",
+                "summary": "노무현 정부 청와대 법무비서관 출신인 이 청장을 법무부 장관 후보자로, 최인호 주택도시보증공사 사장을 정무수석으로 정했다.",
+                "whyItMatters": "검찰 조직을 없애고 새 형사사법 체계를 자리 잡게 하는 일과 조작기소 특검이 맞물린 시기에 법무부를 이끌 사람이다. 대통령과 성남 시절부터 인연이 있어 공소취소 논란이 청문회의 핵심 쟁점이 될 전망이다.",
+                "background": "법무부 장관 자리는 앞서 지명된 김승원 후보자가 물러난 뒤 오래 비어 있었다. 정부는 검찰을 공소청과 중대범죄수사청 등으로 나누는 개편을 진행하고 있다. 이 후보자는 민주사회를 위한 변호사모임(민변) 출신 변호사로, 검사로 일한 적이 없다.",
+                "keyFacts": [
+                  "이용철(66) 후보자는 노무현 정부 청와대 민정2비서관과 법무비서관을 지냈고, 현재 방위사업청장이다.",
+                  "같은 날 정무수석에 최인호 주택도시보증공사 사장, 국세청장 후보자에 안덕수 씨가 정해졌고, 김종철 경찰청 차장이 경찰청장 후보자로 제청됐다.",
+                  "이 후보자는 검찰개혁을 차질 없이 끝내고 새 형사사법 체계가 자리 잡게 하겠다고 밝혔다.",
+                  "국민의힘은 대장동 사업에 관여했다는 의혹을 제기하며 '공소취소용 인사'라고 비판했고, 공소청 검사들 사이에서도 반발이 나왔다."
+                ],
+                "outlook": "국회 인사청문회에서 대장동 관련 의혹과 대통령 사건 공소취소에 대한 입장, 경찰청장·국세청장 후보자 청문 일정을 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "정치",
+                  "minor": "행정부"
+                },
+                "sources": [
+                  {
+                    "name": "한국일보",
+                    "url": "https://www.hankookilbo.com/news/article/A2026110616540001808",
+                    "publishedAt": "2026-11-06",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261106130851001",
+                    "publishedAt": "2026-11-06",
+                    "imageUrl": "https://img.yna.co.kr/etc/inner/KR/2026/11/06/AKR20261106130851001_02_i_P2.jpg"
+                  },
+                  {
+                    "name": "머니투데이",
+                    "url": "https://www.mt.co.kr/politics/2026/11/06/2026110615502478584",
+                    "publishedAt": "2026-11-06"
+                  },
+                  {
+                    "name": "오마이뉴스",
+                    "url": "https://www.ohmynews.com/NWS_Web/View/at_pg.aspx?CNTN_CD=A0003282490&PAGE_CD=ET001&BLCK_NO=1&CMPT_CD=T0016",
+                    "publishedAt": "2026-11-06"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261106175251004",
+                    "publishedAt": "2026-11-06",
+                    "imageUrl": "https://img.yna.co.kr/photo/cms/2026/11/06/64/PCM20261106000064990_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 4,
+                "title": "법원이 쿠팡의 '이용자 기록 무단수집' 과징금 2,011억 원의 효력을 멈췄다",
+                "summary": "서울행정법원이 개인정보보호위원회가 쿠팡에 매긴 과징금 중 온라인 활동기록 무단수집 부분의 효력을 본안 판결 때까지 정지했다.",
+                "whyItMatters": "같은 개인정보 사건에서 전날 4,235억 원 과징금의 효력은 유지됐지만, 이번 처분은 정지돼 쿠팡 제재가 둘로 갈렸다. 본안 소송 결과에 따라 개인정보 제재 기준이 달라질 수 있다.",
+                "background": "개인정보보호위원회는 쿠팡에 개인정보 유출과 이용자 기록 무단수집을 이유로 모두 6천억 원대 과징금을 매겼다. 쿠팡은 처분 취소 소송과 함께 효력을 멈춰 달라고 신청했다.",
+                "keyFacts": [
+                  "정지된 처분은 이용자 약 1,117만 명의 온라인 활동기록을 법적 근거 없이 모아 썼다는 이유의 과징금 2,011억 원과 시정·공표명령이다.",
+                  "효력은 본안 1심 판결 선고 뒤 30일까지 멈춘다.",
+                  "재판부는 회복하기 어려운 손해를 막을 긴급한 필요가 있다고 봤다.",
+                  "전날 다른 재판부는 유출 관련 과징금 4,235억 원의 집행정지 신청을 기각했다."
+                ],
+                "outlook": "두 과징금 처분의 본안 소송과, 쿠팡과 개인정보위의 항고 여부를 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "사회",
+                  "minor": "법·재판"
+                },
+                "sources": [
+                  {
+                    "name": "경향신문",
+                    "url": "https://www.khan.co.kr/article/202611061415001/",
+                    "publishedAt": "2026-11-06",
+                    "primary": true
+                  },
+                  {
+                    "name": "한국일보",
+                    "url": "https://www.hankookilbo.com/news/article/A2026110614010000792",
+                    "publishedAt": "2026-11-06"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261106100951004",
+                    "publishedAt": "2026-11-06",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/06/11/PYH2026061111160001300_P2.jpg"
+                  },
+                  {
+                    "name": "프레시안",
+                    "url": "https://www.pressian.com/pages/articles/2026110615190557103",
+                    "publishedAt": "2026-11-06"
+                  }
+                ]
+              },
+              {
+                "rank": 5,
+                "title": "김민석 민주당 대표가 '신천지 입당 의혹' 제기를 공개 회의에서 다시 사과했지만 당내 갈등은 이어졌다",
+                "summary": "김 대표가 전당대회 때 제기한 의혹으로 상처받은 이들과 당원에게 사과했으나, 정청래 전 대표 측은 직접 사과와 책임을 요구했다.",
+                "whyItMatters": "여당 지도부의 계파 갈등이 특검·예산 정국 한가운데서 커지고 있어 당 운영과 국회 일정에 영향을 줄 수 있다.",
+                "background": "김 대표는 8·17 전당대회 때 경쟁 후보였던 정청래 전 대표 측을 겨냥해 신천지 교인이 집단으로 당에 들어왔다는 의혹을 제기했다. 3일 비공개 의원총회에서 증거가 없었다며 사과했다.",
+                "keyFacts": [
+                  "김 대표는 6일 최고위원회의에서 상처 입은 모든 분과 당원에게 죄송하다고 말했다.",
+                  "정 전 대표 측 최고위원들은 잘못 인정과 피해자에 대한 직접 사과가 필요하다며 두 사람이 만나 경위를 설명하라고 요구했다.",
+                  "당원정비 TF의 신천지 입당 의혹 조사 자료는 13일까지 신청한 의원과 지역위원장에게 개별 열람이 허용됐다.",
+                  "연합뉴스는 당 조사에서 신천지 교인으로 확인된 당원이 약 1만 명이라고 전했다."
+                ],
+                "outlook": "김 대표와 정 전 대표의 만남 여부, 조사 자료 공개 범위를 둘러싼 계파 대립을 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "정치",
+                  "minor": "국회·정당"
+                },
+                "sources": [
+                  {
+                    "name": "서울신문",
+                    "url": "https://seoul.co.kr/news/politics/2026/11/06/20261106500110",
+                    "publishedAt": "2026-11-06",
+                    "primary": true
+                  },
+                  {
+                    "name": "경향신문",
+                    "url": "https://www.khan.co.kr/article/202611061037001/",
+                    "publishedAt": "2026-11-06"
+                  },
+                  {
+                    "name": "오마이뉴스",
+                    "url": "https://www.ohmynews.com/NWS_Web/View/at_pg.aspx?CNTN_CD=A0003282389&PAGE_CD=N0002&CMPT_CD=M0112",
+                    "publishedAt": "2026-11-06"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261106087151001",
+                    "publishedAt": "2026-11-06",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/11/06/PYH2026110604030001300_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 6,
+                "title": "한국형 핵추진잠수함 '장보고 N' 사업이 타당성조사를 면제받아 내년에 착수한다",
+                "summary": "방위사업추진위원회가 사업 추진 기본전략을 의결하고 보안 예외 조항으로 사업타당성 조사를 면제받아 2027년 착수가 확정됐다.",
+                "whyItMatters": "국내 기술로 핵추진잠수함을 만드는 사업이 일정에 오르면서 한국의 대북 억지력과 조선·원자력 산업에 큰 의미가 있다.",
+                "background": "핵추진잠수함은 원자로를 동력으로 써서 오랫동안 물속에 머물 수 있다. 큰 무기 사업은 원래 타당성조사를 거쳐야 하지만, 방위사업법은 보안이 아주 중요한 사업에 예외를 둔다.",
+                "keyFacts": [
+                  "사업은 2027년에 시작해 2030년대 후반 이후 실전 배치를 목표로 한다.",
+                  "선체 개발과 건조 업체는 국내 조선업체 간 경쟁입찰로 정한다.",
+                  "동력원인 소형모듈원자로(SMR)와 핵심 미사일은 정부가 직접 확보해 건조 업체에 준다.",
+                  "총사업비는 보안을 이유로 공개하지 않았고, 8천t급 3척 규모로 알려졌다."
+                ],
+                "outlook": "타당성조사를 대신할 심층 검토 결과와 경쟁입찰 일정, 원자로 연료를 둘러싼 한미 협의를 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "정치",
+                  "minor": "행정부"
+                },
+                "sources": [
+                  {
+                    "name": "아시아경제",
+                    "url": "https://view.asiae.co.kr/article/2026110616502648890",
+                    "publishedAt": "2026-11-06",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261106104151504",
+                    "publishedAt": "2026-11-06",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2025/08/26/PYH2025082622820001300_P2.jpg"
+                  },
+                  {
+                    "name": "TV서울",
+                    "url": "https://www.tvseoul.kr/news/article.html?no=79866",
+                    "publishedAt": "2026-11-06"
+                  }
+                ]
+              }
+            ],
+            "shortNews": [
+              {
+                "summary": "한국갤럽 조사에서 이재명 대통령 국정 지지율이 41%로 2%포인트 올랐고, 정당 지지도는 민주당 36%, 국민의힘 28%였다.",
+                "category": {
+                  "major": "정치",
+                  "minor": "행정부"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261106063200001",
+                    "publishedAt": "2026-11-06",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/11/03/PYH2026110306850001300_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "공소청이 1억 원대 금품 수수 의혹을 받는 강호동 농협중앙회장에 대해 경찰이 신청한 구속영장을 기각했다.",
+                "category": {
+                  "major": "사회",
+                  "minor": "법·재판"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261106175800004",
+                    "publishedAt": "2026-11-06",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/11/05/PYH2026110515420001300_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "삼성바이오로직스 노조가 임금 인상과 인사 제도 개선을 요구하며 약 400명이 참여하는 3주간 부분파업에 들어갔다.",
+                "category": {
+                  "major": "경제",
+                  "minor": "노동·일자리"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261105153751017",
+                    "publishedAt": "2026-11-06",
+                    "imageUrl": "https://img.yna.co.kr/etc/inner/KR/2026/11/05/AKR20261105153751017_02_i_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "인천대교에서 3.5t 트럭이 초등학생 통학버스를 들이받아 학생 5명이 다쳤다.",
+                "category": {
+                  "major": "사회",
+                  "minor": "사건·사고"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261106149400065",
+                    "publishedAt": "2026-11-06",
+                    "imageUrl": "https://img.yna.co.kr/etc/inner/KR/2026/11/06/AKR20261106149400065_01_i_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "입동인 7일 서울 아침 기온이 올가을 처음 영하로 떨어지고 체감온도는 영하 4도까지 내려간다는 예보가 나왔다.",
+                "category": {
+                  "major": "과학·건강",
+                  "minor": "기후·환경"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261106160100530",
+                    "publishedAt": "2026-11-06",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/11/06/PYH2026110601520001300_P2.jpg"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "세계",
+            "flow": "중간선거에서 진 트럼프가 비서실장을 강경파 스티븐 밀러로 바꾸고, 이란 전쟁 재개 우려와 우크라이나 전력난이 이어지는 가운데 유럽에서는 폭탄 협박이 항공기에서 방송사로 번졌다.",
+            "topStories": [
+              {
+                "rank": 1,
+                "title": "트럼프, 중간선거 패배 뒤 비서실장을 수지 와일스에서 스티븐 밀러로 교체",
+                "summary": "트럼프 대통령이 11월 6일 강경 이민정책을 설계한 스티븐 밀러 부비서실장을 새 백악관 비서실장으로 지명했고, 법무부 고위 관료들도 잇따라 물러났다.",
+                "whyItMatters": "민주당이 상·하원을 모두 가져간 직후 대통령이 타협 대신 더 강경한 측근을 백악관 운영 책임자로 앉힌 것이라, 남은 임기 동안 의회와의 충돌이 커질 가능성이 높다. 이민·국방 정책과 탄핵 공방의 방향에도 영향을 준다.",
+                "background": "백악관 비서실장은 대통령의 일정과 참모진, 정책 조율을 총괄하는 자리다. 수지 와일스는 첫 여성 비서실장이자 트럼프 두 임기를 통틀어 가장 오래 일한 비서실장이었다. 10월부터 교체설이 돌았지만 트럼프는 당시 이를 부인했다. 이번 주 중간선거에서 공화당이 크게 지자, 공화당 안에서도 이란 전쟁을 패인으로 꼽으며 헤그세스 국방장관 책임론이 나왔다.",
+                "keyFacts": [
+                  "트럼프는 11월 6일(현지시간) 트루스소셜에 밀러가 월요일(11월 9일)부터 비서실장을 맡는다고 밝혔고, 와일스는 트럼프의 정치 조직으로 옮긴다.",
+                  "밀러는 부비서실장 겸 국토안보부 자문으로, 대규모 추방 정책을 설계한 인물로 꼽힌다. 하킴 제프리스 민주당 하원 원내대표는 그를 \"위험한 외국인 혐오자\"라고 비판했다.",
+                  "선거 뒤 법무부에서는 하밋 딜런 민권국장, 존 아이젠버그 국가안보국장, 트럼프 반대 세력 수사를 맡았던 제이슨 레딩 키뇨네스 연방검사가 물러났다.",
+                  "토머스 매시 공화당 하원의원이 헤그세스 국방장관 탄핵안을 다시 내겠다고 하자, 헤그세스는 SNS 영상에서 탄핵 시도를 정치 공세라며 맞서겠다고 했다.",
+                  "백악관은 헤그세스와 루비오 국무장관이 자리를 떠난다는 관측을 부인했다."
+                ],
+                "outlook": "밀러는 11월 9일 업무를 시작한다. 새 의회 출범 전 레임덕 회기에서 헤그세스 탄핵안 표결이 이뤄질지, 민주당 의회가 이민 정책을 어떻게 견제할지가 관심이다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "국제",
+                  "minor": "미국"
+                },
+                "sources": [
+                  {
+                    "name": "NPR",
+                    "url": "https://www.npr.org/2026/11/06/nx-s1-6032795/stephen-miller-replace-susie-wiles-trumps-chief-of-staff",
+                    "publishedAt": "2026-11-06",
+                    "primary": true
+                  },
+                  {
+                    "name": "CNBC",
+                    "url": "https://www.cnbc.com/2026/11/06/trump-stephen-miller-wiles-chief-of-staff.html",
+                    "publishedAt": "2026-11-06"
+                  },
+                  {
+                    "name": "Washington Post",
+                    "url": "https://www.washingtonpost.com/politics/2026/11/06/trump-names-stephen-miller-new-white-house-chief-staff/",
+                    "publishedAt": "2026-11-06"
+                  },
+                  {
+                    "name": "Bloomberg",
+                    "url": "https://www.bloomberg.com/news/articles/2026-11-06/trump-taps-stephen-miller-to-replace-wiles-as-chief-of-staff",
+                    "publishedAt": "2026-11-06"
+                  },
+                  {
+                    "name": "NBC News",
+                    "url": "https://www.nbcnews.com/politics/trump-administration/secretary-pete-hegseth-defiant-tone-impeachment-threat-thomas-massie-rcna607788",
+                    "publishedAt": "2026-11-06"
+                  },
+                  {
+                    "name": "CNN",
+                    "url": "https://www.cnn.com/2026/11/06/politics/iran-pete-hegseth-impeachment-midterms",
+                    "publishedAt": "2026-11-06"
+                  }
+                ]
+              },
+              {
+                "rank": 2,
+                "title": "이란 미사일 기지 주변 대규모 공사 포착, 걸프 유조선 공격으로 선원 사망",
+                "summary": "위성사진에서 이란 군사기지 재건 정황이 드러나고 걸프 해역에서 유조선 선원이 숨진 가운데, 이란은 카타르를 통해 미국에 핵 제안을 보냈고 트럼프는 카타르 국왕과 긴장 완화를 논의했다.",
+                "whyItMatters": "미국 중간선거 뒤 이란 전쟁이 다시 불붙을 수 있다는 우려 속에 군사 재건과 해상 공격, 외교 중재가 동시에 진행되고 있다. 호르무즈 해협 상황은 세계 유가와 에너지 공급에 바로 영향을 준다.",
+                "background": "올해 미국과 이스라엘이 이란을 폭격하면서 전쟁이 벌어졌고, 호르무즈 해협 운항이 막혀 유가가 크게 뛰었다. 이후 카타르가 미국과 이란 사이를 중재해 왔다. 미국에서는 이란 전쟁이 공화당 중간선거 패배의 원인 중 하나로 꼽힌다.",
+                "keyFacts": [
+                  "BBC 베리파이가 분석한 11월 위성사진에서 테헤란 인근 카라지의 가름다레 기지와 북부 샤흐루드 기지에 굴착과 새 건물이 보였고, 다른 군사시설 최소 12곳에서도 복구 흔적이 확인됐다.",
+                  "전문가들은 카라지 공사가 지하 시설의 새 출입구일 수 있다고 봤다.",
+                  "마셜제도 선적 유조선 벨로스 사파이어호가 11월 5일 빈 배로 바레인으로 가던 중 정체불명의 발사체에 맞아 불이 났고, 선원 1명이 숨졌다고 선사가 6일 밝혔다.",
+                  "이란 고위 관리는 카타르를 통해 미국에 핵 관련 제안을 보냈지만, 미국이 이란의 7개 요구를 먼저 들어줘야 논의할 수 있다고 말했다.",
+                  "트럼프는 6일 카타르 국왕과 통화해 중재와 긴장 완화를 논의했고, 국왕은 추가 확전을 피하고 호르무즈 해협을 열어 둘 것을 강조했다."
+                ],
+                "outlook": "카타르 중재로 미국과 이란이 합의 틀을 찾을지, 미국이 공습 재개를 결정할지가 관건이다. 유조선 공격 조사 결과와 해협 운항 상황도 지켜봐야 한다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "국제",
+                  "minor": "중동"
+                },
+                "sources": [
+                  {
+                    "name": "BBC",
+                    "url": "https://www.bbc.co.uk/news/articles/ckjrwx1r2d5ro",
+                    "publishedAt": "2026-11-06",
+                    "imageUrl": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/5589/live/461d3e00-d879-11f1-b441-2b33b063138f.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "Arab News",
+                    "url": "https://www.arabnews.com/middle-east/satellite-images-show-major-building-work-underway-at-iranian-military-sites-3010141",
+                    "publishedAt": "2026-11-06"
+                  },
+                  {
+                    "name": "gCaptain",
+                    "url": "https://gcaptain.com/seafarer-killed-in-suspected-missile-attack-on-tanker-in-gulf/",
+                    "publishedAt": "2026-11-06"
+                  },
+                  {
+                    "name": "Arab News",
+                    "url": "https://www.arabnews.com/middle-east/iran-sent-nuclear-proposal-to-the-us-via-qatar-senior-iranian-official-says-3010067",
+                    "publishedAt": "2026-11-05"
+                  },
+                  {
+                    "name": "Washington Times",
+                    "url": "https://www.washingtontimes.com/news/2026/nov/6/donald-trump-talks-de-escalation-qatari-emir-diplomacy-end-iran-war/",
+                    "publishedAt": "2026-11-06"
+                  },
+                  {
+                    "name": "Times of Israel",
+                    "url": "https://www.timesofisrael.com/liveblog_entry/trump-qatars-emir-discuss-efforts-to-reach-deal-ending-regional-crisis/",
+                    "publishedAt": "2026-11-06"
+                  }
+                ]
+              },
+              {
+                "rank": 3,
+                "title": "미국 10월 일자리 16만 5천 개 증가로 예상 크게 웃돌아, 실업률 4.1%",
+                "summary": "10월 비농업 일자리가 예상(약 6만 개)의 두 배 이상 늘고 실업률이 떨어지면서 국채 금리가 오르고 연준의 12월 금리 인상 가능성이 높아졌다.",
+                "whyItMatters": "고용이 강하면 연준은 경기보다 물가를 잡는 데 집중할 여지가 커진다. 12월 금리 인상이 이뤄지면 대출 금리와 세계 금융시장, 원화 환율에도 영향이 간다.",
+                "background": "미국 노동부는 매달 첫 금요일 무렵 전달 고용 통계를 낸다. 올해는 이란 전쟁으로 유가가 오르며 물가가 연준 목표(2%)를 웃돌고 있다. 연준은 지난주 금리를 동결했지만 추가 인상 가능성을 열어 두었고, 직전 주에는 AI 주식 급락으로 증시가 크게 흔들렸다.",
+                "keyFacts": [
+                  "10월 비농업 일자리는 16만 5천 개 늘어 시장 예상(5만 9천~6만 5천 개)을 크게 넘었고, 실업률은 4.2%에서 4.1%로 내려갔다.",
+                  "8월과 9월 일자리 수치는 합쳐서 8만 4천 개 상향 수정됐다.",
+                  "평균 시간당 임금은 전달보다 0.4%, 1년 전보다 3.1% 올랐다. 다만 넓은 의미의 실업률(U-6)은 7.9%로 올랐고, 27주 넘게 실업 상태인 사람은 196만 명으로 2021년 12월 이후 가장 많았다.",
+                  "업종별로는 전문·사업 서비스(+7만), 의료(+4만 2천), 운송·창고(+2만 5천)가 늘었다.",
+                  "발표 뒤 미 국채 금리가 전 구간에서 올랐고, 12월 0.25%포인트 인상 확률은 약 77~78%로 높아졌다."
+                ],
+                "outlook": "연준은 12월 8~9일 회의에서 금리를 정한다. 그 전에 나올 물가 지표와 AI 주식 급락 이후 시장 흐름이 결정을 좌우할 것으로 보인다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "경제",
+                  "minor": "노동·일자리"
+                },
+                "sources": [
+                  {
+                    "name": "CNN",
+                    "url": "https://www.cnn.com/2026/11/06/economy/us-jobs-report-october",
+                    "publishedAt": "2026-11-06",
+                    "primary": true
+                  },
+                  {
+                    "name": "CNBC",
+                    "url": "https://www.cnbc.com/2026/11/06/jobs-report-october-2026.html",
+                    "publishedAt": "2026-11-06"
+                  },
+                  {
+                    "name": "NPR",
+                    "url": "https://www.npr.org/2026/11/06/nx-s1-6030867/jobs-labor-market-economy-wages-inflation",
+                    "publishedAt": "2026-11-06"
+                  },
+                  {
+                    "name": "Bloomberg",
+                    "url": "https://www.bloomberg.com/news/live-blog/2026-11-06/us-employment-report-for-october-live-updates",
+                    "publishedAt": "2026-11-06"
+                  }
+                ],
+                "analogy": "고용이 강하다는 소식이 증시에 꼭 좋지만은 않은 것은, 경기가 뜨거우니 연준이 '브레이크(금리 인상)'를 더 밟을 수 있다는 신호로도 읽히기 때문이다."
+              },
+              {
+                "rank": 4,
+                "title": "러시아 공습에 우크라이나 7개 지역 정전, 젤렌스키와 키이우 시장은 책임 공방",
+                "summary": "러시아 공습으로 키이우 일대가 가장 큰 피해를 입은 가운데 대통령과 시장이 준비 부족 책임을 서로 탓했고, 자포리자 구호품 배급소 폭격 사망자는 53명으로 늘었다.",
+                "whyItMatters": "영하에 가까운 날씨에 300만 명이 넘는 수도의 전기·물·난방이 끊기고 있어 겨울 인도적 위기가 커지고 있다. 지도부 내분은 다음 주 평화 협상을 앞둔 우크라이나에 부담이 된다.",
+                "background": "러시아는 겨울을 앞두고 우크라이나 에너지 시설을 집중 공격해 왔고, 11월 3일에는 올해 최대 규모 공격을 했다. 젤렌스키 대통령과 클리치코 키이우 시장은 오래 갈등해 왔으며, 전시라 선거 없이 둘 다 임기를 넘겨 자리를 지키고 있다.",
+                "keyFacts": [
+                  "네크라소우 에너지부 차관은 11월 6일 공습으로 키이우·하르키우·자포리자 등 7개 지역에 새 정전이 생겼고 키이우 일대 피해가 가장 크다고 밝혔다.",
+                  "젤렌스키는 시 행정부가 난방철 준비를 제대로 하지 못했다고 했고, 클리치코는 정부가 도시 회복력 계획 승인을 일부러 늦췄다고 맞받았다.",
+                  "11월 2일 자포리자주 코미슈바하의 구호품 배급소 폭격 사망자는 53명으로 늘었고, 최대 39명이 잔해에 갇혀 있을 수 있다.",
+                  "젤렌스키는 러시아가 에너지 시설과 드니프로강 다리를 노린 새 공격을 준비하고 있다고 경고했다."
+                ],
+                "outlook": "양측 대표단은 11월 10~11일 아부다비에서 미국 중재 협상을 할 예정이다. 추가 대규모 공습이 있을지와 키이우 난방 복구 속도를 지켜봐야 한다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "국제",
+                  "minor": "유럽·러시아"
+                },
+                "sources": [
+                  {
+                    "name": "Al Jazeera",
+                    "url": "https://www.aljazeera.com/news/2026/11/6/ukraine-raises-zaporizhia-aid-strike-death-toll-to-at-least-50",
+                    "publishedAt": "2026-11-06",
+                    "primary": true
+                  },
+                  {
+                    "name": "Cyprus Mail(Reuters)",
+                    "url": "https://cyprus-mail.com/2026/11/06/zelenskiy-kyiv-mayor-trade-blame-as-russian-strikes-plunge-city-into-darkness",
+                    "publishedAt": "2026-11-06"
+                  },
+                  {
+                    "name": "US News(Reuters)",
+                    "url": "https://www.usnews.com/news/world/articles/2026-11-06/russian-strikes-cause-new-outages-in-7-ukrainian-regions-kyiv-area-worst-hit-official-says",
+                    "publishedAt": "2026-11-06"
+                  },
+                  {
+                    "name": "CBC",
+                    "url": "https://www.cbc.ca/news/world/ukraine-zaporizhzhia-attack-russia-melania-trump-9.7411754",
+                    "publishedAt": "2026-11-06"
+                  }
+                ]
+              },
+              {
+                "rank": 5,
+                "title": "관측 사상 가장 더운 10월, 기후회의 앞두고 2026년 1.5도 넘을 듯",
+                "summary": "EU 기후 감시 기구 코페르니쿠스는 10월이 역대 가장 더운 10월이었고 2026년이 산업화 이전보다 1.5도 넘게 더운 해가 될 것이 거의 확실하다고 밝혔다.",
+                "whyItMatters": "다음 주 튀르키예에서 열리는 유엔 기후회의(COP31)를 앞두고 나온 발표라, 화석연료 감축과 기후 재원 논의에 압박이 커진다.",
+                "background": "파리협정은 지구 기온 상승을 산업화 이전보다 1.5도 안으로 막는 것을 목표로 한다. 이 목표는 20년 정도의 장기 평균으로 보기 때문에 한 해가 넘었다고 바로 실패는 아니다. 올해는 강한 엘니뇨와 이란 전쟁에 따른 에너지 가격 충격이 겹쳤다.",
+                "keyFacts": [
+                  "10월 지구 평균 기온은 산업화 이전보다 1.75도 높아 역대 10월 최고였고, 1.5도를 넘은 달이 석 달째 이어졌다.",
+                  "2026년은 2024년에 이어 1.5도를 넘는 두 번째 해가 될 것이 거의 확실하며, 두 번째로 더운 해가 될 확률이 약 80%다.",
+                  "COP31은 11월 9~20일 튀르키예 안탈리아에서 열리고, 정상회의는 11~12일이다.",
+                  "유엔은 세계가 지금 약 1.4도 더워졌고 이대로면 2.6도로 향한다고 본다. 최대 기여국인 미국이 빠져 기후 재원을 누가 낼지가 쟁점이다."
+                ],
+                "outlook": "COP31에서 화석연료 전환 약속 이행과 가난한 나라 지원 재원이 합의될지가 관건이다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "과학·건강",
+                  "minor": "기후·환경"
+                },
+                "sources": [
+                  {
+                    "name": "France 24",
+                    "url": "https://www.france24.com/en/live-news/20261106-2026-most-likely-to-be-second-hottest-year-on-record-eu-monitor",
+                    "publishedAt": "2026-11-06",
+                    "primary": true
+                  },
+                  {
+                    "name": "TimesLIVE(Reuters)",
+                    "url": "https://www.timeslive.co.za/news/world/2026-11-06-warmest-october-on-record-2026-likely-to-exceed-critical-heat-measurement/",
+                    "publishedAt": "2026-11-06"
+                  },
+                  {
+                    "name": "Killeen Daily Herald(AP)",
+                    "url": "https://kdhnews.com/news/nation/un-climate-talks-start-in-the-year-of-disasters-energy-price-shocks-and-fast-rising/article_c4724e04-2d2d-5a98-9391-2a284c763522.html",
+                    "publishedAt": "2026-11-06"
+                  }
+                ]
+              },
+              {
+                "rank": 6,
+                "title": "유럽 폭탄 협박, 항공기에서 방송사로 번져 아일랜드 RTÉ 등 대피",
+                "summary": "항공기를 겨냥한 거짓 폭탄 협박이 이어지는 가운데 11월 6일 아일랜드·영국·불가리아 방송사와 신문사에도 협박 메일이 와 일부 직원이 대피했다.",
+                "whyItMatters": "협박 대상이 교통에서 언론으로 넓어지면서 유럽 각국이 이를 조직적인 '하이브리드 공격'으로 보기 시작했다. 아직 폭발물은 나오지 않았지만 운항 차질과 보안 비용이 커지고 있다.",
+                "background": "이번 주 화요일과 목요일 유럽 여러 나라 항공편에 거짓 폭탄 협박이 잇따라 회항과 비상 착륙이 있었다. 누가 보냈는지는 밝혀지지 않았다.",
+                "keyFacts": [
+                  "더블린의 RTÉ는 45분 안에 폭탄이 터진다는 메일을 받고 직원을 대피시켰고, 경찰 수색 뒤 몇 시간 만에 안전이 확인됐다. 아이리시 인디펜던트, 뉴스토크 등도 협박을 받았다.",
+                  "영국 스카이와 불가리아 노바TV도 협박을 받았다고 밝혔다.",
+                  "같은 날 체코 경찰은 프라하 오가는 항공편 9편, 프랑스는 4편에 대한 협박을 확인했고, 프라하-로마 위즈에어 항공편은 베네치아로 회항했다.",
+                  "아일랜드 정부는 조직적인 교란 캠페인으로 보인다고 했고, 스페인 외교장관은 하이브리드 공격이자 심리전이라고 했다."
+                ],
+                "outlook": "각국 수사기관이 협박 메일의 발신자와 항공·언론 협박 사이의 연관성을 밝혀낼지가 관심이다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "국제",
+                  "minor": "유럽·러시아"
+                },
+                "sources": [
+                  {
+                    "name": "Al Jazeera",
+                    "url": "https://www.aljazeera.com/news/2026/11/6/new-bomb-threats-target-european-broadcasters-air-traffic",
+                    "publishedAt": "2026-11-06",
+                    "primary": true
+                  },
+                  {
+                    "name": "RTÉ",
+                    "url": "https://www.rte.ie/news/ireland/2026/1106/1598241-rte-evacuation/",
+                    "publishedAt": "2026-11-06"
+                  },
+                  {
+                    "name": "Irish Times",
+                    "url": "https://www.irishtimes.com/ireland/2026/11/06/staff-at-irish-media-outlets-evacuated-due-to-security-alert/",
+                    "publishedAt": "2026-11-06"
+                  },
+                  {
+                    "name": "BBC",
+                    "url": "https://www.bbc.co.uk/news/articles/cq62yy064vjpo",
+                    "publishedAt": "2026-11-06",
+                    "imageUrl": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/c047/live/33f77d10-d9ed-11f1-a701-fddedf244c16.jpg"
+                  },
+                  {
+                    "name": "NPR",
+                    "url": "https://www.npr.org/2026/11/06/nx-s1-6032612/europe-flights-hoaxes",
+                    "publishedAt": "2026-11-06"
+                  }
+                ]
+              },
+              {
+                "rank": 7,
+                "title": "케냐 '굶주림 사이비' 교주 매켄지에 징역 200년 선고",
+                "summary": "케냐 법원이 신도들에게 굶어 죽으라고 해 아이 190명 등 191명을 숨지게 한 사이비 교주 폴 매켄지에게 징역 200년을 선고했다.",
+                "whyItMatters": "아프리카에서 가장 큰 사이비 집단 사망 사건 중 하나에 대한 첫 형량이라, 종교 단체 규제와 국가의 보호 책임 논의에 영향을 준다.",
+                "background": "매켄지는 2023년 8월에 세상이 끝나니 천국에 가려면 금식해야 한다고 신도들을 설득했다. 이후 케냐 해안 샤카홀라 숲에서 시신이 잇따라 발견돼 지금까지 429구가 수습됐다. 그는 10월에 191건의 살인 혐의로 유죄 판결을 받았다.",
+                "keyFacts": [
+                  "몸바사 고등법원은 11월 6일 굶겨 숨지게 한 죄에 100년, 직접 살해한 죄에 100년을 매겨 이어서 복역하게 했다.",
+                  "판사는 사형이 신도들에게 순교로 비칠 수 있다며 사형을 선고하지 않았다.",
+                  "함께 기소된 28명은 10~160년 형을 받았고, 부목사는 160년 형을 받았다.",
+                  "피고인들은 14일 안에 항소할 수 있고, 매켄지는 나머지 희생자에 대한 테러·과실치사 재판도 남아 있다."
+                ],
+                "outlook": "항소 여부와 남은 두 재판의 진행을 지켜봐야 한다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "사회",
+                  "minor": "법·재판"
+                },
+                "sources": [
+                  {
+                    "name": "CNN",
+                    "url": "https://www.cnn.com/2026/11/06/africa/kenyan-cult-leader-sentenced-intl",
+                    "publishedAt": "2026-11-06",
+                    "primary": true
+                  },
+                  {
+                    "name": "NPR",
+                    "url": "https://www.npr.org/2026/11/06/nx-s1-6032593/kenya-cult-leader-paul-mackenzie-sentenced-murder",
+                    "publishedAt": "2026-11-06"
+                  },
+                  {
+                    "name": "Al Jazeera",
+                    "url": "https://www.aljazeera.com/news/2026/11/6/kenyan-court-sentences-starvation-cult-leader-to-200-years",
+                    "publishedAt": "2026-11-06"
+                  },
+                  {
+                    "name": "BBC",
+                    "url": "https://www.bbc.co.uk/news/articles/cm5yne5984l0o",
+                    "publishedAt": "2026-11-06",
+                    "imageUrl": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/9676/live/4f47ccc0-d9f0-11f1-bb10-cdca6001fbcf.jpg"
+                  },
+                  {
+                    "name": "Daily Nation",
+                    "url": "https://nation.africa/kenya/counties/kilifi/shakahola-massacre-mackenzie-jailed-for-200-years-5660990",
+                    "publishedAt": "2026-11-06"
+                  }
+                ]
+              }
+            ],
+            "shortNews": [
+              {
+                "summary": "소말리아 대법원이 하산 셰이크 모하무드 대통령의 임기 연장을 위법이라고 판단해, 내년으로 잡힌 1969년 이후 첫 전국 직접선거 일정이 불투명해졌다.",
+                "category": {
+                  "major": "국제",
+                  "minor": "기타 지역"
+                },
+                "sources": [
+                  {
+                    "name": "BBC",
+                    "url": "https://www.bbc.co.uk/news/articles/c977ppnezep6o",
+                    "publishedAt": "2026-11-06",
+                    "imageUrl": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/679b/live/77438af0-d9b1-11f1-bbc7-9574ed12e2df.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "남아공 지방선거 개표가 90%쯤 진행된 가운데 집권 ANC 득표율이 약 32%로, 2021년(약 46%)보다 크게 떨어졌다. 제1야당 DA는 약 24%다.",
+                "category": {
+                  "major": "국제",
+                  "minor": "기타 지역"
+                },
+                "sources": [
+                  {
+                    "name": "TradingView(Reuters)",
+                    "url": "https://www.tradingview.com/news/reuters.com,2026:newsml_S8N46602U:0-south-africa-s-anc-at-32-da-24-as-municipal-vote-count-enters-final-stretch/",
+                    "publishedAt": "2026-11-06"
+                  },
+                  {
+                    "name": "Moneyweb",
+                    "url": "https://www.moneyweb.co.za/news/south-africa/anc-loses-ground-in-south-african-municipal-vote-modelling-shows/",
+                    "publishedAt": "2026-11-06",
+                    "publishedAtEstimated": true
+                  }
+                ]
+              },
+              {
+                "summary": "마카오 첫 국가안보법 재판에서 전 민주파 의원 아우캄산이 국가 정권 전복 혐의로 징역 12년 6개월을 선고받았다.",
+                "category": {
+                  "major": "국제",
+                  "minor": "동아시아"
+                },
+                "sources": [
+                  {
+                    "name": "BBC",
+                    "url": "https://www.bbc.co.uk/news/articles/cmdx33v9vvr2o",
+                    "publishedAt": "2026-11-06",
+                    "imageUrl": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/0ae0/live/23a8aa80-d9aa-11f1-88e6-7913ca4cf3b6.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "미국 연방 판사가 워싱턴에 높이 250피트(약 76m) 규모로 지으려던 트럼프의 대형 개선문 공사를 14일 동안 멈추라고 명령했다.",
+                "category": {
+                  "major": "국제",
+                  "minor": "미국"
+                },
+                "sources": [
+                  {
+                    "name": "BBC",
+                    "url": "https://www.bbc.co.uk/news/articles/cq99zd93ryvko",
+                    "publishedAt": "2026-11-06",
+                    "imageUrl": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/afb3/live/7b472130-d956-11f1-b7f4-8bd3c0617693.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "지난달 폐 일부 절제 수술을 받은 교황 레오 14세가 우루과이·아르헨티나·페루를 도는 남미 순방을 시작했다.",
+                "category": {
+                  "major": "국제",
+                  "minor": "기타 지역"
+                },
+                "sources": [
+                  {
+                    "name": "BBC",
+                    "url": "https://www.bbc.co.uk/news/articles/cqn06j0y61k6o",
+                    "publishedAt": "2026-11-06",
+                    "imageUrl": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/d5f5/live/a7b86be0-d96d-11f1-9fd0-cdf612d1539f.jpg"
+                  }
+                ]
+              }
+            ],
+            "unverified": "유조선 벨로스 사파이어호를 맞힌 것이 미사일인지 기뢰인지, 누가 공격했는지는 확인되지 않았다. 유럽 폭탄 협박의 배후도 아직 밝혀지지 않았고, 한 러시아 극단주의 단체는 관여를 부인했다."
+          },
+          {
+            "name": "IT·AI",
+            "flow": "미국 중간선거 뒤 번진 AI주 폭락이 아시아·유럽까지 휩쓴 뒤 월가에서 일단 멈췄고, 데이터센터 반대 시위가 유럽으로 번지는 가운데 빅테크는 AI 설비 투자를 다시 따져 보기 시작했다.",
+            "topStories": [
+              {
+                "rank": 1,
+                "title": "AI주 폭락이 아시아·유럽으로 번져 TSMC 한때 하한가, 월가는 6일 반등하며 숨 고르기",
+                "summary": "전날 나스닥 5.5% 급락의 여파로 6일 대만·일본 증시가 크게 떨어지고 소프트뱅크 부도 위험 지표가 4년 만에 가장 높아졌지만, 같은 날 뉴욕에서는 AI주가 반등해 전 세계적인 하락이 일단 멈췄다.",
+                "whyItMatters": "몇 년 동안 세계 증시를 끌어 온 AI 투자 열기가 미국 정치 변화 하나로 크게 흔들렸다. 반도체·데이터센터 기업의 자금 조달과 앤트로픽 같은 AI 기업의 상장 일정까지 영향을 받는다.",
+                "background": "미국 중간선거에서 데이터센터 규제를 내건 민주당이 크게 이기자, 5일(미국 시간) 투자자들이 AI 관련주를 한꺼번에 팔아 나스닥이 하루에 5.5% 떨어졌다. AI 투자가 실제 돈을 벌어 줄지에 대한 의심이 이미 쌓여 있던 데다, 빚을 내 산 주식이 강제로 팔리면서 낙폭이 커졌다는 분석이 나왔다.",
+                "keyFacts": [
+                  "대만 TSMC는 6일 장중 하루 가격 제한폭(10%)까지 떨어졌다가 4%대 하락으로 마감했고, 대만 가권지수는 장중 9% 넘게 빠져 역대 최대 장중 하락 폭(포인트 기준)을 기록했다.",
+                  "일본 닛케이지수는 닷새째 떨어져 6% 떨어져 5만7천 선까지 밀리며 6만 선이 무너졌고, 소프트뱅크그룹 주가는 약 11% 떨어졌으며 이 회사 부도 위험에 대비한 보험료(CDS)는 4년 만에 가장 높아졌다.",
+                  "골드만삭스 추정으로 기술주 중심 헤지펀드는 5일 하루에 4% 넘게 잃어 올해 수익을 거의 다 날렸고, 170억달러 규모 헤지펀드 월아이캐피털은 주식 운용팀을 줄이기로 했다.",
+                  "6일(미국 시간) 뉴욕에서는 엔비디아가 4% 안팎 오르는 등 AI주가 반등했고, S&P 500은 1% 가까이 올라 주간 낙폭을 2%대로 줄였다.",
+                  "11월 상장을 추진하던 앤트로픽은 목표 기업가치 1조5천억달러 달성이 어려워지고 일정이 미뤄질 수 있다는 투자자 반응이 나왔다."
+                ],
+                "outlook": "다음 주 이후 앤트로픽의 상장 설명회(로드쇼) 진행 여부와 10월 매출 공개, 미국 새 의회의 AI·데이터센터 법안 움직임이 AI주 흐름을 가를 전망이다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "경제",
+                  "minor": "금융·증시"
+                },
+                "sources": [
+                  {
+                    "name": "BBC",
+                    "url": "https://www.bbc.co.uk/news/articles/c35ynnpzdq51o?at_medium=RSS&at_campaign=rss",
+                    "publishedAt": "2026-11-06",
+                    "imageUrl": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/fdde/live/9036f7e0-da01-11f1-93e1-3b657b665bcf.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "SBS",
+                    "url": "https://news.sbs.co.kr/english/article.do?news_id=N1008834208",
+                    "publishedAt": "2026-11-06"
+                  },
+                  {
+                    "name": "CNBC",
+                    "url": "https://www.cnbc.com/2026/11/06/tech-stocks-sk-hynix-samsung-softbank.html",
+                    "publishedAt": "2026-11-06"
+                  },
+                  {
+                    "name": "AP(Local 10 게재)",
+                    "url": "https://www.local10.com/business/2026/11/06/ai-stocks-halt-their-brutal-worldwide-sell-off-as-wall-street-trims-its-loss-for-the-week/",
+                    "publishedAt": "2026-11-06"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261106111400009",
+                    "publishedAt": "2026-11-06",
+                    "imageUrl": "https://img.yna.co.kr/photo/etc/af/2026/11/06/PAF20261106168401009_P2.jpg"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261106046451073",
+                    "publishedAt": "2026-11-06",
+                    "imageUrl": "https://img.yna.co.kr/photo/cms/2020/03/09/83/PCM20200309000183990_P2.jpg"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261106058600091",
+                    "publishedAt": "2026-11-06",
+                    "imageUrl": "https://img.yna.co.kr/photo/etc/gt/2026/09/16/PGT20260916024601009_P2.jpg"
+                  },
+                  {
+                    "name": "Reuters(Euronext 게재)",
+                    "url": "https://live.euronext.com/en/financial-news/tech-selloff-wipes-out-hedge-fund-gains-prompting-risk-cuts-and-layoffs",
+                    "publishedAt": "2026-11-06"
+                  }
+                ],
+                "analogy": "모두가 한 방향으로 몰려 있던 좁은 다리에서 한 사람이 멈추자 뒤따르던 사람들이 한꺼번에 밀려 넘어진 것과 비슷하다."
+              },
+              {
+                "rank": 2,
+                "title": "데이터센터 반대가 유럽으로 번져, 암스테르담 마이크로소프트 데이터센터 공사장에 시위대 진입",
+                "summary": "6~7일 유럽 15개국 100여 개 단체가 데이터센터 반대 행동에 나선 가운데, 암스테르담에서는 수백 명이 마이크로소프트가 쓸 데이터센터 공사장 울타리를 뚫고 들어가 경찰이 여러 명을 체포했다.",
+                "whyItMatters": "미국 중간선거에서 확인된 데이터센터 반대 여론이 유럽에서도 조직적인 행동으로 나타났다. 전력·물·주택 문제를 둘러싼 지역 반발이 빅테크의 유럽 AI 설비 계획에 새 걸림돌이 될 수 있다.",
+                "background": "AI 서비스를 돌리는 대형 데이터센터는 도시 하나에 맞먹는 전기를 쓴다. 유럽 시민단체들은 'Stop Dirty Data Centres'라는 이름으로 사회·환경 문제가 풀릴 때까지 대형 데이터센터 건설을 멈추자(모라토리엄)고 요구하며 미국 중간선거 직후로 행동 날짜를 잡았다.",
+                "keyFacts": [
+                  "6일 암스테르담 슬로테르데이크의 공사장(85m 높이 건물 3동)에 시위대가 사다리와 절단기로 울타리를 넘어 들어갔고, 주최 측은 약 500명, 다른 보도는 100명 넘게 들어갔다고 전했다.",
+                  "일부는 크레인에 올라 현수막을 걸었고, 경찰은 후추 스프레이를 쓰며 여러 명을 체포했다. 암스테르담 시장은 시위를 금지했다.",
+                  "시위를 이끈 단체 'Geef Tegengas'는 이 시설이 암스테르담 모든 가구를 합친 만큼 전기를 쓸 것이라고 주장했다. 이 건물은 마이크로소프트가 통째로 빌려 쓴다.",
+                  "같은 기간 아일랜드·폴란드·덴마크·핀란드·스페인·프랑스·영국 등 15개국에서 100여 개 단체가 행진과 집회를 열었다.",
+                  "마이크로소프트는 시위를 알고 있으며 평화적 의사 표현은 존중하지만 법을 어기는 행동은 용납하지 않는다고 밝혔다."
+                ],
+                "outlook": "7일까지 이어지는 유럽 각지 시위의 규모와, 유럽 각국 정부가 데이터센터 전력·입지 규제를 강화할지가 관심이다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "AI 산업·기업"
+                },
+                "sources": [
+                  {
+                    "name": "SBS",
+                    "url": "https://news.sbs.co.kr/english/article.do?news_id=N1008834721",
+                    "publishedAt": "2026-11-06",
+                    "primary": true
+                  },
+                  {
+                    "name": "Bloomberg",
+                    "url": "https://www.bloomberg.com/news/articles/2026-11-06/protesters-break-into-microsoft-data-center-site-in-amsterdam",
+                    "publishedAt": "2026-11-06"
+                  },
+                  {
+                    "name": "NL Times",
+                    "url": "https://nltimes.nl/2026/11/06/protesters-break-onto-site-planned-microsoft-data-center-adam-police-intervene",
+                    "publishedAt": "2026-11-06"
+                  },
+                  {
+                    "name": "The Next Web",
+                    "url": "https://thenextweb.com/news/microsoft-data-centre-amsterdam-protest",
+                    "publishedAt": "2026-11-06"
+                  },
+                  {
+                    "name": "AP(ABC News 게재)",
+                    "url": "https://abcnews.com/International/wireStory/protesters-break-microsoft-data-center-site-amsterdam-europes-137915154",
+                    "publishedAt": "2026-11-06"
+                  },
+                  {
+                    "name": "The Register",
+                    "url": "https://www.theregister.com/systems/2026/11/05/stop-dirty-datacenters-europe-wide-protests-planned-demanding-building-moratorium/5307790",
+                    "publishedAt": "2026-11-05"
+                  }
+                ]
+              },
+              {
+                "rank": 3,
+                "title": "마이크로소프트는 빌려 쓰던 AI 클라우드를 줄이고, 오픈AI는 데이터센터 확장 강행 밝혀",
+                "summary": "마이크로소프트가 오라클에서 빌리던 AI 연산 설비 계약을 끝내고 네오클라우드(AI 전용 임대 클라우드) 업체 관리를 조이는 반면, 오픈AI 최고재무책임자(CFO)는 선거 결과와 관계없이 투자를 이어 가겠다고 했다.",
+                "whyItMatters": "AI 설비 수요를 떠받치던 큰손들 사이에서 속도 차이가 드러났다. 임대 설비 수요가 줄면 오라클과 네오클라우드 업체의 수익과 빚 상환 능력이 흔들릴 수 있다.",
+                "background": "빅테크는 직접 짓는 데이터센터만으로 AI 연산이 모자라자 오라클, 코어위브, 엔스케일, 네비우스 같은 업체에서 연산 설비를 빌려 왔다. 마이크로소프트는 이런 외부 클라우드에 800억달러 넘게 약정한 것으로 알려졌다.",
+                "keyFacts": [
+                  "블룸버그에 따르면 마이크로소프트는 2023년 빙(Bing) AI 검색용으로 맺은 오라클 설비 임대 계약을 갱신하지 않고 최근 몇 달 동안 설비를 꺼 왔다. 이 설비는 구형 엔비디아 칩을 썼다.",
+                  "마이크로소프트는 이번 주 엔스케일의 텍사스 계약을 늘릴 수 있는 선택권도 쓰지 않는 등 네오클라우드 공급사 관리를 강화하고 있다. 오라클은 수요가 여전히 강하다고 밝혔고 주가는 약 3% 내렸다.",
+                  "오픈AI의 세라 프라이어 CFO는 6일 CNBC 인터뷰에서 데이터센터 투자를 계속하고, 지역 주민에게 건설 계획을 공개하며 전기 요금을 올리지 않겠다고 했다.",
+                  "구글은 와이오밍주에 170억달러를 들여 첫 데이터센터 단지를 짓고 쓰는 전기 비용을 전액 부담하겠다고 밝혔다."
+                ],
+                "outlook": "마이크로소프트가 다른 임대 계약도 줄일지, 오픈AI의 진행 중인 자금 조달이 시장 불안 속에서 마무리될지가 다음 관심사다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "AI 산업·기업"
+                },
+                "sources": [
+                  {
+                    "name": "Bloomberg",
+                    "url": "https://www.bloomberg.com/news/articles/2026-11-06/microsoft-is-winding-down-oracle-deal-to-rent-ai-cloud-capacity",
+                    "publishedAt": "2026-11-06",
+                    "primary": true
+                  },
+                  {
+                    "name": "The Next Web",
+                    "url": "https://thenextweb.com/news/microsoft-winds-down-oracle-ai-cloud-capacity-deal",
+                    "publishedAt": "2026-11-06"
+                  },
+                  {
+                    "name": "CNBC",
+                    "url": "https://www.cnbc.com/2026/11/06/open-ai-data-centers-election.html",
+                    "publishedAt": "2026-11-06"
+                  },
+                  {
+                    "name": "Bloomberg",
+                    "url": "https://www.bloomberg.com/news/articles/2026-11-06/google-takes-over-wyoming-data-center-that-crusoe-had-pitched",
+                    "publishedAt": "2026-11-06"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261106131000009",
+                    "publishedAt": "2026-11-06",
+                    "imageUrl": "https://img.yna.co.kr/photo/reuters/2026/10/24/PRU20261024066301009_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 4,
+                "title": "EU, 틱톡 '추천 피드 토끼굴' 효과가 디지털서비스법 위반이라고 예비 판단",
+                "summary": "EU 집행위원회가 틱톡의 '추천(For You)' 피드가 이용자를 비슷한 해로운 영상으로 끝없이 끌고 들어가는데도 대책이 부족하다며 디지털서비스법(DSA) 위반 예비 판단을 내렸다.",
+                "whyItMatters": "추천 알고리즘 설계 자체를 법 위반으로 본 사례라, 메타 등 다른 플랫폼의 추천 방식에도 기준이 될 수 있다.",
+                "background": "'토끼굴(rabbit hole)'은 슬픔·고립감·외모 같은 주제의 영상이 계속 추천돼 빠져나오기 어려운 현상을 말한다. EU는 2024년부터 틱톡을 조사해 왔고 올해 2월에는 중독적 설계 문제로 먼저 예비 판단을 냈다.",
+                "keyFacts": [
+                  "집행위는 6일 틱톡이 추천 알고리즘의 위험을 제대로 평가하지 않았고 '관심 없음' 버튼 같은 기존 대책도 효과가 없다고 봤다.",
+                  "틱톡에 이용자가 직접 밝힌 선호를 더 반영하고, 시청 시간을 추천 기준에서 빼고, 알고리즘을 정기적으로 시험하라고 요구했다.",
+                  "최종 결정에서 위반이 확정되면 전 세계 연간 매출의 최대 6%까지 과징금을 물 수 있다. 틱톡은 이에 앞서 반론할 기회를 갖는다."
+                ],
+                "outlook": "틱톡의 반론과 최종 결정 시점, 집행위가 따로 조사 중인 페이스북·인스타그램의 같은 문제에 대한 판단이 이어진다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "규제·정책"
+                },
+                "sources": [
+                  {
+                    "name": "EU 집행위원회",
+                    "url": "https://digital-strategy.ec.europa.eu/en/news/commission-preliminarily-finds-tiktoks-you-feed-breach-digital-services-act-harmful-rabbit-holes",
+                    "publishedAt": "2026-11-06",
+                    "primary": true
+                  },
+                  {
+                    "name": "CNBC",
+                    "url": "https://www.cnbc.com/2026/11/06/eu-charges-tiktok-harmful-algorithmic-rabbit-hole-effects.html",
+                    "publishedAt": "2026-11-06"
+                  },
+                  {
+                    "name": "RTÉ",
+                    "url": "https://www.rte.ie/news/europe/2026/1106/1598263-eu-tiktok-videos/",
+                    "publishedAt": "2026-11-06"
+                  }
+                ]
+              },
+              {
+                "rank": 5,
+                "title": "테슬라, 판매 부진 사이버트럭 생산을 2027년 끝내기로",
+                "summary": "일론 머스크 테슬라 최고경영자가 텍사스 공장의 사이버트럭 생산을 2027년 중반쯤 끝내고 그 자리에서 무인 로보택시 '사이버캡'을 더 만들겠다고 밝혔다.",
+                "whyItMatters": "테슬라가 자동차보다 자율주행·로봇에 무게를 옮기고 있음을 다시 보여 준다. 올해 모델 S·X 단종에 이어 세 번째 단종이다.",
+                "background": "사이버트럭은 2019년 공개 뒤 2023년 말 출시됐지만, 머스크가 예상한 연 25만 대에 크게 못 미쳤다. 값은 처음 약속한 4만달러 아래에서 6만달러 안팎으로 올랐고 여러 차례 리콜도 있었다.",
+                "keyFacts": [
+                  "머스크는 6일 X에 사이버트럭 생산을 정리하고 그 공간을 2인승 로보택시 사이버캡 생산에 쓰겠다고 밝혔다. 그는 판매 부진이 이유는 아니라고 주장했다.",
+                  "콕스 오토모티브 집계로 사이버트럭은 2025년 2만237대 팔려 전년보다 48% 줄었다.",
+                  "테슬라는 오스틴에서 약 두 달째 사이버캡을 운행 중이며 이달 말 댈러스로 넓힐 계획이다."
+                ],
+                "outlook": "남은 재고 처리와 사이버캡 생산 확대 속도, 로보택시 서비스 지역 확장이 관심이다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "경제",
+                  "minor": "산업·기업"
+                },
+                "sources": [
+                  {
+                    "name": "TechCrunch",
+                    "url": "https://techcrunch.com/2026/11/06/tesla-will-stop-making-the-cybertruck-in-2027/",
+                    "publishedAt": "2026-11-06",
+                    "primary": true
+                  },
+                  {
+                    "name": "BBC",
+                    "url": "https://www.bbc.co.uk/news/articles/cq1j33w7d232o?at_medium=RSS&at_campaign=rss",
+                    "publishedAt": "2026-11-06",
+                    "imageUrl": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/d7ce/live/3fc37350-d9f3-11f1-a701-fddedf244c16.jpg"
+                  },
+                  {
+                    "name": "TechSpot",
+                    "url": "https://www.techspot.com/news/114476-tesla-winding-down-cybertruck-production-but-elon-musk.html",
+                    "publishedAt": "2026-11-06"
+                  }
+                ]
+              },
+              {
+                "rank": 6,
+                "title": "가상자산 거래소 고팍스, 해킹 협박 메일 받고 입출금·매매 중단",
+                "summary": "고팍스가 6일 해킹을 예고하는 협박 메일을 받은 뒤 입출금과 매매를 멈추고 인터넷에 연결된 지갑의 자산을 오프라인 지갑(콜드월렛)으로 옮겼다.",
+                "whyItMatters": "바이낸스 대규모 해킹 이후 거래소 보안 불안이 커진 상황에서, 협박만으로 국내 거래소 서비스가 멈춰 이용자 자산 접근이 막혔다.",
+                "background": "국내 거래소는 이용자 자산의 80% 이상을 콜드월렛에 두어야 한다. 금융위원회는 최근 바이낸스 사고 뒤 거래소에 콜드월렛 보관 비중을 점검하라고 당부했다. 고팍스는 지난달 이용자 7명과 임직원 2명의 개인정보 노출 사고를 공개한 바 있다.",
+                "keyFacts": [
+                  "고팍스는 6일 오후 2시 55분쯤 입출금을, 오후 3시 53분쯤 매매를 멈추고 체결되지 않은 주문을 모두 취소했다.",
+                  "회사는 실제 해킹이나 자산 피해는 없었고 협박 메일의 진위는 확인 중이라고 밝혔다.",
+                  "출금은 고객지원센터를 통해 신청하면 내부 확인 뒤 수동으로 처리하며, 서비스 재개 시점은 정해지지 않았다."
+                ],
+                "outlook": "보안 점검 결과와 서비스 재개 시점, 금융당국이 거래소 보안 점검을 넓힐지가 관심이다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "보안"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261106174751002",
+                    "publishedAt": "2026-11-06",
+                    "imageUrl": "https://img.yna.co.kr/photo/cms/2026/11/06/63/PCM20261106000063990_P2.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "파이낸셜뉴스",
+                    "url": "https://www.fnnews.com/news/202611061934567878",
+                    "publishedAt": "2026-11-06"
+                  },
+                  {
+                    "name": "Cointelegraph",
+                    "url": "https://cointelegraph.com/news/gopax-halts-crypto-trading-withdrawals-cold-storage",
+                    "publishedAt": "2026-11-06"
+                  }
+                ],
+                "devCheckpoint": "핫월렛 출금 권한과 키 관리 절차를 점검하고, 협박·이상 징후 때 출금을 멈추는 긴급 절차가 준비돼 있는지 확인할 때다."
+              },
+              {
+                "rank": 7,
+                "title": "일본, 잇단 사이버공격에 100억엔 긴급 대책…AI로 취약점 찾는다",
+                "summary": "다카이치 사나에 일본 총리가 기업·정부 기관 수십 곳이 해킹과 고객 정보 유출을 당한 뒤 예비비 100억엔(약 850억원)을 쓰는 긴급 사이버보안 대책을 발표했다.",
+                "whyItMatters": "정부가 AI를 써서 공격자에 맞서고 공격받은 기업을 직접 돕는 체계를 만드는 것으로, 이웃 나라의 사이버 대응 방식에 참고가 된다.",
+                "background": "일본에서는 최근 몇 주 동안 무단 접속과 고객 정보 유출이 잇따랐다. 일본은 지난달 정부가 공격자 서버에 먼저 접근할 수 있게 한 '능동적 사이버 방어' 제도를 시행했다.",
+                "keyFacts": [
+                  "교도통신에 따르면 경찰 장비·수사에 약 41억엔, 중요 정부 시스템의 AI 기반 취약점 점검에 20억엔, 디지털청 시스템 보안에 38억엔이 배정된다.",
+                  "경제산업성은 이달 말까지 AI로 해커에 맞서고 취약점을 찾는 전문가 '톱건' 팀을 만든다.",
+                  "공격받은 기업의 초기 대응을 돕는 민관 '사이버 구조대'와 방어가 약한 기업을 돕는 팀도 꾸린다."
+                ],
+                "outlook": "톱건 팀 출범과 추가 예산 확보 여부, 능동적 사이버 방어의 실제 적용 사례가 나올지가 관심이다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "보안"
+                },
+                "sources": [
+                  {
+                    "name": "Bloomberg",
+                    "url": "https://www.bloomberg.com/news/articles/2026-11-06/japan-pm-takaichi-announces-emergency-cybersecurity-package",
+                    "publishedAt": "2026-11-06",
+                    "primary": true
+                  },
+                  {
+                    "name": "AP(CP24 게재)",
+                    "url": "https://www.cp24.com/news/world/2026/11/06/japan-announces-emergency-cybersecurity-package-following-a-wave-of-massive-data-attacks/",
+                    "publishedAt": "2026-11-06"
+                  },
+                  {
+                    "name": "교도통신(The Star 게재)",
+                    "url": "https://thestar.com.my/aseanplus/aseanplus-news/2026/11/06/japan-to-use-us63mil-from-reserve-funds-for-cybersecurity-measures",
+                    "publishedAt": "2026-11-06"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261106091600009",
+                    "publishedAt": "2026-11-06",
+                    "imageUrl": "https://img.yna.co.kr/photo/cms/2019/03/25/58/PCM20190325000058009_P2.jpg"
+                  }
+                ],
+                "devCheckpoint": "무단 접속과 정보 유출이 잇따른 만큼 외부에 열린 시스템의 패치 상태와 계정 다중 인증을 다시 점검할 때다."
+              }
+            ],
+            "shortNews": [
+              {
+                "summary": "알파벳이 3분기 보고서(13F)에서 퀄컴 주식 약 298만 주(약 5억4800만달러)를 새로 보유했다고 밝혔다. 퀄컴은 데이터센터 칩 사업을 키우고 있다.",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "반도체·하드웨어"
+                },
+                "sources": [
+                  {
+                    "name": "Mobile World Live",
+                    "url": "https://www.mobileworldlive.com/google/alphabet-reveals-548m-qualcomm-stake/",
+                    "publishedAt": "2026-11-06"
+                  },
+                  {
+                    "name": "Reuters(Euronext 게재)",
+                    "url": "https://live.euronext.com/en/financial-news/alphabet-takes-548-million-stake-partner-qualcomm-data-center-push",
+                    "publishedAt": "2026-11-06"
+                  }
+                ]
+              },
+              {
+                "summary": "디인포메이션은 TSMC가 엔비디아 요청으로 차세대 메모리(3D D램) 생산을 검토하고 있다고 보도했다. 실현되면 삼성전자·SK하이닉스·마이크론과 경쟁하게 된다.",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "반도체·하드웨어"
+                },
+                "sources": [
+                  {
+                    "name": "The Next Web",
+                    "url": "https://thenextweb.com/news/tsmc-3d-dram-memory-chips-nvidia",
+                    "publishedAt": "2026-11-06"
+                  },
+                  {
+                    "name": "Reuters(Investing.com 게재)",
+                    "url": "https://www.investing.com/news/stock-market-news/tsmc-considers-making-advanced-memory-chips-the-information-reports-5008786",
+                    "publishedAt": "2026-11-06"
+                  }
+                ]
+              },
+              {
+                "summary": "엔비디아가 네이버에 10억달러(약 1조3412억원) 투자금 납입을 마쳐 지분 4.13%를 확보했다. 네이버는 이 돈을 AI 팩토리 사업에 쓴다.",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "AI 산업·기업"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261106136800017",
+                    "publishedAt": "2026-11-06",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2025/11/27/PYH2025112705330006100_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "북한 소행으로 지목된 바이낸스 63억달러 탈취 사건 이후 보험사들이 가상자산 기업의 보안 심사를 더 깐깐하게 할 전망이다.",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "보안"
+                },
+                "sources": [
+                  {
+                    "name": "Business Insurance",
+                    "url": "https://www.businessinsurance.com/binance-6-3-billion-heist-to-prompt-closer-scrutiny-by-insurers/",
+                    "publishedAt": "2026-11-06"
+                  },
+                  {
+                    "name": "The Star",
+                    "url": "https://www.thestar.com.my/tech/tech-news/2026/11/06/binance-63-billion-heist-to-prompt-closer-scrutiny-by-insurers",
+                    "publishedAt": "2026-11-06"
+                  }
+                ]
+              },
+              {
+                "summary": "미국 정부가 젠슨 황 엔비디아 CEO와 마크 저커버그 메타 CEO가 참여하는 대통령 과학기술자문위원회(PCAST)의 6일 회의를 미뤘다. 이유는 밝히지 않았다.",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "규제·정책"
+                },
+                "sources": [
+                  {
+                    "name": "Federal Register",
+                    "url": "https://federalregister.gov/documents/2026/11/06/2026-22668/presidents-council-of-advisors-on-science-and-technology-pcast",
+                    "publishedAt": "2026-11-06"
+                  },
+                  {
+                    "name": "Reuters(Investing.com 게재)",
+                    "url": "https://www.investing.com/news/stock-market-news/trump-administration-scraps-meeting-of-panel-that-includes-metas-zuckerberg-nvidias-huang-5008582",
+                    "publishedAt": "2026-11-06"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "collectedAt": "2026-11-07T06:23:41+09:00",
+      "late": false
     }
   ],
   "extracted": [
@@ -4407,13 +5623,15 @@
     "2026-11-02",
     "2026-11-03",
     "2026-11-04",
-    "2026-11-05"
+    "2026-11-05",
+    "2026-11-06"
   ],
   "scheduled": [
     "2026-11-01",
     "2026-11-02",
     "2026-11-03",
     "2026-11-04",
-    "2026-11-05"
+    "2026-11-05",
+    "2026-11-06"
   ]
 }

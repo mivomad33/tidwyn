@@ -70,7 +70,7 @@
     {
       "id": 7,
       "name": "미 연준 12월 FOMC 금리 결정",
-      "due": "2026-12",
+      "due": "2026-12-09",
       "major": "경제",
       "outcome": null,
       "postponedTo": null,
@@ -523,7 +523,7 @@
       "name": "국회 본회의 조작기소 특검법안 처리",
       "due": "2026-11-06",
       "major": "정치",
-      "outcome": null,
+      "outcome": "result",
       "postponedTo": null,
       "mergedInto": null,
       "deleted": false,
@@ -545,6 +545,39 @@
       "name": "OpenAI 받아쓰기 모델·번역 엔드포인트 종료",
       "due": "2027-02-26",
       "major": "IT·AI",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 51,
+      "name": "국민의힘 조작기소 특검법 반대 장외집회",
+      "due": "2026-11-07",
+      "major": "정치",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 52,
+      "name": "스티븐 밀러 백악관 비서실장 업무 시작",
+      "due": "2026-11-09",
+      "major": "국제",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 53,
+      "name": "COP31 튀르키예 안탈리아 개막",
+      "due": "2026-11-09",
+      "major": "과학·건강",
       "outcome": null,
       "postponedTo": null,
       "mergedInto": null,
@@ -916,6 +949,36 @@
     {
       "story": "2026-11-05/한국-s3",
       "schedule": 44,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-06/세계-1",
+      "schedule": 52,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-06/세계-3",
+      "schedule": 7,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-06/세계-4",
+      "schedule": 34,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-06/세계-5",
+      "schedule": 53,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-06/한국-2",
+      "schedule": 48,
+      "role": "result"
+    },
+    {
+      "story": "2026-11-06/한국-2",
+      "schedule": 51,
       "role": "basis"
     }
   ],

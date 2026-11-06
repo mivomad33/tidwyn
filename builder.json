@@ -435,6 +435,78 @@
         "https://platform.claude.com/docs/en/release-notes/overview#ip-allowlisting"
       ],
       "schedules": []
+    },
+    {
+      "id": 16,
+      "date": "2026-11-06",
+      "position": 1,
+      "field": "보안",
+      "title": "Ruby gem에 자격 증명을 훔치는 웜, AI 코딩 도구도 오염",
+      "whatChanged": "Socket이 Shai-Hulud 계열로 보이는 악성 Ruby gem을 찾았다고 알렸다. 설치하는 순간 웜이 돌아 자격 증명을 빼 가고, AI 코딩 도구의 설정을 오염시킨다. 훔친 GitHub 토큰을 폐기하면 파일을 지울 수 있다고 한다.",
+      "who": "Ruby 프로젝트에서 gem을 설치하는 개발자와 CI",
+      "action": "최근 추가하거나 올린 gem을 점검하고, 의심되면 토큰을 바꾸기 전에 기기와 작업 파일을 먼저 백업·격리한다.",
+      "why": "설치만으로 비밀 값이 새고 토큰 폐기가 파일 삭제로 이어질 수 있다.",
+      "due": null,
+      "sources": [
+        {
+          "name": "Socket 블로그",
+          "url": "https://socket.dev/blog/shai-hulud-descendant-malicious-ruby-gem?utm_medium=feed"
+        }
+      ],
+      "issue": null,
+      "reminderOf": null,
+      "keys": [
+        "https://socket.dev/blog/shai-hulud-descendant-malicious-ruby-gem"
+      ],
+      "schedules": []
+    },
+    {
+      "id": 17,
+      "date": "2026-11-06",
+      "position": 2,
+      "field": "보안",
+      "title": "Rails Active Storage 치명적 취약점",
+      "whatChanged": "Rails의 Active Storage에서 치명적 취약점이 나왔다. Socket은 바로 올리기 어려운 팀을 위해 무료 임시 패치를 내놓았고, 결국은 안전한 Rails 버전으로 올려야 한다고 안내했다.",
+      "who": "Active Storage로 파일 업로드를 처리하는 Rails 앱",
+      "action": "쓰는 Rails 버전의 보안 공지를 확인하고 고친 버전으로 올린다. 당장 못 올리면 임시 패치를 검토한다.",
+      "why": "치명적 등급이고 파일 업로드 기능은 기본으로 많이 쓰인다.",
+      "due": null,
+      "sources": [
+        {
+          "name": "Socket 블로그",
+          "url": "https://socket.dev/blog/rails-active-storage-patch?utm_medium=feed"
+        }
+      ],
+      "issue": null,
+      "reminderOf": null,
+      "keys": [
+        "https://socket.dev/blog/rails-active-storage-patch"
+      ],
+      "schedules": []
+    },
+    {
+      "id": 18,
+      "date": "2026-11-06",
+      "position": 3,
+      "field": "코딩 도구",
+      "title": "Claude Code 2.1.319, LLM 게이트웨이 뒤 auto mode 동작 변경",
+      "whatChanged": "텔레메트리나 기능 플래그를 끈 환경과 LLM 게이트웨이 뒤에서 auto mode가 내장 분류기로 넘어가지 않는다. 서버가 판단하지 못한 호출은 묻거나 거부한다. 권한 확인을 기다리는 대신 거부하고 진행하는 permissions.denyInsteadOfPrompting 설정도 생겼다.",
+      "who": "게이트웨이나 텔레메트리 끔 상태로 auto mode를 쓰는 팀",
+      "action": "auto mode에서 거부가 늘었는지 보고, 예전 동작이 필요하면 CLAUDE_CODE_AUTO_MODE_SERVER 환경 변수를 0으로 둔다. Bedrock·Vertex·Foundry는 그대로다.",
+      "why": "기본 설정에서 무인 실행의 동작이 바뀐다.",
+      "due": null,
+      "sources": [
+        {
+          "name": "Claude Code 릴리스",
+          "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.319"
+        }
+      ],
+      "issue": null,
+      "reminderOf": null,
+      "keys": [
+        "npm:@anthropic-ai/claude-code:2.1.319"
+      ],
+      "schedules": []
     }
   ],
   "dates": [
@@ -452,6 +524,10 @@
     },
     {
       "date": "2026-11-05",
+      "status": "partial"
+    },
+    {
+      "date": "2026-11-06",
       "status": "partial"
     }
   ],
@@ -863,6 +939,15 @@
     },
     {
       "doc": "anthropic-limits",
+      "hash": "0fffee20e3fb2f99",
+      "addedOn": "2026-11-07",
+      "removedOn": null,
+      "path": "Response headers",
+      "header": "Header | Description",
+      "row": "`anthropic-ratelimit-requests-reset` | The time when the request rate limit is fully replenished, provided in RFC 3339 format."
+    },
+    {
+      "doc": "anthropic-limits",
       "hash": "11a7aa38b300c5ea",
       "addedOn": "2026-11-03",
       "removedOn": null,
@@ -892,7 +977,7 @@
       "doc": "anthropic-limits",
       "hash": "1a8083267e0a904b",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-07",
       "path": "Rate limits > Cache-aware ITPM > Build tier",
       "header": "Model | Maximum requests per minute (RPM) | Maximum input tokens per minute (ITPM) | Maximum output tokens per minute (OTPM)",
       "row": "Claude Haiku 3.5 (retired, except on Claude Models on Google Cloud (Google managed)) | 2,000 | 200,000 4 | 40,000"
@@ -901,7 +986,7 @@
       "doc": "anthropic-limits",
       "hash": "2276579233e6ebca",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-07",
       "path": "Response headers",
       "header": "Header | Description",
       "row": "`anthropic-ratelimit-input-tokens-reset` | The time when the input token rate limit will be fully replenished, provided in RFC 3339 format."
@@ -955,7 +1040,7 @@
       "doc": "anthropic-limits",
       "hash": "449b7745a10a57d0",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-07",
       "path": "Response headers",
       "header": "Header | Description",
       "row": "`anthropic-ratelimit-requests-reset` | The time when the request rate limit will be fully replenished, provided in RFC 3339 format."
@@ -989,9 +1074,18 @@
     },
     {
       "doc": "anthropic-limits",
+      "hash": "615573efb58468f4",
+      "addedOn": "2026-11-07",
+      "removedOn": null,
+      "path": "Response headers",
+      "header": "Header | Description",
+      "row": "`anthropic-priority-input-tokens-reset` | The time when the Priority Tier input token rate limit is fully replenished, provided in RFC 3339 format. (Priority Tier only)"
+    },
+    {
+      "doc": "anthropic-limits",
       "hash": "6625c31342163c64",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-07",
       "path": "Response headers",
       "header": "Header | Description",
       "row": "`anthropic-ratelimit-tokens-reset` | The time when the token rate limit will be fully replenished, provided in RFC 3339 format."
@@ -1025,9 +1119,18 @@
     },
     {
       "doc": "anthropic-limits",
+      "hash": "711ba4d903945440",
+      "addedOn": "2026-11-07",
+      "removedOn": null,
+      "path": "Response headers",
+      "header": "Header | Description",
+      "row": "`anthropic-ratelimit-tokens-reset` | The time when the token rate limit is fully replenished, provided in RFC 3339 format."
+    },
+    {
+      "doc": "anthropic-limits",
       "hash": "7298d0e9cdcd6272",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-07",
       "path": "Response headers",
       "header": "Header | Description",
       "row": "`anthropic-priority-input-tokens-reset` | The time when the Priority Tier input token rate limit will be fully replenished, provided in RFC 3339 format. (Priority Tier only)"
@@ -1081,7 +1184,7 @@
       "doc": "anthropic-limits",
       "hash": "8841f584adb65577",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-07",
       "path": "Response headers",
       "header": "Header | Description",
       "row": "`anthropic-priority-output-tokens-reset` | The time when the Priority Tier output token rate limit will be fully replenished, provided in RFC 3339 format. (Priority Tier only)"
@@ -1108,7 +1211,7 @@
       "doc": "anthropic-limits",
       "hash": "9949d96480f995b7",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-07",
       "path": "Response headers",
       "header": "Header | Description",
       "row": "`anthropic-ratelimit-output-tokens-reset` | The time when the output token rate limit will be fully replenished, provided in RFC 3339 format."
@@ -1160,6 +1263,24 @@
     },
     {
       "doc": "anthropic-limits",
+      "hash": "b877e2074a361a54",
+      "addedOn": "2026-11-07",
+      "removedOn": null,
+      "path": "Response headers",
+      "header": "Header | Description",
+      "row": "`anthropic-ratelimit-input-tokens-reset` | The time when the input token rate limit is fully replenished, provided in RFC 3339 format."
+    },
+    {
+      "doc": "anthropic-limits",
+      "hash": "bb62d08cd6396090",
+      "addedOn": "2026-11-07",
+      "removedOn": null,
+      "path": "Response headers",
+      "header": "Header | Description",
+      "row": "`retry-after` | The number of seconds to wait until you can retry the request. Earlier retries fail. Not every 429 carries it; the spend-cap 429 never does (see Reaching your spend cap)."
+    },
+    {
+      "doc": "anthropic-limits",
       "hash": "c7a6c5b5145cdebe",
       "addedOn": "2026-11-03",
       "removedOn": null,
@@ -1189,7 +1310,7 @@
       "doc": "anthropic-limits",
       "hash": "e791f51e92d09bb6",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-07",
       "path": "Response headers",
       "header": "Header | Description",
       "row": "`retry-after` | The number of seconds to wait until you can retry the request. Earlier retries will fail. Not every 429 carries it; the spend-cap 429 never does (see Reaching your spend cap)."
@@ -1232,9 +1353,18 @@
     },
     {
       "doc": "anthropic-limits",
+      "hash": "fb32da730c4d5760",
+      "addedOn": "2026-11-07",
+      "removedOn": null,
+      "path": "Response headers",
+      "header": "Header | Description",
+      "row": "`anthropic-priority-output-tokens-reset` | The time when the Priority Tier output token rate limit is fully replenished, provided in RFC 3339 format. (Priority Tier only)"
+    },
+    {
+      "doc": "anthropic-limits",
       "hash": "fb45e01832d52477",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-07",
       "path": "Rate limits > Cache-aware ITPM > Start tier",
       "header": "Model | Maximum requests per minute (RPM) | Maximum input tokens per minute (ITPM) | Maximum output tokens per minute (OTPM)",
       "row": "Claude Haiku 3.5 (retired, except on Claude Models on Google Cloud (Google managed)) | 1,000 | 100,000 4 | 20,000"
@@ -1243,10 +1373,19 @@
       "doc": "anthropic-limits",
       "hash": "ff6a96e1a3a40d43",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-07",
       "path": "Rate limits > Cache-aware ITPM > Scale tier",
       "header": "Model | Maximum requests per minute (RPM) | Maximum input tokens per minute (ITPM) | Maximum output tokens per minute (OTPM)",
       "row": "Claude Haiku 3.5 (retired, except on Claude Models on Google Cloud (Google managed)) | 4,000 | 400,000 4 | 80,000"
+    },
+    {
+      "doc": "anthropic-limits",
+      "hash": "ffafd7b73bdb88ed",
+      "addedOn": "2026-11-07",
+      "removedOn": null,
+      "path": "Response headers",
+      "header": "Header | Description",
+      "row": "`anthropic-ratelimit-output-tokens-reset` | The time when the output token rate limit is fully replenished, provided in RFC 3339 format."
     },
     {
       "doc": "anthropic-pricing",
@@ -1315,7 +1454,7 @@
       "doc": "anthropic-pricing",
       "hash": "197b7cca7233582e",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-07",
       "path": "Model pricing",
       "header": "Model | Base input tokens | 5m cache writes | 1h cache writes | Cache hits and refreshes | Output tokens",
       "row": "Claude Haiku 3.5 (retired, except on Claude Models on Google Cloud (Google managed)) | $0.80 / MTok | $1 / MTok | $1.60 / MTok | $0.08 / MTok | $4 / MTok"
@@ -1378,7 +1517,7 @@
       "doc": "anthropic-pricing",
       "hash": "28dfd0498f8eb8fa",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-07",
       "path": "Feature-specific pricing > Batch processing",
       "header": "Model | Batch input | Batch output",
       "row": "Claude Haiku 3.5 (retired, except on Claude Models on Google Cloud (Google managed)) | $0.40 / MTok | $2 / MTok"
@@ -1702,7 +1841,7 @@
       "doc": "anthropic-pricing",
       "hash": "98dc3dd0ea599bc2",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-07",
       "path": "Feature-specific pricing > Tool use pricing",
       "header": "Model | Tool use system prompt tokens: auto, none | Tool use system prompt tokens: any, tool",
       "row": "Claude Haiku 3.5 (retired, except on Claude Models on Google Cloud (Google managed)) | 264 tokens | 355 tokens"
@@ -8219,17 +8358,17 @@
     {
       "doc": "anthropic-deprecations",
       "hash": "dff781a1f1bbf3c53450a89c0758147001197eb5f0d99d02abcc52dddd7f2313",
-      "storedOn": "2026-11-06"
+      "storedOn": "2026-11-07"
     },
     {
       "doc": "anthropic-limits",
-      "hash": "02e8215f4b1f45a564d2ebab21196da7b2765a8036742f72de52f270d95cf657",
-      "storedOn": "2026-11-06"
+      "hash": "f3592ee54e179674154432d3cba26639af9d0a43d20f880f20d51da776550965",
+      "storedOn": "2026-11-07"
     },
     {
       "doc": "anthropic-pricing",
-      "hash": "e1b915dea2070daeb283ec647ea7200c592870a9a73382d413d63d38c17993c1",
-      "storedOn": "2026-11-06"
+      "hash": "5864b14c0eb020db52f96b3f42787810ad65d3f28823e317c03b7e9ca345aa49",
+      "storedOn": "2026-11-07"
     },
     {
       "doc": "gemini-deprecations",
@@ -8244,174 +8383,174 @@
     {
       "doc": "openai-deprecations",
       "hash": "49e382e18bf8e14ea82d099a21a1f2b818b72603424518519eb908b419b45be1",
-      "storedOn": "2026-11-06"
+      "storedOn": "2026-11-07"
     },
     {
       "doc": "openai-pricing",
-      "hash": "cce7d025c084192ff382095b95d0c9826b0659e0fff2dada2fb7ec8db4bf8c8a",
-      "storedOn": "2026-11-06"
+      "hash": "f1ade44afc62fd8a12dd6e199bcecaa989a94c9b691aa620a34e1504ff62ff57",
+      "storedOn": "2026-11-07"
     }
   ],
   "sources": [
     {
       "source": "anthropic-deprecations",
-      "fetchedAt": "2026-11-05T21:52:13.095Z",
+      "fetchedAt": "2026-11-06T21:52:19.514Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "anthropic-limits",
-      "fetchedAt": "2026-11-05T21:52:13.095Z",
+      "fetchedAt": "2026-11-06T21:52:19.514Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "anthropic-pricing",
-      "fetchedAt": "2026-11-05T21:52:13.095Z",
+      "fetchedAt": "2026-11-06T21:52:19.514Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "claude-code",
-      "fetchedAt": "2026-11-05T21:52:13.095Z",
+      "fetchedAt": "2026-11-06T21:52:19.514Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "claude-notes",
-      "fetchedAt": "2026-11-05T21:52:13.095Z",
+      "fetchedAt": "2026-11-06T21:52:19.514Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "cloudflare",
       "fetchedAt": null,
-      "failDays": 4,
-      "failOn": "2026-11-06"
+      "failDays": 5,
+      "failOn": "2026-11-07"
     },
     {
       "source": "codex",
       "fetchedAt": null,
-      "failDays": 4,
-      "failOn": "2026-11-06"
+      "failDays": 5,
+      "failOn": "2026-11-07"
     },
     {
       "source": "copilot",
-      "fetchedAt": "2026-11-05T21:52:13.095Z",
+      "fetchedAt": "2026-11-06T21:52:19.514Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "eol-nextjs",
-      "fetchedAt": "2026-11-05T21:52:13.095Z",
+      "fetchedAt": "2026-11-06T21:52:19.514Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "eol-nodejs",
-      "fetchedAt": "2026-11-05T21:52:13.095Z",
+      "fetchedAt": "2026-11-06T21:52:19.514Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "gemini-cli",
-      "fetchedAt": "2026-11-05T21:52:13.095Z",
+      "fetchedAt": "2026-11-06T21:52:19.514Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "gemini-deprecations",
       "fetchedAt": "2026-11-02T23:28:54.103Z",
-      "failDays": 3,
-      "failOn": "2026-11-06"
+      "failDays": 4,
+      "failOn": "2026-11-07"
     },
     {
       "source": "gemini-pricing",
       "fetchedAt": "2026-11-02T23:28:54.103Z",
-      "failDays": 3,
-      "failOn": "2026-11-06"
+      "failDays": 4,
+      "failOn": "2026-11-07"
     },
     {
       "source": "ghsa",
-      "fetchedAt": "2026-11-05T21:52:13.095Z",
+      "fetchedAt": "2026-11-06T21:52:19.514Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "kev",
-      "fetchedAt": "2026-11-05T21:52:13.095Z",
+      "fetchedAt": "2026-11-06T21:52:19.514Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "mcp-spec",
-      "fetchedAt": "2026-11-05T21:52:13.095Z",
+      "fetchedAt": "2026-11-06T21:52:19.514Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "nextjs",
-      "fetchedAt": "2026-11-05T21:52:13.095Z",
+      "fetchedAt": "2026-11-06T21:52:19.514Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "nodejs",
-      "fetchedAt": "2026-11-05T21:52:13.095Z",
+      "fetchedAt": "2026-11-06T21:52:19.514Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "openai-deprecations",
-      "fetchedAt": "2026-11-05T21:52:13.095Z",
+      "fetchedAt": "2026-11-06T21:52:19.514Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "openai-pricing",
-      "fetchedAt": "2026-11-05T21:52:13.095Z",
+      "fetchedAt": "2026-11-06T21:52:19.514Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "product-hunt",
-      "fetchedAt": "2026-11-05T21:52:32.214Z",
+      "fetchedAt": "2026-11-06T21:52:37.671Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "react",
-      "fetchedAt": "2026-11-05T21:52:13.095Z",
+      "fetchedAt": "2026-11-06T21:52:19.514Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "socket",
-      "fetchedAt": "2026-11-05T21:52:13.095Z",
+      "fetchedAt": "2026-11-06T21:52:19.514Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "supabase",
-      "fetchedAt": "2026-11-05T21:52:13.095Z",
+      "fetchedAt": "2026-11-06T21:52:19.514Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "typescript",
-      "fetchedAt": "2026-11-05T21:52:13.095Z",
+      "fetchedAt": "2026-11-06T21:52:19.514Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "vercel",
-      "fetchedAt": "2026-11-05T21:52:13.095Z",
+      "fetchedAt": "2026-11-06T21:52:19.514Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "vite",
-      "fetchedAt": "2026-11-05T21:52:13.095Z",
+      "fetchedAt": "2026-11-06T21:52:19.514Z",
       "failDays": 0,
       "failOn": null
     }
@@ -8833,6 +8972,121 @@
       },
       "stars": 116598,
       "growth": 1222
+    },
+    {
+      "id": 22,
+      "date": "2026-11-06",
+      "kind": "product",
+      "position": 1,
+      "key": "ph:wonder-dev-view",
+      "name": "Wonder Dev View",
+      "url": "https://www.producthunt.com/products/wonder-dev-view",
+      "purpose": "Claude Code와 Codex를 각자의 구독으로 여러 개 동시에 돌리는 앱이다. 작업마다 별도 워크트리를 쓰고, 미리보기 화면에서 요소를 골라 에이전트에게 바꿀 점을 바로 말할 수 있다.",
+      "difference": "터미널 여러 개에 CLI를 띄우는 방식과 달리 한 에이전트가 다른 에이전트의 코드를 검토하게 묶고, 만든 앱을 디자인 옆에 띄워 비교한다.",
+      "reason": "여러 코딩 에이전트를 병렬로 쓰는 개발자의 작업 관리 부담을 덜어 준다.",
+      "issue": null,
+      "license": null,
+      "pushedOn": null,
+      "release": null,
+      "stars": null,
+      "growth": null
+    },
+    {
+      "id": 23,
+      "date": "2026-11-06",
+      "kind": "product",
+      "position": 2,
+      "key": "ph:thunderduck-inc",
+      "name": "Thunderduck Inc.",
+      "url": "https://www.producthunt.com/products/thunderduck-inc",
+      "purpose": "DuckDB 기반의 에이전트용 데이터 웨어하우스다. Postgres, BigQuery, Iceberg, S3 파일을 ETL 없이 SQL 한 번으로 묶어 조회하고, 관리형 클라우드나 자체 환경에 둘 수 있다.",
+      "difference": "단일 프로세스로 쓰는 DuckDB와 달리 에이전트마다 격리된 엔진을 따로 주고, 쿼리를 실행하기 전에 비용을 먼저 매겨 보여 준다.",
+      "reason": "에이전트에게 데이터 조회를 맡길 때 비용과 격리 문제를 직접 다룬다.",
+      "issue": null,
+      "license": null,
+      "pushedOn": null,
+      "release": null,
+      "stars": null,
+      "growth": null
+    },
+    {
+      "id": 24,
+      "date": "2026-11-06",
+      "kind": "product",
+      "position": 3,
+      "key": "ph:make0-brain-oss",
+      "name": "Make0 Brain OSS",
+      "url": "https://www.producthunt.com/products/make0-brain",
+      "purpose": "여러 AI 에이전트가 함께 읽고 쓰는 공용 기억 저장소를 주는 오픈소스 도구다. 에이전트를 바꿀 때마다 같은 맥락을 다시 설명하는 일을 줄이려는 목적이다.",
+      "difference": "에이전트마다 따로 두는 메모리나 규칙 파일과 달리 기억을 한곳에 모아 여러 에이전트가 같은 맥락을 공유하게 한다.",
+      "reason": "여러 에이전트를 오가는 사용자가 겪는 맥락 단절을 겨냥한다.",
+      "issue": null,
+      "license": null,
+      "pushedOn": null,
+      "release": null,
+      "stars": null,
+      "growth": null
+    },
+    {
+      "id": 25,
+      "date": "2026-11-06",
+      "kind": "repo",
+      "position": 1,
+      "key": "repo:nutlope/hallmark",
+      "name": "Nutlope/hallmark",
+      "url": "https://github.com/Nutlope/hallmark",
+      "purpose": "Claude Code, Codex, Cursor, OpenCode에서 쓰는 웹 디자인 스킬이다. 50가지 테마 중 셋을 골라 페이지 목적에 맞게 짓고, 기존 페이지의 재설계나 점검만 따로 맡길 수도 있다.",
+      "difference": "프롬프트로 취향만 주는 방식과 달리 결과물을 실제 브라우저에서 검사해 기계가 만든 티가 나는 패턴과 접근성 문제를 단계별 기준으로 걸러 낸다.",
+      "reason": "AI로 만든 랜딩 페이지가 서로 닮아 보이는 문제를 웹 개발자 쪽에서 다룬다.",
+      "issue": null,
+      "license": "MIT",
+      "pushedOn": "2026-11-05",
+      "release": {
+        "state": "none"
+      },
+      "stars": 49543,
+      "growth": 865
+    },
+    {
+      "id": 26,
+      "date": "2026-11-06",
+      "kind": "repo",
+      "position": 2,
+      "key": "repo:govijr/terminal-mac",
+      "name": "govijr/terminal-mac",
+      "url": "https://github.com/govijr/terminal-mac",
+      "purpose": "Apple 실리콘 Mac에서 별도의 macOS 가상 머신을 띄워 컴퓨터 사용 에이전트에게 맡기고, 그 화면을 Ghostty, Kitty, iTerm2 터미널 안에서 보고 조작하게 한다.",
+      "difference": "호스트 Mac에서 직접 화면을 조작하는 컴퓨터 사용 방식과 달리 게스트 안에서 입력을 처리해 실제 Mac의 포인터와 클립보드를 건드리지 않는다.",
+      "reason": "에이전트에게 화면 조작을 맡길 때 작업 환경을 분리해 준다.",
+      "issue": null,
+      "license": "MIT",
+      "pushedOn": "2026-11-06",
+      "release": {
+        "state": "found",
+        "date": "2026-11-03"
+      },
+      "stars": 2132,
+      "growth": 710.7
+    },
+    {
+      "id": 27,
+      "date": "2026-11-06",
+      "kind": "repo",
+      "position": 3,
+      "key": "repo:deepseek-ai/deepseek-harness",
+      "name": "deepseek-ai/deepseek-harness",
+      "url": "https://github.com/deepseek-ai/deepseek-harness",
+      "purpose": "DeepSeek AI가 내놓은 오픈소스 에이전트 하네스다. npx 한 줄로 로컬 웹 UI를 띄워 쓰고, 기능 대부분을 플러그인으로 붙이고 뗀다. 아직 개발자 미리보기 단계라 호환성이 깨지는 변경이 예고돼 있다.",
+      "difference": "기능이 본체에 묶인 코딩 에이전트 CLI와 달리 모든 구성 요소를 플러그인으로 짜는 구조라, 주변에 모바일 클라이언트와 모델 플러그인 생태계가 빠르게 붙고 있다.",
+      "reason": "새 에이전트 하네스와 그 플러그인 생태계가 함께 뜨고 있다.",
+      "issue": 126,
+      "license": "MIT",
+      "pushedOn": "2026-11-04",
+      "release": {
+        "state": "none"
+      },
+      "stars": 274855,
+      "growth": 1123
     }
   ],
   "kindDates": [
@@ -8873,6 +9127,16 @@
     },
     {
       "date": "2026-11-05",
+      "kind": "repo",
+      "status": "checked"
+    },
+    {
+      "date": "2026-11-06",
+      "kind": "product",
+      "status": "checked"
+    },
+    {
+      "date": "2026-11-06",
       "kind": "repo",
       "status": "checked"
     }
