@@ -325,7 +325,7 @@
       "name": "메타 새 사업 약관 시행",
       "due": "2026-11-20",
       "major": "IT·AI",
-      "outcome": null,
+      "outcome": "cancelled",
       "postponedTo": null,
       "mergedInto": null,
       "deleted": false,
@@ -556,7 +556,7 @@
       "name": "국민의힘 조작기소 특검법 반대 장외집회",
       "due": "2026-11-07",
       "major": "정치",
-      "outcome": null,
+      "outcome": "result",
       "postponedTo": null,
       "mergedInto": null,
       "deleted": false,
@@ -578,6 +578,50 @@
       "name": "COP31 튀르키예 안탈리아 개막",
       "due": "2026-11-09",
       "major": "과학·건강",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 54,
+      "name": "노동감독관 직무집행법 시행",
+      "due": "2026-12-08",
+      "major": "경제",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 55,
+      "name": "2027학년도 대학수학능력시험",
+      "due": "2026-11-19",
+      "major": "사회",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 56,
+      "name": "뉴질랜드 총선 최종 개표 결과 발표",
+      "due": "2026-11-27",
+      "major": "국제",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 57,
+      "name": "국민의힘 청와대 앞 현장 최고위원회의",
+      "due": "2026-11-09",
+      "major": "정치",
       "outcome": null,
       "postponedTo": null,
       "mergedInto": null,
@@ -979,6 +1023,41 @@
     {
       "story": "2026-11-06/한국-2",
       "schedule": 51,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-07/IT·AI-4",
+      "schedule": 30,
+      "role": "notice"
+    },
+    {
+      "story": "2026-11-07/세계-1",
+      "schedule": 34,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-07/세계-6",
+      "schedule": 56,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-07/한국-1",
+      "schedule": 51,
+      "role": "result"
+    },
+    {
+      "story": "2026-11-07/한국-1",
+      "schedule": 57,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-07/한국-3",
+      "schedule": 54,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-07/한국-s4",
+      "schedule": 55,
       "role": "basis"
     }
   ],

@@ -5616,6 +5616,1040 @@
       },
       "collectedAt": "2026-11-07T06:23:41+09:00",
       "late": false
+    },
+    {
+      "brief": {
+        "targetDate": "2026-11-07",
+        "headline": "국민의힘이 조작기소 특검법에 맞서 서울 도심 장외집회를 열고 대통령 탄핵까지 거론했고, 세계에서는 러시아가 3자 협상을 앞두고 키이우 전력망과 다리를 때렸으며 이스라엘 대통령이 네타냐후 대신 아이젠코트에게 정부 구성을 맡겼다.",
+        "keywords": [
+          "조작기소 특검 장외집회",
+          "미래에셋증권 해킹",
+          "키이우 공습",
+          "아이젠코트 조각",
+          "오픈AI 1.25조 달러"
+        ],
+        "sections": [
+          {
+            "name": "한국",
+            "flow": "특검법 통과 다음 날 국민의힘이 도심 장외집회로 맞섰고, 금융권 연쇄 해킹은 미래에셋증권까지 번졌으며, 노동부는 중대재해가 되풀이되는 기업을 특별감독 수준으로 보겠다고 밝혔다.",
+            "topStories": [
+              {
+                "rank": 1,
+                "title": "조작기소 특검법 통과 다음 날, 국민의힘이 서울 도심 장외집회를 열고 대통령 탄핵을 거론했다",
+                "summary": "국민의힘이 경복궁역 앞에서 특검법 규탄 집회를 열었고, 장동혁 대표는 이재명 대통령 탄핵을 주장했다.",
+                "whyItMatters": "제1야당이 국회 밖 투쟁으로 돌아서면서 예산안 심사와 남은 정기국회 일정이 여야 대치 속에 흔들릴 수 있다.",
+                "background": "더불어민주당 주도로 6일 국회를 통과한 '조작기소 특검법'은 윤석열 정부 때 검찰 수사·기소가 조작됐는지 규명하겠다는 법이다. 국민의힘은 이 법이 대통령 본인이 기소된 사건을 없애려는 것이라고 주장해 왔고, 민주당은 논란이 된 공소취소 권한 등을 법안에서 뺐다고 반박해 왔다.",
+                "keyFacts": [
+                  "국민의힘은 7일 오후 서울 경복궁역 앞에서 특검법 규탄 집회를 열었다.",
+                  "장동혁 대표는 연설에서 특검법을 대통령을 '탈옥'시키는 법이라고 부르며 대통령 탄핵을 거론했다.",
+                  "참가 인원은 국민의힘이 15만 명, 경찰이 약 6천 명으로 크게 엇갈렸다.",
+                  "민주당은 공소취소 권한과 사건 이첩요구권을 이미 삭제했다며 '방탄' 비판을 정치 공세라고 맞받았다.",
+                  "같은 날 한국노총(경찰 추산 약 1만5천 명)과 민주노총(약 1만8천 명)도 여의대로와 숭례문 일대에서 전국노동자대회를 열고 초광역권 전략산업특구법 철회를 요구했다."
+                ],
+                "outlook": "국민의힘은 9일 청와대 앞 현장 최고위원회의, 10일 의원총회를 열어 장외 여론전을 이어 갈 계획이다. 특검법 공포와 특검 임명 절차, 예산안 심사에서 여야가 어떻게 부딪치는지 봐야 한다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "정치",
+                  "minor": "국회·정당"
+                },
+                "sources": [
+                  {
+                    "name": "강원일보",
+                    "url": "https://www.kwnews.co.kr/article/20261107500274",
+                    "publishedAt": "2026-11-07",
+                    "primary": true
+                  },
+                  {
+                    "name": "MBC",
+                    "url": "https://imnews.imbc.com/replay/2026/nwdesk/article/6863931_37004.html",
+                    "publishedAt": "2026-11-07"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261107043800001",
+                    "publishedAt": "2026-11-07",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/11/07/PYH2026110704470001300_P2.jpg"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261107039200004",
+                    "publishedAt": "2026-11-07",
+                    "imageUrl": "https://img.yna.co.kr/etc/inner/KR/2026/11/07/AKR20261107039200004_03_i_P2.jpg"
+                  },
+                  {
+                    "name": "서울경제",
+                    "url": "https://www.sedaily.com/article/20111477",
+                    "publishedAt": "2026-11-07"
+                  }
+                ]
+              },
+              {
+                "rank": 2,
+                "title": "금융권 연쇄 해킹이 미래에셋증권으로 번져 고객·임직원 3만9천여 명의 정보가 빠져나갔다",
+                "summary": "미래에셋증권이 외부 공격으로 고객 3,800여 명의 계좌번호와 임직원 3만5천여 명의 정보가 유출됐다고 당국에 신고했다.",
+                "whyItMatters": "증권사·자산운용사·가상자산 거래소로 이어진 해킹이 대형 증권사까지 닿아, 금융권 보안 관리 전반에 대한 의문과 당국의 감독 강화 압력이 커졌다.",
+                "background": "10월 말부터 대신증권, 미래에셋자산운용, 빗썸, 미래에셋생명 등에서 해킹 피해가 잇따랐다. 금융당국은 3일까지 금융사 37곳에서 침해 사고가 나 고객 정보 47만여 건이 유출됐다고 집계했다.",
+                "keyFacts": [
+                  "4~5일 모바일웹의 휴대전화 인증 로그인 서비스와 사내 그룹웨어를 겨냥한 외부 공격이 있었다.",
+                  "고객 3,800여 명의 계좌번호가 유출됐고, 예금주 이름 같은 다른 정보는 빠져나가지 않았다고 회사는 밝혔다.",
+                  "퇴직자·외주 직원을 포함한 임직원 3만5,255명의 이름과 사번, 일부의 이메일·휴대전화 번호·암호화된 비밀번호가 노출됐다.",
+                  "주민등록번호 등 고유식별정보는 유출되지 않았고, 확인된 금전 피해는 아직 없다고 회사는 설명했다.",
+                  "회사는 6일 밤 금융위원회·금융감독원·개인정보보호위원회에 신고하고 대상자에게 개별 통지했다."
+                ],
+                "outlook": "금융당국의 현장 점검 결과와 제재 여부, 유출된 계좌번호를 노린 사칭 전화·문자 피해가 나오는지 봐야 한다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "보안"
+                },
+                "sources": [
+                  {
+                    "name": "한국일보",
+                    "url": "https://www.hankookilbo.com/news/article/A2026110709410001222",
+                    "publishedAt": "2026-11-07",
+                    "primary": true
+                  },
+                  {
+                    "name": "이투데이",
+                    "url": "https://etoday.co.kr/news/view/2645285",
+                    "publishedAt": "2026-11-07"
+                  },
+                  {
+                    "name": "헤럴드경제",
+                    "url": "https://biz.heraldcorp.com/article/10929197",
+                    "publishedAt": "2026-11-07"
+                  },
+                  {
+                    "name": "MBC",
+                    "url": "https://imnews.imbc.com/replay/2026/nw1200/article/6863893_36967.html",
+                    "publishedAt": "2026-11-07"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261107014453008",
+                    "publishedAt": "2026-11-07",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/11/07/PYH2026110701640001300_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 3,
+                "title": "노동부 장관, 중대재해가 되풀이되는 기업은 특별감독처럼 엄하게 보라고 지시했다",
+                "summary": "김영훈 고용노동부 장관이 전국 49개 노동관서장을 긴급 소집해 반복 재해 기업에 대한 감독 강화를 주문했다.",
+                "whyItMatters": "같은 유형의 사망사고가 반복되는 사업장에 감독 강도를 높이겠다는 것이어서, 건설·제조업 현장의 안전 투자 압박이 커진다.",
+                "background": "정부는 올해 산업재해 사망을 줄이는 것을 핵심 과제로 내세워 왔다. 다음 달부터는 노동감독관 직무집행법이 시행돼 감독 권한 일부가 지방정부로 넘어간다.",
+                "keyFacts": [
+                  "7일 전국 49개 지방고용노동관서장이 참석한 긴급 기관장 회의가 열렸다.",
+                  "같은 유형의 중대재해가 반복된 기업은 특별감독과 같은 수준으로 감독하라고 지시했다.",
+                  "이미 점검을 마친 사업장도 시차를 두고 불시에 다시 찾아 개선 여부를 확인하고, 위반이 나오면 무관용으로 조치하라고 했다.",
+                  "사망사고 뒤에도 안전보다 비용을 앞세우는 사업주는 책임이 무겁다는 점을 분명히 알리라고 했다.",
+                  "12월 8일 시행되는 노동감독관 직무집행법에 맞춰 본부와 지방관서가 준비하라고 당부했다."
+                ],
+                "outlook": "불시 재점검이 실제로 얼마나 이뤄지는지, 반복 재해 기업에 대한 처분과 12월 지방정부 감독 위임이 어떻게 굴러가는지 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "경제",
+                  "minor": "노동·일자리"
+                },
+                "sources": [
+                  {
+                    "name": "SBS",
+                    "url": "https://news.sbs.co.kr/news/endPage.do?news_id=N1008835242",
+                    "publishedAt": "2026-11-07",
+                    "primary": true
+                  },
+                  {
+                    "name": "대전일보",
+                    "url": "https://www.daejonilbo.com/news/articleView.html?idxno=2312000",
+                    "publishedAt": "2026-11-07"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261106183951530",
+                    "publishedAt": "2026-11-07",
+                    "imageUrl": "https://img.yna.co.kr/etc/inner/KR/2026/11/06/AKR20261106183951530_01_i_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 4,
+                "title": "서울 마곡동 열 수송관이 터져 9천 세대 난방이 끊기고, 땅에 빠진 행인이 전신 화상을 입었다",
+                "summary": "6일 밤 강서구 마곡동 도로 밑 열 수송관이 파열돼 약 9천 세대의 난방·온수가 12시간가량 끊겼고, 꺼진 땅에 빠진 40대 행인이 크게 다쳤다.",
+                "whyItMatters": "첫 영하권 추위가 온 날 난방이 끊겼고, 오래된 지하 열 수송관이 시민 안전을 위협할 수 있다는 점이 다시 드러났다.",
+                "background": "지역난방은 열병합발전소 등에서 데운 물을 땅속 수송관으로 보내 아파트에 난방과 온수를 공급한다. 2018년 고양 백석역에서도 열 수송관이 터져 사상자가 났다.",
+                "keyFacts": [
+                  "6일 오후 8시 18분께 마곡동 아파트 인근 도로에 묻힌 열 수송관이 파열됐다.",
+                  "인근 8,965세대의 난방과 온수 공급이 끊겼다가 약 12시간 만에 다시 이어졌다.",
+                  "현장을 지나던 40대 남성이 온수 누출로 꺼진 도로 구멍에 빠져 전신 60%에 화상을 입고 중태에 빠졌다.",
+                  "현장을 점검하던 서울에너지공사 직원도 화상을 입었다.",
+                  "강서구는 정확한 원인을 조사하고 있고, 도로 복구는 8일까지 이어진다."
+                ],
+                "outlook": "파열 원인과 배관 노후 여부, 사고 현장 통제가 제대로 됐는지에 대한 조사 결과를 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "사회",
+                  "minor": "재난·안전"
+                },
+                "sources": [
+                  {
+                    "name": "세계일보",
+                    "url": "https://www.segye.com/newsView/20261107506188",
+                    "publishedAt": "2026-11-07",
+                    "primary": true
+                  },
+                  {
+                    "name": "SBS",
+                    "url": "https://news.sbs.co.kr/news/endPage.do?news_id=N1008834866",
+                    "publishedAt": "2026-11-07"
+                  },
+                  {
+                    "name": "SBS",
+                    "url": "https://news.sbs.co.kr/news/endPage.do?news_id=N1008835379",
+                    "publishedAt": "2026-11-07"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261107010451004",
+                    "publishedAt": "2026-11-07",
+                    "imageUrl": "https://img.yna.co.kr/etc/inner/KR/2026/11/07/AKR20261107010451004_01_i_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 5,
+                "title": "포스코 노조가 임금 잠정합의안을 반대 51.7%로 부결해 교섭이 원점으로 돌아갔다",
+                "summary": "기본급 2.6% 인상 등을 담은 포스코 잠정합의안이 조합원 투표에서 311표 차로 부결됐다.",
+                "whyItMatters": "창사 이후 첫 파업까지 갔던 포스코 노사 갈등이 다시 길어질 수 있어, 철강 생산과 지역 경제에 부담이 될 수 있다.",
+                "background": "포스코 노사는 6월부터 임금 교섭을 해 왔다. 노조는 9월 창사 이후 처음으로 파업에 들어가 두 차례 부분파업을 했고, 3차 파업을 앞두고 잠정합의안이 나왔다.",
+                "keyFacts": [
+                  "7일 찬반투표에서 반대 4,744표(51.69%), 찬성 4,433표(48.31%)가 나왔다.",
+                  "선거인 9,424명 중 9,177명이 투표해 투표율은 97.38%였다.",
+                  "합의안에는 기본급 2.6% 인상, 일시금 600만 원, 특별승호 3호봉 등이 담겼다.",
+                  "노조는 애초 기본급 7.1% 인상을 요구했다."
+                ],
+                "outlook": "노조가 교섭과 쟁의를 다시 시작하겠다고 밝힌 만큼, 재협상 일정과 추가 파업 여부를 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "경제",
+                  "minor": "노동·일자리"
+                },
+                "sources": [
+                  {
+                    "name": "SBS Biz",
+                    "url": "https://biz.sbs.co.kr/article/20000344923",
+                    "publishedAt": "2026-11-07",
+                    "primary": true
+                  },
+                  {
+                    "name": "아주경제",
+                    "url": "https://www.ajunews.com/view/20261107171711953",
+                    "publishedAt": "2026-11-07"
+                  },
+                  {
+                    "name": "노컷뉴스",
+                    "url": "https://nocutnews.co.kr/news/6603585",
+                    "publishedAt": "2026-11-07"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261107046300053",
+                    "publishedAt": "2026-11-07",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/09/16/PYH2026091618690005300_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 6,
+                "title": "여주 26만 마리 산란계 농장에서 고병원성 조류인플루엔자가 확진돼 3개 도에 이동중지가 내려졌다",
+                "summary": "경기 여주 산란계 농장에서 H5N1형 고병원성 조류인플루엔자가 확인돼, 이달 가금농장 발생이 세 건으로 늘었다.",
+                "whyItMatters": "대형 산란계 농장의 살처분은 달걀 공급과 값에 영향을 줄 수 있고, 철새가 오는 겨울철 확산 우려가 커졌다.",
+                "background": "고병원성 조류인플루엔자는 닭·오리에 치명적인 바이러스 감염병으로, 주로 겨울 철새를 통해 들어온다. 같은 날 전남 장흥 육용오리 농장에서도 확진이 나왔다.",
+                "keyFacts": [
+                  "중앙사고수습본부는 7일 여주 산란계 농장(26만여 마리)에서 H5N1형 고병원성 조류인플루엔자를 확진했다.",
+                  "농장주가 닭 폐사가 늘었다고 신고한 뒤 검사에서 확인됐다.",
+                  "경기·강원·충북의 닭 농장과 축산시설·차량에 24시간 일시 이동중지 명령이 내려졌다.",
+                  "전국 산란계 농장 정밀검사 주기가 분기 1회에서 2주 1회로 짧아졌다.",
+                  "반경 10㎞ 안 가금농장 38곳이 정밀검사를 받고, 17일까지 전국 일제 소독 주간이 운영된다."
+                ],
+                "outlook": "주변 농장으로 번지는지, 산란계 살처분이 늘어 달걀 값이 움직이는지 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "사회",
+                  "minor": "재난·안전"
+                },
+                "sources": [
+                  {
+                    "name": "헤럴드경제",
+                    "url": "https://biz.heraldcorp.com/article/10929140",
+                    "publishedAt": "2026-11-07",
+                    "primary": true
+                  },
+                  {
+                    "name": "뉴스1",
+                    "url": "https://www.news1.kr/economy/agri-food/6346521",
+                    "publishedAt": "2026-11-07"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261107048500030",
+                    "publishedAt": "2026-11-07",
+                    "imageUrl": "https://img.yna.co.kr/etc/inner/KR/2026/11/07/AKR20261107048500030_01_i_P2.jpg"
+                  }
+                ]
+              }
+            ],
+            "shortNews": [
+              {
+                "summary": "국산 단감이 검역 협상 17년 만에 처음 중국으로 수출됐고, 이재명 대통령은 농가에 새로운 기회라고 평가했다.",
+                "category": {
+                  "major": "경제",
+                  "minor": "무역·통상"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261107040000001",
+                    "publishedAt": "2026-11-07",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/11/05/PYH2026110510650001300_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "중국을 방문 중인 김성남 북한 노동당 국제비서가 류하이싱 중국 공산당 대외연락부장과 회담했다. 이번 방중의 세 번째 고위급 회동이다.",
+                "category": {
+                  "major": "정치",
+                  "minor": "북한"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261107030200504",
+                    "publishedAt": "2026-11-07",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/11/04/PYH2026110400660004200_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "젤렌스키 우크라이나 대통령은 밤사이 러시아가 에너지 시설을 공격할 때 북한제 KN-23 미사일도 썼다고 밝혔다.",
+                "category": {
+                  "major": "정치",
+                  "minor": "북한"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261107054400099",
+                    "publishedAt": "2026-11-07",
+                    "imageUrl": "https://img.yna.co.kr/photo/reuters/2026/11/07/PRU20261107246801009_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "19일 수능을 앞두고 AI 기능이 들어간 스마트안경이 부정행위에 쓰일 수 있다는 우려가 커져, 시험장마다 전담 요원을 두기로 했지만 현장의 불안은 남아 있다.",
+                "category": {
+                  "major": "사회",
+                  "minor": "교육"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261106116500061",
+                    "publishedAt": "2026-11-07",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/10/14/PYH2026101416680001300_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "이재명 대통령은 정치인에게 칭찬도 비판도 필요하지만 그것이 종교적 찬양이나 숭배가 돼서는 안 된다고 말했다.",
+                "category": {
+                  "major": "정치",
+                  "minor": "행정부"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261107040051001",
+                    "publishedAt": "2026-11-07",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/11/05/PYH2026110510650001300_P2.jpg"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "세계",
+            "flow": "러시아가 다음 주 3자 협상을 앞두고 키이우 전력망을 때렸고, 이스라엘과 뉴질랜드는 정부 구성의 향방이 갈렸으며, 파라과이에서는 은행 붕괴로 대통령이 파면됐다.",
+            "topStories": [
+              {
+                "rank": 1,
+                "title": "러시아가 아부다비 3자 협상을 앞두고 키이우 전력 시설과 북부 다리를 대규모로 공격했다",
+                "summary": "러시아가 밤사이 탄도미사일 수십 발로 키이우 일대 전력 시설을 때려 정전·단수가 났고, 크렘린은 다음 주 협상에 외교관과 군 인사를 보낸다고 밝혔다.",
+                "whyItMatters": "겨울을 앞두고 수도의 전력과 교통이 흔들리는 가운데, 2월 이후 처음 열리는 미국·러시아·우크라이나 3자 협상의 분위기에도 영향을 준다.",
+                "background": "러시아는 몇 달째 우크라이나 에너지 시설을 집중 공격해 왔다. 미국이 중재하는 3자 협상은 1~2월 아부다비에서 열렸지만 큰 진전 없이 멈췄다.",
+                "keyFacts": [
+                  "젤렌스키 대통령은 러시아가 키이우와 주변에 탄도미사일 36발을 쐈고 4발만 격추했다며, 패트리엇 요격미사일이 모자라다고 밝혔다.",
+                  "두 원자력발전소의 전력을 키이우로 보내는 시설이 맞아 새로운 정전과 단수가 생겼다.",
+                  "드니프로강 동쪽 주거지를 잇는 북부 다리가 피해를 입어 닫혔고, 러시아 국방부는 무기 수송로라 노렸다고 밝혔다.",
+                  "공격으로 9명이 다쳤다.",
+                  "크렘린은 리아브코프 외무차관 등 외교·군 인사가 화·수요일 아부다비 3자 협상에 참여한다고 밝혔다."
+                ],
+                "outlook": "10~11일로 예정된 아부다비 협상에서 휴전이나 에너지 시설 공격 중단 논의가 나오는지, 협상 직전 공격이 더 이어지는지 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "국제",
+                  "minor": "유럽·러시아"
+                },
+                "sources": [
+                  {
+                    "name": "BBC",
+                    "url": "https://www.bbc.co.uk/news/articles/cm4g1nq8158po",
+                    "publishedAt": "2026-11-07",
+                    "imageUrl": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/0554/live/2786bc40-daa0-11f1-a523-f508a3e924cb.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "Al Arabiya(Reuters)",
+                    "url": "https://english.alarabiya.net/News/world/2026/11/07/russian-forces-launch-missile-attack-on-ukrainian-capital-kyiv-mayor-says",
+                    "publishedAt": "2026-11-07"
+                  },
+                  {
+                    "name": "CBS News",
+                    "url": "https://www.cbsnews.com/news/zelenskyy-russia-attacks-us-talks/",
+                    "publishedAt": "2026-11-07"
+                  },
+                  {
+                    "name": "AP(Anchorage Daily News 게재)",
+                    "url": "https://www.adn.com/nation-world/2026/11/07/russian-drone-and-missile-attacks-strike-ukraine-ahead-of-peace-talks-with-us/",
+                    "publishedAt": "2026-11-07"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261107051700099",
+                    "publishedAt": "2026-11-07",
+                    "imageUrl": "https://img.yna.co.kr/photo/etc/af/2026/11/07/PAF20261107181601009_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 2,
+                "title": "이스라엘 대통령이 네타냐후 대신 경쟁자 아이젠코트에게 정부 구성을 맡겼다",
+                "summary": "헤르초그 대통령이 총선 뒤 협의를 거쳐 야권의 가디 아이젠코트를 차기 정부 구성 후보로 정했다.",
+                "whyItMatters": "오래 집권해 온 네타냐후 총리가 물러날 가능성이 처음으로 구체화돼, 이스라엘의 전쟁·외교 노선이 바뀔 수 있다.",
+                "background": "10월 말 총선에서 네타냐후의 리쿠드당이 가장 많은 의석을 얻었지만 어느 진영도 과반을 차지하지 못했다. 아이젠코트는 전직 군 참모총장으로 야권 대표 주자다.",
+                "keyFacts": [
+                  "아이젠코트를 지지한 정당들의 의석은 67석, 네타냐후 진영은 46석이었다.",
+                  "아이젠코트는 28일 안에 연정을 꾸려야 하고, 14일 연장할 수 있다.",
+                  "그는 아랍계 정당에 기대지 않겠다고 했는데, 그 없이 61석을 채우기가 쉽지 않다.",
+                  "네타냐후는 거국 내각을 요구하며 아랍계 정당이 받치는 정부에 반대했다.",
+                  "그동안 네타냐후는 임시 총리로 남는다."
+                ],
+                "outlook": "아이젠코트가 아랍계 정당 없이 과반을 모을 수 있는지, 실패하면 정부 구성권이 네타냐후 쪽으로 넘어가는지 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "국제",
+                  "minor": "중동"
+                },
+                "sources": [
+                  {
+                    "name": "NPR",
+                    "url": "https://www.npr.org/2026/11/07/g-s1-152536/israels-president-taps-opposition-candidate-eisenkot-to-form-a-government-in-setback-for-netanyahu",
+                    "publishedAt": "2026-11-07",
+                    "primary": true
+                  },
+                  {
+                    "name": "CNN",
+                    "url": "https://www.cnn.com/2026/11/07/middleeast/eisenkot-israel-government-latam-intl",
+                    "publishedAt": "2026-11-07"
+                  },
+                  {
+                    "name": "Al Jazeera",
+                    "url": "https://www.aljazeera.com/news/2026/11/7/israels-president-picks-eisenkot-over-netanyahu-to-form-next-government",
+                    "publishedAt": "2026-11-07"
+                  },
+                  {
+                    "name": "Washington Post",
+                    "url": "https://www.washingtonpost.com/world/2026/11/07/israeli-president-taps-ex-general-eisenkot-opponent-netanyahu-form-government/",
+                    "publishedAt": "2026-11-07"
+                  }
+                ]
+              },
+              {
+                "rank": 3,
+                "title": "미국이 이란과 간접 협상 중에 게슘섬 방공시설을 또 공습하고, 핵 정보 제보에 최고 2천만 달러를 걸었다",
+                "summary": "트럼프 대통령은 호르무즈 해협 게슘섬의 방공시설을 겨냥한 '작은' 공습을 했다고 확인했고, 미군은 이란 핵 정보에 현상금을 내걸었다.",
+                "whyItMatters": "카타르 중재로 종전 협상이 이어지는 와중에도 군사 압박이 계속돼, 협상 판과 원유 수송로인 호르무즈 해협의 긴장이 함께 커지고 있다.",
+                "background": "미국과 이란은 전쟁 상태에서 카타르를 통해 간접 협상을 하고 있다. 미국은 이란을 해상 봉쇄하고 있고, 2~3일에도 게슘섬 일대를 공습했다.",
+                "keyFacts": [
+                  "트럼프 대통령은 이란 방공 장비를 겨냥한 제한적 공습을 했다고 밝혔고, 이란 매체는 게슘섬에 미사일 2발이 떨어졌다고 전했다.",
+                  "트럼프는 공습과 함께 이란과 계속 대화해 왔다고 말했다.",
+                  "미 중부사령부는 이란 핵 프로그램 정보를 주면 최고 2천만 달러(약 273억 원)를 주겠다고 밝혔다.",
+                  "미군은 해상 봉쇄에 더해 이란의 육상 국경을 통한 무기·제재 물자 운송을 막는 전담 조직을 만들기로 했다."
+                ],
+                "outlook": "카타르 중재안에 이란이 답하는지, 미국이 핵 시설 공격 재개로 나아가는지 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "국제",
+                  "minor": "중동"
+                },
+                "sources": [
+                  {
+                    "name": "Times of Israel",
+                    "url": "https://www.timesofisrael.com/trump-us-launched-minor-strikes-on-iran-targeting-a-little-bit-of-an-anti-aircraft-device/",
+                    "publishedAt": "2026-11-07",
+                    "primary": true
+                  },
+                  {
+                    "name": "BBC",
+                    "url": "https://www.bbc.co.uk/news/articles/c6d091ev3p0jo",
+                    "publishedAt": "2026-11-07",
+                    "imageUrl": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/0b84/live/0f887590-dad0-11f1-93e1-3b657b665bcf.jpg"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261107013351009",
+                    "publishedAt": "2026-11-07",
+                    "imageUrl": "https://img.yna.co.kr/photo/reuters/2026/10/30/PRU20261030056801009_P2.jpg"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261108003700071",
+                    "publishedAt": "2026-11-08",
+                    "imageUrl": "https://img.yna.co.kr/etc/inner/KR/2026/11/08/AKR20261108003700071_01_i_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 4,
+                "title": "파라과이 의회가 은행 붕괴 사태로 페냐 대통령을 파면했고, 알리아나 부통령이 대통령에 올랐다",
+                "summary": "상원이 44 대 1로 산티아고 페냐 대통령을 파면했고, 페냐는 가택연금 상태에서 검찰에 기소됐다.",
+                "whyItMatters": "성인 인구 절반의 예금이 묶인 은행 붕괴가 현직 대통령의 몰락으로 이어져, 남미 정치와 금융 불안이 함께 번지고 있다.",
+                "background": "이번 주 우에노 은행이 무너져 파라과이 성인 약 절반의 예금이 묶였다. 페냐 대통령은 이 은행과 사업상 연관이 있다는 의혹을 받아 왔다.",
+                "keyFacts": [
+                  "상원은 6일 45명 중 44명 찬성으로 페냐를 파면했다.",
+                  "페냐는 탄핵 심리 중 사의를 냈지만 의회는 사표를 받지 않고 탄핵을 진행했다.",
+                  "52세의 페드로 알리아나 부통령이 대통령으로 취임했고, 임기는 2028년 8월까지다.",
+                  "검찰은 은행 사태와 관련해 페냐를 기소하고 재판 전 구금을 요청했다.",
+                  "수도에서는 예금이 묶인 시민들의 항의 시위가 이어졌다."
+                ],
+                "outlook": "법원이 페냐의 구금을 받아들이는지, 새 정부가 묶인 예금을 어떻게 풀지 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "국제",
+                  "minor": "기타 지역"
+                },
+                "sources": [
+                  {
+                    "name": "BBC",
+                    "url": "https://www.bbc.co.uk/news/articles/c68jzzvjgdy9o",
+                    "publishedAt": "2026-11-07",
+                    "imageUrl": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/a65d/live/3fe15d20-da57-11f1-af22-a97b84c9ca63.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "Reuters(US News 게재)",
+                    "url": "https://www.usnews.com/news/world/articles/2026-11-06/paraguays-alliana-sworn-in-as-president-after-pena-impeachment",
+                    "publishedAt": "2026-11-06"
+                  },
+                  {
+                    "name": "CNN",
+                    "url": "https://www.cnn.com/2026/11/05/americas/president-paraguay-resigns-latam-intl",
+                    "publishedAt": "2026-11-06"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261107019900087",
+                    "publishedAt": "2026-11-07",
+                    "imageUrl": "https://img.yna.co.kr/photo/etc/af/2026/11/06/PAF20261106106201009_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 5,
+                "title": "폴란드 크라쿠프 중앙광장에서 총기 난사로 6명이 숨지고 16명이 다쳤다",
+                "summary": "군복 차림의 25세 남성이 관광객이 많은 크라쿠프 중앙시장 광장에서 총을 쏴 6명이 숨졌고, 폴란드 정부는 테러로 규정했다.",
+                "whyItMatters": "총기 범죄가 드문 폴란드의 대표 관광지에서 벌어진 사건이라 충격이 크고, 극우 성향이 동기로 지목되면서 유럽의 극단주의 우려가 커졌다.",
+                "background": "크라쿠프는 폴란드 제2 도시이고, 중앙시장 광장은 유네스코 세계유산 구역의 중심이다.",
+                "keyFacts": [
+                  "7일 용의자가 차량으로 광장에 들어와 사람들에게 무차별로 총을 쐈다고 경찰이 밝혔다.",
+                  "여성 4명과 남성 2명이 숨졌고 16명이 다쳤다.",
+                  "용의자는 경찰의 총에 맞아 병원으로 옮겨졌다.",
+                  "국방장관은 이 사건을 테러로 불렀고, 내무장관은 용의자가 극우·초국가주의 사상에 빠져 있었다고 말했다."
+                ],
+                "outlook": "범행 동기와 총기를 구한 경로, 공범 여부에 대한 수사 결과를 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "국제",
+                  "minor": "유럽·러시아"
+                },
+                "sources": [
+                  {
+                    "name": "CNN",
+                    "url": "https://www.cnn.com/2026/11/07/europe/krakow-shooting-poland-killed-intl",
+                    "publishedAt": "2026-11-07",
+                    "primary": true
+                  },
+                  {
+                    "name": "BBC",
+                    "url": "https://www.bbc.co.uk/news/articles/cmd7q15drwgeo",
+                    "publishedAt": "2026-11-07",
+                    "imageUrl": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/f6c3/live/95455f00-dac5-11f1-bda8-29fb69dbc026.jpg"
+                  },
+                  {
+                    "name": "CBC",
+                    "url": "https://www.cbc.ca/news/world/krakow-poland-shooting-9.7413582",
+                    "publishedAt": "2026-11-07"
+                  },
+                  {
+                    "name": "AP(PBS 게재)",
+                    "url": "https://www.pbs.org/newshour/world/gunman-opens-fire-in-polish-city-of-krakow-killing-6-people-and-injuring-15",
+                    "publishedAt": "2026-11-07"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261108001053098",
+                    "publishedAt": "2026-11-08",
+                    "imageUrl": "https://img.yna.co.kr/etc/inner/KR/2026/11/08/AKR20261108001053098_02_i_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 6,
+                "title": "뉴질랜드 총선에서 국민당과 노동당이 득표율 0.15%포인트 차로 맞서 승자를 가리지 못했다",
+                "summary": "잠정 개표 결과 집권 국민당 연정이 근소한 과반을 지켰지만, 해외·특별 투표가 남아 최종 결과는 27일에야 나온다.",
+                "whyItMatters": "특별 투표가 진보 쪽에 유리했던 전례가 있어 정권 교체 가능성이 남아 있고, 몇 주간 연정 협상이 이어질 수 있다.",
+                "background": "크리스토퍼 럭슨 총리의 국민당은 ACT당, 뉴질랜드제일당과 연정을 꾸려 집권해 왔다.",
+                "keyFacts": [
+                  "선관위 잠정 집계에서 노동당이 29.36%, 국민당이 29.21%를 얻었다.",
+                  "의석 예상은 국민당 42석, 노동당 36석으로 지역구 승리가 국민당에 유리하게 작용했다.",
+                  "현 연정은 전체 131석 중 68석 안팎으로 근소한 과반이다.",
+                  "아직 세지 않은 특별 투표가 약 40만 표다."
+                ],
+                "outlook": "27일 최종 개표에서 특별 투표가 연정 과반을 무너뜨리는지 본다. 그때까지 럭슨 정부가 임시로 국정을 맡는다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "국제",
+                  "minor": "기타 지역"
+                },
+                "sources": [
+                  {
+                    "name": "BBC",
+                    "url": "https://www.bbc.co.uk/news/articles/c3ewev11g1e0o",
+                    "publishedAt": "2026-11-07",
+                    "imageUrl": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/3578/live/a76cb0d0-dab5-11f1-a701-fddedf244c16.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "뉴질랜드 선거관리위원회",
+                    "url": "https://elections.nz/media-and-news/2026/2026-general-election-preliminary-results",
+                    "publishedAt": "2026-11-07"
+                  },
+                  {
+                    "name": "Reuters(US News 게재)",
+                    "url": "https://www.usnews.com/news/world/articles/2026-11-07/new-zealand-vote-leaves-national-labour-nearly-deadlocked",
+                    "publishedAt": "2026-11-07"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261107044951084",
+                    "publishedAt": "2026-11-07",
+                    "imageUrl": "https://img.yna.co.kr/photo/etc/af/2026/11/07/PAF20261107199101009_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 7,
+                "title": "트럼프, 의회를 장악한 민주당의 조사 예고를 '갈취'라 부르며 법무부에 조사를 지시했다",
+                "summary": "트럼프 대통령이 법무장관 탄핵 등을 거론한 민주당을 조사하라고 법무부에 요구했고, 같은 날 UFC 회장에게 백악관 대변인직을 제안했다.",
+                "whyItMatters": "중간선거 패배 뒤 대통령이 사법기관을 야당 견제에 쓰려 한다는 논란이 커지면서, 내년 1월 출범할 민주당 의회와의 충돌이 예고됐다.",
+                "background": "민주당은 3일 중간선거에서 상·하원을 모두 되찾았다. 트럼프는 6일 비서실장을 강경파 스티븐 밀러로 바꿨다.",
+                "keyFacts": [
+                  "트럼프는 7일 소셜미디어에 민주당이 법무장관 등과 공화당 후원자들을 위협하고 있다며 법무부 조사를 지시했다.",
+                  "증거는 내놓지 않았고, 법무부는 공식 수사 개시를 확인하지 않았다.",
+                  "민주당은 소환장 경고 등을 포함한 의회 감독은 정당한 권한이라고 반박했다.",
+                  "트럼프는 데이나 화이트 UFC 회장에게 백악관 대변인을 맡아 달라고 공개 요청했다."
+                ],
+                "outlook": "법무부가 실제 수사에 나서는지, 민주당 의회가 1월부터 어떤 청문회와 소환을 시작하는지 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "국제",
+                  "minor": "미국"
+                },
+                "sources": [
+                  {
+                    "name": "Washington Post",
+                    "url": "https://www.washingtonpost.com/politics/2026/11/07/trump-calls-justice-department-investigate-democrats/",
+                    "publishedAt": "2026-11-07",
+                    "primary": true
+                  },
+                  {
+                    "name": "Reuters(Yahoo 게재)",
+                    "url": "https://www.yahoo.com/news/politics/articles/trump-orders-doj-look-democrats-181318926.html",
+                    "publishedAt": "2026-11-07"
+                  },
+                  {
+                    "name": "NBC News",
+                    "url": "https://www.nbcnews.com/politics/2026-election/live-blog/rump-taps-stephen-miller-chief-staff-wiles-cabinet-midterm-elections-rcna607914",
+                    "publishedAt": "2026-11-07"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261108002600071",
+                    "publishedAt": "2026-11-08",
+                    "imageUrl": "https://img.yna.co.kr/etc/inner/KR/2026/11/08/AKR20261108002600071_01_i_P2.jpg"
+                  }
+                ]
+              }
+            ],
+            "shortNews": [
+              {
+                "summary": "예멘 후티 반군은 수도 사나 인근 마을이 사우디아라비아의 공습을 받아 여성과 어린이를 중심으로 27명이 숨졌다고 주장했다. 사우디는 언급하지 않았다.",
+                "category": {
+                  "major": "국제",
+                  "minor": "중동"
+                },
+                "sources": [
+                  {
+                    "name": "The New Arab",
+                    "url": "https://www.newarab.com/news/houthis-say-27-killed-saudi-strikes-yemens-sanaa-province",
+                    "publishedAt": "2026-11-07"
+                  },
+                  {
+                    "name": "BBC",
+                    "url": "https://www.bbc.co.uk/news/articles/c65yn1v99ypmo",
+                    "publishedAt": "2026-11-07",
+                    "imageUrl": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/2670/live/bfaac760-dacc-11f1-bda8-29fb69dbc026.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "안토니오 타야니 이탈리아 외무장관의 개인정보가 다크웹에 퍼졌고, 멜로니 총리는 친러시아 해커의 소행이라고 밝혔다.",
+                "category": {
+                  "major": "국제",
+                  "minor": "유럽·러시아"
+                },
+                "sources": [
+                  {
+                    "name": "BBC",
+                    "url": "https://www.bbc.co.uk/news/articles/cr20wvge32j3o",
+                    "publishedAt": "2026-11-07",
+                    "imageUrl": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/34a9/live/e340cb90-dabb-11f1-93e1-3b657b665bcf.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "프랑스에서 고물가와 교육 여건에 항의하는 주말 시위가 4주째 이어졌고, 참가 규모는 약 15만 명으로 줄었다.",
+                "category": {
+                  "major": "국제",
+                  "minor": "유럽·러시아"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261108001751098",
+                    "publishedAt": "2026-11-08",
+                    "imageUrl": "https://img.yna.co.kr/etc/inner/KR/2026/11/08/AKR20261108001751098_01_i_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "말레이시아 검찰이 비리로 복역 중인 나집 전 총리의 가택연금 전환을 미루자, 국왕이 자신의 결정을 거역하지 말라고 경고했다.",
+                "category": {
+                  "major": "국제",
+                  "minor": "동아시아"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261107050100084",
+                    "publishedAt": "2026-11-07",
+                    "imageUrl": "https://img.yna.co.kr/etc/inner/KR/2026/11/07/AKR20261107050100084_01_i_P2.jpg"
+                  }
+                ]
+              }
+            ],
+            "unverified": "크라쿠프 총격범의 범행 동기는 정부 인사들의 초기 설명이고, 수사로 확정되지 않았다."
+          },
+          {
+            "name": "IT·AI",
+            "flow": "AI주 급락 속에도 오픈AI가 1조2,500억 달러 가치로 110억 달러를 모았고, 의회를 되찾은 미국 민주당은 AI 규제 법안을 쏟아낼 채비를 하며, 해킹 여파가 바이낸스와 팬픽 사이트 AO3에서 이어졌다.",
+            "topStories": [
+              {
+                "rank": 1,
+                "title": "오픈AI가 1조2,500억 달러 가치로 110억 달러를 먼저 모았지만, 처음 목표에는 못 미쳤다",
+                "summary": "오픈AI가 새 투자 유치의 첫 단계로 110억 달러를 받았고, 기업가치는 처음 노린 1조4천억 달러보다 낮아졌다.",
+                "whyItMatters": "미국 중간선거 뒤 AI주가 급락한 가운데 나온 결과라, 시장이 AI 기업에 매기는 값과 데이터센터 투자 열기가 식고 있는지 가늠하는 신호가 된다.",
+                "background": "오픈AI는 3월 투자 유치에서 8,520억 달러 가치로 1,220억 달러를 모았다. 이번에는 300억 달러 이상을 1조4천억 달러 가치로 모으려 했지만 AI주 매도 속에 목표를 낮췄다.",
+                "keyFacts": [
+                  "첫 단계로 받은 금액은 110억 달러이고, 투자 전 기업가치는 1조2,500억 달러다.",
+                  "사라 프라이어 최고재무책임자(CFO)가 방송 인터뷰에서 이 기업가치를 확인했다.",
+                  "소프트뱅크와 MGX가 참여한 것으로 전해졌다.",
+                  "프라이어 CFO는 중간선거 결과와 관계없이 데이터센터 확장을 이어 가겠다고 밝혔다."
+                ],
+                "outlook": "남은 투자 유치가 몇 주 안에 마무리되는지, 최종 규모와 기업가치가 어떻게 정해지는지 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "AI 산업·기업"
+                },
+                "sources": [
+                  {
+                    "name": "TechCrunch",
+                    "url": "https://techcrunch.com/2026/11/06/openai-reportedly-raises-an-additional-11-billion-at-a-1-25-trillion-valuation/",
+                    "publishedAt": "2026-11-06",
+                    "primary": true
+                  },
+                  {
+                    "name": "Investing.com(Bloomberg 인용)",
+                    "url": "https://www.investing.com/news/stock-market-news/openai-closes-11-billion-funding-at-125-trillion-valuation--report-5009147",
+                    "publishedAt": "2026-11-07"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261107012051091",
+                    "publishedAt": "2026-11-07",
+                    "imageUrl": "https://img.yna.co.kr/photo/reuters/2026/10/19/PRU20261019343801009_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 2,
+                "title": "의회를 되찾은 미국 민주당이 AI 안전 시험·책임·전기요금 법안을 쏟아낼 준비를 하고 있다",
+                "summary": "민주당은 1월 새 의회가 열리면 AI 시스템과 데이터센터를 겨냥한 법안을 잇달아 내고 오픈AI·앤트로픽 등을 청문회로 부를 계획이다.",
+                "whyItMatters": "AI 개발을 밀어 온 공화당 의회와 달리 규제 쪽으로 방향이 바뀌는 것이어서, AI 기업과 데이터센터 투자 계획에 불확실성이 커진다.",
+                "background": "민주당은 3일 중간선거에서 상·하원을 모두 차지했다. 선거에서 데이터센터 반대 여론이 드러났고, 이후 AI 관련주가 크게 떨어졌다.",
+                "keyFacts": [
+                  "데이터센터 때문에 오르는 전기요금에서 소비자를 보호하는 법안을 추진한다.",
+                  "고성능 AI 시스템을 독립 기관이 시험하게 하는 법안도 준비한다.",
+                  "AI가 해를 끼쳤을 때 기업에 책임을 물을 수 있게 하는 법안도 거론된다.",
+                  "트럼프 대통령은 AI 의무 규제를 거부해 와서, 법안이 통과돼도 거부권에 막힐 가능성이 크다."
+                ],
+                "outlook": "1월 새 의회 출범 뒤 첫 AI 청문회 일정과, 예산안 같은 필수 법안에 AI 조항이 실리는지 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "규제·정책"
+                },
+                "sources": [
+                  {
+                    "name": "Reuters(Investing.com 게재)",
+                    "url": "https://www.investing.com/news/stock-market-news/democrats-planning-flood-of-ai-bills-when-they-take-control-of-congress-5007213",
+                    "publishedAt": "2026-11-06",
+                    "primary": true
+                  },
+                  {
+                    "name": "West Hawaii Today",
+                    "url": "https://www.westhawaiitoday.com/2026/11/07/nation-world-news/democrats-planning-flood-of-ai-bills-when-they-take-control-of-congress/",
+                    "publishedAt": "2026-11-07"
+                  },
+                  {
+                    "name": "The Express Tribune",
+                    "url": "https://tribune.com.pk/story/2639017/democrats-planning-flood-of-ai-bills-when-they-take-control-of-congress",
+                    "publishedAt": "2026-11-07"
+                  }
+                ]
+              },
+              {
+                "rank": 3,
+                "title": "아이폰 키보드가 약 10만 개의 낱말을 추천에서 몰래 빼고 있었다는 분석이 나왔다",
+                "summary": "한 연구자가 iOS 자동완성이 감추는 낱말 목록을 찾아냈는데, 욕설 외에 '독재자 트럼프' 같은 정치 표현도 들어 있었다.",
+                "whyItMatters": "수억 명이 쓰는 키보드가 공개 기준 없이 어떤 표현을 추천하지 않는지가 드러나, 플랫폼의 보이지 않는 언어 관리에 대한 문제 제기로 이어지고 있다.",
+                "background": "자동완성과 밀어서 입력하기는 사용자가 치는 낱말을 예측해 추천하는 기능이다. 애플은 이런 추천에서 빼는 낱말 목록을 공개한 적이 없다.",
+                "keyFacts": [
+                  "목록은 여러 언어로 된 수만~약 10만 개 항목이고, 대부분은 비속어·공격적 표현이다.",
+                  "'Dictator Trump', 'Sleepy Joe' 같은 정치 표현도 들어 있었고, 한국어에서도 '극우', '빨갱이' 등이 추천에서 빠졌다.",
+                  "사용자가 직접 입력하는 것은 막지 않고, 추천에서만 빠진다.",
+                  "다른 보안 연구자도 같은 목록을 따로 찾아내 거의 일치한다고 확인했다.",
+                  "애플은 목록이나 정치 표현을 넣은 이유를 설명하지 않았다."
+                ],
+                "outlook": "애플이 목록의 기준을 설명하거나 바꾸는지, 정치권과 규제 당국이 문제를 삼는지 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "플랫폼·인터넷"
+                },
+                "sources": [
+                  {
+                    "name": "Reuters(BNN Bloomberg 게재)",
+                    "url": "https://www.bnnbloomberg.ca/business/company-news/2026/11/06/apples-predictive-text-restrictions-include-dictator-trump-and-sleepy-joe-researcher-finds-reuters-exclusive/",
+                    "publishedAt": "2026-11-06",
+                    "primary": true
+                  },
+                  {
+                    "name": "The Next Web",
+                    "url": "https://thenextweb.com/news/apple-iphone-keyboard-hidden-list",
+                    "publishedAt": "2026-11-07"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261107005800091",
+                    "publishedAt": "2026-11-07",
+                    "imageUrl": "https://img.yna.co.kr/photo/etc/up/2026/10/24/PUP20261024005101009_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 4,
+                "title": "메타가 언론사 웹사이트를 AI 학습에 쓸 수 있게 한 새 약관을 무기한 미뤘다",
+                "summary": "메타가 비즈니스 계정과 연결된 웹사이트를 수집할 수 있게 한 약관 변경을 20일 시행하지 않고 보류했다.",
+                "whyItMatters": "페이스북 페이지를 가진 거의 모든 언론사가 대상이었던 만큼, AI 학습용 콘텐츠 수집을 둘러싼 플랫폼과 언론의 다툼에서 언론 쪽이 한발 얻어 냈다.",
+                "background": "메타는 광고·상거래 등 비즈니스 도구 약관을 바꿔, 연결된 웹사이트 콘텐츠를 AI 개발에 쓸 수 있게 하려 했다. 각국 언론 단체가 강하게 반발했다.",
+                "keyFacts": [
+                  "보류 대상은 상거래 약관, 제품 카탈로그 약관, 셀프서브 광고 약관, 생성형 AI 광고 약관이다.",
+                  "메타는 이해관계자와 더 논의하겠다며 변경을 멈췄고, 언론사와 업계에 먼저 의견을 듣겠다고 했다.",
+                  "브라질 상파울루 법원은 3일 수집 조항에 가처분을 내렸고, 영국 경쟁당국도 조사를 시작했다.",
+                  "영국 언론 단체는 기존 약관으로도 메타가 수집한 콘텐츠를 폭넓게 쓸 수 있다고 지적했다."
+                ],
+                "outlook": "메타가 내놓을 새 약관에 언론사 콘텐츠 수집 범위가 어떻게 담기는지, 영국·브라질 조사와 소송이 어떻게 이어지는지 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "규제·정책"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261107004300091",
+                    "publishedAt": "2026-11-07",
+                    "imageUrl": "https://img.yna.co.kr/photo/reuters/2026/11/05/PRU20261105023301009_P2.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "Yahoo Tech",
+                    "url": "https://tech.yahoo.com/ai/meta-ai/articles/meta-puts-controversial-scraping-policy-183028085.html",
+                    "publishedAt": "2026-11-06"
+                  },
+                  {
+                    "name": "NewsBytes",
+                    "url": "https://www.newsbytesapp.com/news/science/meta-indefinitely-suspends-controversial-terms-allowing-it-to-scrape-websites/story",
+                    "publishedAt": "2026-11-07"
+                  }
+                ]
+              },
+              {
+                "rank": 5,
+                "title": "63억 달러를 해킹당한 바이낸스에서 최고재무책임자가 일주일 만에 물러났다",
+                "summary": "바이낸스는 카이저 응 CFO가 새 사업을 위해 떠나고 저스틴 예크가 뒤를 잇는다고 밝혔다.",
+                "whyItMatters": "사상 최대 규모의 가상자산 탈취 직후의 경영진 교체여서, 세계 최대 거래소의 내부 통제와 보안 관리에 대한 시장의 의심이 커질 수 있다.",
+                "background": "바이낸스는 지난주 정교한 공격으로 약 63억 달러어치 가상자산을 도둑맞았다고 밝혔다. 공격자는 가짜 채용 절차로 엔지니어를 노린 것으로 전해졌고, 이 사건은 북한 소행으로 지목됐다.",
+                "keyFacts": [
+                  "바이낸스는 7일 응 CFO의 사임과 후임 인선을 발표했다.",
+                  "응은 2022년 1월부터 CFO를 맡아 5년 넘게 바이낸스에서 일했다.",
+                  "바이낸스는 이번 교체가 해킹과 관련 있다고 밝히지 않았다.",
+                  "바이낸스는 해킹 손실을 자체적으로 메우겠다고 밝혔다."
+                ],
+                "outlook": "해킹 조사 결과와 추가 경영진 교체, 각국 감독 당국의 대응을 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "보안"
+                },
+                "sources": [
+                  {
+                    "name": "The Globe and Mail",
+                    "url": "https://www.theglobeandmail.com/world/article-binance-cfo-kaiser-ng-resigns-steps-down-63-billion-hackers/",
+                    "publishedAt": "2026-11-07",
+                    "primary": true
+                  },
+                  {
+                    "name": "Global Banking & Finance Review",
+                    "url": "https://www.globalbankingandfinance.com/binance-cfo-kaiser-ng-steps-down-justin-yek-named-new/",
+                    "publishedAt": "2026-11-07"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261108003400075",
+                    "publishedAt": "2026-11-08",
+                    "imageUrl": "https://img.yna.co.kr/photo/reuters/2026/11/05/PRU20261105189201009_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 6,
+                "title": "팬픽 사이트 AO3가 보안 사고로 열흘째 닫혀 있고, 복구에 최대 한 달이 걸릴 전망이다",
+                "summary": "세계 최대 팬 창작 보관소 AO3가 10월 29일부터 접속이 막혔고, 운영 단체는 이용자 정보 유출 가능성을 배제하지 못한다고 밝혔다.",
+                "whyItMatters": "수백만 명이 쓰는 비영리 창작 보관소가 공격 한 번에 장기간 멈추면서, 작은 단체가 운영하는 큰 서비스의 보안 취약성이 드러났다.",
+                "background": "AO3(Archive of Our Own)는 비영리 단체 OTW가 운영하는 팬픽 보관 사이트다. 10월 29일 점검 안내와 함께 닫힌 뒤 다음 날 보안 사고가 있었다고 공개됐다.",
+                "keyFacts": [
+                  "OTW는 작품 등 콘텐츠는 잃지 않았다고 밝혔다.",
+                  "아이디·이메일·암호화된 비밀번호가 담긴 이용자 DB가 빠져나갔다고 보지는 않지만 가능성은 배제할 수 없다고 했다.",
+                  "복구 예상은 2~4주로 늘었고, 7일 기준 한 달 안 복구를 내다봤다.",
+                  "그사이 AO3 작품을 옮겨 담은 다른 사이트가 생기는 등 이용자들이 우회로를 찾고 있다."
+                ],
+                "outlook": "사이트가 언제 다시 열리는지, 이용자 정보 유출 여부가 확인되는지 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "보안"
+                },
+                "sources": [
+                  {
+                    "name": "CNN",
+                    "url": "https://www.cnn.com/2026/11/07/entertainment/ao3-hack-shutdown-cec",
+                    "publishedAt": "2026-11-07",
+                    "primary": true
+                  },
+                  {
+                    "name": "Malay Mail(AFP)",
+                    "url": "https://www.malaymail.com/news/life/2026/11/07/people-are-in-withdrawal-fanfiction-fans-left-hanging-as-cyberattack-shutters-ao3/242311",
+                    "publishedAt": "2026-11-07"
+                  },
+                  {
+                    "name": "Vice",
+                    "url": "https://www.vice.com/en/article/what-happened-to-ao3-everything-we-know-about-the-fanfiction-sites-massive-outage/",
+                    "publishedAt": "2026-11-07"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261107052100009",
+                    "publishedAt": "2026-11-07",
+                    "imageUrl": "https://img.yna.co.kr/photo/ap/2025/07/16/PAP20250716134401009_P2.jpg"
+                  }
+                ],
+                "devCheckpoint": "AO3와 같은 비밀번호를 다른 서비스에 썼다면 그 비밀번호를 바꾼다."
+              }
+            ],
+            "shortNews": [
+              {
+                "summary": "미국 미시시피주 환경당국은 SpaceXAI 자회사가 사우스헤이븐 데이터센터 공사를 물 관련 허가 없이 시작했다고 보고, 공사 하루당 최고 2만5천 달러의 벌금을 매길 수 있다고 통보했다.",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "AI 산업·기업"
+                },
+                "sources": [
+                  {
+                    "name": "Mississippi Today",
+                    "url": "https://mississippitoday.org/2026/11/06/spacexai-southaven-data-center-fines-mdeq/",
+                    "publishedAt": "2026-11-06"
+                  },
+                  {
+                    "name": "AP(US News 게재)",
+                    "url": "https://www.usnews.com/news/us/articles/2026-11-06/spacexai-started-southaven-data-center-construction-without-water-permits-mississippi-alleges",
+                    "publishedAt": "2026-11-06"
+                  }
+                ]
+              },
+              {
+                "summary": "중국 로봇기업 유니트리가 국영 석유기업 등과 합작해 유전과 정유공장 같은 산업 현장에 로봇을 투입하기로 했다.",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "AI 산업·기업"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261107026300083",
+                    "publishedAt": "2026-11-07",
+                    "imageUrl": "https://img.yna.co.kr/photo/reuters/2026/10/28/PRU20261028300501009_P2.jpg"
+                  }
+                ]
+              }
+            ],
+            "unverified": "오픈AI의 이번 투자 유치가 최종 약 200억 달러가 될 것이라는 전망은 익명 소식통을 인용한 보도다."
+          }
+        ]
+      },
+      "collectedAt": "2026-11-08T06:19:37+09:00",
+      "late": false
     }
   ],
   "extracted": [
@@ -5624,7 +6658,8 @@
     "2026-11-03",
     "2026-11-04",
     "2026-11-05",
-    "2026-11-06"
+    "2026-11-06",
+    "2026-11-07"
   ],
   "scheduled": [
     "2026-11-01",
@@ -5632,6 +6667,7 @@
     "2026-11-03",
     "2026-11-04",
     "2026-11-05",
-    "2026-11-06"
+    "2026-11-06",
+    "2026-11-07"
   ]
 }

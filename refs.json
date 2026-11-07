@@ -3975,9 +3975,9 @@
       "aliases": [
         "Pedro Alliana"
       ],
-      "description": "파라과이 부통령, 대통령직 승계자",
-      "describedOn": "2026-11-06",
-      "describedStory": "2026-11-05/세계-3",
+      "description": "파라과이 대통령(2026년 11월 취임)",
+      "describedOn": "2026-11-08",
+      "describedStory": "2026-11-07/세계-4",
       "mergedInto": null
     },
     {
@@ -4450,6 +4450,351 @@
       "description": "일본 총리",
       "describedOn": "2026-11-07",
       "describedStory": "2026-11-06/IT·AI-7",
+      "mergedInto": null
+    },
+    {
+      "id": 361,
+      "kind": "기관",
+      "name": "한국노동조합총연맹",
+      "aliases": [
+        "한국노총",
+        "FKTU"
+      ],
+      "description": "대한민국의 전국 단위 노동조합 총연맹",
+      "describedOn": "2026-11-08",
+      "describedStory": "2026-11-07/한국-1",
+      "mergedInto": null
+    },
+    {
+      "id": 362,
+      "kind": "기관",
+      "name": "미래에셋증권",
+      "aliases": [
+        "Mirae Asset Securities"
+      ],
+      "description": "한국의 증권사, 미래에셋그룹 계열사",
+      "describedOn": "2026-11-08",
+      "describedStory": "2026-11-07/한국-2",
+      "mergedInto": null
+    },
+    {
+      "id": 363,
+      "kind": "기관",
+      "name": "금융감독원",
+      "aliases": [
+        "금감원",
+        "Financial Supervisory Service"
+      ],
+      "description": "대한민국의 금융회사 검사·감독 기관",
+      "describedOn": "2026-11-08",
+      "describedStory": "2026-11-07/한국-2",
+      "mergedInto": null
+    },
+    {
+      "id": 364,
+      "kind": "인물",
+      "name": "김영훈",
+      "aliases": [
+        "Kim Young-hoon"
+      ],
+      "description": "대한민국 고용노동부 장관",
+      "describedOn": "2026-11-08",
+      "describedStory": "2026-11-07/한국-3",
+      "mergedInto": null
+    },
+    {
+      "id": 365,
+      "kind": "기관",
+      "name": "서울에너지공사",
+      "aliases": [
+        "Seoul Energy Corporation"
+      ],
+      "description": "서울시 산하 지역난방 공급 공기업",
+      "describedOn": "2026-11-08",
+      "describedStory": "2026-11-07/한국-4",
+      "mergedInto": null
+    },
+    {
+      "id": 366,
+      "kind": "인물",
+      "name": "김성남",
+      "aliases": [
+        "Kim Song-nam"
+      ],
+      "description": "북한 노동당 국제비서",
+      "describedOn": "2026-11-08",
+      "describedStory": "2026-11-07/한국-s2",
+      "mergedInto": null
+    },
+    {
+      "id": 367,
+      "kind": "인물",
+      "name": "류하이싱",
+      "aliases": [
+        "Liu Haixing"
+      ],
+      "description": "중국 공산당 대외연락부장",
+      "describedOn": "2026-11-08",
+      "describedStory": "2026-11-07/한국-s2",
+      "mergedInto": null
+    },
+    {
+      "id": 368,
+      "kind": "인물",
+      "name": "세르게이 리아브코프",
+      "aliases": [
+        "리아브코프",
+        "랴브코프",
+        "Sergei Ryabkov"
+      ],
+      "description": "러시아 외무차관",
+      "describedOn": "2026-11-08",
+      "describedStory": "2026-11-07/세계-1",
+      "mergedInto": null
+    },
+    {
+      "id": 369,
+      "kind": "기관",
+      "name": "미국 중부사령부",
+      "aliases": [
+        "중부사령부",
+        "CENTCOM"
+      ],
+      "description": "중동 지역을 맡는 미군 통합 전투사령부",
+      "describedOn": "2026-11-08",
+      "describedStory": "2026-11-07/세계-3",
+      "mergedInto": null
+    },
+    {
+      "id": 370,
+      "kind": "국가",
+      "name": "뉴질랜드",
+      "aliases": [
+        "New Zealand"
+      ],
+      "description": "남태평양 오세아니아의 섬나라",
+      "describedOn": "2026-11-08",
+      "describedStory": "2026-11-07/세계-6",
+      "mergedInto": null
+    },
+    {
+      "id": 371,
+      "kind": "인물",
+      "name": "크리스토퍼 럭슨",
+      "aliases": [
+        "럭슨",
+        "Christopher Luxon"
+      ],
+      "description": "뉴질랜드 총리, 국민당 대표",
+      "describedOn": "2026-11-08",
+      "describedStory": "2026-11-07/세계-6",
+      "mergedInto": null
+    },
+    {
+      "id": 372,
+      "kind": "기관",
+      "name": "뉴질랜드 국민당",
+      "aliases": [
+        "New Zealand National Party"
+      ],
+      "description": "뉴질랜드의 중도우파 정당",
+      "describedOn": "2026-11-08",
+      "describedStory": "2026-11-07/세계-6",
+      "mergedInto": null
+    },
+    {
+      "id": 373,
+      "kind": "기관",
+      "name": "뉴질랜드 노동당",
+      "aliases": [
+        "New Zealand Labour Party"
+      ],
+      "description": "뉴질랜드의 중도좌파 정당",
+      "describedOn": "2026-11-08",
+      "describedStory": "2026-11-07/세계-6",
+      "mergedInto": null
+    },
+    {
+      "id": 374,
+      "kind": "인물",
+      "name": "데이나 화이트",
+      "aliases": [
+        "Dana White"
+      ],
+      "description": "미국 종합격투기 단체 UFC 회장",
+      "describedOn": "2026-11-08",
+      "describedStory": "2026-11-07/세계-7",
+      "mergedInto": null
+    },
+    {
+      "id": 375,
+      "kind": "기관",
+      "name": "후티",
+      "aliases": [
+        "후티 반군",
+        "Houthis",
+        "안사르알라"
+      ],
+      "description": "예멘 북부와 수도 사나를 장악한 무장 정파",
+      "describedOn": "2026-11-08",
+      "describedStory": "2026-11-07/세계-s1",
+      "mergedInto": null
+    },
+    {
+      "id": 376,
+      "kind": "국가",
+      "name": "사우디아라비아",
+      "aliases": [
+        "사우디",
+        "Saudi Arabia"
+      ],
+      "description": "아라비아반도의 나라",
+      "describedOn": "2026-11-08",
+      "describedStory": "2026-11-07/세계-s1",
+      "mergedInto": null
+    },
+    {
+      "id": 377,
+      "kind": "국가",
+      "name": "예멘",
+      "aliases": [
+        "Yemen"
+      ],
+      "description": "아라비아반도 남서부의 나라",
+      "describedOn": "2026-11-08",
+      "describedStory": "2026-11-07/세계-s1",
+      "mergedInto": null
+    },
+    {
+      "id": 378,
+      "kind": "인물",
+      "name": "안토니오 타야니",
+      "aliases": [
+        "타야니",
+        "Antonio Tajani"
+      ],
+      "description": "이탈리아 외무장관",
+      "describedOn": "2026-11-08",
+      "describedStory": "2026-11-07/세계-s2",
+      "mergedInto": null
+    },
+    {
+      "id": 379,
+      "kind": "인물",
+      "name": "조르자 멜로니",
+      "aliases": [
+        "멜로니",
+        "Giorgia Meloni"
+      ],
+      "description": "이탈리아 총리",
+      "describedOn": "2026-11-08",
+      "describedStory": "2026-11-07/세계-s2",
+      "mergedInto": null
+    },
+    {
+      "id": 380,
+      "kind": "국가",
+      "name": "이탈리아",
+      "aliases": [
+        "Italy"
+      ],
+      "description": "남유럽 지중해의 나라",
+      "describedOn": "2026-11-08",
+      "describedStory": "2026-11-07/세계-s2",
+      "mergedInto": null
+    },
+    {
+      "id": 381,
+      "kind": "인물",
+      "name": "나집 라작",
+      "aliases": [
+        "나집",
+        "Najib Razak"
+      ],
+      "description": "말레이시아 전 총리",
+      "describedOn": "2026-11-08",
+      "describedStory": "2026-11-07/세계-s4",
+      "mergedInto": null
+    },
+    {
+      "id": 382,
+      "kind": "인물",
+      "name": "사라 프라이어",
+      "aliases": [
+        "Sarah Friar"
+      ],
+      "description": "오픈AI 최고재무책임자",
+      "describedOn": "2026-11-08",
+      "describedStory": "2026-11-07/IT·AI-1",
+      "mergedInto": null
+    },
+    {
+      "id": 383,
+      "kind": "기관",
+      "name": "MGX",
+      "aliases": [],
+      "description": "아랍에미리트의 AI 전문 투자회사",
+      "describedOn": "2026-11-08",
+      "describedStory": "2026-11-07/IT·AI-1",
+      "mergedInto": null
+    },
+    {
+      "id": 384,
+      "kind": "인물",
+      "name": "카이저 응",
+      "aliases": [
+        "Kaiser Ng"
+      ],
+      "description": "바이낸스 전 최고재무책임자",
+      "describedOn": "2026-11-08",
+      "describedStory": "2026-11-07/IT·AI-5",
+      "mergedInto": null
+    },
+    {
+      "id": 385,
+      "kind": "기관",
+      "name": "AO3",
+      "aliases": [
+        "Archive of Our Own"
+      ],
+      "description": "팬 창작 작품을 모아 두는 비영리 보관 사이트",
+      "describedOn": "2026-11-08",
+      "describedStory": "2026-11-07/IT·AI-6",
+      "mergedInto": null
+    },
+    {
+      "id": 386,
+      "kind": "기관",
+      "name": "OTW",
+      "aliases": [
+        "Organization for Transformative Works"
+      ],
+      "description": "AO3를 운영하는 미국 비영리 단체",
+      "describedOn": "2026-11-08",
+      "describedStory": "2026-11-07/IT·AI-6",
+      "mergedInto": null
+    },
+    {
+      "id": 387,
+      "kind": "기관",
+      "name": "SpaceXAI",
+      "aliases": [],
+      "description": "미국의 AI·우주 기업",
+      "describedOn": "2026-11-08",
+      "describedStory": "2026-11-07/IT·AI-s1",
+      "mergedInto": null
+    },
+    {
+      "id": 388,
+      "kind": "기관",
+      "name": "유니트리",
+      "aliases": [
+        "위수커지",
+        "Unitree Robotics"
+      ],
+      "description": "중국의 로봇 기업",
+      "describedOn": "2026-11-08",
+      "describedStory": "2026-11-07/IT·AI-s2",
       "mergedInto": null
     }
   ],
@@ -5832,6 +6177,78 @@
         "오프라인 지갑"
       ],
       "description": "인터넷과 연결하지 않은 채 가상자산을 보관하는 지갑이다. 해커가 원격으로 접근하기 어려워 거래소가 자산 대부분을 여기에 둔다.",
+      "mergedInto": null
+    },
+    {
+      "id": 162,
+      "name": "중대재해",
+      "aliases": [
+        "중대산업재해"
+      ],
+      "description": "일하다 사람이 숨지거나 여러 명이 크게 다치는 등 피해가 큰 산업재해를 말한다. 법은 이런 사고에 대해 사업주와 경영책임자의 책임을 무겁게 묻는다.",
+      "mergedInto": null
+    },
+    {
+      "id": 163,
+      "name": "특별감독",
+      "aliases": [],
+      "description": "사고가 크거나 위반이 심한 사업장을 정부 감독관이 집중적으로 들여다보는 감독이다. 일반 점검보다 범위가 넓고 위반이 나오면 바로 처벌이나 처분으로 이어진다.",
+      "mergedInto": null
+    },
+    {
+      "id": 164,
+      "name": "열 수송관",
+      "aliases": [
+        "온수관"
+      ],
+      "description": "발전소나 열 생산 시설에서 데운 물을 아파트 등으로 보내는 땅속 배관이다. 지역난방의 난방과 온수가 이 관을 따라 공급된다.",
+      "mergedInto": null
+    },
+    {
+      "id": 165,
+      "name": "잠정합의안",
+      "aliases": [],
+      "description": "노사 교섭 대표가 먼저 합의한 안이다. 조합원 찬반투표를 통과해야 최종 합의로 확정되고, 부결되면 다시 교섭한다.",
+      "mergedInto": null
+    },
+    {
+      "id": 166,
+      "name": "고병원성 조류인플루엔자",
+      "aliases": [
+        "고병원성 AI",
+        "조류독감",
+        "HPAI"
+      ],
+      "description": "닭·오리 같은 가금류에 퍼지는 바이러스 감염병 가운데 치사율이 높은 것이다. 주로 겨울 철새를 통해 들어오며, 발생하면 살처분과 이동 제한을 한다.",
+      "mergedInto": null
+    },
+    {
+      "id": 167,
+      "name": "패트리엇",
+      "aliases": [
+        "Patriot",
+        "패트리엇 미사일"
+      ],
+      "description": "미국이 만든 지대공 방공 체계다. 날아오는 항공기와 탄도미사일을 요격미사일로 맞혀 떨어뜨린다.",
+      "mergedInto": null
+    },
+    {
+      "id": 168,
+      "name": "거부권",
+      "aliases": [
+        "veto"
+      ],
+      "description": "의회가 통과시킨 법안을 대통령이 받아들이지 않고 돌려보내는 권한이다. 미국에서는 상·하원이 각각 3분의 2 찬성으로 다시 의결해야 거부권을 넘을 수 있다.",
+      "mergedInto": null
+    },
+    {
+      "id": 169,
+      "name": "자동완성",
+      "aliases": [
+        "autocomplete",
+        "예측 입력"
+      ],
+      "description": "사용자가 입력하는 글자를 보고 다음에 올 낱말을 미리 추천하는 기능이다. 키보드나 검색창에서 쓰인다.",
       "mergedInto": null
     }
   ],
@@ -9063,6 +9480,306 @@
     {
       "story": "2026-11-06/한국-s3",
       "entity": 346
+    },
+    {
+      "story": "2026-11-07/IT·AI-1",
+      "entity": 113
+    },
+    {
+      "story": "2026-11-07/IT·AI-1",
+      "entity": 331
+    },
+    {
+      "story": "2026-11-07/IT·AI-1",
+      "entity": 382
+    },
+    {
+      "story": "2026-11-07/IT·AI-1",
+      "entity": 383
+    },
+    {
+      "story": "2026-11-07/IT·AI-2",
+      "entity": 40
+    },
+    {
+      "story": "2026-11-07/IT·AI-2",
+      "entity": 50
+    },
+    {
+      "story": "2026-11-07/IT·AI-2",
+      "entity": 113
+    },
+    {
+      "story": "2026-11-07/IT·AI-2",
+      "entity": 280
+    },
+    {
+      "story": "2026-11-07/IT·AI-3",
+      "entity": 57
+    },
+    {
+      "story": "2026-11-07/IT·AI-4",
+      "entity": 56
+    },
+    {
+      "story": "2026-11-07/IT·AI-5",
+      "entity": 149
+    },
+    {
+      "story": "2026-11-07/IT·AI-5",
+      "entity": 384
+    },
+    {
+      "story": "2026-11-07/IT·AI-6",
+      "entity": 385
+    },
+    {
+      "story": "2026-11-07/IT·AI-6",
+      "entity": 386
+    },
+    {
+      "story": "2026-11-07/IT·AI-s1",
+      "entity": 387
+    },
+    {
+      "story": "2026-11-07/IT·AI-s2",
+      "entity": 388
+    },
+    {
+      "story": "2026-11-07/세계-1",
+      "entity": 29
+    },
+    {
+      "story": "2026-11-07/세계-1",
+      "entity": 30
+    },
+    {
+      "story": "2026-11-07/세계-1",
+      "entity": 101
+    },
+    {
+      "story": "2026-11-07/세계-1",
+      "entity": 256
+    },
+    {
+      "story": "2026-11-07/세계-1",
+      "entity": 368
+    },
+    {
+      "story": "2026-11-07/세계-2",
+      "entity": 24
+    },
+    {
+      "story": "2026-11-07/세계-2",
+      "entity": 25
+    },
+    {
+      "story": "2026-11-07/세계-2",
+      "entity": 26
+    },
+    {
+      "story": "2026-11-07/세계-2",
+      "entity": 100
+    },
+    {
+      "story": "2026-11-07/세계-3",
+      "entity": 40
+    },
+    {
+      "story": "2026-11-07/세계-3",
+      "entity": 42
+    },
+    {
+      "story": "2026-11-07/세계-3",
+      "entity": 107
+    },
+    {
+      "story": "2026-11-07/세계-3",
+      "entity": 217
+    },
+    {
+      "story": "2026-11-07/세계-3",
+      "entity": 369
+    },
+    {
+      "story": "2026-11-07/세계-4",
+      "entity": 321
+    },
+    {
+      "story": "2026-11-07/세계-4",
+      "entity": 322
+    },
+    {
+      "story": "2026-11-07/세계-4",
+      "entity": 323
+    },
+    {
+      "story": "2026-11-07/세계-4",
+      "entity": 324
+    },
+    {
+      "story": "2026-11-07/세계-5",
+      "entity": 174
+    },
+    {
+      "story": "2026-11-07/세계-6",
+      "entity": 370
+    },
+    {
+      "story": "2026-11-07/세계-6",
+      "entity": 371
+    },
+    {
+      "story": "2026-11-07/세계-6",
+      "entity": 372
+    },
+    {
+      "story": "2026-11-07/세계-6",
+      "entity": 373
+    },
+    {
+      "story": "2026-11-07/세계-7",
+      "entity": 38
+    },
+    {
+      "story": "2026-11-07/세계-7",
+      "entity": 40
+    },
+    {
+      "story": "2026-11-07/세계-7",
+      "entity": 280
+    },
+    {
+      "story": "2026-11-07/세계-7",
+      "entity": 374
+    },
+    {
+      "story": "2026-11-07/세계-s1",
+      "entity": 375
+    },
+    {
+      "story": "2026-11-07/세계-s1",
+      "entity": 376
+    },
+    {
+      "story": "2026-11-07/세계-s1",
+      "entity": 377
+    },
+    {
+      "story": "2026-11-07/세계-s2",
+      "entity": 378
+    },
+    {
+      "story": "2026-11-07/세계-s2",
+      "entity": 379
+    },
+    {
+      "story": "2026-11-07/세계-s2",
+      "entity": 380
+    },
+    {
+      "story": "2026-11-07/세계-s3",
+      "entity": 218
+    },
+    {
+      "story": "2026-11-07/세계-s4",
+      "entity": 118
+    },
+    {
+      "story": "2026-11-07/세계-s4",
+      "entity": 381
+    },
+    {
+      "story": "2026-11-07/한국-1",
+      "entity": 8
+    },
+    {
+      "story": "2026-11-07/한국-1",
+      "entity": 9
+    },
+    {
+      "story": "2026-11-07/한국-1",
+      "entity": 72
+    },
+    {
+      "story": "2026-11-07/한국-1",
+      "entity": 84
+    },
+    {
+      "story": "2026-11-07/한국-1",
+      "entity": 85
+    },
+    {
+      "story": "2026-11-07/한국-1",
+      "entity": 361
+    },
+    {
+      "story": "2026-11-07/한국-2",
+      "entity": 202
+    },
+    {
+      "story": "2026-11-07/한국-2",
+      "entity": 309
+    },
+    {
+      "story": "2026-11-07/한국-2",
+      "entity": 362
+    },
+    {
+      "story": "2026-11-07/한국-2",
+      "entity": 363
+    },
+    {
+      "story": "2026-11-07/한국-3",
+      "entity": 132
+    },
+    {
+      "story": "2026-11-07/한국-3",
+      "entity": 364
+    },
+    {
+      "story": "2026-11-07/한국-4",
+      "entity": 365
+    },
+    {
+      "story": "2026-11-07/한국-5",
+      "entity": 165
+    },
+    {
+      "story": "2026-11-07/한국-s1",
+      "entity": 48
+    },
+    {
+      "story": "2026-11-07/한국-s1",
+      "entity": 84
+    },
+    {
+      "story": "2026-11-07/한국-s2",
+      "entity": 12
+    },
+    {
+      "story": "2026-11-07/한국-s2",
+      "entity": 366
+    },
+    {
+      "story": "2026-11-07/한국-s2",
+      "entity": 367
+    },
+    {
+      "story": "2026-11-07/한국-s3",
+      "entity": 12
+    },
+    {
+      "story": "2026-11-07/한국-s3",
+      "entity": 30
+    },
+    {
+      "story": "2026-11-07/한국-s3",
+      "entity": 101
+    },
+    {
+      "story": "2026-11-07/한국-s5",
+      "entity": 84
     }
   ],
   "termLinks": [
@@ -10290,6 +11007,71 @@
       "story": "2026-11-06/한국-6",
       "term": 155,
       "surface": "핵추진잠수함"
+    },
+    {
+      "story": "2026-11-07/IT·AI-2",
+      "term": 168,
+      "surface": "거부권"
+    },
+    {
+      "story": "2026-11-07/IT·AI-3",
+      "term": 169,
+      "surface": "자동완성"
+    },
+    {
+      "story": "2026-11-07/세계-1",
+      "term": 75,
+      "surface": "탄도미사일"
+    },
+    {
+      "story": "2026-11-07/세계-1",
+      "term": 167,
+      "surface": "패트리엇"
+    },
+    {
+      "story": "2026-11-07/세계-2",
+      "term": 17,
+      "surface": "연정"
+    },
+    {
+      "story": "2026-11-07/세계-6",
+      "term": 17,
+      "surface": "연정"
+    },
+    {
+      "story": "2026-11-07/한국-1",
+      "term": 42,
+      "surface": "특검"
+    },
+    {
+      "story": "2026-11-07/한국-3",
+      "term": 162,
+      "surface": "중대재해"
+    },
+    {
+      "story": "2026-11-07/한국-3",
+      "term": 163,
+      "surface": "특별감독"
+    },
+    {
+      "story": "2026-11-07/한국-4",
+      "term": 164,
+      "surface": "열 수송관"
+    },
+    {
+      "story": "2026-11-07/한국-5",
+      "term": 146,
+      "surface": "쟁의"
+    },
+    {
+      "story": "2026-11-07/한국-5",
+      "term": 165,
+      "surface": "잠정합의안"
+    },
+    {
+      "story": "2026-11-07/한국-6",
+      "term": 166,
+      "surface": "고병원성 조류인플루엔자"
     }
   ],
   "merges": [],

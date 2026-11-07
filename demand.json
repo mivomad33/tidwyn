@@ -70,6 +70,15 @@
         "acrc"
       ],
       "communityMissing": []
+    },
+    {
+      "date": "2026-11-07",
+      "status": "checked",
+      "missing": [
+        "assembly",
+        "acrc"
+      ],
+      "communityMissing": []
     }
   ],
   "flowCorrections": []

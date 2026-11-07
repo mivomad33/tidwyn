@@ -507,6 +507,54 @@
         "npm:@anthropic-ai/claude-code:2.1.319"
       ],
       "schedules": []
+    },
+    {
+      "id": 19,
+      "date": "2026-11-07",
+      "position": 1,
+      "field": "모델",
+      "title": "Claude Admin API, 조직 구성원 전체 로그아웃 베타",
+      "whatChanged": "Claude Enterprise 조직의 관리자가 Admin API로 특정 구성원을 모든 기기의 Claude에서 한 번에 로그아웃시킬 수 있게 됐다. 베타 기능이다. 로그아웃된 구성원은 조직에 그대로 남고 다시 로그인할 수 있다.",
+      "who": "Claude Enterprise 조직을 관리하는 관리자와 보안 담당자",
+      "action": "퇴사자나 기기 분실 대응 절차에 이 API를 넣을지 검토하고, 베타 헤더와 요청이 끝내지 않는 범위를 문서에서 확인한다.",
+      "why": "계정 사고 때 세션을 바로 끊는 수단이 생겨 관리 절차를 바꿀 수 있다.",
+      "due": null,
+      "sources": [
+        {
+          "name": "Claude 릴리스 노트",
+          "url": "https://platform.claude.com/docs/en/release-notes/overview#admin-api-sign-out"
+        }
+      ],
+      "issue": null,
+      "reminderOf": null,
+      "keys": [
+        "https://platform.claude.com/docs/en/release-notes/overview#admin-api-sign-out"
+      ],
+      "schedules": []
+    },
+    {
+      "id": 20,
+      "date": "2026-11-07",
+      "position": 2,
+      "field": "플랫폼",
+      "title": "supabase-flutter v3, 전체 API에 타입 적용하는 호환성 변경",
+      "whatChanged": "Supabase가 Flutter용 클라이언트 supabase-flutter v3를 내놓았다. API 전반에 타입 안전성을 넣은 판으로, 기존 코드와 호환되지 않는 변경이 들어 있다.",
+      "who": "Flutter 앱에서 supabase-flutter를 쓰는 개발자",
+      "action": "v3로 올리기 전에 변경 기록에서 바뀐 API를 확인하고, 시험 브랜치에서 빌드와 주요 호출을 점검한다.",
+      "why": "호환성 변경이라 그대로 올리면 빌드나 호출이 깨질 수 있다.",
+      "due": null,
+      "sources": [
+        {
+          "name": "Supabase 변경 기록",
+          "url": "https://supabase.com/changelog/supabase-flutter-v3"
+        }
+      ],
+      "issue": null,
+      "reminderOf": null,
+      "keys": [
+        "https://supabase.com/changelog/supabase-flutter-v3"
+      ],
+      "schedules": []
     }
   ],
   "dates": [
@@ -528,6 +576,10 @@
     },
     {
       "date": "2026-11-06",
+      "status": "partial"
+    },
+    {
+      "date": "2026-11-07",
       "status": "partial"
     }
   ],
@@ -8358,17 +8410,17 @@
     {
       "doc": "anthropic-deprecations",
       "hash": "dff781a1f1bbf3c53450a89c0758147001197eb5f0d99d02abcc52dddd7f2313",
-      "storedOn": "2026-11-07"
+      "storedOn": "2026-11-08"
     },
     {
       "doc": "anthropic-limits",
       "hash": "f3592ee54e179674154432d3cba26639af9d0a43d20f880f20d51da776550965",
-      "storedOn": "2026-11-07"
+      "storedOn": "2026-11-08"
     },
     {
       "doc": "anthropic-pricing",
       "hash": "5864b14c0eb020db52f96b3f42787810ad65d3f28823e317c03b7e9ca345aa49",
-      "storedOn": "2026-11-07"
+      "storedOn": "2026-11-08"
     },
     {
       "doc": "gemini-deprecations",
@@ -8383,174 +8435,174 @@
     {
       "doc": "openai-deprecations",
       "hash": "49e382e18bf8e14ea82d099a21a1f2b818b72603424518519eb908b419b45be1",
-      "storedOn": "2026-11-07"
+      "storedOn": "2026-11-08"
     },
     {
       "doc": "openai-pricing",
       "hash": "f1ade44afc62fd8a12dd6e199bcecaa989a94c9b691aa620a34e1504ff62ff57",
-      "storedOn": "2026-11-07"
+      "storedOn": "2026-11-08"
     }
   ],
   "sources": [
     {
       "source": "anthropic-deprecations",
-      "fetchedAt": "2026-11-06T21:52:19.514Z",
+      "fetchedAt": "2026-11-07T21:48:41.368Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "anthropic-limits",
-      "fetchedAt": "2026-11-06T21:52:19.514Z",
+      "fetchedAt": "2026-11-07T21:48:41.368Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "anthropic-pricing",
-      "fetchedAt": "2026-11-06T21:52:19.514Z",
+      "fetchedAt": "2026-11-07T21:48:41.368Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "claude-code",
-      "fetchedAt": "2026-11-06T21:52:19.514Z",
+      "fetchedAt": "2026-11-07T21:48:41.368Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "claude-notes",
-      "fetchedAt": "2026-11-06T21:52:19.514Z",
+      "fetchedAt": "2026-11-07T21:48:41.368Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "cloudflare",
       "fetchedAt": null,
-      "failDays": 5,
-      "failOn": "2026-11-07"
+      "failDays": 6,
+      "failOn": "2026-11-08"
     },
     {
       "source": "codex",
       "fetchedAt": null,
-      "failDays": 5,
-      "failOn": "2026-11-07"
+      "failDays": 6,
+      "failOn": "2026-11-08"
     },
     {
       "source": "copilot",
-      "fetchedAt": "2026-11-06T21:52:19.514Z",
+      "fetchedAt": "2026-11-07T21:48:41.368Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "eol-nextjs",
-      "fetchedAt": "2026-11-06T21:52:19.514Z",
+      "fetchedAt": "2026-11-07T21:48:41.368Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "eol-nodejs",
-      "fetchedAt": "2026-11-06T21:52:19.514Z",
+      "fetchedAt": "2026-11-07T21:48:41.368Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "gemini-cli",
-      "fetchedAt": "2026-11-06T21:52:19.514Z",
+      "fetchedAt": "2026-11-07T21:48:41.368Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "gemini-deprecations",
       "fetchedAt": "2026-11-02T23:28:54.103Z",
-      "failDays": 4,
-      "failOn": "2026-11-07"
+      "failDays": 5,
+      "failOn": "2026-11-08"
     },
     {
       "source": "gemini-pricing",
       "fetchedAt": "2026-11-02T23:28:54.103Z",
-      "failDays": 4,
-      "failOn": "2026-11-07"
+      "failDays": 5,
+      "failOn": "2026-11-08"
     },
     {
       "source": "ghsa",
-      "fetchedAt": "2026-11-06T21:52:19.514Z",
+      "fetchedAt": "2026-11-07T21:48:41.368Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "kev",
-      "fetchedAt": "2026-11-06T21:52:19.514Z",
+      "fetchedAt": "2026-11-07T21:48:41.368Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "mcp-spec",
-      "fetchedAt": "2026-11-06T21:52:19.514Z",
+      "fetchedAt": "2026-11-07T21:48:41.368Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "nextjs",
-      "fetchedAt": "2026-11-06T21:52:19.514Z",
+      "fetchedAt": "2026-11-07T21:48:41.368Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "nodejs",
-      "fetchedAt": "2026-11-06T21:52:19.514Z",
+      "fetchedAt": "2026-11-07T21:48:41.368Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "openai-deprecations",
-      "fetchedAt": "2026-11-06T21:52:19.514Z",
+      "fetchedAt": "2026-11-07T21:48:41.368Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "openai-pricing",
-      "fetchedAt": "2026-11-06T21:52:19.514Z",
+      "fetchedAt": "2026-11-07T21:48:41.368Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "product-hunt",
-      "fetchedAt": "2026-11-06T21:52:37.671Z",
+      "fetchedAt": "2026-11-07T21:48:58.560Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "react",
-      "fetchedAt": "2026-11-06T21:52:19.514Z",
+      "fetchedAt": "2026-11-07T21:48:41.368Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "socket",
-      "fetchedAt": "2026-11-06T21:52:19.514Z",
+      "fetchedAt": "2026-11-07T21:48:41.368Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "supabase",
-      "fetchedAt": "2026-11-06T21:52:19.514Z",
+      "fetchedAt": "2026-11-07T21:48:41.368Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "typescript",
-      "fetchedAt": "2026-11-06T21:52:19.514Z",
+      "fetchedAt": "2026-11-07T21:48:41.368Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "vercel",
-      "fetchedAt": "2026-11-06T21:52:19.514Z",
+      "fetchedAt": "2026-11-07T21:48:41.368Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "vite",
-      "fetchedAt": "2026-11-06T21:52:19.514Z",
+      "fetchedAt": "2026-11-07T21:48:41.368Z",
       "failDays": 0,
       "failOn": null
     }
@@ -9087,6 +9139,122 @@
       },
       "stars": 274855,
       "growth": 1123
+    },
+    {
+      "id": 28,
+      "date": "2026-11-07",
+      "kind": "product",
+      "position": 1,
+      "key": "ph:exa-monitors-v2",
+      "name": "Exa Monitors v2",
+      "url": "https://www.producthunt.com/products/exa-ai",
+      "purpose": "AI 에이전트용 예약 웹 검색이다. 지켜볼 대상과 주기를 정하면 새롭고 관련 있는 결과가 나왔을 때만 웹훅으로 요약이나 JSON을 출처와 함께 보낸다. Python SDK와 API를 쓴다.",
+      "difference": "이전 판과 달리 이미 보낸 내용을 기억해 알림이 덜 잦고, 실행 1천 회당 비용이 15달러에서 2달러로 내려갔다고 Exa는 밝혔다.",
+      "reason": "에이전트에 웹 변화 감시를 붙이려는 개발자에게 바로 쓸 수 있는 API다.",
+      "issue": null,
+      "license": null,
+      "pushedOn": null,
+      "release": null,
+      "stars": null,
+      "growth": null
+    },
+    {
+      "id": 29,
+      "date": "2026-11-07",
+      "kind": "product",
+      "position": 2,
+      "key": "ph:livereview",
+      "name": "LiveReview",
+      "url": "https://www.producthunt.com/products/livereview",
+      "purpose": "PR마다 위험 점수를 매겨 위험이 낮은 변경은 자동 승인하고, 위험한 변경은 봐야 할 엔지니어에게 넘기는 코드 리뷰 도구다. 무료이고 직접 호스팅할 수 있다.",
+      "difference": "문제를 지적하는 데 그치는 다른 AI 리뷰 도구와 달리, LLM과 장애 데이터로 학습한 모델, 코드 그래프 분석으로 위험도를 판단해 승인 여부까지 가른다.",
+      "reason": "리뷰 부담을 줄이려는 팀이 직접 호스팅해 시험해 볼 수 있다.",
+      "issue": null,
+      "license": null,
+      "pushedOn": null,
+      "release": null,
+      "stars": null,
+      "growth": null
+    },
+    {
+      "id": 30,
+      "date": "2026-11-07",
+      "kind": "product",
+      "position": 3,
+      "key": "ph:sendoff-2",
+      "name": "Sendoff",
+      "url": "https://www.producthunt.com/products/sendoff-2",
+      "purpose": "Claude나 Codex에서 말 한마디로 뉴스레터와 출시 소식을 구독자 목록에 보내는 도구다. 본인의 Cloudflare와 AWS 계정에 직접 올려 Amazon SES로 발송한다.",
+      "difference": "호스팅형 이메일 마케팅 서비스와 달리 발송 인프라와 구독자 데이터를 자기 계정에 두고, 에이전트에서 바로 발송을 지시한다.",
+      "reason": "에이전트로 작업하는 개발자가 자체 메일 발송을 꾸리기 좋다.",
+      "issue": null,
+      "license": null,
+      "pushedOn": null,
+      "release": null,
+      "stars": null,
+      "growth": null
+    },
+    {
+      "id": 31,
+      "date": "2026-11-07",
+      "kind": "repo",
+      "position": 1,
+      "key": "repo:anomalyco/rune",
+      "name": "anomalyco/rune",
+      "url": "https://github.com/anomalyco/rune",
+      "purpose": "macOS, Windows, Linux, 웹을 지원하는 Rust UI 프레임워크다. 자체 렌더러와 텍스트, 레이아웃, 스프링 애니메이션을 갖추고 GPU로 그린다. 아직 정식 출시 전이다.",
+      "difference": "모든 앱을 화면 없이 실행해 PNG로 렌더링하고 요소 트리를 덤프하며 스크립트 입력으로 조작할 수 있어, 코딩 에이전트가 결과를 스스로 확인하게 설계됐다.",
+      "reason": "에이전트로 네이티브 UI를 만들 때 검증 루프를 붙이기 쉽다.",
+      "issue": null,
+      "license": "MIT",
+      "pushedOn": "2026-11-07",
+      "release": {
+        "state": "none"
+      },
+      "stars": 3632,
+      "growth": 1233
+    },
+    {
+      "id": 32,
+      "date": "2026-11-07",
+      "kind": "repo",
+      "position": 2,
+      "key": "repo:google/elephant-goldfish-model",
+      "name": "google/elephant-goldfish-model",
+      "url": "https://github.com/google/elephant-goldfish-model",
+      "purpose": "AI 코딩 도구에 넣는 소프트웨어 설계·리뷰 플러그인이다. 프로젝트 맥락을 쥔 쪽이 명세 초안을 쓰고, 사람이 트레이드오프를 정해 승인한 뒤 구현에 들어간다.",
+      "difference": "리뷰어 에이전트가 앞선 대화 없이 초안과 참조 자료만 보고 검토해 숨은 가정과 사각지대를 드러낸다. Claude Code, Codex, Antigravity에 설치된다.",
+      "reason": "에이전트 작업 전에 설계 명세를 다듬는 흐름을 바로 써 볼 수 있다.",
+      "issue": null,
+      "license": "Apache-2.0",
+      "pushedOn": "2026-11-07",
+      "release": {
+        "state": "found",
+        "date": "2026-11-06"
+      },
+      "stars": 13765,
+      "growth": 724
+    },
+    {
+      "id": 33,
+      "date": "2026-11-07",
+      "kind": "repo",
+      "position": 3,
+      "key": "repo:milind-soni/openmausbot",
+      "name": "milind-soni/OpenMausBot",
+      "url": "https://github.com/milind-soni/OpenMausBot",
+      "purpose": "여러 AI 봇을 연락처처럼 두고 채팅 앱에서 대화하는 데스크톱 앱이다. 봇마다 성격, 모델, 클라우드 컴퓨터, 연결 앱을 따로 두고 작업을 지켜보며 승인한다.",
+      "difference": "Grok Bot 같은 서비스와 달리 오픈소스이고 로컬 우선이며, 이미 쓰는 Claude나 Codex를 봇의 실제 에이전트로 돌린다.",
+      "reason": "쓰던 에이전트를 여러 개 나눠 굴리려는 사용자에게 맞다.",
+      "issue": null,
+      "license": "Apache-2.0",
+      "pushedOn": "2026-11-07",
+      "release": {
+        "state": "found",
+        "date": "2026-11-07"
+      },
+      "stars": 16871,
+      "growth": 1793
     }
   ],
   "kindDates": [
@@ -9137,6 +9305,16 @@
     },
     {
       "date": "2026-11-06",
+      "kind": "repo",
+      "status": "checked"
+    },
+    {
+      "date": "2026-11-07",
+      "kind": "product",
+      "status": "checked"
+    },
+    {
+      "date": "2026-11-07",
       "kind": "repo",
       "status": "checked"
     }
