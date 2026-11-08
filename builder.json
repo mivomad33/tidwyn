@@ -581,6 +581,10 @@
     {
       "date": "2026-11-07",
       "status": "partial"
+    },
+    {
+      "date": "2026-11-08",
+      "status": "partial"
     }
   ],
   "rows": [
@@ -8410,17 +8414,17 @@
     {
       "doc": "anthropic-deprecations",
       "hash": "dff781a1f1bbf3c53450a89c0758147001197eb5f0d99d02abcc52dddd7f2313",
-      "storedOn": "2026-11-08"
+      "storedOn": "2026-11-09"
     },
     {
       "doc": "anthropic-limits",
       "hash": "f3592ee54e179674154432d3cba26639af9d0a43d20f880f20d51da776550965",
-      "storedOn": "2026-11-08"
+      "storedOn": "2026-11-09"
     },
     {
       "doc": "anthropic-pricing",
       "hash": "5864b14c0eb020db52f96b3f42787810ad65d3f28823e317c03b7e9ca345aa49",
-      "storedOn": "2026-11-08"
+      "storedOn": "2026-11-09"
     },
     {
       "doc": "gemini-deprecations",
@@ -8435,174 +8439,174 @@
     {
       "doc": "openai-deprecations",
       "hash": "49e382e18bf8e14ea82d099a21a1f2b818b72603424518519eb908b419b45be1",
-      "storedOn": "2026-11-08"
+      "storedOn": "2026-11-09"
     },
     {
       "doc": "openai-pricing",
       "hash": "f1ade44afc62fd8a12dd6e199bcecaa989a94c9b691aa620a34e1504ff62ff57",
-      "storedOn": "2026-11-08"
+      "storedOn": "2026-11-09"
     }
   ],
   "sources": [
     {
       "source": "anthropic-deprecations",
-      "fetchedAt": "2026-11-07T21:48:41.368Z",
+      "fetchedAt": "2026-11-08T21:51:52.621Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "anthropic-limits",
-      "fetchedAt": "2026-11-07T21:48:41.368Z",
+      "fetchedAt": "2026-11-08T21:51:52.621Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "anthropic-pricing",
-      "fetchedAt": "2026-11-07T21:48:41.368Z",
+      "fetchedAt": "2026-11-08T21:51:52.621Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "claude-code",
-      "fetchedAt": "2026-11-07T21:48:41.368Z",
+      "fetchedAt": "2026-11-08T21:51:52.621Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "claude-notes",
-      "fetchedAt": "2026-11-07T21:48:41.368Z",
+      "fetchedAt": "2026-11-08T21:51:52.621Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "cloudflare",
       "fetchedAt": null,
-      "failDays": 6,
-      "failOn": "2026-11-08"
+      "failDays": 7,
+      "failOn": "2026-11-09"
     },
     {
       "source": "codex",
       "fetchedAt": null,
-      "failDays": 6,
-      "failOn": "2026-11-08"
+      "failDays": 7,
+      "failOn": "2026-11-09"
     },
     {
       "source": "copilot",
-      "fetchedAt": "2026-11-07T21:48:41.368Z",
+      "fetchedAt": "2026-11-08T21:51:52.621Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "eol-nextjs",
-      "fetchedAt": "2026-11-07T21:48:41.368Z",
+      "fetchedAt": "2026-11-08T21:51:52.621Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "eol-nodejs",
-      "fetchedAt": "2026-11-07T21:48:41.368Z",
+      "fetchedAt": "2026-11-08T21:51:52.621Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "gemini-cli",
-      "fetchedAt": "2026-11-07T21:48:41.368Z",
+      "fetchedAt": "2026-11-08T21:51:52.621Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "gemini-deprecations",
       "fetchedAt": "2026-11-02T23:28:54.103Z",
-      "failDays": 5,
-      "failOn": "2026-11-08"
+      "failDays": 6,
+      "failOn": "2026-11-09"
     },
     {
       "source": "gemini-pricing",
       "fetchedAt": "2026-11-02T23:28:54.103Z",
-      "failDays": 5,
-      "failOn": "2026-11-08"
+      "failDays": 6,
+      "failOn": "2026-11-09"
     },
     {
       "source": "ghsa",
-      "fetchedAt": "2026-11-07T21:48:41.368Z",
+      "fetchedAt": "2026-11-08T21:51:52.621Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "kev",
-      "fetchedAt": "2026-11-07T21:48:41.368Z",
+      "fetchedAt": "2026-11-08T21:51:52.621Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "mcp-spec",
-      "fetchedAt": "2026-11-07T21:48:41.368Z",
+      "fetchedAt": "2026-11-08T21:51:52.621Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "nextjs",
-      "fetchedAt": "2026-11-07T21:48:41.368Z",
+      "fetchedAt": "2026-11-08T21:51:52.621Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "nodejs",
-      "fetchedAt": "2026-11-07T21:48:41.368Z",
+      "fetchedAt": "2026-11-08T21:51:52.621Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "openai-deprecations",
-      "fetchedAt": "2026-11-07T21:48:41.368Z",
+      "fetchedAt": "2026-11-08T21:51:52.621Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "openai-pricing",
-      "fetchedAt": "2026-11-07T21:48:41.368Z",
+      "fetchedAt": "2026-11-08T21:51:52.621Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "product-hunt",
-      "fetchedAt": "2026-11-07T21:48:58.560Z",
+      "fetchedAt": "2026-11-08T21:52:10.746Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "react",
-      "fetchedAt": "2026-11-07T21:48:41.368Z",
+      "fetchedAt": "2026-11-08T21:51:52.621Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "socket",
-      "fetchedAt": "2026-11-07T21:48:41.368Z",
+      "fetchedAt": "2026-11-08T21:51:52.621Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "supabase",
-      "fetchedAt": "2026-11-07T21:48:41.368Z",
+      "fetchedAt": "2026-11-08T21:51:52.621Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "typescript",
-      "fetchedAt": "2026-11-07T21:48:41.368Z",
+      "fetchedAt": "2026-11-08T21:51:52.621Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "vercel",
-      "fetchedAt": "2026-11-07T21:48:41.368Z",
+      "fetchedAt": "2026-11-08T21:51:52.621Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "vite",
-      "fetchedAt": "2026-11-07T21:48:41.368Z",
+      "fetchedAt": "2026-11-08T21:51:52.621Z",
       "failDays": 0,
       "failOn": null
     }
@@ -9255,6 +9259,84 @@
       },
       "stars": 16871,
       "growth": 1793
+    },
+    {
+      "id": 34,
+      "date": "2026-11-08",
+      "kind": "product",
+      "position": 1,
+      "key": "ph:nomac-2",
+      "name": "NoMac",
+      "url": "https://www.producthunt.com/products/nomac",
+      "purpose": "Claude Code, Codex, Cursor 같은 코딩 에이전트에게 클라우드의 Apple 실리콘 Mac을 내준다. 에이전트가 Xcode로 iOS 앱을 빌드하고 시뮬레이터에서 돌려 보고 TestFlight와 App Store까지 올린다. 작업이 끝나면 Mac이 꺼진다.",
+      "difference": "월 단위로 빌리는 Mac 호스팅이나 CI용 macOS 러너와 달리, 에이전트가 직접 다루도록 만들었다. 시뮬레이터 화면을 실시간으로 지켜볼 수 있고, 구독 없이 선불 크레딧에서 분 단위로 요금이 빠진다.",
+      "reason": "Mac 없이도 에이전트에게 iOS 빌드와 배포를 맡길 수 있다.",
+      "issue": null,
+      "license": null,
+      "pushedOn": null,
+      "release": null,
+      "stars": null,
+      "growth": null
+    },
+    {
+      "id": 35,
+      "date": "2026-11-08",
+      "kind": "product",
+      "position": 2,
+      "key": "ph:outages-live",
+      "name": "outages.live",
+      "url": "https://www.producthunt.com/products/polylane",
+      "purpose": "클라우드, AI, 결제, 개발 도구 업체의 공식 상태 페이지를 한 피드로 모아 몇 분마다 갱신한다. 코드를 디버깅하기 전에 업체 쪽 장애인지 먼저 확인할 수 있다. 웹 피드, RSS·Atom·JSON Feed, Slack으로 받아 볼 수 있다.",
+      "difference": "업체 상태 페이지를 하나씩 찾아 들어가거나 사용자 제보를 모으는 장애 사이트와 달리, 공식 상태 정보만 모은다. 코딩 에이전트에게는 MCP로 장애 상황을 넘겨준다. 로그인이나 API 키 없이 무료로 쓴다.",
+      "reason": "에이전트가 외부 장애를 자기 코드 버그로 잘못 짚는 일을 줄여 준다.",
+      "issue": null,
+      "license": null,
+      "pushedOn": null,
+      "release": null,
+      "stars": null,
+      "growth": null
+    },
+    {
+      "id": 36,
+      "date": "2026-11-08",
+      "kind": "repo",
+      "position": 1,
+      "key": "repo:meta/astryx",
+      "name": "meta/astryx",
+      "url": "https://github.com/meta/astryx",
+      "purpose": "Meta 안에서 8년 동안 쓰이던 React 19용 디자인 시스템을 공개했다. 접근성을 갖춘 컴포넌트 150여 개, 브랜드 테마, 다크 모드, 템플릿, CLI를 한 묶음으로 제공한다. 미리 빌드된 CSS를 불러와 타입이 있는 컴포넌트를 쓰면 된다.",
+      "difference": "내부는 StyleX로 짰지만 쓰는 쪽은 Tailwind, CSS 모듈, 일반 CSS 중 무엇으로든 className을 덮어쓸 수 있다. 테마는 CSS 변수 덮어쓰기로 바꾸고, 필요하면 swizzle로 컴포넌트 소스를 프로젝트에 꺼내 직접 고친다.",
+      "reason": "대규모 사내 사용을 거친 디자인 시스템이 사람과 AI 도우미가 함께 쓰는 형태로 나왔다.",
+      "issue": null,
+      "license": "MIT",
+      "pushedOn": "2026-11-08",
+      "release": {
+        "state": "found",
+        "date": "2026-11-07"
+      },
+      "stars": 16419,
+      "growth": 2018
+    },
+    {
+      "id": 37,
+      "date": "2026-11-08",
+      "kind": "repo",
+      "position": 2,
+      "key": "repo:vercel-labs/agent-browser",
+      "name": "vercel-labs/agent-browser",
+      "url": "https://github.com/vercel-labs/agent-browser",
+      "purpose": "AI 에이전트가 셸 명령 한 줄씩으로 브라우저를 다루게 해 주는 Rust CLI다. 페이지를 접근성 트리 기반의 짧은 텍스트로 받아 요소마다 참조값을 얻고, 그 참조로 클릭하거나 입력한 뒤 다시 읽어 결과를 확인한다.",
+      "difference": "Playwright 스크립트나 MCP 서버를 따로 띄우는 방식과 달리, 브라우저를 열어 둔 채 짧은 셸 호출로 한 단계씩 진행한다. 대상이 가려졌거나 비활성이면 성공이라고 넘기지 않고 클릭을 실패로 알린다.",
+      "reason": "셸만 쓸 수 있는 코딩 에이전트에게 웹 테스트와 조작을 맡기기 쉽다.",
+      "issue": null,
+      "license": "Apache-2.0",
+      "pushedOn": "2026-11-08",
+      "release": {
+        "state": "found",
+        "date": "2026-11-03"
+      },
+      "stars": 47511,
+      "growth": 763
     }
   ],
   "kindDates": [
@@ -9315,6 +9397,16 @@
     },
     {
       "date": "2026-11-07",
+      "kind": "repo",
+      "status": "checked"
+    },
+    {
+      "date": "2026-11-08",
+      "kind": "product",
+      "status": "checked"
+    },
+    {
+      "date": "2026-11-08",
       "kind": "repo",
       "status": "checked"
     }

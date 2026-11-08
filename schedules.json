@@ -627,6 +627,39 @@
       "mergedInto": null,
       "deleted": false,
       "deletedOn": null
+    },
+    {
+      "id": 58,
+      "name": "금감원 가상자산사업자 보안책임자 해킹 대응회의",
+      "due": "2026-11-19",
+      "major": "IT·AI",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 59,
+      "name": "G7 외교장관회의 파리 개막",
+      "due": "2026-11-09",
+      "major": "국제",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 60,
+      "name": "최해천 서울대 총장 임기 시작",
+      "due": "2027-02-01",
+      "major": "사회",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
     }
   ],
   "links": [
@@ -1058,6 +1091,31 @@
     {
       "story": "2026-11-07/한국-s4",
       "schedule": 55,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-08/IT·AI-5",
+      "schedule": 58,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-08/세계-4",
+      "schedule": 34,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-08/세계-s3",
+      "schedule": 53,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-08/세계-s4",
+      "schedule": 59,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-08/한국-s3",
+      "schedule": 60,
       "role": "basis"
     }
   ],
