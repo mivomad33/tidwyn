@@ -501,7 +501,7 @@
       "name": "러셀 브랜드 성범죄 사건 형량 선고",
       "due": "2026-11-09",
       "major": "문화·스포츠",
-      "outcome": null,
+      "outcome": "result",
       "postponedTo": null,
       "mergedInto": null,
       "deleted": false,
@@ -578,7 +578,7 @@
       "name": "COP31 튀르키예 안탈리아 개막",
       "due": "2026-11-09",
       "major": "과학·건강",
-      "outcome": null,
+      "outcome": "result",
       "postponedTo": null,
       "mergedInto": null,
       "deleted": false,
@@ -622,7 +622,7 @@
       "name": "국민의힘 청와대 앞 현장 최고위원회의",
       "due": "2026-11-09",
       "major": "정치",
-      "outcome": null,
+      "outcome": "result",
       "postponedTo": null,
       "mergedInto": null,
       "deleted": false,
@@ -655,6 +655,28 @@
       "name": "최해천 서울대 총장 임기 시작",
       "due": "2027-02-01",
       "major": "사회",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 61,
+      "name": "COP31 정상회의",
+      "due": "2026-11-11",
+      "major": "과학·건강",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 62,
+      "name": "COP31 튀르키예 안탈리아 폐막",
+      "due": "2026-11-20",
+      "major": "과학·건강",
       "outcome": null,
       "postponedTo": null,
       "mergedInto": null,
@@ -1117,6 +1139,41 @@
       "story": "2026-11-08/한국-s3",
       "schedule": 60,
       "role": "basis"
+    },
+    {
+      "story": "2026-11-09/세계-2",
+      "schedule": 53,
+      "role": "result"
+    },
+    {
+      "story": "2026-11-09/세계-2",
+      "schedule": 61,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-09/세계-2",
+      "schedule": 62,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-09/세계-4",
+      "schedule": 34,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-09/세계-5",
+      "schedule": 10,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-09/세계-s2",
+      "schedule": 46,
+      "role": "result"
+    },
+    {
+      "story": "2026-11-09/한국-2",
+      "schedule": 57,
+      "role": "result"
     }
   ],
   "merges": [],

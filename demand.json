@@ -87,6 +87,14 @@
         "assembly"
       ],
       "communityMissing": []
+    },
+    {
+      "date": "2026-11-09",
+      "status": "failed",
+      "missing": [
+        "assembly"
+      ],
+      "communityMissing": []
     }
   ],
   "flowCorrections": []

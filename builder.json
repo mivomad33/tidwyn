@@ -555,6 +555,70 @@
         "https://supabase.com/changelog/supabase-flutter-v3"
       ],
       "schedules": []
+    },
+    {
+      "id": 21,
+      "date": "2026-11-09",
+      "position": 1,
+      "field": "모델",
+      "title": "Claude Fable 5.2·Mythos 5.2 공개, 입력 $8·출력 $40으로 인하",
+      "whatChanged": "Anthropic이 긴 추론과 장시간 에이전트 작업용 Claude Fable 5.2(claude-fable-5-2)를 내놓았다. 같은 능력의 Mythos 5.2는 검증된 조직만 쓴다. 두 모델 모두 컨텍스트 100만 토큰, 최대 출력 12.8만 토큰이고 적응형 사고가 늘 켜진다. 가격은 100만 토큰당 입력 8달러, 출력 40달러로 5.1(10달러·50달러)보다 낮다. 출력 속도를 최대 2.5배 올리는 fast mode는 입력 16달러, 출력 80달러다.",
+      "who": "Claude API에서 Fable 5.1·Mythos 5.1을 쓰거나 상위 모델을 검토하는 개발자",
+      "action": "모델 이름을 claude-fable-5-2로 바꿔 품질과 비용을 시험하고, 속도가 필요하면 요청에 speed 값을 fast로 주어 비교한다.",
+      "why": "같은 계열에서 값이 내려간 새 모델이라 바꾸기만 해도 비용이 준다.",
+      "due": null,
+      "sources": [
+        {
+          "name": "Claude 릴리스 노트",
+          "url": "https://platform.claude.com/docs/en/release-notes/overview#claude-fable-5-2"
+        },
+        {
+          "name": "Claude 릴리스 노트",
+          "url": "https://platform.claude.com/docs/en/release-notes/overview#fast-mode-claude-fable-5-2"
+        },
+        {
+          "name": "Anthropic 가격",
+          "url": "https://platform.claude.com/docs/en/about-claude/pricing"
+        }
+      ],
+      "issue": null,
+      "reminderOf": null,
+      "keys": [
+        "https://platform.claude.com/docs/en/release-notes/overview#claude-fable-5-2",
+        "https://platform.claude.com/docs/en/release-notes/overview#fast-mode-claude-fable-5-2",
+        "num:anthropic:2026-11-10:07664c61ba012afc",
+        "num:anthropic:2026-11-10:3e3ab74017712fee",
+        "num:anthropic:2026-11-10:50c3a63c32c14ede",
+        "num:anthropic:2026-11-10:8b852d37e3ffdec5",
+        "num:anthropic:2026-11-10:acbeeb6e06f2e55b",
+        "num:anthropic:2026-11-10:b46b70f5bf3502f7",
+        "num:anthropic:2026-11-10:d9d5c3cc1240c331"
+      ],
+      "schedules": []
+    },
+    {
+      "id": 22,
+      "date": "2026-11-09",
+      "position": 2,
+      "field": "보안",
+      "title": "@ethersphere/bee-js 13.3.0·Swarm Desktop 0.56.2에 백도어",
+      "whatChanged": "관리자 계정이 탈취돼 npm 패키지 @ethersphere/bee-js 13.3.0과 Swarm Desktop 0.56.2에 악성 코드가 들어갔다고 Socket이 알렸다. 이더리움 주소로 명령 서버를 찾는 SleepyDuck 백도어의 기반을 다시 썼다. 고친 버전은 재료에 없다.",
+      "who": "@ethersphere/bee-js나 Swarm Desktop을 쓰는 프로젝트와 개발자",
+      "action": "잠금 파일에서 bee-js 13.3.0과 Swarm Desktop 0.56.2를 찾아 이전 버전으로 되돌리고, 설치한 기기의 토큰과 키를 바꾼다.",
+      "why": "설치만으로 원격 조종 통로가 열리는 공급망 공격이다.",
+      "due": null,
+      "sources": [
+        {
+          "name": "Socket 블로그",
+          "url": "https://socket.dev/blog/bee-js-compromise?utm_medium=feed"
+        }
+      ],
+      "issue": null,
+      "reminderOf": null,
+      "keys": [
+        "https://socket.dev/blog/bee-js-compromise"
+      ],
+      "schedules": []
     }
   ],
   "dates": [
@@ -584,6 +648,10 @@
     },
     {
       "date": "2026-11-08",
+      "status": "partial"
+    },
+    {
+      "date": "2026-11-09",
       "status": "partial"
     }
   ],
@@ -731,6 +799,15 @@
       "path": "Deprecation history > 2026-04-14: Claude Sonnet 4 and Claude Opus 4 models",
       "header": "Retirement date | Deprecated model | Recommended replacement",
       "row": "June 15, 2026 | `claude-sonnet-4-20250514` | `claude-sonnet-5-5`"
+    },
+    {
+      "doc": "anthropic-deprecations",
+      "hash": "50dec8f9f32955f4",
+      "addedOn": "2026-11-10",
+      "removedOn": null,
+      "path": "Model status",
+      "header": "API model name | Current state | Deprecated | Tentative retirement date",
+      "row": "claude-mythos-5-2 | Active | N/A | Not sooner than November 9, 2027"
     },
     {
       "doc": "anthropic-deprecations",
@@ -911,6 +988,15 @@
       "path": "Model status",
       "header": "API model name | Current state | Deprecated | Tentative retirement date",
       "row": "claude-haiku-5-5 | Active | N/A | Not sooner than October 7, 2027"
+    },
+    {
+      "doc": "anthropic-deprecations",
+      "hash": "e56761c6b59965f8",
+      "addedOn": "2026-11-10",
+      "removedOn": null,
+      "path": "Model status",
+      "header": "API model name | Current state | Deprecated | Tentative retirement date",
+      "row": "claude-fable-5-2 | Active | N/A | Not sooner than November 9, 2027"
     },
     {
       "doc": "anthropic-deprecations",
@@ -1112,6 +1198,15 @@
     },
     {
       "doc": "anthropic-limits",
+      "hash": "577a7f72fa3338ad",
+      "addedOn": "2026-11-10",
+      "removedOn": null,
+      "path": "Rate limits > Cache-aware ITPM > Build tier",
+      "header": "Model | Maximum requests per minute (RPM) | Maximum input tokens per minute (ITPM) | Maximum output tokens per minute (OTPM)",
+      "row": "Claude Fable 5.1 and Claude Fable 5 1 | 10,000 | 1,500,000 | 300,000"
+    },
+    {
+      "doc": "anthropic-limits",
       "hash": "5c0aaa3123fa8645",
       "addedOn": "2026-11-03",
       "removedOn": null,
@@ -1159,7 +1254,7 @@
       "doc": "anthropic-limits",
       "hash": "6fdd7a50642a6132",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-10",
       "path": "Rate limits > Cache-aware ITPM > Scale tier",
       "header": "Model | Maximum requests per minute (RPM) | Maximum input tokens per minute (ITPM) | Maximum output tokens per minute (OTPM)",
       "row": "Claude Fable 5.x 1 | 13,000 | 4,000,000 | 800,000"
@@ -1213,7 +1308,7 @@
       "doc": "anthropic-limits",
       "hash": "84cb947b363bdbc4",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-10",
       "path": "Rate limits > Cache-aware ITPM > Build tier",
       "header": "Model | Maximum requests per minute (RPM) | Maximum input tokens per minute (ITPM) | Maximum output tokens per minute (OTPM)",
       "row": "Claude Fable 5.x 1 | 10,000 | 1,500,000 | 300,000"
@@ -1292,9 +1387,18 @@
     },
     {
       "doc": "anthropic-limits",
+      "hash": "a293af4f64290795",
+      "addedOn": "2026-11-10",
+      "removedOn": null,
+      "path": "Rate limits > Cache-aware ITPM > Start tier",
+      "header": "Model | Maximum requests per minute (RPM) | Maximum input tokens per minute (ITPM) | Maximum output tokens per minute (OTPM)",
+      "row": "Claude Fable 5.2 | 4,000 | 500,000 | 100,000"
+    },
+    {
+      "doc": "anthropic-limits",
       "hash": "a41242b88b11bb6d",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-10",
       "path": "Rate limits > Cache-aware ITPM > Start tier",
       "header": "Model | Maximum requests per minute (RPM) | Maximum input tokens per minute (ITPM) | Maximum output tokens per minute (OTPM)",
       "row": "Claude Fable 5.x 1 | 4,000 | 500,000 | 100,000"
@@ -1307,6 +1411,15 @@
       "path": "Rate limits > Cache-aware ITPM > Start tier",
       "header": "Model | Maximum requests per minute (RPM) | Maximum input tokens per minute (ITPM) | Maximum output tokens per minute (OTPM)",
       "row": "Claude Opus 5 | 1,000 | 2,000,000 | 400,000"
+    },
+    {
+      "doc": "anthropic-limits",
+      "hash": "add48a8bd6b667c6",
+      "addedOn": "2026-11-10",
+      "removedOn": null,
+      "path": "Rate limits > Cache-aware ITPM > Scale tier",
+      "header": "Model | Maximum requests per minute (RPM) | Maximum input tokens per minute (ITPM) | Maximum output tokens per minute (OTPM)",
+      "row": "Claude Fable 5.2 | 13,000 | 4,000,000 | 800,000"
     },
     {
       "doc": "anthropic-limits",
@@ -1343,6 +1456,24 @@
       "path": "Rate limits > Cache-aware ITPM > Start tier",
       "header": "Model | Maximum requests per minute (RPM) | Maximum input tokens per minute (ITPM) | Maximum output tokens per minute (OTPM)",
       "row": "Claude Sonnet 4.x 3 | 1,000 | 2,000,000 | 400,000"
+    },
+    {
+      "doc": "anthropic-limits",
+      "hash": "d0ac658698e73c08",
+      "addedOn": "2026-11-10",
+      "removedOn": null,
+      "path": "Rate limits > Cache-aware ITPM > Scale tier",
+      "header": "Model | Maximum requests per minute (RPM) | Maximum input tokens per minute (ITPM) | Maximum output tokens per minute (OTPM)",
+      "row": "Claude Fable 5.1 and Claude Fable 5 1 | 13,000 | 4,000,000 | 800,000"
+    },
+    {
+      "doc": "anthropic-limits",
+      "hash": "deb5c1404e0bdba2",
+      "addedOn": "2026-11-10",
+      "removedOn": null,
+      "path": "Rate limits > Cache-aware ITPM > Start tier",
+      "header": "Model | Maximum requests per minute (RPM) | Maximum input tokens per minute (ITPM) | Maximum output tokens per minute (OTPM)",
+      "row": "Claude Fable 5.1 and Claude Fable 5 1 | 4,000 | 500,000 | 100,000"
     },
     {
       "doc": "anthropic-limits",
@@ -1400,6 +1531,15 @@
     },
     {
       "doc": "anthropic-limits",
+      "hash": "f3f73951548a5c28",
+      "addedOn": "2026-11-10",
+      "removedOn": null,
+      "path": "Rate limits > Cache-aware ITPM > Build tier",
+      "header": "Model | Maximum requests per minute (RPM) | Maximum input tokens per minute (ITPM) | Maximum output tokens per minute (OTPM)",
+      "row": "Claude Fable 5.2 | 10,000 | 1,500,000 | 300,000"
+    },
+    {
+      "doc": "anthropic-limits",
       "hash": "f9531da4f87fb897",
       "addedOn": "2026-11-03",
       "removedOn": null,
@@ -1451,6 +1591,15 @@
       "path": "Claude Platform on AWS pricing",
       "header": "Concept | Details",
       "row": "Conversion | Token usage rated in USD at standard per-model, per-feature rates (same as Claude API pricing), then converted to CCUs at $0.01 USD per CCU"
+    },
+    {
+      "doc": "anthropic-pricing",
+      "hash": "07664c61ba012afc",
+      "addedOn": "2026-11-10",
+      "removedOn": null,
+      "path": "Feature-specific pricing > Fast mode pricing",
+      "header": "Model | Input | Output",
+      "row": "Claude Mythos 5.2 | $16 USD / MTok | $80 USD / MTok"
     },
     {
       "doc": "anthropic-pricing",
@@ -1634,6 +1783,15 @@
     },
     {
       "doc": "anthropic-pricing",
+      "hash": "3e3ab74017712fee",
+      "addedOn": "2026-11-10",
+      "removedOn": null,
+      "path": "Feature-specific pricing > Fast mode pricing",
+      "header": "Model | Input | Output",
+      "row": "Claude Fable 5.2 | $16 USD / MTok | $80 USD / MTok"
+    },
+    {
+      "doc": "anthropic-pricing",
       "hash": "3f699187ab25fae3",
       "addedOn": "2026-11-03",
       "removedOn": null,
@@ -1694,6 +1852,15 @@
       "path": "Feature-specific pricing > Batch processing",
       "header": "Model | Batch input | Batch output",
       "row": "Claude Opus 4.1 (retired, except on Bedrock and Claude Models on Google Cloud (Google managed)) | $7.50 / MTok | $37.50 / MTok"
+    },
+    {
+      "doc": "anthropic-pricing",
+      "hash": "50c3a63c32c14ede",
+      "addedOn": "2026-11-10",
+      "removedOn": null,
+      "path": "Model pricing",
+      "header": "Model | Base input tokens | 5m cache writes | 1h cache writes | Cache hits and refreshes | Output tokens",
+      "row": "Claude Fable 5.2 | $8 / MTok | $10 / MTok | $16 / MTok | $0.20 / MTok 1 | $40 / MTok"
     },
     {
       "doc": "anthropic-pricing",
@@ -1870,7 +2037,7 @@
       "doc": "anthropic-pricing",
       "hash": "8b852d37e3ffdec5",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-10",
       "path": "Feature-specific pricing > Prompt caching",
       "header": "Cache operation | Multiplier | Duration",
       "row": "Cache read (hit) | 0.1x base input price (0.025x on Claude Fable 5.1 and Claude Mythos 5.1; 0.05x on Claude Opus 5.5 and Claude Sonnet 5.5) | Same duration as the preceding write"
@@ -2003,6 +2170,24 @@
     },
     {
       "doc": "anthropic-pricing",
+      "hash": "acbeeb6e06f2e55b",
+      "addedOn": "2026-11-10",
+      "removedOn": null,
+      "path": "Feature-specific pricing > Batch processing",
+      "header": "Model | Batch input | Batch output",
+      "row": "Claude Fable 5.2 | $4 / MTok | $20 / MTok"
+    },
+    {
+      "doc": "anthropic-pricing",
+      "hash": "b46b70f5bf3502f7",
+      "addedOn": "2026-11-10",
+      "removedOn": null,
+      "path": "Model pricing",
+      "header": "Model | Base input tokens | 5m cache writes | 1h cache writes | Cache hits and refreshes | Output tokens",
+      "row": "Claude Mythos 5.2 (limited availability) | $8 / MTok | $10 / MTok | $16 / MTok | $0.20 / MTok 1 | $40 / MTok"
+    },
+    {
+      "doc": "anthropic-pricing",
       "hash": "b8dcc58c846143e2",
       "addedOn": "2026-11-03",
       "removedOn": null,
@@ -2072,6 +2257,15 @@
       "path": "Feature-specific pricing > Batch processing",
       "header": "Model | Batch input | Batch output",
       "row": "Claude Fable 5.1 | $5 / MTok | $25 / MTok"
+    },
+    {
+      "doc": "anthropic-pricing",
+      "hash": "d9d5c3cc1240c331",
+      "addedOn": "2026-11-10",
+      "removedOn": null,
+      "path": "Feature-specific pricing > Batch processing",
+      "header": "Model | Batch input | Batch output",
+      "row": "Claude Mythos 5.2 (limited availability) | $4 / MTok | $20 / MTok"
     },
     {
       "doc": "anthropic-pricing",
@@ -7477,7 +7671,7 @@
       "doc": "openai-pricing",
       "hash": "85509b3ab760ed4a",
       "addedOn": "2026-11-06",
-      "removedOn": null,
+      "removedOn": "2026-11-10",
       "path": "Pricing > Standard pricing data",
       "header": "Model | Short context input | Short context output | Short context cached input | Short context 30m write | Short context 12h write | Long context input | Long context output | Long context cached input | Long context 30m write | Long context 12h write",
       "row": "gpt-6-cyber | $20.00 | $100.00 | $2.00 | $25.00 | $50.00 | - | - | - | - | -"
@@ -8294,6 +8488,15 @@
     },
     {
       "doc": "openai-pricing",
+      "hash": "f4109ee684638a66",
+      "addedOn": "2026-11-10",
+      "removedOn": null,
+      "path": "Pricing > Standard pricing data",
+      "header": "Model | Short context input | Short context output | Short context cached input | Short context 30m write | Short context 12h write | Long context input | Long context output | Long context cached input | Long context 30m write | Long context 12h write",
+      "row": "gpt-6-cyber | $20.00 | $100.00 | $2.00 | $25.00 | $50.00 | $40.00 | $150.00 | $4.00 | - | -"
+    },
+    {
+      "doc": "openai-pricing",
       "hash": "f4de1d1f1b2d1218",
       "addedOn": "2026-11-03",
       "removedOn": null,
@@ -8413,18 +8616,18 @@
   "docs": [
     {
       "doc": "anthropic-deprecations",
-      "hash": "dff781a1f1bbf3c53450a89c0758147001197eb5f0d99d02abcc52dddd7f2313",
-      "storedOn": "2026-11-09"
+      "hash": "a04f5853f198f546cbf1927059fc701c3ea82aacf709a9a66f3bf37855045b03",
+      "storedOn": "2026-11-10"
     },
     {
       "doc": "anthropic-limits",
-      "hash": "f3592ee54e179674154432d3cba26639af9d0a43d20f880f20d51da776550965",
-      "storedOn": "2026-11-09"
+      "hash": "670eb7cb68b1e9e1ddfef4b454686567650b17b889969beac215117fde2289a5",
+      "storedOn": "2026-11-10"
     },
     {
       "doc": "anthropic-pricing",
-      "hash": "5864b14c0eb020db52f96b3f42787810ad65d3f28823e317c03b7e9ca345aa49",
-      "storedOn": "2026-11-09"
+      "hash": "4fe2b894c1ec51f87e10428bb630886489c6a668fb674bc607a2c36a6834aabb",
+      "storedOn": "2026-11-10"
     },
     {
       "doc": "gemini-deprecations",
@@ -8439,174 +8642,180 @@
     {
       "doc": "openai-deprecations",
       "hash": "49e382e18bf8e14ea82d099a21a1f2b818b72603424518519eb908b419b45be1",
-      "storedOn": "2026-11-09"
+      "storedOn": "2026-11-10"
     },
     {
       "doc": "openai-pricing",
-      "hash": "f1ade44afc62fd8a12dd6e199bcecaa989a94c9b691aa620a34e1504ff62ff57",
-      "storedOn": "2026-11-09"
+      "hash": "825519a5f7b52a812cd19c6c4cebd5f6b9c395a1b292bda80a04cbaf88981428",
+      "storedOn": "2026-11-10"
     }
   ],
   "sources": [
     {
       "source": "anthropic-deprecations",
-      "fetchedAt": "2026-11-08T21:51:52.621Z",
+      "fetchedAt": "2026-11-10T00:39:30.818Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "anthropic-limits",
-      "fetchedAt": "2026-11-08T21:51:52.621Z",
+      "fetchedAt": "2026-11-10T00:39:30.818Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "anthropic-pricing",
-      "fetchedAt": "2026-11-08T21:51:52.621Z",
+      "fetchedAt": "2026-11-10T00:39:30.818Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "claude-code",
-      "fetchedAt": "2026-11-08T21:51:52.621Z",
+      "fetchedAt": "2026-11-10T00:39:30.818Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "claude-notes",
-      "fetchedAt": "2026-11-08T21:51:52.621Z",
+      "fetchedAt": "2026-11-10T00:39:30.818Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "cloudflare",
       "fetchedAt": null,
-      "failDays": 7,
-      "failOn": "2026-11-09"
+      "failDays": 8,
+      "failOn": "2026-11-10"
     },
     {
       "source": "codex",
       "fetchedAt": null,
-      "failDays": 7,
-      "failOn": "2026-11-09"
+      "failDays": 8,
+      "failOn": "2026-11-10"
     },
     {
       "source": "copilot",
-      "fetchedAt": "2026-11-08T21:51:52.621Z",
+      "fetchedAt": "2026-11-10T00:39:30.818Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "eol-nextjs",
-      "fetchedAt": "2026-11-08T21:51:52.621Z",
+      "fetchedAt": "2026-11-10T00:39:30.818Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "eol-nodejs",
-      "fetchedAt": "2026-11-08T21:51:52.621Z",
+      "fetchedAt": "2026-11-10T00:39:30.818Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "gemini-cli",
-      "fetchedAt": "2026-11-08T21:51:52.621Z",
+      "fetchedAt": "2026-11-10T00:39:30.818Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "gemini-deprecations",
       "fetchedAt": "2026-11-02T23:28:54.103Z",
-      "failDays": 6,
-      "failOn": "2026-11-09"
+      "failDays": 7,
+      "failOn": "2026-11-10"
     },
     {
       "source": "gemini-pricing",
       "fetchedAt": "2026-11-02T23:28:54.103Z",
-      "failDays": 6,
-      "failOn": "2026-11-09"
+      "failDays": 7,
+      "failOn": "2026-11-10"
     },
     {
       "source": "ghsa",
-      "fetchedAt": "2026-11-08T21:51:52.621Z",
+      "fetchedAt": "2026-11-10T00:39:30.818Z",
       "failDays": 0,
       "failOn": null
     },
     {
+      "source": "github-repos",
+      "fetchedAt": null,
+      "failDays": 1,
+      "failOn": "2026-11-10"
+    },
+    {
       "source": "kev",
-      "fetchedAt": "2026-11-08T21:51:52.621Z",
+      "fetchedAt": "2026-11-10T00:39:30.818Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "mcp-spec",
-      "fetchedAt": "2026-11-08T21:51:52.621Z",
+      "fetchedAt": "2026-11-10T00:39:30.818Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "nextjs",
-      "fetchedAt": "2026-11-08T21:51:52.621Z",
+      "fetchedAt": "2026-11-10T00:39:30.818Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "nodejs",
-      "fetchedAt": "2026-11-08T21:51:52.621Z",
+      "fetchedAt": "2026-11-10T00:39:30.818Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "openai-deprecations",
-      "fetchedAt": "2026-11-08T21:51:52.621Z",
+      "fetchedAt": "2026-11-10T00:39:30.818Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "openai-pricing",
-      "fetchedAt": "2026-11-08T21:51:52.621Z",
+      "fetchedAt": "2026-11-10T00:39:30.818Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "product-hunt",
       "fetchedAt": "2026-11-08T21:52:10.746Z",
-      "failDays": 0,
-      "failOn": null
+      "failDays": 1,
+      "failOn": "2026-11-10"
     },
     {
       "source": "react",
-      "fetchedAt": "2026-11-08T21:51:52.621Z",
+      "fetchedAt": "2026-11-10T00:39:30.818Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "socket",
-      "fetchedAt": "2026-11-08T21:51:52.621Z",
+      "fetchedAt": "2026-11-10T00:39:30.818Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "supabase",
-      "fetchedAt": "2026-11-08T21:51:52.621Z",
+      "fetchedAt": "2026-11-10T00:39:30.818Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "typescript",
-      "fetchedAt": "2026-11-08T21:51:52.621Z",
+      "fetchedAt": "2026-11-10T00:39:30.818Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "vercel",
-      "fetchedAt": "2026-11-08T21:51:52.621Z",
+      "fetchedAt": "2026-11-10T00:39:30.818Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "vite",
-      "fetchedAt": "2026-11-08T21:51:52.621Z",
+      "fetchedAt": "2026-11-10T00:39:30.818Z",
       "failDays": 0,
       "failOn": null
     }
@@ -9409,6 +9618,16 @@
       "date": "2026-11-08",
       "kind": "repo",
       "status": "checked"
+    },
+    {
+      "date": "2026-11-09",
+      "kind": "product",
+      "status": "failed"
+    },
+    {
+      "date": "2026-11-09",
+      "kind": "repo",
+      "status": "failed"
     }
   ],
   "discoveryCorrections": []
