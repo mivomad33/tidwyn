@@ -369,7 +369,7 @@
       "name": "아부다비 미국·러시아·우크라이나 3자 평화협상",
       "due": "2026-11-10",
       "major": "국제",
-      "outcome": null,
+      "outcome": "result",
       "postponedTo": null,
       "mergedInto": null,
       "deleted": false,
@@ -677,6 +677,61 @@
       "name": "COP31 튀르키예 안탈리아 폐막",
       "due": "2026-11-20",
       "major": "과학·건강",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 63,
+      "name": "대법원 전원합의체 한덕수 상고심 2차 심리",
+      "due": "2026-11-19",
+      "major": "사회",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 64,
+      "name": "한덕수 헌법재판관 미임명 사건 1심 선고",
+      "due": "2026-11-30",
+      "major": "사회",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 65,
+      "name": "공정위 네이버파이낸셜·두나무 기업결합 전원회의",
+      "due": "2026-11-18",
+      "major": "경제",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 66,
+      "name": "곽상도 대장동 50억 사건 항소심 선고",
+      "due": "2027-01-19",
+      "major": "사회",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 67,
+      "name": "OpenAI gpt-image-2 지원 종료",
+      "due": "2027-02-10",
+      "major": "IT·AI",
       "outcome": null,
       "postponedTo": null,
       "mergedInto": null,
@@ -1174,6 +1229,41 @@
       "story": "2026-11-09/한국-2",
       "schedule": 57,
       "role": "result"
+    },
+    {
+      "story": "2026-11-10/세계-1",
+      "schedule": 7,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-10/세계-2",
+      "schedule": 34,
+      "role": "result"
+    },
+    {
+      "story": "2026-11-10/세계-4",
+      "schedule": 10,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-10/한국-4",
+      "schedule": 63,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-10/한국-4",
+      "schedule": 64,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-10/한국-5",
+      "schedule": 65,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-10/한국-s1",
+      "schedule": 66,
+      "role": "basis"
     }
   ],
   "merges": [],

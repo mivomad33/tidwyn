@@ -619,6 +619,109 @@
         "https://socket.dev/blog/bee-js-compromise"
       ],
       "schedules": []
+    },
+    {
+      "id": 23,
+      "date": "2026-11-10",
+      "position": 1,
+      "field": "보안",
+      "title": "React Server Components 원격 코드 실행 취약점",
+      "whatChanged": "react-server-dom-webpack에서 인증 없이 서버에서 코드를 실행할 수 있는 치명적 취약점(CVE-2026-126187)이 공개됐다. 영향 범위는 19.0.0 이상 19.0.9 미만이고, 19.0.9에서 고쳐졌다.",
+      "who": "React Server Components를 쓰는 앱(react-server-dom-webpack 19.0.x)",
+      "action": "react-server-dom-webpack을 19.0.9 이상으로 올리고, 이 패키지를 묶어 쓰는 프레임워크의 패치 버전도 확인한다.",
+      "why": "인증 없는 원격 코드 실행이라 공개된 서버가 바로 위험하다.",
+      "due": null,
+      "sources": [
+        {
+          "name": "GitHub 보안 공지",
+          "url": "https://github.com/advisories/GHSA-xqc2-xf4c-x3h3"
+        }
+      ],
+      "issue": null,
+      "reminderOf": null,
+      "keys": [
+        "ghsa:GHSA-xqc2-xf4c-x3h3"
+      ],
+      "schedules": []
+    },
+    {
+      "id": 24,
+      "date": "2026-11-10",
+      "position": 2,
+      "field": "보안",
+      "title": "Mongoose 6.x 쿼리 필터·속성 덮어쓰기 취약점 3건",
+      "whatChanged": "npm mongoose에 보안 공지 3건이 나왔다. countDocuments와 연결 단위 설정에서 sanitizeFilter가 적용되지 않는 문제(치명적 1건, 높음 1건)와, 상속된 속성을 따라가 기본 함수를 덮어쓸 수 있는 문제(높음)다. 6.13.12 미만이 영향을 받는다.",
+      "who": "mongoose 6.x로 MongoDB를 쓰는 Node.js 서비스",
+      "action": "mongoose를 6.13.12 이상으로 올리고, sanitizeFilter에 기대던 쿼리를 다시 확인한다.",
+      "why": "주간 다운로드가 많은 패키지의 치명적 취약점이다.",
+      "due": null,
+      "sources": [
+        {
+          "name": "GitHub 보안 공지",
+          "url": "https://github.com/advisories/GHSA-pcrw-h46h-c93h"
+        }
+      ],
+      "issue": null,
+      "reminderOf": null,
+      "keys": [
+        "ghsa:GHSA-8332-j7wj-wjw4",
+        "ghsa:GHSA-gg4r-jv3p-qx3c",
+        "ghsa:GHSA-pcrw-h46h-c93h"
+      ],
+      "schedules": []
+    },
+    {
+      "id": 25,
+      "date": "2026-11-10",
+      "position": 3,
+      "field": "모델",
+      "title": "OpenAI gpt-image-2, 2027년 2월 10일 종료",
+      "whatChanged": "OpenAI가 gpt-image-2와 gpt-image-2-2026-04-21을 2027년 2월 10일에 끝낸다고 지원 종료 목록에 올렸다. 대체 모델은 gpt-image-2.6-sunburst 또는 gpt-image-2.6-flare다.",
+      "who": "API에서 gpt-image-2 계열로 이미지를 만드는 개발자",
+      "action": "모델 이름을 gpt-image-2.6 계열로 바꾸고, 결과물 품질과 비용을 미리 견줘 본다.",
+      "why": "기한을 놓치면 이미지 생성 호출이 실패한다.",
+      "due": {
+        "date": "2027-02-10",
+        "state": "confirmed"
+      },
+      "sources": [
+        {
+          "name": "OpenAI 지원 종료",
+          "url": "https://developers.openai.com/api/docs/deprecations"
+        }
+      ],
+      "issue": null,
+      "reminderOf": null,
+      "keys": [
+        "deprecation:gpt-image-2:2027-02-10:확정"
+      ],
+      "schedules": [
+        67
+      ]
+    },
+    {
+      "id": 26,
+      "date": "2026-11-10",
+      "position": 4,
+      "field": "코딩 도구",
+      "title": "GitHub Copilot에서 Gemini 4 Carbon 정식 제공",
+      "whatChanged": "구글의 새 모델 Gemini 4 Carbon을 GitHub Copilot에서 정식으로 고를 수 있게 됐다. GitHub는 복잡한 코딩, 에이전트 작업, 추론에 맞춘 모델이라고 소개했다.",
+      "who": "GitHub Copilot에서 모델을 골라 쓰는 개발자",
+      "action": "Copilot 모델 선택에서 Gemini 4 Carbon을 켜고, 자주 하는 작업으로 기존 모델과 결과를 견줘 본다.",
+      "why": "주요 코딩 도구에 새 모델 선택지가 생겼다.",
+      "due": null,
+      "sources": [
+        {
+          "name": "Copilot 변경 기록",
+          "url": "https://github.blog/changelog/2026-11-10-gemini-4-carbon-in-github-copilot"
+        }
+      ],
+      "issue": 48,
+      "reminderOf": null,
+      "keys": [
+        "https://github.blog/changelog/2026-11-10-gemini-4-carbon-in-github-copilot"
+      ],
+      "schedules": []
     }
   ],
   "dates": [
@@ -652,6 +755,10 @@
     },
     {
       "date": "2026-11-09",
+      "status": "partial"
+    },
+    {
+      "date": "2026-11-10",
       "status": "partial"
     }
   ],
@@ -6283,6 +6390,15 @@
     },
     {
       "doc": "openai-deprecations",
+      "hash": "953c20423224f6fb",
+      "addedOn": "2026-11-11",
+      "removedOn": null,
+      "path": "Deprecations > Upcoming deprecations > 2026-11-10: GPT Image 2",
+      "header": "Shutdown date | Model / system | Recommended replacement",
+      "row": "February 10, 2027 | `gpt-image-2` | `gpt-image-2-2026-04-21` | `gpt-image-2.6-sunburst` or `gpt-image-2.6-flare`"
+    },
+    {
+      "doc": "openai-deprecations",
       "hash": "956989f7e4c5378b",
       "addedOn": "2026-11-03",
       "removedOn": null,
@@ -6904,9 +7020,18 @@
     },
     {
       "doc": "openai-pricing",
+      "hash": "0314a89b1da7d5a3",
+      "addedOn": "2026-11-11",
+      "removedOn": null,
+      "path": "Pricing > Grouped Pricing Table data",
+      "header": "Model | Modality | Input | Output | Cached input",
+      "row": "gpt-realtime-2 | Image | $5.00 | - | $0.50"
+    },
+    {
+      "doc": "openai-pricing",
       "hash": "03c7ec8545edcf60",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-11",
       "path": "Pricing > Grouped Pricing Table data",
       "header": "Tool | Details | Pricing",
       "row": "Web search | Web search preview (non-reasoning models) | $25.00 / 1k calls + Search content tokens are free."
@@ -6933,7 +7058,7 @@
       "doc": "openai-pricing",
       "hash": "06d78f35c128426e",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-11",
       "path": "Pricing > Grouped Pricing Table data",
       "header": "Category | Model | Input | Output | Cached input",
       "row": "Embedding | text-embedding-3-large | $0.13 | - | -"
@@ -6942,7 +7067,7 @@
       "doc": "openai-pricing",
       "hash": "0868eae88024b193",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-11",
       "path": "Pricing > Grouped Pricing Table data",
       "header": "Model | Modality | Input | Output / cost | Cached input",
       "row": "gpt-realtime-2.1-mini | Audio | $10.00 | $20.00 | $0.30"
@@ -6951,10 +7076,28 @@
       "doc": "openai-pricing",
       "hash": "0aff1aabbc1482cb",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-11",
       "path": "Pricing > Grouped Pricing Table data",
       "header": "Category | Model | Input | Output | Cached input",
       "row": "Search | gpt-5-search-api | $1.25 | $10.00 | $0.125"
+    },
+    {
+      "doc": "openai-pricing",
+      "hash": "0b773d6c98e1cc04",
+      "addedOn": "2026-11-11",
+      "removedOn": null,
+      "path": "Pricing > Grouped Pricing Table data",
+      "header": "Category | Model | Input | Output | Cached input | 30m write | 12h write",
+      "row": "Cyber — Trusted Access: Daybreak | gpt-5.6-cyber (long context) | - | - | - | - | -"
+    },
+    {
+      "doc": "openai-pricing",
+      "hash": "0ba031b9afa14be6",
+      "addedOn": "2026-11-11",
+      "removedOn": null,
+      "path": "Pricing > Grouped Pricing Table data",
+      "header": "Model | Modality | Input | Output | Cached input",
+      "row": "gpt-realtime-2.1-mini | Text | $0.60 | $2.40 | $0.06"
     },
     {
       "doc": "openai-pricing",
@@ -6996,7 +7139,7 @@
       "doc": "openai-pricing",
       "hash": "114b4809655e40dc",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-11",
       "path": "Pricing > Grouped Pricing Table data",
       "header": "Tool | Details | Pricing",
       "row": "Containers | Hosted Shell and Code Interpreter | 1 GB $0.03, 4 GB $0.12, 16 GB $0.48, 64 GB $1.92 per 20-minute session per container."
@@ -7005,7 +7148,7 @@
       "doc": "openai-pricing",
       "hash": "11bf34221a319ce0",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-11",
       "path": "Pricing > Standard pricing data",
       "header": "Model | Short context input | Short context output | Short context cached input | Short context 30m write | Short context 12h write | Long context input | Long context output | Long context cached input | Long context 30m write | Long context 12h write",
       "row": "gpt-rosalind-discovery | $5.00 | $25.00 | $0.50 | - | - | - | - | - | - | -"
@@ -7032,7 +7175,7 @@
       "doc": "openai-pricing",
       "hash": "148093453cb07a99",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-11",
       "path": "Pricing > Grouped Pricing Table data",
       "header": "Model configuration | Input | Output | Cached input",
       "row": "gpt-6-astra-law | $10.00 | $50.00 | $1.00"
@@ -7050,7 +7193,7 @@
       "doc": "openai-pricing",
       "hash": "179d419d2be4236f",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-11",
       "path": "Pricing > Grouped Pricing Table data",
       "header": "Category | Model | Input | Output | Cached input",
       "row": "Embedding | text-embedding-3-small | $0.02 | - | -"
@@ -7111,9 +7254,27 @@
     },
     {
       "doc": "openai-pricing",
+      "hash": "1ea2ccd09959ff8d",
+      "addedOn": "2026-11-11",
+      "removedOn": null,
+      "path": "Pricing > Grouped Pricing Table data",
+      "header": "Model | Modality | Input | Output | Cached input",
+      "row": "gpt-realtime-2.1 | Image | $5.00 | - | $0.50"
+    },
+    {
+      "doc": "openai-pricing",
+      "hash": "215b138fca060bec",
+      "addedOn": "2026-11-11",
+      "removedOn": null,
+      "path": "Pricing > Grouped Pricing Table data",
+      "header": "Tool | Details | Pricing",
+      "row": "Web search | Web search preview (other models) | $25.00 / 1k calls + Search content tokens are free."
+    },
+    {
+      "doc": "openai-pricing",
       "hash": "225423903b9e5d7b",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-11",
       "path": "Pricing > Grouped Pricing Table data",
       "header": "Model | Modality | Input | Output / cost | Cached input",
       "row": "gpt-realtime-1.5 | Text | $4.00 | $16.00 | $0.40"
@@ -7122,10 +7283,19 @@
       "doc": "openai-pricing",
       "hash": "232b75690c8e901a",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-11",
       "path": "Pricing > Grouped Pricing Table data",
       "header": "Model | Modality | Input | Output / cost | Cached input",
       "row": "gpt-audio-1.5 | Audio | $32.00 | $64.00 | -"
+    },
+    {
+      "doc": "openai-pricing",
+      "hash": "23a638cb76d6d197",
+      "addedOn": "2026-11-11",
+      "removedOn": null,
+      "path": "Pricing > Grouped Pricing Table data",
+      "header": "Category | Model | Input | Output | Cached input | 30m write | 12h write",
+      "row": "ChatGPT | chat-latest | $5.00 | $30.00 | $0.50 | - | -"
     },
     {
       "doc": "openai-pricing",
@@ -7138,6 +7308,15 @@
     },
     {
       "doc": "openai-pricing",
+      "hash": "24225d788511d965",
+      "addedOn": "2026-11-11",
+      "removedOn": null,
+      "path": "Pricing > Grouped Pricing Table data",
+      "header": "Model | Modality | Input | Output | Cached input",
+      "row": "gpt-realtime-2.1 | Text | $4.00 | $24.00 | $0.40"
+    },
+    {
+      "doc": "openai-pricing",
       "hash": "24c34ff90c0f14d8",
       "addedOn": "2026-11-03",
       "removedOn": null,
@@ -7147,12 +7326,48 @@
     },
     {
       "doc": "openai-pricing",
+      "hash": "2609f680851a233b",
+      "addedOn": "2026-11-11",
+      "removedOn": null,
+      "path": "Pricing > Grouped Pricing Table data",
+      "header": "Category | Model | Input | Output | Cached input | 30m write | 12h write",
+      "row": "Embedding | text-embedding-ada-002 | $0.10 | - | - | - | -"
+    },
+    {
+      "doc": "openai-pricing",
+      "hash": "27fdd1c931d10c41",
+      "addedOn": "2026-11-11",
+      "removedOn": null,
+      "path": "Pricing > Grouped Pricing Table data",
+      "header": "Model | Modality | Input | Output | Cached input",
+      "row": "gpt-4o-mini-tts | Audio | - | $12.00 | -"
+    },
+    {
+      "doc": "openai-pricing",
+      "hash": "2803f71ef828048e",
+      "addedOn": "2026-11-11",
+      "removedOn": null,
+      "path": "Pricing > Grouped Pricing Table data",
+      "header": "Model | Modality | Input | Output | Cached input",
+      "row": "gpt-realtime-2.1-mini | Audio | $10.00 | $20.00 | $0.30"
+    },
+    {
+      "doc": "openai-pricing",
       "hash": "29d7b1bef3d009a1",
       "addedOn": "2026-11-03",
       "removedOn": null,
       "path": "Pricing > Batch pricing data > Batch",
       "header": "Model | Short context input | Short context output | Short context cached input | Short context 30m write | Short context 12h write | Long context input | Long context output | Long context cached input | Long context 30m write | Long context 12h write",
       "row": "gpt-5.6-sol | $2.00 | $10.00 | $0.20 | $2.50 | $5.00 | $4.00 | $15.00 | $0.40 | $5.00 | $10.00"
+    },
+    {
+      "doc": "openai-pricing",
+      "hash": "2a70cf57a5b1e4bc",
+      "addedOn": "2026-11-11",
+      "removedOn": null,
+      "path": "Pricing > Grouped Pricing Table data",
+      "header": "Model | Modality | Input | Output | Cached input",
+      "row": "gpt-realtime-1.5 | Audio | $32.00 | $64.00 | $0.40"
     },
     {
       "doc": "openai-pricing",
@@ -7171,6 +7386,15 @@
       "path": "Pricing > Fast pricing data",
       "header": "Model | Input | Output | Cached input",
       "row": "gpt-4o | $4.25 | $17.00 | $2.125"
+    },
+    {
+      "doc": "openai-pricing",
+      "hash": "2c15f629b7af5705",
+      "addedOn": "2026-11-11",
+      "removedOn": null,
+      "path": "Pricing > Grouped Pricing Table data",
+      "header": "Model | Modality | Input | Output | Cached input",
+      "row": "gpt-4o-mini-tts | Text | $0.60 | - | -"
     },
     {
       "doc": "openai-pricing",
@@ -7228,6 +7452,42 @@
     },
     {
       "doc": "openai-pricing",
+      "hash": "351f18af20255f9e",
+      "addedOn": "2026-11-11",
+      "removedOn": null,
+      "path": "Pricing > Grouped Pricing Table data",
+      "header": "Category | Model | Input | Output | Cached input | 30m write | 12h write",
+      "row": "Life Sciences — Trusted Access: Rosalind | gpt-6-rosalind (short context) | $15.00 | $75.00 | $1.50 | $18.75 | $37.50"
+    },
+    {
+      "doc": "openai-pricing",
+      "hash": "35617ef5277fd0b2",
+      "addedOn": "2026-11-11",
+      "removedOn": null,
+      "path": "Pricing > Grouped Pricing Table data",
+      "header": "Category | Model | Input | Output | Cached input | 30m write | 12h write",
+      "row": "Embedding | text-embedding-3-small | $0.02 | - | - | - | -"
+    },
+    {
+      "doc": "openai-pricing",
+      "hash": "35f913c93df6cac4",
+      "addedOn": "2026-11-11",
+      "removedOn": null,
+      "path": "Pricing > Grouped Pricing Table data",
+      "header": "Category | Model | Input | Output | Cached input | 30m write | 12h write",
+      "row": "Embedding | text-embedding-3-large | $0.13 | - | - | - | -"
+    },
+    {
+      "doc": "openai-pricing",
+      "hash": "360318443338084f",
+      "addedOn": "2026-11-11",
+      "removedOn": null,
+      "path": "Pricing > Grouped Pricing Table data",
+      "header": "Model | Modality | Input | Output | Cached input",
+      "row": "gpt-audio-1.5 | Text | $2.50 | $10.00 | -"
+    },
+    {
+      "doc": "openai-pricing",
       "hash": "3843876851a2df97",
       "addedOn": "2026-11-03",
       "removedOn": null,
@@ -7266,7 +7526,7 @@
       "doc": "openai-pricing",
       "hash": "3e0c02a6cf9e1704",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-11",
       "path": "Pricing > Standard pricing data",
       "header": "Model | Short context input | Short context output | Short context cached input | Short context 30m write | Short context 12h write | Long context input | Long context output | Long context cached input | Long context 30m write | Long context 12h write",
       "row": "gpt-5.5-cyber | $12.50 | $75.00 | $1.25 | - | - | - | - | - | - | -"
@@ -7279,6 +7539,15 @@
       "path": "Pricing > Grouped Pricing Table data",
       "header": "Model | Modality | Input | Output | Cached input",
       "row": "gpt-image-2.6-flare | Image | $8.00 | $30.00 | $2.00"
+    },
+    {
+      "doc": "openai-pricing",
+      "hash": "3f962614c836d06b",
+      "addedOn": "2026-11-11",
+      "removedOn": null,
+      "path": "Pricing > Grouped Pricing Table data",
+      "header": "Tool | Details | Pricing",
+      "row": "Web search | Web search (incl. images) | $10.00 / 1k calls + Search content tokens billed at model rates."
     },
     {
       "doc": "openai-pricing",
@@ -7354,6 +7623,15 @@
     },
     {
       "doc": "openai-pricing",
+      "hash": "4c5625f0d3360975",
+      "addedOn": "2026-11-11",
+      "removedOn": null,
+      "path": "Pricing > Grouped Pricing Table data",
+      "header": "Model | Modality | Input | Output | Cached input",
+      "row": "gpt-realtime | Audio | $32.00 | $64.00 | $0.40"
+    },
+    {
+      "doc": "openai-pricing",
       "hash": "4cde3910127bd838",
       "addedOn": "2026-11-03",
       "removedOn": null,
@@ -7374,7 +7652,7 @@
       "doc": "openai-pricing",
       "hash": "4eff08dc5ec239e2",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-11",
       "path": "Pricing > Grouped Pricing Table data",
       "header": "Tool | Details | Pricing",
       "row": "Web search | Web search preview (reasoning models, including `gpt-5`, `o-series`) | $10.00 / 1k calls + Search content tokens billed at model rates."
@@ -7383,7 +7661,7 @@
       "doc": "openai-pricing",
       "hash": "4f69a4c1c89dd881",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-11",
       "path": "Pricing > Grouped Pricing Table data",
       "header": "Model | Modality | Input | Output / cost | Cached input",
       "row": "gpt-audio | Audio | $32.00 | $64.00 | -"
@@ -7426,6 +7704,15 @@
     },
     {
       "doc": "openai-pricing",
+      "hash": "53b70ffa7401df81",
+      "addedOn": "2026-11-11",
+      "removedOn": null,
+      "path": "Pricing > Grouped Pricing Table data",
+      "header": "Tool | Details | Pricing",
+      "row": "File search | Storage | $0.10 / GB per day 1 GB free"
+    },
+    {
+      "doc": "openai-pricing",
       "hash": "548fa5d0fc5b50cf",
       "addedOn": "2026-11-03",
       "removedOn": null,
@@ -7437,7 +7724,7 @@
       "doc": "openai-pricing",
       "hash": "54a97afb1745af06",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-11",
       "path": "Pricing > Grouped Pricing Table data",
       "header": "Model | Modality | Input | Output / cost | Cached input",
       "row": "gpt-realtime-1.5 | Image | $5.00 | - | $0.50"
@@ -7446,10 +7733,19 @@
       "doc": "openai-pricing",
       "hash": "5e8f8877dab27e61",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-11",
       "path": "Pricing > Grouped Pricing Table data",
       "header": "Tool | Details | Pricing",
       "row": "Agent Kit | ChatKit file and image upload storage | $0.10 / GB-day after 1 GB free per account per month"
+    },
+    {
+      "doc": "openai-pricing",
+      "hash": "5f6781e5ed3e813e",
+      "addedOn": "2026-11-11",
+      "removedOn": null,
+      "path": "Pricing > Grouped Pricing Table data",
+      "header": "Category | Model | Input | Output | Cached input | 30m write | 12h write",
+      "row": "Cyber — Trusted Access: Daybreak | gpt-5.6-cyber (short context) | $12.50 | $75.00 | $1.25 | $15.625 | $31.25"
     },
     {
       "doc": "openai-pricing",
@@ -7464,7 +7760,7 @@
       "doc": "openai-pricing",
       "hash": "6286451f16e52c80",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-11",
       "path": "Pricing > Grouped Pricing Table data",
       "header": "Model | Modality | Input | Output / cost | Cached input",
       "row": "gpt-realtime | Image | $5.00 | - | $0.50"
@@ -7473,7 +7769,7 @@
       "doc": "openai-pricing",
       "hash": "638fc79adf1ed541",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-11",
       "path": "Pricing > Grouped Pricing Table data",
       "header": "Model | Modality | Input | Output / cost | Cached input",
       "row": "gpt-4o-mini-tts | Text | $0.60 | - | -"
@@ -7482,7 +7778,7 @@
       "doc": "openai-pricing",
       "hash": "64f899ab966fb1bc",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-11",
       "path": "Pricing > Grouped Pricing Table data",
       "header": "Category | Model | Input | Output | Cached input",
       "row": "Embedding | text-embedding-ada-002 | $0.10 | - | -"
@@ -7491,7 +7787,7 @@
       "doc": "openai-pricing",
       "hash": "65ecf87e6b3f5e27",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-11",
       "path": "Pricing > Grouped Pricing Table data",
       "header": "Model | Modality | Input | Output / cost | Cached input",
       "row": "gpt-realtime | Audio | $32.00 | $64.00 | $0.40"
@@ -7500,7 +7796,7 @@
       "doc": "openai-pricing",
       "hash": "670529c3b618482e",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-11",
       "path": "Pricing > Grouped Pricing Table data",
       "header": "Model | Modality | Input | Output / cost | Cached input",
       "row": "gpt-realtime-2 | Text | $4.00 | $24.00 | $0.40"
@@ -7518,10 +7814,19 @@
       "doc": "openai-pricing",
       "hash": "68ff5de446c246ec",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-11",
       "path": "Pricing > Grouped Pricing Table data",
       "header": "Model | Modality | Input | Output / cost | Cached input",
       "row": "gpt-realtime-1.5 | Audio | $32.00 | $64.00 | $0.40"
+    },
+    {
+      "doc": "openai-pricing",
+      "hash": "69960afbee99975b",
+      "addedOn": "2026-11-11",
+      "removedOn": null,
+      "path": "Pricing > Grouped Pricing Table data",
+      "header": "Tool | Details | Pricing",
+      "row": "Agent Kit | ChatKit file and image upload storage | $0.10 / GB-day 1 GB free"
     },
     {
       "doc": "openai-pricing",
@@ -7543,6 +7848,15 @@
     },
     {
       "doc": "openai-pricing",
+      "hash": "6cd1d58140700bac",
+      "addedOn": "2026-11-11",
+      "removedOn": null,
+      "path": "Pricing > Grouped Pricing Table data",
+      "header": "Model | Modality | Input | Output | Cached input",
+      "row": "gpt-audio-mini | Text | $0.60 | $2.40 | -"
+    },
+    {
+      "doc": "openai-pricing",
       "hash": "6ffec78a69926817",
       "addedOn": "2026-11-03",
       "removedOn": null,
@@ -7561,9 +7875,18 @@
     },
     {
       "doc": "openai-pricing",
+      "hash": "724fb59342a515ea",
+      "addedOn": "2026-11-11",
+      "removedOn": null,
+      "path": "Pricing > Grouped Pricing Table data",
+      "header": "Category | Model | Input | Output | Cached input | 30m write | 12h write",
+      "row": "Search | gpt-5-search-api | $1.25 | $10.00 | $0.125 | - | -"
+    },
+    {
+      "doc": "openai-pricing",
       "hash": "728185ed7f9a46b8",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-11",
       "path": "Pricing > Grouped Pricing Table data",
       "header": "Model | Modality | Input | Output / cost | Cached input",
       "row": "gpt-audio-mini | Audio | $10.00 | $20.00 | -"
@@ -7599,7 +7922,7 @@
       "doc": "openai-pricing",
       "hash": "740dd5fc2fb8e0db",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-11",
       "path": "Pricing > Grouped Pricing Table data",
       "header": "Tool | Details | Pricing",
       "row": "File search | Storage | $0.10 / GB per day (1 GB free)"
@@ -7608,7 +7931,7 @@
       "doc": "openai-pricing",
       "hash": "77ca952f9ef5c420",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-11",
       "path": "Pricing > Grouped Pricing Table data",
       "header": "Model | Modality | Input | Output / cost | Cached input",
       "row": "gpt-realtime | Text | $4.00 | $16.00 | $0.40"
@@ -7626,7 +7949,7 @@
       "doc": "openai-pricing",
       "hash": "7b1105253ca5ed6c",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-11",
       "path": "Pricing > Standard pricing data",
       "header": "Model | Short context input | Short context output | Short context cached input | Short context 30m write | Short context 12h write | Long context input | Long context output | Long context cached input | Long context 30m write | Long context 12h write",
       "row": "gpt-rosalind-research | $5.00 | $25.00 | $0.50 | - | - | - | - | - | - | -"
@@ -7644,7 +7967,7 @@
       "doc": "openai-pricing",
       "hash": "7c5ae37cba0954f9",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-11",
       "path": "Pricing > Grouped Pricing Table data",
       "header": "Model | Modality | Input | Output / cost | Cached input",
       "row": "gpt-realtime-2 | Audio | $32.00 | $64.00 | $0.40"
@@ -7666,6 +7989,33 @@
       "path": "Pricing > Grouped Pricing Table data",
       "header": "Model | Modality | Input | Output | Cached input",
       "row": "gpt-image-1-mini | Image | $2.50 | $8.00 | $0.25"
+    },
+    {
+      "doc": "openai-pricing",
+      "hash": "8138021b7ca2b4ca",
+      "addedOn": "2026-11-11",
+      "removedOn": null,
+      "path": "Pricing > Grouped Pricing Table data",
+      "header": "Model | Modality | Input | Output | Cached input",
+      "row": "gpt-realtime | Text | $4.00 | $16.00 | $0.40"
+    },
+    {
+      "doc": "openai-pricing",
+      "hash": "81fd46b0d0b979e2",
+      "addedOn": "2026-11-11",
+      "removedOn": null,
+      "path": "Pricing > Grouped Pricing Table data",
+      "header": "Model | Modality | Input | Output | Cached input",
+      "row": "gpt-audio | Audio | $32.00 | $64.00 | -"
+    },
+    {
+      "doc": "openai-pricing",
+      "hash": "8236d52623424389",
+      "addedOn": "2026-11-11",
+      "removedOn": null,
+      "path": "Pricing > Grouped Pricing Table data",
+      "header": "Model | Modality | Input | Output | Cached input",
+      "row": "gpt-realtime-2 | Text | $4.00 | $24.00 | $0.40"
     },
     {
       "doc": "openai-pricing",
@@ -7707,16 +8057,25 @@
       "doc": "openai-pricing",
       "hash": "8ac60ad80b19a3b0",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-11",
       "path": "Pricing > Grouped Pricing Table data",
       "header": "Category | Model | Input | Output | Cached input",
       "row": "Codex | gpt-5.3-codex | $1.75 | $14.00 | $0.175"
     },
     {
       "doc": "openai-pricing",
+      "hash": "8c5b2dbaabd463e4",
+      "addedOn": "2026-11-11",
+      "removedOn": null,
+      "path": "Pricing > Grouped Pricing Table data",
+      "header": "Model | Modality | Input | Output | Cached input",
+      "row": "gpt-realtime-1.5 | Text | $4.00 | $16.00 | $0.40"
+    },
+    {
+      "doc": "openai-pricing",
       "hash": "8d3fba86b0d3e9ea",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-11",
       "path": "Pricing > Grouped Pricing Table data",
       "header": "Model | Modality | Input | Output / cost | Cached input",
       "row": "gpt-realtime-2.1 | Text | $4.00 | $24.00 | $0.40"
@@ -7729,6 +8088,15 @@
       "path": "Pricing > Grouped Pricing Table data",
       "header": "Model | Use case | Input | Output | Estimated cost",
       "row": "Whisper | Transcription | - | - | $0.006 / minute"
+    },
+    {
+      "doc": "openai-pricing",
+      "hash": "8ec869d592984e91",
+      "addedOn": "2026-11-11",
+      "removedOn": null,
+      "path": "Pricing > Grouped Pricing Table data",
+      "header": "Model | Modality | Input | Output | Cached input",
+      "row": "tts-1 | Text | $15.00 / 1M characters | - | -"
     },
     {
       "doc": "openai-pricing",
@@ -7786,12 +8154,30 @@
     },
     {
       "doc": "openai-pricing",
+      "hash": "92ea476a54f777c1",
+      "addedOn": "2026-11-11",
+      "removedOn": null,
+      "path": "Pricing > Grouped Pricing Table data",
+      "header": "Model | Modality | Input | Output | Cached input",
+      "row": "gpt-realtime-2.1 | Audio | $32.00 | $64.00 | $0.40"
+    },
+    {
+      "doc": "openai-pricing",
       "hash": "9339330a3c26fed8",
       "addedOn": "2026-11-03",
       "removedOn": null,
       "path": "Pricing > Grouped Pricing Table data",
       "header": "Model | Modality | Input | Output | Cached input",
       "row": "gpt-image-1.5 | Text | $2.50 | $5.00 | $0.63"
+    },
+    {
+      "doc": "openai-pricing",
+      "hash": "944eed69719bc6f7",
+      "addedOn": "2026-11-11",
+      "removedOn": null,
+      "path": "Pricing > Grouped Pricing Table data",
+      "header": "Model | Modality | Input | Output | Cached input",
+      "row": "tts-1-hd | Text | $30.00 / 1M characters | - | -"
     },
     {
       "doc": "openai-pricing",
@@ -7815,7 +8201,7 @@
       "doc": "openai-pricing",
       "hash": "9684f6d0eb400aec",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-11",
       "path": "Pricing > Grouped Pricing Table data",
       "header": "Model | Modality | Input | Output / cost | Cached input",
       "row": "tts-1 | Text | $15.00 / 1M characters | - | -"
@@ -7824,7 +8210,7 @@
       "doc": "openai-pricing",
       "hash": "96852f5411014edf",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-11",
       "path": "Pricing > Grouped Pricing Table data",
       "header": "Tool | Details | Pricing",
       "row": "Web search | Image Web search (all models) | $10.00 / 1k calls + Search content tokens billed at model rates."
@@ -7846,6 +8232,24 @@
       "path": "Pricing > Fast pricing data",
       "header": "Model | Input | Output | Cached input",
       "row": "gpt-5-mini | $0.45 | $3.60 | $0.045"
+    },
+    {
+      "doc": "openai-pricing",
+      "hash": "9a169182993eccfd",
+      "addedOn": "2026-11-11",
+      "removedOn": null,
+      "path": "Pricing > Grouped Pricing Table data",
+      "header": "Model | Modality | Input | Output | Cached input",
+      "row": "gpt-audio-1.5 | Audio | $32.00 | $64.00 | -"
+    },
+    {
+      "doc": "openai-pricing",
+      "hash": "9a730bdc88ee332a",
+      "addedOn": "2026-11-11",
+      "removedOn": null,
+      "path": "Pricing > Grouped Pricing Table data",
+      "header": "Model | Modality | Input | Output | Cached input",
+      "row": "gpt-realtime | Image | $5.00 | - | $0.50"
     },
     {
       "doc": "openai-pricing",
@@ -7882,6 +8286,15 @@
       "path": "Pricing > Grouped Pricing Table data",
       "header": "Model | Modality | Input | Output | Cached input",
       "row": "gpt-image-1.5 | Image | $4.00 | $16.00 | $1.00"
+    },
+    {
+      "doc": "openai-pricing",
+      "hash": "9e0d46470056e5d5",
+      "addedOn": "2026-11-11",
+      "removedOn": null,
+      "path": "Pricing > Grouped Pricing Table data",
+      "header": "Category | Model | Input | Output | Cached input | 30m write | 12h write",
+      "row": "Life Sciences — Trusted Access: Rosalind | gpt-rosalind-discovery (short context) | $5.00 | $25.00 | $0.50 | - | -"
     },
     {
       "doc": "openai-pricing",
@@ -8013,7 +8426,7 @@
       "doc": "openai-pricing",
       "hash": "ab1201fb1aa1f914",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-11",
       "path": "Pricing > Grouped Pricing Table data",
       "header": "Model | Modality | Input | Output / cost | Cached input",
       "row": "gpt-realtime-mini | Image | $0.80 | - | $0.08"
@@ -8056,6 +8469,24 @@
     },
     {
       "doc": "openai-pricing",
+      "hash": "af6df42b7b1d984e",
+      "addedOn": "2026-11-11",
+      "removedOn": null,
+      "path": "Pricing > Grouped Pricing Table data",
+      "header": "Model | Modality | Input | Output | Cached input",
+      "row": "gpt-realtime-mini | Image | $0.80 | - | $0.08"
+    },
+    {
+      "doc": "openai-pricing",
+      "hash": "af8dba02b46691d2",
+      "addedOn": "2026-11-11",
+      "removedOn": null,
+      "path": "Pricing > Grouped Pricing Table data",
+      "header": "Model | Modality | Input | Output | Cached input",
+      "row": "gpt-realtime-2 | Audio | $32.00 | $64.00 | $0.40"
+    },
+    {
+      "doc": "openai-pricing",
       "hash": "afff3bb90b146e9f",
       "addedOn": "2026-11-03",
       "removedOn": null,
@@ -8067,10 +8498,19 @@
       "doc": "openai-pricing",
       "hash": "b061733645656a9e",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-11",
       "path": "Pricing > Grouped Pricing Table data",
       "header": "Model | Modality | Input | Output / cost | Cached input",
       "row": "gpt-realtime-2.1-mini | Text | $0.60 | $2.40 | $0.06"
+    },
+    {
+      "doc": "openai-pricing",
+      "hash": "b1e0392b8b7c06aa",
+      "addedOn": "2026-11-11",
+      "removedOn": null,
+      "path": "Pricing > Grouped Pricing Table data",
+      "header": "Tool | Details | Pricing",
+      "row": "Containers | Hosted Shell and Code Interpreter | 1 GB $0.03, 4 GB $0.12, 16 GB $0.48, 64 GB $1.92 per 20-minute session per container"
     },
     {
       "doc": "openai-pricing",
@@ -8148,7 +8588,7 @@
       "doc": "openai-pricing",
       "hash": "bc7cee5a423014d1",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-11",
       "path": "Pricing > Grouped Pricing Table data",
       "header": "Model | Modality | Input | Output / cost | Cached input",
       "row": "gpt-realtime-mini | Audio | $10.00 | $20.00 | $0.30"
@@ -8166,7 +8606,7 @@
       "doc": "openai-pricing",
       "hash": "bd9a3b04d20f70e8",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-11",
       "path": "Pricing > Grouped Pricing Table data",
       "header": "Model | Modality | Input | Output / cost | Cached input",
       "row": "gpt-realtime-mini | Text | $0.60 | $2.40 | $0.06"
@@ -8175,7 +8615,7 @@
       "doc": "openai-pricing",
       "hash": "bf338fd894359040",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-11",
       "path": "Pricing > Grouped Pricing Table data",
       "header": "Model | Modality | Input | Output / cost | Cached input",
       "row": "gpt-audio-mini | Text | $0.60 | $2.40 | -"
@@ -8197,6 +8637,15 @@
       "path": "Pricing > Fast pricing data",
       "header": "Model | Short context input | Short context output | Short context cached input | Short context 30m write | Short context 12h write | Long context input | Long context output | Long context cached input | Long context 30m write | Long context 12h write",
       "row": "gpt-5.6-terra | $4.00 | $24.00 | $0.40 | $5.00 | $10.00 | $8.00 | $36.00 | $0.80 | $10.00 | $20.00"
+    },
+    {
+      "doc": "openai-pricing",
+      "hash": "c355433a3644e39e",
+      "addedOn": "2026-11-11",
+      "removedOn": null,
+      "path": "Pricing > Grouped Pricing Table data",
+      "header": "Category | Model | Input | Output | Cached input | 30m write | 12h write",
+      "row": "Cyber — Trusted Access: Daybreak | gpt-5.5-cyber-preview (short context) | $12.50 | $75.00 | $1.25 | - | -"
     },
     {
       "doc": "openai-pricing",
@@ -8227,6 +8676,15 @@
     },
     {
       "doc": "openai-pricing",
+      "hash": "c67986461813cdf2",
+      "addedOn": "2026-11-11",
+      "removedOn": null,
+      "path": "Pricing > Grouped Pricing Table data",
+      "header": "Model | Modality | Input | Output | Cached input",
+      "row": "gpt-realtime-mini | Text | $0.60 | $2.40 | $0.06"
+    },
+    {
+      "doc": "openai-pricing",
       "hash": "c7b47e3baa378297",
       "addedOn": "2026-11-03",
       "removedOn": null,
@@ -8238,7 +8696,7 @@
       "doc": "openai-pricing",
       "hash": "ca95863c303f9159",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-11",
       "path": "Pricing > Grouped Pricing Table data",
       "header": "Model | Modality | Input | Output / cost | Cached input",
       "row": "gpt-realtime-2 | Image | $5.00 | - | $0.50"
@@ -8263,9 +8721,18 @@
     },
     {
       "doc": "openai-pricing",
+      "hash": "cdc8d9517ba97079",
+      "addedOn": "2026-11-11",
+      "removedOn": null,
+      "path": "Pricing > Grouped Pricing Table data",
+      "header": "Model | Modality | Input | Output | Cached input",
+      "row": "gpt-audio-mini | Audio | $10.00 | $20.00 | -"
+    },
+    {
+      "doc": "openai-pricing",
       "hash": "d3436330282aff82",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-11",
       "path": "Pricing > Grouped Pricing Table data",
       "header": "Model | Modality | Input | Output / cost | Cached input",
       "row": "gpt-realtime-2.1-mini | Image | $0.80 | - | $0.08"
@@ -8301,7 +8768,7 @@
       "doc": "openai-pricing",
       "hash": "d5b67768e88d6677",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-11",
       "path": "Pricing > Grouped Pricing Table data",
       "header": "Model | Modality | Input | Output / cost | Cached input",
       "row": "gpt-4o-mini-tts | Audio | - | $12.00 | -"
@@ -8335,9 +8802,18 @@
     },
     {
       "doc": "openai-pricing",
+      "hash": "d75e64d4d4784e71",
+      "addedOn": "2026-11-11",
+      "removedOn": null,
+      "path": "Pricing > Grouped Pricing Table data",
+      "header": "Model | Modality | Input | Output | Cached input",
+      "row": "gpt-realtime-1.5 | Image | $5.00 | - | $0.50"
+    },
+    {
+      "doc": "openai-pricing",
       "hash": "d85840a448008ed7",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-11",
       "path": "Pricing > Grouped Pricing Table data",
       "header": "Category | Model | Input | Output | Cached input",
       "row": "ChatGPT | chat-latest | $5.00 | $30.00 | $0.50"
@@ -8373,10 +8849,37 @@
       "doc": "openai-pricing",
       "hash": "ddfb17157b47221e",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-11",
       "path": "Pricing > Grouped Pricing Table data",
       "header": "Tool | Details | Pricing",
       "row": "Web search | Web search (all models) | $10.00 / 1k calls + Search content tokens billed at model rates."
+    },
+    {
+      "doc": "openai-pricing",
+      "hash": "de3e5d2664670a75",
+      "addedOn": "2026-11-11",
+      "removedOn": null,
+      "path": "Pricing > Grouped Pricing Table data",
+      "header": "Model | Modality | Input | Output | Cached input",
+      "row": "gpt-realtime-mini | Audio | $10.00 | $20.00 | $0.30"
+    },
+    {
+      "doc": "openai-pricing",
+      "hash": "dfa0118cacad08f2",
+      "addedOn": "2026-11-11",
+      "removedOn": null,
+      "path": "Pricing > Grouped Pricing Table data",
+      "header": "Category | Model | Input | Output | Cached input | 30m write | 12h write",
+      "row": "Legal | gpt-6-astra-law | $10.00 | $50.00 | $1.00 | - | -"
+    },
+    {
+      "doc": "openai-pricing",
+      "hash": "dfca20191e5460ed",
+      "addedOn": "2026-11-11",
+      "removedOn": null,
+      "path": "Pricing > Grouped Pricing Table data",
+      "header": "Model | Modality | Input | Output | Cached input",
+      "row": "gpt-realtime-2.1-mini | Image | $0.80 | - | $0.08"
     },
     {
       "doc": "openai-pricing",
@@ -8389,9 +8892,18 @@
     },
     {
       "doc": "openai-pricing",
+      "hash": "e21e8dc6b3953b0e",
+      "addedOn": "2026-11-11",
+      "removedOn": null,
+      "path": "Pricing > Grouped Pricing Table data",
+      "header": "Category | Model | Input | Output | Cached input | 30m write | 12h write",
+      "row": "Codex | gpt-5.3-codex | $1.75 | $14.00 | $0.175 | - | -"
+    },
+    {
+      "doc": "openai-pricing",
       "hash": "e29c7458ed049872",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-11",
       "path": "Pricing > Standard pricing data",
       "header": "Model | Short context input | Short context output | Short context cached input | Short context 30m write | Short context 12h write | Long context input | Long context output | Long context cached input | Long context 30m write | Long context 12h write",
       "row": "gpt-5.6-cyber | $12.50 | $75.00 | $1.25 | $15.625 | $31.25 | - | - | - | - | -"
@@ -8425,6 +8937,24 @@
     },
     {
       "doc": "openai-pricing",
+      "hash": "e78d3726329d1416",
+      "addedOn": "2026-11-11",
+      "removedOn": null,
+      "path": "Pricing > Grouped Pricing Table data",
+      "header": "Category | Model | Input | Output | Cached input | 30m write | 12h write",
+      "row": "Cyber — Trusted Access: Daybreak | gpt-6-cyber (short context) | $20.00 | $100.00 | $2.00 | $25.00 | $50.00"
+    },
+    {
+      "doc": "openai-pricing",
+      "hash": "e7ab2ca0e9f4a7ca",
+      "addedOn": "2026-11-11",
+      "removedOn": null,
+      "path": "Pricing > Grouped Pricing Table data",
+      "header": "Category | Model | Input | Output | Cached input | 30m write | 12h write",
+      "row": "Cyber — Trusted Access: Daybreak | gpt-5.5-cyber-preview (long context) | - | - | - | - | -"
+    },
+    {
+      "doc": "openai-pricing",
       "hash": "e85c9d477546b5d8",
       "addedOn": "2026-11-03",
       "removedOn": null,
@@ -8434,12 +8964,30 @@
     },
     {
       "doc": "openai-pricing",
+      "hash": "e8829743faaf32b9",
+      "addedOn": "2026-11-11",
+      "removedOn": null,
+      "path": "Pricing > Grouped Pricing Table data",
+      "header": "Category | Model | Input | Output | Cached input | 30m write | 12h write",
+      "row": "Life Sciences — Trusted Access: Rosalind | gpt-rosalind-research (short context) | $5.00 | $25.00 | $0.50 | - | -"
+    },
+    {
+      "doc": "openai-pricing",
       "hash": "ea4a7d8fb8758ea4",
       "addedOn": "2026-11-03",
       "removedOn": null,
       "path": "Pricing > Standard pricing data",
       "header": "Model | Input | Output | Cached input",
       "row": "gpt-4o | $2.50 | $10.00 | $1.25"
+    },
+    {
+      "doc": "openai-pricing",
+      "hash": "eae86b327fd2e6b0",
+      "addedOn": "2026-11-11",
+      "removedOn": null,
+      "path": "Pricing > Grouped Pricing Table data",
+      "header": "Model | Modality | Input | Output | Cached input",
+      "row": "gpt-audio | Text | $2.50 | $10.00 | -"
     },
     {
       "doc": "openai-pricing",
@@ -8463,7 +9011,7 @@
       "doc": "openai-pricing",
       "hash": "ee8696ef7b33d3e2",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-11",
       "path": "Pricing > Grouped Pricing Table data",
       "header": "Model | Modality | Input | Output / cost | Cached input",
       "row": "gpt-audio-1.5 | Text | $2.50 | $10.00 | -"
@@ -8479,9 +9027,18 @@
     },
     {
       "doc": "openai-pricing",
+      "hash": "f202a88525d8a0aa",
+      "addedOn": "2026-11-11",
+      "removedOn": null,
+      "path": "Pricing > Grouped Pricing Table data",
+      "header": "Tool | Details | Pricing",
+      "row": "Web search | Web search preview (reasoning models) | $10.00 / 1k calls + Search content tokens billed at model rates."
+    },
+    {
+      "doc": "openai-pricing",
       "hash": "f3f8f7f23a5ca136",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-11",
       "path": "Pricing > Grouped Pricing Table data",
       "header": "Model | Modality | Input | Output / cost | Cached input",
       "row": "tts-1-hd | Text | $30.00 / 1M characters | - | -"
@@ -8490,7 +9047,7 @@
       "doc": "openai-pricing",
       "hash": "f4109ee684638a66",
       "addedOn": "2026-11-10",
-      "removedOn": null,
+      "removedOn": "2026-11-11",
       "path": "Pricing > Standard pricing data",
       "header": "Model | Short context input | Short context output | Short context cached input | Short context 30m write | Short context 12h write | Long context input | Long context output | Long context cached input | Long context 30m write | Long context 12h write",
       "row": "gpt-6-cyber | $20.00 | $100.00 | $2.00 | $25.00 | $50.00 | $40.00 | $150.00 | $4.00 | - | -"
@@ -8499,7 +9056,7 @@
       "doc": "openai-pricing",
       "hash": "f4de1d1f1b2d1218",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-11",
       "path": "Pricing > Grouped Pricing Table data",
       "header": "Model | Modality | Input | Output / cost | Cached input",
       "row": "gpt-realtime-2.1 | Image | $5.00 | - | $0.50"
@@ -8533,6 +9090,15 @@
     },
     {
       "doc": "openai-pricing",
+      "hash": "f9308874ae138853",
+      "addedOn": "2026-11-11",
+      "removedOn": null,
+      "path": "Pricing > Grouped Pricing Table data",
+      "header": "Category | Model | Input | Output | Cached input | 30m write | 12h write",
+      "row": "Cyber — Trusted Access: Daybreak | gpt-6-cyber (long context) | $40.00 | $150.00 | $4.00 | - | -"
+    },
+    {
+      "doc": "openai-pricing",
       "hash": "fa66e27976dd9eb9",
       "addedOn": "2026-11-03",
       "removedOn": null,
@@ -8553,7 +9119,7 @@
       "doc": "openai-pricing",
       "hash": "faf8552af06ac0eb",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-11",
       "path": "Pricing > Standard pricing data",
       "header": "Model | Short context input | Short context output | Short context cached input | Short context 30m write | Short context 12h write | Long context input | Long context output | Long context cached input | Long context 30m write | Long context 12h write",
       "row": "gpt-6-rosalind | $15.00 | $75.00 | $1.50 | $18.75 | $37.50 | $30.00 | $112.50 | $3.00 | $37.50 | $75.00"
@@ -8562,7 +9128,7 @@
       "doc": "openai-pricing",
       "hash": "fb54c8acc9d4ef64",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-11",
       "path": "Pricing > Grouped Pricing Table data",
       "header": "Model | Modality | Input | Output / cost | Cached input",
       "row": "gpt-realtime-2.1 | Audio | $32.00 | $64.00 | $0.40"
@@ -8587,6 +9153,15 @@
     },
     {
       "doc": "openai-pricing",
+      "hash": "fe1e4a8486ee81b0",
+      "addedOn": "2026-11-11",
+      "removedOn": null,
+      "path": "Pricing > Grouped Pricing Table data",
+      "header": "Category | Model | Input | Output | Cached input | 30m write | 12h write",
+      "row": "Life Sciences — Trusted Access: Rosalind | gpt-6-rosalind (long context) | $30.00 | $112.50 | $3.00 | $37.50 | $75.00"
+    },
+    {
+      "doc": "openai-pricing",
       "hash": "fe4edd67b1327a6a",
       "addedOn": "2026-11-03",
       "removedOn": null,
@@ -8598,7 +9173,7 @@
       "doc": "openai-pricing",
       "hash": "feb1e72d10d8e3d6",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-11",
       "path": "Pricing > Grouped Pricing Table data",
       "header": "Model | Modality | Input | Output / cost | Cached input",
       "row": "gpt-audio | Text | $2.50 | $10.00 | -"
@@ -8617,17 +9192,17 @@
     {
       "doc": "anthropic-deprecations",
       "hash": "a04f5853f198f546cbf1927059fc701c3ea82aacf709a9a66f3bf37855045b03",
-      "storedOn": "2026-11-10"
+      "storedOn": "2026-11-11"
     },
     {
       "doc": "anthropic-limits",
       "hash": "670eb7cb68b1e9e1ddfef4b454686567650b17b889969beac215117fde2289a5",
-      "storedOn": "2026-11-10"
+      "storedOn": "2026-11-11"
     },
     {
       "doc": "anthropic-pricing",
       "hash": "4fe2b894c1ec51f87e10428bb630886489c6a668fb674bc607a2c36a6834aabb",
-      "storedOn": "2026-11-10"
+      "storedOn": "2026-11-11"
     },
     {
       "doc": "gemini-deprecations",
@@ -8641,181 +9216,181 @@
     },
     {
       "doc": "openai-deprecations",
-      "hash": "49e382e18bf8e14ea82d099a21a1f2b818b72603424518519eb908b419b45be1",
-      "storedOn": "2026-11-10"
+      "hash": "1db77cfb953de16420d3142560c734b2a52195050988ff9332030c6c7074d8df",
+      "storedOn": "2026-11-11"
     },
     {
       "doc": "openai-pricing",
-      "hash": "825519a5f7b52a812cd19c6c4cebd5f6b9c395a1b292bda80a04cbaf88981428",
-      "storedOn": "2026-11-10"
+      "hash": "57af767674cca405b46ecf2cbea46941baacbbfc94176faf0a4cd4888c10c3b9",
+      "storedOn": "2026-11-11"
     }
   ],
   "sources": [
     {
       "source": "anthropic-deprecations",
-      "fetchedAt": "2026-11-10T00:39:30.818Z",
+      "fetchedAt": "2026-11-11T00:07:45.725Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "anthropic-limits",
-      "fetchedAt": "2026-11-10T00:39:30.818Z",
+      "fetchedAt": "2026-11-11T00:07:45.725Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "anthropic-pricing",
-      "fetchedAt": "2026-11-10T00:39:30.818Z",
+      "fetchedAt": "2026-11-11T00:07:45.725Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "claude-code",
-      "fetchedAt": "2026-11-10T00:39:30.818Z",
+      "fetchedAt": "2026-11-11T00:07:45.725Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "claude-notes",
-      "fetchedAt": "2026-11-10T00:39:30.818Z",
+      "fetchedAt": "2026-11-11T00:07:45.725Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "cloudflare",
       "fetchedAt": null,
-      "failDays": 8,
-      "failOn": "2026-11-10"
+      "failDays": 9,
+      "failOn": "2026-11-11"
     },
     {
       "source": "codex",
       "fetchedAt": null,
-      "failDays": 8,
-      "failOn": "2026-11-10"
+      "failDays": 9,
+      "failOn": "2026-11-11"
     },
     {
       "source": "copilot",
-      "fetchedAt": "2026-11-10T00:39:30.818Z",
+      "fetchedAt": "2026-11-11T00:07:45.725Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "eol-nextjs",
-      "fetchedAt": "2026-11-10T00:39:30.818Z",
+      "fetchedAt": "2026-11-11T00:07:45.725Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "eol-nodejs",
-      "fetchedAt": "2026-11-10T00:39:30.818Z",
+      "fetchedAt": "2026-11-11T00:07:45.725Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "gemini-cli",
-      "fetchedAt": "2026-11-10T00:39:30.818Z",
+      "fetchedAt": "2026-11-11T00:07:45.725Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "gemini-deprecations",
       "fetchedAt": "2026-11-02T23:28:54.103Z",
-      "failDays": 7,
-      "failOn": "2026-11-10"
+      "failDays": 8,
+      "failOn": "2026-11-11"
     },
     {
       "source": "gemini-pricing",
       "fetchedAt": "2026-11-02T23:28:54.103Z",
-      "failDays": 7,
-      "failOn": "2026-11-10"
+      "failDays": 8,
+      "failOn": "2026-11-11"
     },
     {
       "source": "ghsa",
-      "fetchedAt": "2026-11-10T00:39:30.818Z",
+      "fetchedAt": "2026-11-11T00:07:45.725Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "github-repos",
       "fetchedAt": null,
-      "failDays": 1,
-      "failOn": "2026-11-10"
+      "failDays": 2,
+      "failOn": "2026-11-11"
     },
     {
       "source": "kev",
-      "fetchedAt": "2026-11-10T00:39:30.818Z",
+      "fetchedAt": "2026-11-11T00:07:45.725Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "mcp-spec",
-      "fetchedAt": "2026-11-10T00:39:30.818Z",
+      "fetchedAt": "2026-11-11T00:07:45.725Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "nextjs",
-      "fetchedAt": "2026-11-10T00:39:30.818Z",
+      "fetchedAt": "2026-11-11T00:07:45.725Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "nodejs",
-      "fetchedAt": "2026-11-10T00:39:30.818Z",
+      "fetchedAt": "2026-11-11T00:07:45.725Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "openai-deprecations",
-      "fetchedAt": "2026-11-10T00:39:30.818Z",
+      "fetchedAt": "2026-11-11T00:07:45.725Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "openai-pricing",
-      "fetchedAt": "2026-11-10T00:39:30.818Z",
+      "fetchedAt": "2026-11-11T00:07:45.725Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "product-hunt",
       "fetchedAt": "2026-11-08T21:52:10.746Z",
-      "failDays": 1,
-      "failOn": "2026-11-10"
+      "failDays": 2,
+      "failOn": "2026-11-11"
     },
     {
       "source": "react",
-      "fetchedAt": "2026-11-10T00:39:30.818Z",
+      "fetchedAt": "2026-11-11T00:07:45.725Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "socket",
-      "fetchedAt": "2026-11-10T00:39:30.818Z",
+      "fetchedAt": "2026-11-11T00:07:45.725Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "supabase",
-      "fetchedAt": "2026-11-10T00:39:30.818Z",
+      "fetchedAt": "2026-11-11T00:07:45.725Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "typescript",
-      "fetchedAt": "2026-11-10T00:39:30.818Z",
+      "fetchedAt": "2026-11-11T00:07:45.725Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "vercel",
-      "fetchedAt": "2026-11-10T00:39:30.818Z",
+      "fetchedAt": "2026-11-11T00:07:45.725Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "vite",
-      "fetchedAt": "2026-11-10T00:39:30.818Z",
+      "fetchedAt": "2026-11-11T00:07:45.725Z",
       "failDays": 0,
       "failOn": null
     }
@@ -9626,6 +10201,16 @@
     },
     {
       "date": "2026-11-09",
+      "kind": "repo",
+      "status": "failed"
+    },
+    {
+      "date": "2026-11-10",
+      "kind": "product",
+      "status": "failed"
+    },
+    {
+      "date": "2026-11-10",
       "kind": "repo",
       "status": "failed"
     }
