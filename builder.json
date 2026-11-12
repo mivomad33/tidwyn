@@ -760,6 +760,10 @@
     {
       "date": "2026-11-10",
       "status": "partial"
+    },
+    {
+      "date": "2026-11-11",
+      "status": "partial"
     }
   ],
   "rows": [
@@ -1694,7 +1698,7 @@
       "doc": "anthropic-pricing",
       "hash": "0646d32e6a69b647",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-12",
       "path": "Claude Platform on AWS pricing",
       "header": "Concept | Details",
       "row": "Conversion | Token usage rated in USD at standard per-model, per-feature rates (same as Claude API pricing), then converted to CCUs at $0.01 USD per CCU"
@@ -1757,7 +1761,7 @@
       "doc": "anthropic-pricing",
       "hash": "184276f28fc080e8",
       "addedOn": "2026-11-03",
-      "removedOn": null,
+      "removedOn": "2026-11-12",
       "path": "Claude in Microsoft Foundry pricing",
       "header": "Concept | Details",
       "row": "Conversion | Token usage rated in USD at standard per-model, per-feature rates (same as Claude API pricing), then converted to CCUs at $0.01 USD per CCU"
@@ -1770,6 +1774,15 @@
       "path": "Model pricing",
       "header": "Model | Base input tokens | 5m cache writes | 1h cache writes | Cache hits and refreshes | Output tokens",
       "row": "Claude Haiku 3.5 (retired, except on Claude Models on Google Cloud (Google managed)) | $0.80 / MTok | $1 / MTok | $1.60 / MTok | $0.08 / MTok | $4 / MTok"
+    },
+    {
+      "doc": "anthropic-pricing",
+      "hash": "1b5dee094bba675d",
+      "addedOn": "2026-11-12",
+      "removedOn": null,
+      "path": "Feature-specific pricing > Prompt caching",
+      "header": "Model | Cache hit multiplier | Cache hit price per million tokens",
+      "row": "Claude Fable 5.1 and Claude Mythos 5.1 | 0.025x | $0.25 USD"
     },
     {
       "doc": "anthropic-pricing",
@@ -1851,6 +1864,15 @@
       "path": "Feature-specific pricing > Tool use pricing",
       "header": "Model | Tool use system prompt tokens: auto, none | Tool use system prompt tokens: any, tool",
       "row": "Claude Haiku 5.5 | 286 tokens | 406 tokens"
+    },
+    {
+      "doc": "anthropic-pricing",
+      "hash": "2fbb4ea023df42a3",
+      "addedOn": "2026-11-12",
+      "removedOn": null,
+      "path": "Feature-specific pricing > Prompt caching",
+      "header": "Cache operation | Multiplier | Duration",
+      "row": "Cache read (hit) | 0.1x base input price on most models | Same duration as the preceding write"
     },
     {
       "doc": "anthropic-pricing",
@@ -1998,6 +2020,24 @@
     },
     {
       "doc": "anthropic-pricing",
+      "hash": "588f89dc58e0bbb4",
+      "addedOn": "2026-11-12",
+      "removedOn": null,
+      "path": "Claude Platform on AWS pricing",
+      "header": "Concept | Details",
+      "row": "Conversion | Token usage rated in USD at standard per-model, per-feature rates (same as Model pricing), then converted to CCUs at $0.01 USD per CCU"
+    },
+    {
+      "doc": "anthropic-pricing",
+      "hash": "5d28da0008f653cf",
+      "addedOn": "2026-11-12",
+      "removedOn": null,
+      "path": "Feature-specific pricing > Prompt caching",
+      "header": "Model | Cache hit multiplier | Cache hit price per million tokens",
+      "row": "Claude Opus 5.5 | 0.05x | $0.20 USD"
+    },
+    {
+      "doc": "anthropic-pricing",
       "hash": "5d405ada30e06bd8",
       "addedOn": "2026-11-03",
       "removedOn": "2026-11-05",
@@ -2121,6 +2161,15 @@
       "path": "Feature-specific pricing > Specific tool pricing > Text editor tool",
       "header": "Tool | Additional input tokens",
       "row": "`text_editor_20250728` (Claude 4.7 and later models and Claude Mythos Preview) | 974 tokens"
+    },
+    {
+      "doc": "anthropic-pricing",
+      "hash": "8253533ce930574b",
+      "addedOn": "2026-11-12",
+      "removedOn": null,
+      "path": "Feature-specific pricing > Prompt caching",
+      "header": "Model | Cache hit multiplier | Cache hit price per million tokens",
+      "row": "Claude Sonnet 5.5 | 0.05x | $0.10 USD"
     },
     {
       "doc": "anthropic-pricing",
@@ -2367,6 +2416,15 @@
     },
     {
       "doc": "anthropic-pricing",
+      "hash": "cd9ff3bd0dfd5289",
+      "addedOn": "2026-11-12",
+      "removedOn": null,
+      "path": "Feature-specific pricing > Prompt caching",
+      "header": "Model | Cache hit multiplier | Cache hit price per million tokens",
+      "row": "All other models | 0.1x | See Model pricing"
+    },
+    {
+      "doc": "anthropic-pricing",
       "hash": "d9d5c3cc1240c331",
       "addedOn": "2026-11-10",
       "removedOn": null,
@@ -2409,6 +2467,15 @@
       "path": "Feature-specific pricing > Batch processing",
       "header": "Model | Batch input | Batch output",
       "row": "Claude Opus 4.5 | $2.50 / MTok | $12.50 / MTok"
+    },
+    {
+      "doc": "anthropic-pricing",
+      "hash": "e1e1adb19d08c87c",
+      "addedOn": "2026-11-12",
+      "removedOn": null,
+      "path": "Feature-specific pricing > Prompt caching",
+      "header": "Model | Cache hit multiplier | Cache hit price per million tokens",
+      "row": "Claude Fable 5.2 and Claude Mythos 5.2 | 0.025x | $0.20 USD"
     },
     {
       "doc": "anthropic-pricing",
@@ -2490,6 +2557,15 @@
       "path": "Model pricing",
       "header": "Model | Base input tokens | 5m cache writes | 1h cache writes | Cache hits and refreshes | Output tokens",
       "row": "Claude Haiku 5.5 (for prompts over 100,000 tokens) | $0.50 / MTok | $0.625 / MTok | $1 / MTok | $0.05 / MTok | $2.50 / MTok"
+    },
+    {
+      "doc": "anthropic-pricing",
+      "hash": "f65c0e759ed2a78c",
+      "addedOn": "2026-11-12",
+      "removedOn": null,
+      "path": "Claude in Microsoft Foundry pricing",
+      "header": "Concept | Details",
+      "row": "Conversion | Token usage rated in USD at standard per-model, per-feature rates (same as Model pricing), then converted to CCUs at $0.01 USD per CCU"
     },
     {
       "doc": "anthropic-pricing",
@@ -9191,18 +9267,18 @@
   "docs": [
     {
       "doc": "anthropic-deprecations",
-      "hash": "a04f5853f198f546cbf1927059fc701c3ea82aacf709a9a66f3bf37855045b03",
-      "storedOn": "2026-11-11"
+      "hash": "cf4dc6596cae93bc850eb93f6f6d4d1f4df43162bffb6dde54623966dba6c2e4",
+      "storedOn": "2026-11-12"
     },
     {
       "doc": "anthropic-limits",
-      "hash": "670eb7cb68b1e9e1ddfef4b454686567650b17b889969beac215117fde2289a5",
-      "storedOn": "2026-11-11"
+      "hash": "e9596704c65bc132ce90fe9c4c7ac2ed384b9e8905728b8c400c81b3bc4a3fe2",
+      "storedOn": "2026-11-12"
     },
     {
       "doc": "anthropic-pricing",
-      "hash": "4fe2b894c1ec51f87e10428bb630886489c6a668fb674bc607a2c36a6834aabb",
-      "storedOn": "2026-11-11"
+      "hash": "a94bce7294d5b8e8c5f2b15e7d33b47b4a0c25e3862c871dc0608f21f0a339ec",
+      "storedOn": "2026-11-12"
     },
     {
       "doc": "gemini-deprecations",
@@ -9217,180 +9293,180 @@
     {
       "doc": "openai-deprecations",
       "hash": "1db77cfb953de16420d3142560c734b2a52195050988ff9332030c6c7074d8df",
-      "storedOn": "2026-11-11"
+      "storedOn": "2026-11-12"
     },
     {
       "doc": "openai-pricing",
       "hash": "57af767674cca405b46ecf2cbea46941baacbbfc94176faf0a4cd4888c10c3b9",
-      "storedOn": "2026-11-11"
+      "storedOn": "2026-11-12"
     }
   ],
   "sources": [
     {
       "source": "anthropic-deprecations",
-      "fetchedAt": "2026-11-11T00:07:45.725Z",
+      "fetchedAt": "2026-11-12T01:27:38.179Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "anthropic-limits",
-      "fetchedAt": "2026-11-11T00:07:45.725Z",
+      "fetchedAt": "2026-11-12T01:27:38.179Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "anthropic-pricing",
-      "fetchedAt": "2026-11-11T00:07:45.725Z",
+      "fetchedAt": "2026-11-12T01:27:38.179Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "claude-code",
-      "fetchedAt": "2026-11-11T00:07:45.725Z",
+      "fetchedAt": "2026-11-12T01:27:38.179Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "claude-notes",
-      "fetchedAt": "2026-11-11T00:07:45.725Z",
+      "fetchedAt": "2026-11-12T01:27:38.179Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "cloudflare",
       "fetchedAt": null,
-      "failDays": 9,
-      "failOn": "2026-11-11"
+      "failDays": 10,
+      "failOn": "2026-11-12"
     },
     {
       "source": "codex",
       "fetchedAt": null,
-      "failDays": 9,
-      "failOn": "2026-11-11"
+      "failDays": 10,
+      "failOn": "2026-11-12"
     },
     {
       "source": "copilot",
-      "fetchedAt": "2026-11-11T00:07:45.725Z",
+      "fetchedAt": "2026-11-12T01:27:38.179Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "eol-nextjs",
-      "fetchedAt": "2026-11-11T00:07:45.725Z",
+      "fetchedAt": "2026-11-12T01:27:38.179Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "eol-nodejs",
-      "fetchedAt": "2026-11-11T00:07:45.725Z",
+      "fetchedAt": "2026-11-12T01:27:38.179Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "gemini-cli",
-      "fetchedAt": "2026-11-11T00:07:45.725Z",
+      "fetchedAt": "2026-11-12T01:27:38.179Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "gemini-deprecations",
       "fetchedAt": "2026-11-02T23:28:54.103Z",
-      "failDays": 8,
-      "failOn": "2026-11-11"
+      "failDays": 9,
+      "failOn": "2026-11-12"
     },
     {
       "source": "gemini-pricing",
       "fetchedAt": "2026-11-02T23:28:54.103Z",
-      "failDays": 8,
-      "failOn": "2026-11-11"
+      "failDays": 9,
+      "failOn": "2026-11-12"
     },
     {
       "source": "ghsa",
-      "fetchedAt": "2026-11-11T00:07:45.725Z",
+      "fetchedAt": "2026-11-12T01:27:38.179Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "github-repos",
       "fetchedAt": null,
-      "failDays": 2,
-      "failOn": "2026-11-11"
+      "failDays": 3,
+      "failOn": "2026-11-12"
     },
     {
       "source": "kev",
-      "fetchedAt": "2026-11-11T00:07:45.725Z",
+      "fetchedAt": "2026-11-12T01:27:38.179Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "mcp-spec",
-      "fetchedAt": "2026-11-11T00:07:45.725Z",
+      "fetchedAt": "2026-11-12T01:27:38.179Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "nextjs",
-      "fetchedAt": "2026-11-11T00:07:45.725Z",
+      "fetchedAt": "2026-11-12T01:27:38.179Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "nodejs",
-      "fetchedAt": "2026-11-11T00:07:45.725Z",
+      "fetchedAt": "2026-11-12T01:27:38.179Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "openai-deprecations",
-      "fetchedAt": "2026-11-11T00:07:45.725Z",
+      "fetchedAt": "2026-11-12T01:27:38.179Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "openai-pricing",
-      "fetchedAt": "2026-11-11T00:07:45.725Z",
+      "fetchedAt": "2026-11-12T01:27:38.179Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "product-hunt",
       "fetchedAt": "2026-11-08T21:52:10.746Z",
-      "failDays": 2,
-      "failOn": "2026-11-11"
+      "failDays": 3,
+      "failOn": "2026-11-12"
     },
     {
       "source": "react",
-      "fetchedAt": "2026-11-11T00:07:45.725Z",
+      "fetchedAt": "2026-11-12T01:27:38.179Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "socket",
-      "fetchedAt": "2026-11-11T00:07:45.725Z",
+      "fetchedAt": "2026-11-12T01:27:38.179Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "supabase",
-      "fetchedAt": "2026-11-11T00:07:45.725Z",
+      "fetchedAt": "2026-11-12T01:27:38.179Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "typescript",
-      "fetchedAt": "2026-11-11T00:07:45.725Z",
+      "fetchedAt": "2026-11-12T01:27:38.179Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "vercel",
-      "fetchedAt": "2026-11-11T00:07:45.725Z",
+      "fetchedAt": "2026-11-12T01:27:38.179Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "vite",
-      "fetchedAt": "2026-11-11T00:07:45.725Z",
+      "fetchedAt": "2026-11-12T01:27:38.179Z",
       "failDays": 0,
       "failOn": null
     }
@@ -10211,6 +10287,16 @@
     },
     {
       "date": "2026-11-10",
+      "kind": "repo",
+      "status": "failed"
+    },
+    {
+      "date": "2026-11-11",
+      "kind": "product",
+      "status": "failed"
+    },
+    {
+      "date": "2026-11-11",
       "kind": "repo",
       "status": "failed"
     }

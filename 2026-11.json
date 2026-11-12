@@ -9594,6 +9594,780 @@
       },
       "collectedAt": "2026-11-11T08:39:14+09:00",
       "late": false
+    },
+    {
+      "brief": {
+        "targetDate": "2026-11-11",
+        "headline": "엔비디아 이사회가 젠슨 황 해임을 준비한다는 보도가 나오며 AI 업계가 흔들렸고, 한국에서는 코어위브 호실적에 증시가 급등한 가운데 국고채 담합에 역대 최대 과징금이 매겨졌다.",
+        "keywords": [
+          "젠슨 황",
+          "국고채 담합",
+          "분당 버스 추돌",
+          "앤트로픽 IPO",
+          "스페인 총파업"
+        ],
+        "sections": [
+          {
+            "name": "한국",
+            "flow": "출근길 분당 버스 연쇄 추돌과 금융권을 겨눈 역대 최대 담합 과징금이 하루를 채웠고, 증시는 미국 금리 우려에도 AI 훈풍으로 크게 올랐다.",
+            "topStories": [
+              {
+                "rank": 1,
+                "title": "분당 출근길 시내버스가 차량 32대 들이받아 57명 다쳐",
+                "summary": "성남 분당에서 시내버스가 신호를 기다리던 차량 32대를 잇따라 들이받아 57명이 다쳤다.",
+                "whyItMatters": "출근 시간 도심 한복판에서 대중교통 차량이 일으킨 대형 사고라, 버스 제동장치 점검과 운전자 관리 문제가 다시 떠올랐다.",
+                "background": "시내버스는 하루 수백 킬로미터를 달리며 많은 승객을 태운다. 제동장치에 문제가 생기거나 운전자가 제대로 대응하지 못하면 한 대의 사고가 여러 차량으로 번지기 쉽다. 경찰은 운전자의 진술과 블랙박스·CCTV 영상, 차량 정비 기록을 함께 살펴 원인을 가린다.",
+                "keyFacts": [
+                  "11일 오전 7시 34분께 분당구 야탑동 벌말사거리 근처에서 사고가 났다.",
+                  "60대 기사가 몰던 340번 시내버스가 버스 4대, 화물차 1대, 승용차 27대 등 32대를 연달아 들이받았다.",
+                  "기사를 포함해 9명이 크게 다치고 48명이 가볍게 다쳤으며, 숨진 사람은 없다.",
+                  "기사는 경찰에 브레이크가 듣지 않았다고 말했고, 현장 음주 측정에서는 술이 나오지 않았다.",
+                  "한때 양방향 통행이 막혀 출근길 정체가 생겼다가 차량을 옮긴 뒤 풀렸다."
+                ],
+                "outlook": "경찰은 브레이크 결함 여부와 약물 복용 여부를 확인하고, 버스 회사의 정비 관리도 조사할 예정이다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "사회",
+                  "minor": "사건·사고"
+                },
+                "sources": [
+                  {
+                    "name": "경향신문",
+                    "url": "https://www.khan.co.kr/article/202611112106045/",
+                    "publishedAt": "2026-11-11",
+                    "primary": true
+                  },
+                  {
+                    "name": "파이낸셜뉴스",
+                    "url": "https://www.fnnews.com/news/202611111144520750",
+                    "publishedAt": "2026-11-11"
+                  },
+                  {
+                    "name": "주간경향",
+                    "url": "https://weekly.khan.co.kr/article/202611111230001/",
+                    "publishedAt": "2026-11-11"
+                  }
+                ]
+              },
+              {
+                "rank": 2,
+                "title": "국고채 입찰 담합한 은행·증권사 15곳에 과징금 1조6천억원",
+                "summary": "공정거래위원회가 국고채 입찰에서 금리를 미리 맞춘 국고채전문딜러 15곳에 역대 최대인 약 1조6천억원의 과징금을 매겼다.",
+                "whyItMatters": "나라 빚을 조달하는 국고채 시장의 입찰이 짜고 친 것으로 판정돼, 정부 이자 부담과 금융사 실적, 국고채 시장 운영 방식 모두에 영향이 간다.",
+                "background": "정부는 국고채를 경쟁입찰로 팔고, 국고채전문딜러(PD)로 지정된 은행·증권사가 금리를 써 내 사들인다. 딜러들이 금리를 미리 맞추면 경쟁이 사라져 정부가 더 높은 이자를 낼 수 있다. 공정위는 8월부터 이 사건을 심의해 왔다.",
+                "keyFacts": [
+                  "대상은 2020년 1월부터 2023년 6월까지 국고채 입찰에 참여한 은행 5곳과 증권사 10곳이다.",
+                  "공정위는 145건의 입찰에서 써 낼 금리를 미리 합의했다고 봤다.",
+                  "과징금은 약 1조6,266억원으로, 종전 담합 사건 최대였던 7,476억원의 두 배가 넘는다.",
+                  "가담 기간이 길고 건수가 많은 7곳은 중대범죄수사청에 고발된다.",
+                  "금융투자협회는 제재가 지나쳐 대외 신인도에 타격을 줄 수 있다고 반발했다."
+                ],
+                "outlook": "금융사들은 통상적인 정보 교환이었다며 법적 대응을 예고했다. 일부 증권사는 4분기 실적에 손실이 잡힐 전망이다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "경제",
+                  "minor": "금융·증시"
+                },
+                "sources": [
+                  {
+                    "name": "한국경제",
+                    "url": "https://www.hankyung.com/article/2026111109981",
+                    "publishedAt": "2026-11-11",
+                    "primary": true
+                  },
+                  {
+                    "name": "파이낸셜뉴스",
+                    "url": "https://www.fnnews.com/news/202611111812576878",
+                    "publishedAt": "2026-11-11"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261112030500008",
+                    "publishedAt": "2026-11-12",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/11/11/PYH2026111105470001300_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 3,
+                "title": "미국 '빅스텝' 우려에도 코스피 2.6%, 코스닥 5.6% 급등",
+                "summary": "미국 금리 인상 우려 속에서도 코어위브 호실적과 앤트로픽 상장 기대에 반도체주가 올라 코스피가 5,375로 마감했다.",
+                "whyItMatters": "지난주 AI 거품 우려로 크게 흔들렸던 한국 증시가 이틀 연속 반등했지만, 국고채 금리는 미국 금리 인상 전망에 함께 뛰어 엇갈린 신호를 보였다.",
+                "background": "미국 10월 소비자물가가 예상보다 많이 오르자 연준 인사들 사이에서 12월에 금리를 0.5%포인트 올리는 '빅스텝'까지 거론됐다. 한국 증시는 반도체 비중이 커서 미국 AI 기업의 실적과 투자 흐름에 크게 움직인다.",
+                "keyFacts": [
+                  "코스피는 136.23포인트(2.60%) 오른 5,375.36, 코스닥은 37.49포인트(5.62%) 오른 705.10에 마감했다.",
+                  "삼성전자는 3%대, SK하이닉스는 5%대 올랐고 외국인이 순매수했다.",
+                  "원/달러 환율은 3.9원 내린 1,333.6원에 거래를 마쳤다.",
+                  "국고채 3년물 금리는 연 3.729%로 올라 채권 금리가 일제히 상승했다."
+                ],
+                "outlook": "엔비디아 경영진 거취 논란과 12월 미국 금리 결정이 반도체주 흐름을 가를 변수다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "경제",
+                  "minor": "금융·증시"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261111135351008",
+                    "publishedAt": "2026-11-11",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/11/11/PYH2026111116960001300_P2.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261111150551008",
+                    "publishedAt": "2026-11-11",
+                    "imageUrl": "https://img.yna.co.kr/photo/cms/2024/03/04/44/PCM20240304000144990_P2.jpg"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261111046151008",
+                    "publishedAt": "2026-11-11",
+                    "imageUrl": "https://img.yna.co.kr/photo/cms/2026/10/29/28/PCM20261029000028990_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 4,
+                "title": "해외에서 산 비만약, 12일부터 3개월치까지 들고 입국 가능",
+                "summary": "정부가 해외에서 정상적으로 산 비만치료제 등 자가 치료용 의약품을 최대 3개월치까지 휴대해 들여오는 것을 허용했다.",
+                "whyItMatters": "위고비·마운자로 같은 GLP-1 계열 비만약을 해외에서 사 오려는 수요가 많아, 여행객의 반입 규칙이 바뀌고 해외 구매가 늘 수 있다.",
+                "background": "GLP-1 계열 약은 식욕을 줄여 체중을 낮추는 주사제로, 나라마다 가격과 처방 조건이 다르다. 그동안 개인이 이런 의약품을 들여오는 데에는 제한이 있었다. 식품의약품안전처가 자가 치료용 의약품의 휴대 반입 기준을 넓혔다.",
+                "keyFacts": [
+                  "12일부터 GLP-1 계열 비만치료제 등 자가 치료용 의약품을 휴대 반입할 수 있다.",
+                  "해외에서 정상적으로 구매한 약이어야 하고, 양은 최대 3개월치다.",
+                  "식품의약품안전처가 발표했다."
+                ],
+                "outlook": "일본 등 가까운 나라에서 비만약을 사 오는 사람이 늘어날지, 오남용을 막을 장치가 충분한지가 관심이다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "과학·건강",
+                  "minor": "의료·건강"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261111158151017",
+                    "publishedAt": "2026-11-11",
+                    "imageUrl": "https://img.yna.co.kr/photo/cms/2026/10/15/78/PCM20261015000078990_P2.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261111154751017",
+                    "publishedAt": "2026-11-11",
+                    "imageUrl": "https://img.yna.co.kr/photo/cms/2026/10/15/78/PCM20261015000078990_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 5,
+                "title": "조정식 국회의장 \"개헌해도 현직 대통령 연임은 불가\"",
+                "summary": "조정식 국회의장이 개헌을 하더라도 현직 대통령이 연임할 수는 없다고 밝히고, 논란을 빚은 데 대해 사과했다.",
+                "whyItMatters": "대통령 연임제 개헌 논의에서 현직 대통령에게도 적용되느냐가 큰 쟁점이었는데, 국회의장이 선을 그어 개헌 논의의 방향에 영향을 준다.",
+                "background": "현행 헌법은 대통령 임기를 5년 단임으로 정하고, 임기 연장이나 중임 변경은 개정 당시 대통령에게 효력이 없다고 규정한다. 개헌 논의에서 4년 연임제가 거론되면서 현직 적용 여부를 두고 해석 논란이 있었다.",
+                "keyFacts": [
+                  "조 의장은 11일 개헌 시 현직 대통령의 연임은 불가능하다고 말했다.",
+                  "개헌은 국회 중심으로 추진하겠다고 밝혔다.",
+                  "관련 논란으로 국민께 송구하다는 뜻도 전했다."
+                ],
+                "outlook": "여야가 국회 개헌 논의 기구를 어떻게 꾸리고 언제까지 개헌안을 낼지가 다음 관심사다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "정치",
+                  "minor": "국회·정당"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261111060652001",
+                    "publishedAt": "2026-11-11",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/11/11/PYH2026111106100001300_P2.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261111060651001",
+                    "publishedAt": "2026-11-11",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/11/11/PYH2026111106100001300_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 6,
+                "title": "북한, 선전매체에 개정 헌법 공개하며 '두 국가' 반영 공식화",
+                "summary": "북한 선전매체가 비공개로 돌렸던 헌법 코너를 다시 열고, '적대적 두 국가' 노선을 반영한 헌법 전문을 공개했다.",
+                "whyItMatters": "남북을 서로 다른 적대 국가로 보는 노선이 헌법 문서로 확인돼, 통일을 전제로 한 기존 남북 관계의 틀이 더 멀어진 것으로 해석된다.",
+                "background": "김정은 국무위원장은 남북 관계를 '적대적인 두 국가 관계'로 규정하고 통일 관련 기구와 표현을 정리해 왔다. 그 뒤 북한 선전매체 '내나라'는 헌법 관련 코너를 비공개로 바꿔 개정 내용이 알려지지 않았다.",
+                "keyFacts": [
+                  "북한 선전매체 '내나라'가 헌법 전문을 다시 공개했다.",
+                  "공개된 헌법에는 '두 국가' 노선이 반영된 것으로 파악됐다.",
+                  "'두 국가' 선언 이후 헌법 코너는 그동안 비공개 상태였다."
+                ],
+                "outlook": "정부는 공개된 조문을 분석해 영토 조항과 대남 규정이 어떻게 바뀌었는지 확인할 예정이다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "정치",
+                  "minor": "북한"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261111085951504",
+                    "publishedAt": "2026-11-11",
+                    "imageUrl": "https://img.yna.co.kr/etc/inner/KR/2026/11/11/AKR20261111085951504_01_i_P2.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261111085900504",
+                    "publishedAt": "2026-11-11",
+                    "imageUrl": "https://img.yna.co.kr/etc/inner/KR/2026/11/11/AKR20261111085900504_01_i_P2.jpg"
+                  }
+                ]
+              }
+            ],
+            "shortNews": [
+              {
+                "summary": "농협중앙회장을 약 187만 조합원이 직접 뽑고 독립 감사기구를 두는 농협법 개정안이 국회 농해수위를 여당 주도로 통과했다. 국민의힘은 의결에 불참했다.",
+                "category": {
+                  "major": "정치",
+                  "minor": "국회·정당"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261111156000001",
+                    "publishedAt": "2026-11-11",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/11/11/PYH2026111117500001300_P2.jpg"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261111163300030",
+                    "publishedAt": "2026-11-11",
+                    "imageUrl": "https://img.yna.co.kr/photo/cms/2024/10/02/09/PCM20241002000309030_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "내년 시행 예정이던 가상자산 소득과세를 2년 미루는 정부 방침에 여야도 잠정 합의했다.",
+                "category": {
+                  "major": "경제",
+                  "minor": "거시·정책"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261111170100001",
+                    "publishedAt": "2026-11-11",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/11/11/PYH2026111117870001300_P2.jpg"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "세계",
+            "flow": "미국은 중간선거 뒤 정치 지형 변화가 이어졌고, 러시아·우크라이나는 대규모 포로 교환에 합의했으며 유럽과 아시아에서는 주택난 파업과 부통령 사임이 겹쳤다.",
+            "topStories": [
+              {
+                "rank": 1,
+                "title": "러시아·우크라이나, 역대 최대 포로 교환 합의…종전 돌파구는 없어",
+                "summary": "미국이 중재한 아부다비 협상에서 두 나라가 대규모 포로 교환에 합의했지만 영토와 안보 문제에서는 진전이 없었다.",
+                "whyItMatters": "전쟁을 끝내기 위한 3자 협상이 이어지는 가운데 나온 첫 구체적 성과지만, 핵심 쟁점이 그대로여서 휴전까지는 거리가 멀다.",
+                "background": "미국은 러시아와 우크라이나를 아랍에미리트 아부다비로 불러 종전 협상을 중재하고 있다. 협상장 밖에서는 두 나라가 서로의 에너지 시설을 공격하는 일이 계속됐다. 러시아는 우크라이나가 동부 도시들을 내주길 요구하고 있다.",
+                "keyFacts": [
+                  "협상은 이틀에 걸쳐 열렸고, 첫날에는 약 4시간 동안 이어졌다.",
+                  "두 나라는 지금까지 가운데 가장 큰 규모의 포로 교환에 합의했다.",
+                  "논의는 전쟁 뒤 유럽 안보 틀로 옮겨 갔지만 영토와 안보 보장에서는 입장 차가 컸다.",
+                  "미국은 서로에 대한 신뢰 부족이 협상을 막고 있다고 밝혔다.",
+                  "미국 특사들은 목요일에 푸틴 대통령과 젤렌스키 대통령을 각각 만날 예정이다."
+                ],
+                "outlook": "포로 교환이 실제로 이뤄지는지, 미국 특사와 두 정상의 만남에서 안보 보장안이 나오는지 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "국제",
+                  "minor": "유럽·러시아"
+                },
+                "sources": [
+                  {
+                    "name": "BBC",
+                    "url": "https://www.bbc.co.uk/news/articles/ck792we7zrz4o",
+                    "publishedAt": "2026-11-12",
+                    "imageUrl": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/8cf0/live/2eb174e0-ddef-11f1-b441-2b33b063138f.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261111181200109",
+                    "publishedAt": "2026-11-11",
+                    "imageUrl": "https://img.yna.co.kr/photo/ap/2026/11/11/PAP20261111196701009_P2.jpg"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261111164200109",
+                    "publishedAt": "2026-11-11",
+                    "imageUrl": "https://img.yna.co.kr/photo/etc/up/2026/11/11/PUP20261111012201009_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 2,
+                "title": "미 하원, 헤그세스 국방장관 탄핵 시도 막아",
+                "summary": "미국 하원에서 공화당이 피트 헤그세스 국방장관 탄핵소추안 표결을 막았다.",
+                "whyItMatters": "중간선거에서 크게 이긴 민주당이 새 의회 전부터 행정부 견제에 나섰지만, 아직 하원 다수인 공화당에 막혀 첫 시도가 무산됐다.",
+                "background": "탄핵은 대통령뿐 아니라 장관에게도 할 수 있어, 하원이 소추하고 상원이 심판한다. 민주당 일부 의원은 헤그세스 장관의 탄핵을 추진해 왔다.새로 뽑힌 의회는 내년 1월에 들어선다.",
+                "keyFacts": [
+                  "하원 공화당은 탄핵소추안이 본격 표결에 오르지 못하도록 막았다.",
+                  "트럼프 대통령은 결과를 반기며 헤그세스 장관을 치켜세웠다.",
+                  "민주당 의원 가운데 펠로시 전 의장 등 11명이 표결에 참여하지 않았다.",
+                  "민주당은 내년 새 의회에서 다시 시도할 수 있다."
+                ],
+                "outlook": "민주당이 다수가 되는 새 의회에서 탄핵과 행정부 조사를 얼마나 밀어붙일지 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "국제",
+                  "minor": "미국"
+                },
+                "sources": [
+                  {
+                    "name": "BBC",
+                    "url": "https://www.bbc.co.uk/news/articles/cxly4y5jzl0qo",
+                    "publishedAt": "2026-11-11",
+                    "imageUrl": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/5391/live/eb55ba30-dd67-11f1-a701-fddedf244c16.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261112000600071",
+                    "publishedAt": "2026-11-12",
+                    "imageUrl": "https://img.yna.co.kr/photo/reuters/2026/11/11/PRU20261111097701009_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 3,
+                "title": "미시시피 상원 선거도 민주당 승리…콜롬, 140여 년 만의 흑인 상원의원",
+                "summary": "공화당 텃밭인 미시시피 상원 선거에서 민주당 스콧 콜롬 후보가 현직 공화당 의원을 꺾었다.",
+                "whyItMatters": "공화당이 오래 지켜 온 남부 지역까지 민주당이 가져가 중간선거 압승의 폭이 더 커졌고, 상원 의석 구도에도 영향을 준다.",
+                "background": "미국 중간선거가 끝난 지 일주일이 지났지만 일부 접전 지역은 개표가 늦어 결과가 나오지 않았다. 미시시피는 오랫동안 공화당이 강한 지역이다.",
+                "keyFacts": [
+                  "민주당 스콧 콜롬 후보가 현직 신디 하이드스미스 공화당 의원을 이겼다.",
+                  "콜롬은 140여 년 만에 미시시피에서 뽑힌 첫 흑인 연방 상원의원이다.",
+                  "이 승리로 민주당 상원 의석은 55석이 될 것으로 보인다."
+                ],
+                "outlook": "아직 결과가 나오지 않은 접전 선거구와 새 상원의 지도부 구성을 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "국제",
+                  "minor": "미국"
+                },
+                "sources": [
+                  {
+                    "name": "BBC",
+                    "url": "https://www.bbc.co.uk/news/articles/cw7vppyr80eeo",
+                    "publishedAt": "2026-11-12",
+                    "imageUrl": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/dc59/live/150d2fe0-ddde-11f1-b465-b9821c2582d4.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261112016852071",
+                    "publishedAt": "2026-11-12",
+                    "imageUrl": "https://img.yna.co.kr/photo/ap/2026/11/05/PAP20261105063401009_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 4,
+                "title": "스페인, 주택난에 14년 만의 총파업…바르셀로나서 충돌",
+                "summary": "스페인 주요 노조가 치솟는 집값과 임대료에 항의해 14년 만에 총파업을 벌였고, 바르셀로나에서는 충돌이 일어났다.",
+                "whyItMatters": "주택 문제가 유럽 여러 나라의 가장 큰 생활 불만으로 떠오른 가운데, 스페인에서 전국 규모 파업으로 번져 정부의 주택 정책 압박이 커졌다.",
+                "background": "스페인 대도시에서는 관광객용 단기 임대가 늘고 집값이 크게 올라 젊은 층이 집을 구하기 어려워졌다. 그동안 마드리드와 바르셀로나에서 주택 시위가 이어져 왔다.",
+                "keyFacts": [
+                  "11일 주요 노조가 부른 총파업에 수많은 노동자가 일손을 놓았다.",
+                  "스페인 총파업은 14년 만이다.",
+                  "바르셀로나에서는 시위대와 경찰 사이에 충돌이 벌어졌다.",
+                  "마드리드에서도 대규모 주택 시위가 열렸다."
+                ],
+                "outlook": "정부가 임대료 규제나 공공주택 확대 같은 대책을 내놓을지 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "국제",
+                  "minor": "유럽·러시아"
+                },
+                "sources": [
+                  {
+                    "name": "BBC",
+                    "url": "https://www.bbc.co.uk/news/articles/cwvg25nypmrvo",
+                    "publishedAt": "2026-11-12",
+                    "imageUrl": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/c8f2/live/d0df2010-de11-11f1-a701-fddedf244c16.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261111176951098",
+                    "publishedAt": "2026-11-12",
+                    "imageUrl": "https://img.yna.co.kr/photo/ap/2026/11/12/PAP20261112047601009_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 5,
+                "title": "미국, 영국 공군기지 공격 모의한 이란 연계 3명 기소",
+                "summary": "미 법무부가 영국 페어퍼드 공군기지 공격 등을 모의한 혐의로 이란과 연계된 남성 3명을 기소했다.",
+                "whyItMatters": "미국과 이란의 전쟁이 멈춘 상태에서도 이란 연계 세력의 공격 위협이 서방 본토와 동맹국 기지로 이어지고 있음을 보여 준다.",
+                "background": "미국과 이란은 올해 무력 충돌을 겪었고, 지금은 대규모 공습이 멈춘 상태에서 경제 압박이 이어지고 있다. 영국 페어퍼드 기지에는 미 공군 항공기가 배치돼 있다.",
+                "keyFacts": [
+                  "기소된 3명은 페어퍼드 기지 사건을 포함한 여러 공격을 모의한 혐의를 받는다.",
+                  "이 가운데 한 명은 미국 교도소 안에서 공격 모의를 도운 것으로 알려졌다.",
+                  "스콧 베선트 재무장관은 이란의 위협 때문에 군기지 안으로 거처를 옮겼다.",
+                  "트럼프 행정부 관료 여러 명이 안전 문제로 군기지에서 지낸다."
+                ],
+                "outlook": "재판 과정에서 이란 정부의 직접 개입이 드러나는지, 이란과의 대화 재개에 영향을 주는지 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "국제",
+                  "minor": "중동"
+                },
+                "sources": [
+                  {
+                    "name": "BBC",
+                    "url": "https://www.bbc.co.uk/news/articles/c3rryrryk59zo",
+                    "publishedAt": "2026-11-12",
+                    "imageUrl": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/9ba2/live/c17cf610-dd8f-11f1-8c82-87885cae71d3.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "BBC",
+                    "url": "https://www.bbc.co.uk/news/articles/cqr7gr0010r2o",
+                    "publishedAt": "2026-11-12",
+                    "imageUrl": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/274f/live/14e2f1f0-dde6-11f1-9204-cdcddf7d901c.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 6,
+                "title": "인도네시아 부통령 기브란 사임…여권 연합 균열",
+                "summary": "인도네시아의 기브란 라카부밍 라카 부통령이 물러나 프라보워 정부의 정치 불안이 커졌다.",
+                "whyItMatters": "조코 위도도 전 대통령의 아들인 부통령이 물러나면서, 현 대통령과 전임 대통령 진영의 연합이 흔들린다는 신호로 읽힌다.",
+                "background": "프라보워 수비안토 대통령은 조코 위도도 전 대통령의 지지를 받아 당선됐고, 위도도의 아들 기브란이 부통령이 됐다. 최근 두 진영 사이의 갈등이 커지고 있다.",
+                "keyFacts": [
+                  "기브란 부통령이 사임했다고 측근과 정치권 소식통이 전했다.",
+                  "프라보워 대통령은 위도도 전 대통령과의 틈이 벌어지는 상황이다.",
+                  "앞서 의원 120명이 학력 문제를 들어 부통령 탄핵을 요구했다."
+                ],
+                "outlook": "누가 부통령 자리를 잇는지, 여권 연합이 다시 짜이는지 본다.",
+                "confidence": "보도에 따르면",
+                "category": {
+                  "major": "국제",
+                  "minor": "기타 지역"
+                },
+                "sources": [
+                  {
+                    "name": "BBC",
+                    "url": "https://www.bbc.co.uk/news/articles/cmvgxgz87qqro",
+                    "publishedAt": "2026-11-12",
+                    "imageUrl": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/0e5a/live/8d137e10-dcf1-11f1-9ef0-4b5930e2f80e.jpg",
+                    "primary": true
+                  }
+                ]
+              }
+            ],
+            "shortNews": [
+              {
+                "summary": "콩고민주공화국의 에볼라 확진자가 1만1천 명을 넘어 보름 사이 1천 명 늘었다.",
+                "category": {
+                  "major": "과학·건강",
+                  "minor": "의료·건강"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261111174800099",
+                    "publishedAt": "2026-11-11",
+                    "imageUrl": "https://img.yna.co.kr/photo/ap/2026/11/10/PAP20261110227901009_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "케냐가 마지막 에볼라 환자를 퇴원시켜, 새 환자가 없으면 42일 뒤 종식을 선언한다.",
+                "category": {
+                  "major": "과학·건강",
+                  "minor": "의료·건강"
+                },
+                "sources": [
+                  {
+                    "name": "BBC",
+                    "url": "https://www.bbc.co.uk/news/articles/cwe9kzv0g0v7o",
+                    "publishedAt": "2026-11-11",
+                    "imageUrl": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/1675/live/f68a02b0-ddcd-11f1-b441-2b33b063138f.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "이란 안보 수장이 농축 핵물질을 나라 밖으로 내보내지 않겠다고 밝혀 미국과의 협상 재개가 더 어려워졌다.",
+                "category": {
+                  "major": "국제",
+                  "minor": "중동"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261111172300079",
+                    "publishedAt": "2026-11-11",
+                    "imageUrl": "https://img.yna.co.kr/etc/inner/KR/2026/11/11/AKR20261111172300079_02_i_P2.jpg"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "IT·AI",
+            "flow": "젠슨 황 스캔들이 엔비디아 경영진 교체 보도로 번진 한편, 코어위브 호실적과 앤트로픽 상장 기대가 AI 투자 심리를 되살렸다.",
+            "topStories": [
+              {
+                "rank": 1,
+                "title": "엔비디아 이사회, 젠슨 황 해임 준비 보도…주가 시간외 8% 급락",
+                "summary": "월스트리트저널이 엔비디아 이사회가 젠슨 황 CEO를 물러나게 할 준비를 한다고 보도하자 주가가 시간외 거래에서 크게 떨어졌다.",
+                "whyItMatters": "세계 AI 반도체 시장을 이끄는 회사의 창업자 거취가 흔들려, AI 투자 흐름과 미중 반도체 갈등, 한국 메모리 업체까지 영향이 번질 수 있다.",
+                "background": "젠슨 황은 중국 스파이로 지목된 중국 국적 여성과 혼외 관계였다는 보도 뒤 이를 인정했고, 이사회는 8일 독립 조사를 시작했다. 이 여성이 엔비디아 AI 칩의 중국 판매를 도왔다는 의혹도 나왔다. 엔비디아는 국가 안보나 회사 기밀이 새어 나갔다고 볼 근거는 없다고 밝혀 왔다.",
+                "keyFacts": [
+                  "월스트리트저널은 이사회가 이르면 11일 회의를 열어 황 CEO의 거취를 정할 것이라고 전했다.",
+                  "뉴욕타임스는 황 CEO가 자신에게 보고하는 회사 임원과도 관계를 맺었다고 보도했다.",
+                  "주가는 시간외 거래에서 8% 넘게 떨어져 159.51달러까지 밀렸다.",
+                  "공화당 케빈 크레이머 상원의원은 황 CEO가 물러나야 한다고 요구했다.",
+                  "엔비디아는 17일 실적 발표를 앞두고 있다."
+                ],
+                "outlook": "이사회가 실제로 CEO 교체를 결정하는지, 후임과 실적 발표 일정이 어떻게 되는지 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "반도체·하드웨어"
+                },
+                "sources": [
+                  {
+                    "name": "CBS News",
+                    "url": "https://www.cbsnews.com/news/nvidia-stock-dives-report-board-prepares-oust-jensen-huang/",
+                    "publishedAt": "2026-11-11",
+                    "primary": true
+                  },
+                  {
+                    "name": "CNBC",
+                    "url": "https://www.cnbc.com/2026/11/11/nvidia-jensen-huang-affair-employee.html",
+                    "publishedAt": "2026-11-11"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261112020752072",
+                    "publishedAt": "2026-11-12",
+                    "imageUrl": "https://img.yna.co.kr/photo/etc/epa/2026/09/30/PEP20260930089001009_P2.jpg"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261111006551091",
+                    "publishedAt": "2026-11-11",
+                    "imageUrl": "https://img.yna.co.kr/photo/reuters/2026/11/10/PRU20261110119301009_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 2,
+                "title": "코어위브 호실적에 AI 주식 반등…매출 두 배 넘게 늘어",
+                "summary": "AI 클라우드 기업 코어위브가 예상보다 좋은 3분기 실적과 높인 연간 전망을 내놓아 AI 관련주가 함께 올랐다.",
+                "whyItMatters": "AI 데이터센터 투자가 거품이라는 우려로 주가가 크게 빠진 뒤, 실제 수요가 여전히 강하다는 숫자가 나와 시장 분위기를 바꿨다.",
+                "background": "코어위브는 엔비디아 GPU를 대량으로 사들여 AI 기업에 빌려주는 클라우드 회사다. 지난 한 달 동안 AI 인프라 주식이 크게 떨어지면서 코어위브 주가도 약 40% 빠졌었다.",
+                "keyFacts": [
+                  "3분기 매출은 36억6천만 달러로 1년 전보다 두 배 넘게 늘어 시장 예상을 넘었다.",
+                  "2026년 연간 매출 전망을 130억~133억 달러로 높였다.",
+                  "주가는 11일 약 20% 올랐고, 나스닥도 1% 넘게 상승했다.",
+                  "한국에서도 삼성전자와 SK하이닉스가 함께 올랐다."
+                ],
+                "outlook": "코어위브가 계획대로 흑자로 돌아설 수 있는지, 다른 AI 인프라 기업 실적이 같은 흐름을 보이는지 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "AI 산업·기업"
+                },
+                "sources": [
+                  {
+                    "name": "CNBC",
+                    "url": "https://www.cnbc.com/2026/11/10/coreweave-crwv-q3-earnings-report-2026.html",
+                    "publishedAt": "2026-11-11",
+                    "primary": true
+                  },
+                  {
+                    "name": "CoreWeave",
+                    "url": "https://www.sec.gov/Archives/edgar/data/0001769628/000176962826000461/coreweave3q26earningspress.htm",
+                    "publishedAt": "2026-11-11"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261111046151008",
+                    "publishedAt": "2026-11-11",
+                    "imageUrl": "https://img.yna.co.kr/photo/cms/2026/10/29/28/PCM20261029000028990_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 3,
+                "title": "앤트로픽 IPO에 공모 물량 몇 배 수요…아마존·구글 큰 차익 전망",
+                "summary": "AI 기업 앤트로픽의 기업공개에 공모 물량의 몇 배가 넘는 투자 수요가 몰려 역대 최대 상장이 될 전망이다.",
+                "whyItMatters": "앤트로픽 상장의 흥행 여부가 AI 기업 가치에 대한 시장의 판단을 보여 주는 기준이 되고, 다른 AI 기업의 상장 계획에도 영향을 준다.",
+                "background": "앤트로픽은 AI 모델 클로드를 만드는 회사로, 10월 말 상장 서류를 냈다. 아마존과 구글은 일찍부터 큰돈을 투자해 많은 지분을 갖고 있다.",
+                "keyFacts": [
+                  "공모 물량보다 몇 배 많은 투자 수요가 들어온 것으로 전해졌다.",
+                  "기업 가치는 1조 달러를 넘는 수준으로 거론된다.",
+                  "로이터 계산으로 아마존과 구글의 지분 가치는 공모가 상단에서 합쳐 약 4,110억 달러가 될 수 있다.",
+                  "개인 투자자 매수도 역대 최대가 될 수 있다는 분석이 나왔다."
+                ],
+                "outlook": "공모가가 희망 범위 상단에서 정해지는지, 상장 첫날 주가가 어떻게 움직이는지 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "AI 산업·기업"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261112004700072",
+                    "publishedAt": "2026-11-12",
+                    "imageUrl": "https://img.yna.co.kr/photo/reuters/2026/11/12/PRU20261112094901009_P2.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "Investing.com",
+                    "url": "https://www.investing.com/news/stock-market-news/factboxamazon-google-set-for-big-windfall-from-anthropic-ipo-5016134",
+                    "publishedAt": "2026-11-11"
+                  }
+                ]
+              },
+              {
+                "rank": 4,
+                "title": "금융보안원도 해킹당해…48개 금융사 자료 130여 개 유출",
+                "summary": "금융권 보안을 맡는 금융보안원이 해킹을 당해 48개 금융사의 파일 130여 개가 빠져나갔고 경찰이 수사에 나섰다.",
+                "whyItMatters": "금융사 보안을 점검하는 기관마저 뚫려, 가을 내내 이어진 금융권 해킹 사태에 대한 불안이 더 커졌다.",
+                "background": "9월 말부터 국내 금융사 수십 곳에서 침해사고가 잇따라 신고됐다. 금융보안원은 금융사들의 보안 점검과 침해 대응을 맡는 기관이다.",
+                "keyFacts": [
+                  "해커는 금융감독원 권한을 가진 것처럼 꾸민 가짜 계정으로 접속한 것으로 알려졌다.",
+                  "금융보안원은 9일 오후 공격이 몰리자 이를 알아채고 접속을 막았다.",
+                  "유출 자료에는 이름·생년월일 같은 개인정보 300여 건이 든 서식이 포함됐다.",
+                  "피해 회사는 저축은행 등 중소 금융사가 많고 대형사는 없는 것으로 파악됐다.",
+                  "금융위원회와 금감원은 현장에 인력을 보내 점검에 들어갔다."
+                ],
+                "outlook": "경찰이 접속 경로를 추적해 공격 주체를 밝히는지, 다른 기관에도 같은 취약점이 있는지 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "보안"
+                },
+                "sources": [
+                  {
+                    "name": "노컷뉴스",
+                    "url": "https://nocutnews.co.kr/news/6605379",
+                    "publishedAt": "2026-11-11",
+                    "primary": true
+                  },
+                  {
+                    "name": "EBN",
+                    "url": "https://www.ebn.co.kr/news/articleView.html?idxno=1731294",
+                    "publishedAt": "2026-11-11"
+                  },
+                  {
+                    "name": "천지일보",
+                    "url": "https://www.newscj.com/news/articleView.html?idxno=3447901",
+                    "publishedAt": "2026-11-11"
+                  }
+                ],
+                "devCheckpoint": "권한 승인 시스템에서 다른 기관 권한을 사칭한 계정을 걸러 내는지, 짧은 시간에 여러 IP로 바뀌는 접속을 탐지하는지 점검한다."
+              },
+              {
+                "rank": 5,
+                "title": "젠슨 황 스캔들에 미 의회 대중 칩 규제 탄력…블랙리스트 대학 H200 구매도",
+                "summary": "엔비디아 스캔들을 계기로 미국 의회에서 중국 반도체 수출 규제 법안이 힘을 얻었고, 수출 통제 대상인 중국 대학이 H200을 샀다는 보도도 나왔다.",
+                "whyItMatters": "미국의 대중 AI 칩 규제가 더 세지면 엔비디아의 중국 사업과 한국 반도체 업체의 수출 환경이 함께 바뀔 수 있다.",
+                "background": "미국은 고성능 AI 칩의 중국 수출을 막고, 군과 연계된 중국 기관을 수출 통제 명단에 올려 왔다. 젠슨 황 스캔들로 칩이 우회 경로로 중국에 들어갔다는 의혹이 커졌다.",
+                "keyFacts": [
+                  "미 의회에서 중국 칩 규제를 담은 법안 3건 처리에 속도가 붙었다.",
+                  "중국 군과 연계돼 미국 수출 통제 명단에 오른 대학이 소량이지만 엔비디아 H200을 샀다고 로이터가 보도했다.",
+                  "한국 반도체 업계에 미칠 영향도 주목받고 있다."
+                ],
+                "outlook": "법안이 국방수권법 등에 실려 처리되는지, 미 상무부가 우회 수출 단속을 강화하는지 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "규제·정책"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261112000500071",
+                    "publishedAt": "2026-11-12",
+                    "imageUrl": "https://img.yna.co.kr/photo/ap/2026/11/11/PAP20261111147201009_P2.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261111128800009",
+                    "publishedAt": "2026-11-11",
+                    "imageUrl": "https://img.yna.co.kr/photo/reuters/2026/11/11/PRU20261111164001009_P2.jpg"
+                  }
+                ]
+              }
+            ],
+            "shortNews": [
+              {
+                "summary": "딥엘이 목소리의 감정과 어조까지 살려 실시간으로 통역하는 음성 AI '오러'를 공개했다.",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "AI 모델·연구"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261111084500091",
+                    "publishedAt": "2026-11-11",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2023/05/09/PYH2023050905810001300_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "과학기술정보통신부가 GS건설 아파트 커뮤니티 시설 예약·관리 시스템 침해사고를 직권조사하기로 했다.",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "보안"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261111163101017",
+                    "publishedAt": "2026-11-11",
+                    "imageUrl": "https://img.yna.co.kr/photo/cms/2021/03/07/11/PCM20210307000011990_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "유럽에서 냉장·냉동설비 제어시스템 해킹이 잇따르자 정부가 국내 콜드체인 설비를 긴급 점검한다.",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "보안"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261111161500017",
+                    "publishedAt": "2026-11-11",
+                    "imageUrl": "https://img.yna.co.kr/photo/reuters/2026/11/02/PRU20261102373201009_P2.jpg"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "collectedAt": "2026-11-12T09:53:16+09:00",
+      "late": false
     }
   ],
   "extracted": [
@@ -9606,7 +10380,8 @@
     "2026-11-07",
     "2026-11-08",
     "2026-11-09",
-    "2026-11-10"
+    "2026-11-10",
+    "2026-11-11"
   ],
   "scheduled": [
     "2026-11-01",
@@ -9618,6 +10393,7 @@
     "2026-11-07",
     "2026-11-08",
     "2026-11-09",
-    "2026-11-10"
+    "2026-11-10",
+    "2026-11-11"
   ]
 }

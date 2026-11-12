@@ -5682,6 +5682,171 @@
       "describedOn": "2026-11-11",
       "describedStory": "2026-11-10/IT·AI-s2",
       "mergedInto": null
+    },
+    {
+      "id": 460,
+      "kind": "기관",
+      "name": "금융투자협회",
+      "aliases": [
+        "금투협",
+        "Korea Financial Investment Association"
+      ],
+      "description": "한국 증권사·자산운용사 등이 모인 금융투자업계 협회",
+      "describedOn": "2026-11-12",
+      "describedStory": "2026-11-11/한국-2",
+      "mergedInto": null
+    },
+    {
+      "id": 461,
+      "kind": "기관",
+      "name": "식품의약품안전처",
+      "aliases": [
+        "식약처",
+        "MFDS"
+      ],
+      "description": "대한민국의 식품·의약품 안전 관리 기관",
+      "describedOn": "2026-11-12",
+      "describedStory": "2026-11-11/한국-4",
+      "mergedInto": null
+    },
+    {
+      "id": 462,
+      "kind": "기관",
+      "name": "내나라",
+      "aliases": [
+        "Naenara"
+      ],
+      "description": "북한의 대외 선전 매체",
+      "describedOn": "2026-11-12",
+      "describedStory": "2026-11-11/한국-6",
+      "mergedInto": null
+    },
+    {
+      "id": 463,
+      "kind": "인물",
+      "name": "낸시 펠로시",
+      "aliases": [
+        "펠로시",
+        "Nancy Pelosi"
+      ],
+      "description": "미국 민주당 하원의원, 전 하원의장",
+      "describedOn": "2026-11-12",
+      "describedStory": "2026-11-11/세계-2",
+      "mergedInto": null
+    },
+    {
+      "id": 464,
+      "kind": "인물",
+      "name": "스콧 콜롬",
+      "aliases": [
+        "Scott Colom"
+      ],
+      "description": "미국 민주당 정치인, 미시시피주 연방 상원의원 당선인",
+      "describedOn": "2026-11-12",
+      "describedStory": "2026-11-11/세계-3",
+      "mergedInto": null
+    },
+    {
+      "id": 465,
+      "kind": "인물",
+      "name": "신디 하이드스미스",
+      "aliases": [
+        "Cindy Hyde-Smith"
+      ],
+      "description": "미국 공화당 미시시피주 연방 상원의원",
+      "describedOn": "2026-11-12",
+      "describedStory": "2026-11-11/세계-3",
+      "mergedInto": null
+    },
+    {
+      "id": 466,
+      "kind": "인물",
+      "name": "스콧 베선트",
+      "aliases": [
+        "베선트",
+        "Scott Bessent"
+      ],
+      "description": "미국 재무장관",
+      "describedOn": "2026-11-12",
+      "describedStory": "2026-11-11/세계-5",
+      "mergedInto": null
+    },
+    {
+      "id": 467,
+      "kind": "인물",
+      "name": "기브란 라카부밍 라카",
+      "aliases": [
+        "기브란",
+        "Gibran Rakabuming Raka"
+      ],
+      "description": "인도네시아 부통령(2026년 11월 사임 보도)",
+      "describedOn": "2026-11-12",
+      "describedStory": "2026-11-11/세계-6",
+      "mergedInto": null
+    },
+    {
+      "id": 468,
+      "kind": "인물",
+      "name": "조코 위도도",
+      "aliases": [
+        "위도도",
+        "Joko Widodo",
+        "Jokowi"
+      ],
+      "description": "인도네시아 전 대통령",
+      "describedOn": "2026-11-12",
+      "describedStory": "2026-11-11/세계-6",
+      "mergedInto": null
+    },
+    {
+      "id": 469,
+      "kind": "기관",
+      "name": "뉴욕타임스",
+      "aliases": [
+        "NYT",
+        "The New York Times"
+      ],
+      "description": "미국의 일간지",
+      "describedOn": "2026-11-12",
+      "describedStory": "2026-11-11/IT·AI-1",
+      "mergedInto": null
+    },
+    {
+      "id": 470,
+      "kind": "인물",
+      "name": "케빈 크레이머",
+      "aliases": [
+        "Kevin Cramer"
+      ],
+      "description": "미국 공화당 노스다코타주 연방 상원의원",
+      "describedOn": "2026-11-12",
+      "describedStory": "2026-11-11/IT·AI-1",
+      "mergedInto": null
+    },
+    {
+      "id": 471,
+      "kind": "기관",
+      "name": "딥엘",
+      "aliases": [
+        "DeepL"
+      ],
+      "description": "AI 번역·통역 서비스를 만드는 독일 기업",
+      "describedOn": "2026-11-12",
+      "describedStory": "2026-11-11/IT·AI-s1",
+      "mergedInto": null
+    },
+    {
+      "id": 472,
+      "kind": "기관",
+      "name": "과학기술정보통신부",
+      "aliases": [
+        "과기정통부",
+        "MSIT"
+      ],
+      "description": "대한민국의 과학기술·정보통신 정책 부처",
+      "describedOn": "2026-11-12",
+      "describedStory": "2026-11-11/IT·AI-s2",
+      "mergedInto": null
     }
   ],
   "terms": [
@@ -7312,6 +7477,65 @@
       "name": "선급금",
       "aliases": [],
       "description": "물건이나 서비스를 받기 전에 먼저 치르는 돈이다. 계약이 바뀌면 돌려받지 못해 손실이 될 수 있다.",
+      "mergedInto": null
+    },
+    {
+      "id": 189,
+      "name": "국고채전문딜러",
+      "aliases": [
+        "PD",
+        "Primary Dealer"
+      ],
+      "description": "정부가 지정해 국고채 입찰에 참여하고 시장에서 사고팔 의무를 지는 은행·증권사다. 국고채를 안정적으로 발행하고 거래되게 하는 역할을 맡는다.",
+      "mergedInto": null
+    },
+    {
+      "id": 190,
+      "name": "빅스텝",
+      "aliases": [
+        "big step"
+      ],
+      "description": "중앙은행이 기준금리를 한 번에 0.5%포인트 올리거나 내리는 것을 이르는 말이다. 보통 0.25%포인트씩 움직이는 것보다 큰 폭이다.",
+      "mergedInto": null
+    },
+    {
+      "id": 191,
+      "name": "GLP-1 계열 약",
+      "aliases": [
+        "GLP-1",
+        "GLP-1 작용제"
+      ],
+      "description": "몸에서 나오는 장 호르몬 GLP-1처럼 작용해 혈당을 낮추고 식욕을 줄이는 약이다. 당뇨병과 비만 치료에 쓴다.",
+      "mergedInto": null
+    },
+    {
+      "id": 192,
+      "name": "탄핵",
+      "aliases": [
+        "탄핵소추",
+        "impeachment"
+      ],
+      "description": "대통령이나 고위 공직자가 법을 어겼을 때 의회가 소추해 파면 여부를 가리는 절차다. 미국에서는 하원이 소추하고 상원이 심판한다.",
+      "mergedInto": null
+    },
+    {
+      "id": 193,
+      "name": "시간외 거래",
+      "aliases": [
+        "after-hours trading",
+        "시간외 매매"
+      ],
+      "description": "증권거래소의 정규 거래 시간이 끝난 뒤나 시작되기 전에 주식을 사고파는 것이다. 거래량이 적어 가격이 크게 움직이기도 한다.",
+      "mergedInto": null
+    },
+    {
+      "id": 194,
+      "name": "수출 통제",
+      "aliases": [
+        "export control",
+        "수출 규제"
+      ],
+      "description": "정부가 안보나 외교 이유로 특정 물품·기술을 특정 나라나 기관에 팔지 못하게 막거나 허가를 받게 하는 제도다.",
       "mergedInto": null
     }
   ],
@@ -11767,6 +11991,234 @@
     {
       "story": "2026-11-10/한국-s5",
       "entity": 84
+    },
+    {
+      "story": "2026-11-11/IT·AI-1",
+      "entity": 65
+    },
+    {
+      "story": "2026-11-11/IT·AI-1",
+      "entity": 114
+    },
+    {
+      "story": "2026-11-11/IT·AI-1",
+      "entity": 206
+    },
+    {
+      "story": "2026-11-11/IT·AI-1",
+      "entity": 469
+    },
+    {
+      "story": "2026-11-11/IT·AI-1",
+      "entity": 470
+    },
+    {
+      "story": "2026-11-11/IT·AI-2",
+      "entity": 294
+    },
+    {
+      "story": "2026-11-11/IT·AI-3",
+      "entity": 50
+    },
+    {
+      "story": "2026-11-11/IT·AI-3",
+      "entity": 62
+    },
+    {
+      "story": "2026-11-11/IT·AI-3",
+      "entity": 119
+    },
+    {
+      "story": "2026-11-11/IT·AI-4",
+      "entity": 202
+    },
+    {
+      "story": "2026-11-11/IT·AI-4",
+      "entity": 363
+    },
+    {
+      "story": "2026-11-11/IT·AI-4",
+      "entity": 453
+    },
+    {
+      "story": "2026-11-11/IT·AI-5",
+      "entity": 42
+    },
+    {
+      "story": "2026-11-11/IT·AI-5",
+      "entity": 48
+    },
+    {
+      "story": "2026-11-11/IT·AI-5",
+      "entity": 65
+    },
+    {
+      "story": "2026-11-11/IT·AI-s1",
+      "entity": 471
+    },
+    {
+      "story": "2026-11-11/IT·AI-s2",
+      "entity": 203
+    },
+    {
+      "story": "2026-11-11/IT·AI-s2",
+      "entity": 472
+    },
+    {
+      "story": "2026-11-11/IT·AI-s3",
+      "entity": 472
+    },
+    {
+      "story": "2026-11-11/세계-1",
+      "entity": 29
+    },
+    {
+      "story": "2026-11-11/세계-1",
+      "entity": 30
+    },
+    {
+      "story": "2026-11-11/세계-1",
+      "entity": 32
+    },
+    {
+      "story": "2026-11-11/세계-1",
+      "entity": 42
+    },
+    {
+      "story": "2026-11-11/세계-1",
+      "entity": 101
+    },
+    {
+      "story": "2026-11-11/세계-2",
+      "entity": 23
+    },
+    {
+      "story": "2026-11-11/세계-2",
+      "entity": 40
+    },
+    {
+      "story": "2026-11-11/세계-2",
+      "entity": 463
+    },
+    {
+      "story": "2026-11-11/세계-3",
+      "entity": 280
+    },
+    {
+      "story": "2026-11-11/세계-3",
+      "entity": 464
+    },
+    {
+      "story": "2026-11-11/세계-3",
+      "entity": 465
+    },
+    {
+      "story": "2026-11-11/세계-4",
+      "entity": 89
+    },
+    {
+      "story": "2026-11-11/세계-5",
+      "entity": 38
+    },
+    {
+      "story": "2026-11-11/세계-5",
+      "entity": 103
+    },
+    {
+      "story": "2026-11-11/세계-5",
+      "entity": 107
+    },
+    {
+      "story": "2026-11-11/세계-5",
+      "entity": 466
+    },
+    {
+      "story": "2026-11-11/세계-6",
+      "entity": 288
+    },
+    {
+      "story": "2026-11-11/세계-6",
+      "entity": 290
+    },
+    {
+      "story": "2026-11-11/세계-6",
+      "entity": 467
+    },
+    {
+      "story": "2026-11-11/세계-6",
+      "entity": 468
+    },
+    {
+      "story": "2026-11-11/세계-s1",
+      "entity": 36
+    },
+    {
+      "story": "2026-11-11/세계-s2",
+      "entity": 222
+    },
+    {
+      "story": "2026-11-11/세계-s3",
+      "entity": 107
+    },
+    {
+      "story": "2026-11-11/한국-2",
+      "entity": 86
+    },
+    {
+      "story": "2026-11-11/한국-2",
+      "entity": 201
+    },
+    {
+      "story": "2026-11-11/한국-2",
+      "entity": 460
+    },
+    {
+      "story": "2026-11-11/한국-3",
+      "entity": 50
+    },
+    {
+      "story": "2026-11-11/한국-3",
+      "entity": 63
+    },
+    {
+      "story": "2026-11-11/한국-3",
+      "entity": 64
+    },
+    {
+      "story": "2026-11-11/한국-3",
+      "entity": 95
+    },
+    {
+      "story": "2026-11-11/한국-3",
+      "entity": 294
+    },
+    {
+      "story": "2026-11-11/한국-4",
+      "entity": 461
+    },
+    {
+      "story": "2026-11-11/한국-5",
+      "entity": 304
+    },
+    {
+      "story": "2026-11-11/한국-6",
+      "entity": 12
+    },
+    {
+      "story": "2026-11-11/한국-6",
+      "entity": 125
+    },
+    {
+      "story": "2026-11-11/한국-6",
+      "entity": 462
+    },
+    {
+      "story": "2026-11-11/한국-s1",
+      "entity": 9
+    },
+    {
+      "story": "2026-11-11/한국-s1",
+      "entity": 277
     }
   ],
   "termLinks": [
@@ -13304,6 +13756,51 @@
       "story": "2026-11-10/한국-5",
       "term": 183,
       "surface": "기업결합"
+    },
+    {
+      "story": "2026-11-11/IT·AI-1",
+      "term": 193,
+      "surface": "시간외 거래"
+    },
+    {
+      "story": "2026-11-11/IT·AI-2",
+      "term": 70,
+      "surface": "GPU"
+    },
+    {
+      "story": "2026-11-11/IT·AI-3",
+      "term": 28,
+      "surface": "기업공개"
+    },
+    {
+      "story": "2026-11-11/IT·AI-5",
+      "term": 194,
+      "surface": "수출 통제"
+    },
+    {
+      "story": "2026-11-11/세계-2",
+      "term": 192,
+      "surface": "탄핵"
+    },
+    {
+      "story": "2026-11-11/한국-2",
+      "term": 62,
+      "surface": "과징금"
+    },
+    {
+      "story": "2026-11-11/한국-2",
+      "term": 189,
+      "surface": "국고채전문딜러"
+    },
+    {
+      "story": "2026-11-11/한국-3",
+      "term": 190,
+      "surface": "빅스텝"
+    },
+    {
+      "story": "2026-11-11/한국-4",
+      "term": 191,
+      "surface": "GLP-1"
     }
   ],
   "merges": [],

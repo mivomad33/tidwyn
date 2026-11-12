@@ -737,6 +737,28 @@
       "mergedInto": null,
       "deleted": false,
       "deletedOn": null
+    },
+    {
+      "id": 68,
+      "name": "엔비디아 분기 실적 발표",
+      "due": "2026-11-17",
+      "major": "IT·AI",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 69,
+      "name": "해외 구매 비만약 휴대 반입 허용 시행",
+      "due": "2026-11-12",
+      "major": "과학·건강",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
     }
   ],
   "links": [
@@ -1263,6 +1285,21 @@
     {
       "story": "2026-11-10/한국-s1",
       "schedule": 66,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-11/IT·AI-1",
+      "schedule": 68,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-11/한국-3",
+      "schedule": 7,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-11/한국-4",
+      "schedule": 69,
       "role": "basis"
     }
   ],
