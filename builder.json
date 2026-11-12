@@ -722,6 +722,30 @@
         "https://github.blog/changelog/2026-11-10-gemini-4-carbon-in-github-copilot"
       ],
       "schedules": []
+    },
+    {
+      "id": 27,
+      "date": "2026-11-12",
+      "position": 1,
+      "field": "모델",
+      "title": "Claude Managed Agents, 자체 인프라에서 통째로 운영 가능",
+      "whatChanged": "Anthropic이 Claude Managed Agents의 자체 호스팅 방식을 내놓았다. 샌드박스만이 아니라 서비스 전체를 자기 인프라에서 돌리고, 에이전트와 세션, 세션 기록도 그곳에 보관한다. 모델 요청은 고른 공급자로 보내며 기본값은 Anthropic이다. 쓰려면 Anthropic 담당 팀에 접근을 요청해야 한다.",
+      "who": "데이터를 외부에 두기 어려운 조직에서 Claude 에이전트를 운영하려는 팀",
+      "action": "세션 기록을 사내에 둬야 하는 요건이 있으면 Anthropic 담당 팀에 접근을 문의한다. 그 밖에는 없음.",
+      "why": "에이전트 기록의 보관 위치를 직접 정할 수 있는 새 배포 방식이다.",
+      "due": null,
+      "sources": [
+        {
+          "name": "Claude 릴리스 노트",
+          "url": "https://platform.claude.com/docs/en/release-notes/overview#self-hosted-managed-agents"
+        }
+      ],
+      "issue": null,
+      "reminderOf": null,
+      "keys": [
+        "https://platform.claude.com/docs/en/release-notes/overview#self-hosted-managed-agents"
+      ],
+      "schedules": []
     }
   ],
   "dates": [
@@ -763,6 +787,10 @@
     },
     {
       "date": "2026-11-11",
+      "status": "partial"
+    },
+    {
+      "date": "2026-11-12",
       "status": "partial"
     }
   ],
@@ -1408,6 +1436,15 @@
     },
     {
       "doc": "anthropic-limits",
+      "hash": "825c430c8d4709dc",
+      "addedOn": "2026-11-13",
+      "removedOn": null,
+      "path": "Response headers",
+      "header": "Header | Description",
+      "row": "`retry-after` | The number of seconds to wait until you can retry the request. Earlier retries might fail. Not every 429 carries it; the spend-cap 429 never does (see Reaching your spend cap)."
+    },
+    {
+      "doc": "anthropic-limits",
       "hash": "82ec1730ea36cff0",
       "addedOn": "2026-11-03",
       "removedOn": null,
@@ -1554,7 +1591,7 @@
       "doc": "anthropic-limits",
       "hash": "bb62d08cd6396090",
       "addedOn": "2026-11-07",
-      "removedOn": null,
+      "removedOn": "2026-11-13",
       "path": "Response headers",
       "header": "Header | Description",
       "row": "`retry-after` | The number of seconds to wait until you can retry the request. Earlier retries fail. Not every 429 carries it; the spend-cap 429 never does (see Reaching your spend cap)."
@@ -9268,17 +9305,17 @@
     {
       "doc": "anthropic-deprecations",
       "hash": "cf4dc6596cae93bc850eb93f6f6d4d1f4df43162bffb6dde54623966dba6c2e4",
-      "storedOn": "2026-11-12"
+      "storedOn": "2026-11-13"
     },
     {
       "doc": "anthropic-limits",
-      "hash": "e9596704c65bc132ce90fe9c4c7ac2ed384b9e8905728b8c400c81b3bc4a3fe2",
-      "storedOn": "2026-11-12"
+      "hash": "5e13aee9554685226d355db339e77753ed9ff4abbcb0d8a633700cfd81e76815",
+      "storedOn": "2026-11-13"
     },
     {
       "doc": "anthropic-pricing",
-      "hash": "a94bce7294d5b8e8c5f2b15e7d33b47b4a0c25e3862c871dc0608f21f0a339ec",
-      "storedOn": "2026-11-12"
+      "hash": "048ccb65c7aa39a16f8475d92bec1730bc9e42c63b79085e2f0f1e6e5f867cd1",
+      "storedOn": "2026-11-13"
     },
     {
       "doc": "gemini-deprecations",
@@ -9293,180 +9330,180 @@
     {
       "doc": "openai-deprecations",
       "hash": "1db77cfb953de16420d3142560c734b2a52195050988ff9332030c6c7074d8df",
-      "storedOn": "2026-11-12"
+      "storedOn": "2026-11-13"
     },
     {
       "doc": "openai-pricing",
       "hash": "57af767674cca405b46ecf2cbea46941baacbbfc94176faf0a4cd4888c10c3b9",
-      "storedOn": "2026-11-12"
+      "storedOn": "2026-11-13"
     }
   ],
   "sources": [
     {
       "source": "anthropic-deprecations",
-      "fetchedAt": "2026-11-12T01:27:38.179Z",
+      "fetchedAt": "2026-11-12T21:50:40.519Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "anthropic-limits",
-      "fetchedAt": "2026-11-12T01:27:38.179Z",
+      "fetchedAt": "2026-11-12T21:50:40.519Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "anthropic-pricing",
-      "fetchedAt": "2026-11-12T01:27:38.179Z",
+      "fetchedAt": "2026-11-12T21:50:40.519Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "claude-code",
-      "fetchedAt": "2026-11-12T01:27:38.179Z",
+      "fetchedAt": "2026-11-12T21:50:40.519Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "claude-notes",
-      "fetchedAt": "2026-11-12T01:27:38.179Z",
+      "fetchedAt": "2026-11-12T21:50:40.519Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "cloudflare",
       "fetchedAt": null,
-      "failDays": 10,
-      "failOn": "2026-11-12"
+      "failDays": 11,
+      "failOn": "2026-11-13"
     },
     {
       "source": "codex",
       "fetchedAt": null,
-      "failDays": 10,
-      "failOn": "2026-11-12"
+      "failDays": 11,
+      "failOn": "2026-11-13"
     },
     {
       "source": "copilot",
-      "fetchedAt": "2026-11-12T01:27:38.179Z",
+      "fetchedAt": "2026-11-12T21:50:40.519Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "eol-nextjs",
-      "fetchedAt": "2026-11-12T01:27:38.179Z",
+      "fetchedAt": "2026-11-12T21:50:40.519Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "eol-nodejs",
-      "fetchedAt": "2026-11-12T01:27:38.179Z",
+      "fetchedAt": "2026-11-12T21:50:40.519Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "gemini-cli",
-      "fetchedAt": "2026-11-12T01:27:38.179Z",
+      "fetchedAt": "2026-11-12T21:50:40.519Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "gemini-deprecations",
       "fetchedAt": "2026-11-02T23:28:54.103Z",
-      "failDays": 9,
-      "failOn": "2026-11-12"
+      "failDays": 10,
+      "failOn": "2026-11-13"
     },
     {
       "source": "gemini-pricing",
       "fetchedAt": "2026-11-02T23:28:54.103Z",
-      "failDays": 9,
-      "failOn": "2026-11-12"
+      "failDays": 10,
+      "failOn": "2026-11-13"
     },
     {
       "source": "ghsa",
-      "fetchedAt": "2026-11-12T01:27:38.179Z",
+      "fetchedAt": "2026-11-12T21:50:40.519Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "github-repos",
       "fetchedAt": null,
-      "failDays": 3,
-      "failOn": "2026-11-12"
+      "failDays": 4,
+      "failOn": "2026-11-13"
     },
     {
       "source": "kev",
-      "fetchedAt": "2026-11-12T01:27:38.179Z",
+      "fetchedAt": "2026-11-12T21:50:40.519Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "mcp-spec",
-      "fetchedAt": "2026-11-12T01:27:38.179Z",
+      "fetchedAt": "2026-11-12T21:50:40.519Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "nextjs",
-      "fetchedAt": "2026-11-12T01:27:38.179Z",
+      "fetchedAt": "2026-11-12T21:50:40.519Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "nodejs",
-      "fetchedAt": "2026-11-12T01:27:38.179Z",
+      "fetchedAt": "2026-11-12T21:50:40.519Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "openai-deprecations",
-      "fetchedAt": "2026-11-12T01:27:38.179Z",
+      "fetchedAt": "2026-11-12T21:50:40.519Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "openai-pricing",
-      "fetchedAt": "2026-11-12T01:27:38.179Z",
+      "fetchedAt": "2026-11-12T21:50:40.519Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "product-hunt",
       "fetchedAt": "2026-11-08T21:52:10.746Z",
-      "failDays": 3,
-      "failOn": "2026-11-12"
+      "failDays": 4,
+      "failOn": "2026-11-13"
     },
     {
       "source": "react",
-      "fetchedAt": "2026-11-12T01:27:38.179Z",
+      "fetchedAt": "2026-11-12T21:50:40.519Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "socket",
-      "fetchedAt": "2026-11-12T01:27:38.179Z",
+      "fetchedAt": "2026-11-12T21:50:40.519Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "supabase",
-      "fetchedAt": "2026-11-12T01:27:38.179Z",
+      "fetchedAt": "2026-11-12T21:50:40.519Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "typescript",
-      "fetchedAt": "2026-11-12T01:27:38.179Z",
+      "fetchedAt": "2026-11-12T21:50:40.519Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "vercel",
-      "fetchedAt": "2026-11-12T01:27:38.179Z",
+      "fetchedAt": "2026-11-12T21:50:40.519Z",
       "failDays": 0,
       "failOn": null
     },
     {
       "source": "vite",
-      "fetchedAt": "2026-11-12T01:27:38.179Z",
+      "fetchedAt": "2026-11-12T21:50:40.519Z",
       "failDays": 0,
       "failOn": null
     }
@@ -10297,6 +10334,16 @@
     },
     {
       "date": "2026-11-11",
+      "kind": "repo",
+      "status": "failed"
+    },
+    {
+      "date": "2026-11-12",
+      "kind": "product",
+      "status": "failed"
+    },
+    {
+      "date": "2026-11-12",
       "kind": "repo",
       "status": "failed"
     }

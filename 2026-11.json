@@ -10368,6 +10368,925 @@
       },
       "collectedAt": "2026-11-12T09:53:16+09:00",
       "late": false
+    },
+    {
+      "brief": {
+        "targetDate": "2026-11-12",
+        "headline": "젠슨 황이 스캔들 끝에 엔비디아 최고경영자에서 물러났고, 한국에서는 충청권 메가프로젝트가 첫 삽을 뜬 가운데 중동 긴장으로 국제유가가 다시 뛰었다.",
+        "keywords": [
+          "젠슨 황 사임",
+          "메가프로젝트 착공",
+          "은행지주 지배구조",
+          "국제유가",
+          "브루클린 붕괴"
+        ],
+        "sections": [
+          {
+            "name": "한국",
+            "flow": "정부와 삼성이 충청권 대규모 투자의 첫 삽을 떴고, 당정은 은행지주 회장의 연임 문턱을 높이기로 했으며, 한전 실적 급감과 서울 집값 약세 확산이 경제 지표로 나왔다.",
+            "topStories": [
+              {
+                "rank": 1,
+                "title": "충청권 메가프로젝트 착공…이 대통령·이재용 회장 함께 첫 삽",
+                "summary": "정부가 미는 대규모 지역 투자 사업인 '3대 메가프로젝트'가 충남 아산 삼성전자 온양캠퍼스 착공식으로 본격 시작됐다.",
+                "whyItMatters": "수도권에 몰린 첨단 산업 투자를 지방으로 넓히는 정부 핵심 사업이 계획 단계를 지나 실제 공사에 들어갔다. 반도체 후공정과 기판 같은 AI 부품 공급망이 충청권에 자리 잡는지가 여기에 달렸다.",
+                "background": "정부는 지난 7월 충청권 첨단산업 발전 비전을 발표하며 삼성, SK하이닉스 등의 대규모 투자 계획과 정부 지원책을 함께 내놓았다. 메가프로젝트는 기업이 생산 시설을 지방에 짓고 정부가 인허가와 기반 시설을 빠르게 지원하는 방식이다. 이번 착공식은 발표 뒤 약 넉 달 만에 열렸다.",
+                "keyFacts": [
+                  "이재명 대통령은 12일 오전 충남 아산시 삼성전자 온양캠퍼스 건설 현장에서 열린 착공식에 참석했고, 이재용 삼성전자 회장이 환영사를 했다.",
+                  "이 대통령은 아산의 반도체 첨단 패키징 공장과 첨단 디스플레이 생산라인, 세종의 AI 서버용 고성능 기판 제조시설을 언급했다.",
+                  "착공식 뒤 이 대통령은 현장에서 제4차 메가프로젝트 민관합동 점검회의를 주재했고, 배관공 인력난 같은 현장 어려움을 풀 방안을 검토하라고 지시했다.",
+                  "정부는 충청권 투자에 참여하는 8대 앵커기업의 프로젝트 10개 가운데 6개를 올해 안에 착공하도록 지원하기로 했다.",
+                  "서울경제는 이 대통령이 112개 기업의 24조원 추가 투자를 언급했다고 보도했다."
+                ],
+                "outlook": "나머지 프로젝트의 착공 시기와 인허가 단축, 건설 인력 확보가 실제로 이뤄지는지 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "경제",
+                  "minor": "산업·기업"
+                },
+                "sources": [
+                  {
+                    "name": "세계일보",
+                    "url": "https://www.segye.com/newsView/20261112508869",
+                    "publishedAt": "2026-11-12",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261112090800001",
+                    "publishedAt": "2026-11-12",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/11/12/PYH2026111207440001300_P2.jpg"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261112144400003",
+                    "publishedAt": "2026-11-12",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/11/12/PYH2026111206870001300_P2.jpg"
+                  },
+                  {
+                    "name": "서울경제",
+                    "url": "https://sedaily.com/article/20113664",
+                    "publishedAt": "2026-11-12",
+                    "publishedAtEstimated": true
+                  }
+                ]
+              },
+              {
+                "rank": 2,
+                "title": "당정, 은행지주 회장 연임 문턱 높인다…추천위는 전원 독립이사로",
+                "summary": "정부와 여당이 은행지주 최고경영자가 연임할수록 추천과 주주총회 의결 요건이 까다로워지는 지배구조 개선안에 합의했다.",
+                "whyItMatters": "주인 없는 회사로 불리는 금융지주에서 현직 회장이 이사회를 통해 스스로 연임하는 관행을 제도적으로 막으려는 조치다. 연말 금융권 인사와 내년 주주총회에 바로 영향을 줄 수 있다.",
+                "background": "은행지주 회장은 이사회 안의 임원후보추천위원회가 후보를 정하는데, 현직 회장의 영향력이 큰 이사들이 추천을 맡아 '셀프 연임' 논란이 이어졌다. 금융당국은 금융감독원의 은행지주 특별점검 결과를 바탕으로 개선안을 마련했다.",
+                "keyFacts": [
+                  "당정은 12일 국회에서 금융회사 지배구조 개선방안 당정협의회를 열었다.",
+                  "임원후보추천위원회를 모두 독립이사로 꾸리고 현직 최고경영자는 참석하지 못하게 한다.",
+                  "추천 요건은 출석 위원 과반에서 위원 총수 3분의 2 이상으로 높이고, 연임 후보는 4분의 3 이상이 찬성해야 한다.",
+                  "주주총회에서는 1회 연임 때 출석 의결권 3분의 2와 발행주식 3분의 1 이상, 2회 이상 연임 때는 4분의 3과 2분의 1 이상의 찬성이 필요하다.",
+                  "임원 보수 계획을 주주총회에서 설명하는 제도와 성과보수 환수제도 함께 추진한다."
+                ],
+                "outlook": "금융회사 지배구조법 개정안이 연내 국회에 올라 처리되는지, 입법 과정에서 문턱이 바뀌는지 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "경제",
+                  "minor": "금융·증시"
+                },
+                "sources": [
+                  {
+                    "name": "노컷뉴스",
+                    "url": "https://www.nocutnews.co.kr/news/6605736",
+                    "publishedAt": "2026-11-12",
+                    "primary": true,
+                    "publishedAtEstimated": true
+                  },
+                  {
+                    "name": "서울신문",
+                    "url": "https://seoul.co.kr/news/politics/2026/11/12/20261112500106",
+                    "publishedAt": "2026-11-12"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261111175651002",
+                    "publishedAt": "2026-11-12",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/11/12/PYH2026111201670001300_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 3,
+                "title": "한전 3분기 영업이익 71% 급감…본사는 2년 만에 적자",
+                "summary": "한국전력의 3분기 영업이익이 중동 전쟁으로 오른 연료비 탓에 지난해보다 70.9% 줄어 1조6천441억원에 그쳤다.",
+                "whyItMatters": "연료비는 올랐는데 전기요금은 묶여 있어 한전의 빚 부담이 다시 커지고 있다. 실적 악화는 전기요금 인상 논의로 이어져 가계와 기업의 비용에 영향을 준다.",
+                "background": "한전은 발전 연료와 민간 발전사의 전기를 사서 정해진 요금으로 판다. 국제 연료 가격은 몇 달 뒤에 비용에 반영되는데, 요금은 정부와 협의해 정하므로 연료비가 급등하면 손실이 쌓인다. 가정용 요금은 14분기, 산업용은 8분기째 그대로다.",
+                "keyFacts": [
+                  "3분기 연결 매출은 26조8천518억원으로 2.6% 줄었고, 순이익은 8천359억원으로 77.9% 감소했다.",
+                  "자회사를 뺀 별도 기준으로는 990억원의 영업손실을 내, 2024년 3분기 이후 2년 만에 분기 적자였다.",
+                  "연료비와 전력 구입비는 지난해보다 3조1천41억원 늘었고, 전기 판매 수익은 1조1천606억원 줄었다.",
+                  "1~9월 누적 영업이익은 6조5천569억원으로 43.2% 감소했다.",
+                  "3분기 말 총부채는 209조6천억원이다."
+                ],
+                "outlook": "정부가 4분기나 내년 초 전기요금 조정에 나서는지, 연료비 부담이 내년 상반기까지 이어지는지 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "경제",
+                  "minor": "산업·기업"
+                },
+                "sources": [
+                  {
+                    "name": "한국경제",
+                    "url": "https://www.hankyung.com/article/2026111236091",
+                    "publishedAt": "2026-11-12",
+                    "primary": true
+                  },
+                  {
+                    "name": "세계일보",
+                    "url": "https://www.segye.com/newsView/20261112516598",
+                    "publishedAt": "2026-11-12"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261112143151527",
+                    "publishedAt": "2026-11-12",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2023/05/12/PYH2023051206310005400_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 4,
+                "title": "강남발 아파트값 약세, 성동·강동으로 번져",
+                "summary": "서울 아파트값 상승률은 전주와 같았지만 성동구와 강동구가 30여 주 만에 하락으로 돌아섰다.",
+                "whyItMatters": "강남 3구에서 시작된 약세가 한강 주변 인기 지역으로 넓어지면 서울 집값 흐름이 바뀌는 신호일 수 있다.",
+                "background": "한국부동산원은 매주 아파트 매매가격 변동률을 발표한다. 강남·서초·송파구는 대출 규제와 금리 상승 속에 몇 달째 내리고 있다.",
+                "keyFacts": [
+                  "11월 9일 기준 서울 아파트 매매가격은 전주보다 0.07% 올랐다.",
+                  "성동구는 0.02% 내려 32주 만에, 강동구는 0.01% 내려 33주 만에 하락했다.",
+                  "서초·강남구는 14주 연속, 송파구는 10주 연속 내렸고, 약세 자치구는 3곳에서 5곳으로 늘었다.",
+                  "성북·강북·서대문구 등 외곽 지역은 오름세를 이어 갔다.",
+                  "홍지선 국토교통부 장관은 매물이 쌓이고 거래가 주는 상황을 가격 하락기의 신호로 볼 수 있다고 말했다."
+                ],
+                "outlook": "약세 지역이 더 늘어나는지, 외곽과 경기 남부의 오름세가 이어지는지 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "경제",
+                  "minor": "부동산"
+                },
+                "sources": [
+                  {
+                    "name": "경향신문",
+                    "url": "https://www.khan.co.kr/article/202611121603001/",
+                    "publishedAt": "2026-11-12",
+                    "primary": true
+                  },
+                  {
+                    "name": "이투데이",
+                    "url": "https://www.etoday.co.kr/news/view/2647378",
+                    "publishedAt": "2026-11-12",
+                    "publishedAtEstimated": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261112091200003",
+                    "publishedAt": "2026-11-12",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/11/12/PYH2026111207000001300_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 5,
+                "title": "이 대통령, 16~19일 아세안·중국 APEC 정상회의 참석",
+                "summary": "이재명 대통령이 16일부터 나흘간 필리핀 마닐라의 아세안 관련 정상회의와 중국 선전의 APEC 정상회의에 참석한다.",
+                "whyItMatters": "미국, 중국, 러시아 정상이 모일 수 있는 자리여서 한반도 문제가 다뤄질 가능성이 있고, 한중·한일 정상 외교도 함께 이뤄진다.",
+                "background": "올해 APEC 정상회의는 중국이 주최한다. 청와대는 순방에서 남북·북미 대화 재개를 위한 주변국의 지지를 요청하겠다는 방침이다.",
+                "keyFacts": [
+                  "위성락 국가안보실장이 12일 브리핑에서 일정을 발표했다.",
+                  "이 대통령은 16일 한-아세안 정상회의, 17일 아세안+3 정상회의와 동아시아정상회의에 참석한다.",
+                  "18일 선전으로 옮겨 시진핑 주석이 여는 환영 만찬에 참석하고, 19일 APEC 정상회의 본회의 뒤 귀국한다.",
+                  "청와대는 APEC을 계기로 한 북미 접촉 가능성은 작다고 봤고, 미·중·러 정상 회담 가능성은 지켜보고 있다고 밝혔다.",
+                  "조현 외교부 장관은 13일 베이징에서 왕이 중국 외교부장과 회담한다."
+                ],
+                "outlook": "순방 중 한중·한일 정상회담이 열리는지, 미·중·러 정상 간 만남에서 한반도 문제가 다뤄지는지 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "정치",
+                  "minor": "행정부"
+                },
+                "sources": [
+                  {
+                    "name": "파이낸셜뉴스",
+                    "url": "https://www.fnnews.com/news/202611120952288003",
+                    "publishedAt": "2026-11-12",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261112043900001",
+                    "publishedAt": "2026-11-12",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2025/10/27/PYH2025102712160001300_P2.jpg"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261112119752504",
+                    "publishedAt": "2026-11-12",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/08/19/PYH2026081921190001300_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 6,
+                "title": "선관위 특검, '보안점검 점수 조작' 의혹 중앙선관위 압수수색",
+                "summary": "선거관리위원회 특별검사팀이 보안 점검 문서를 허위로 꾸민 혐의로 중앙선관위와 용역업체 2곳을 압수수색했다.",
+                "whyItMatters": "선거를 관리하는 기관이 보안 점수를 부풀렸다는 의혹이어서 선거 시스템에 대한 신뢰와 직접 닿아 있다.",
+                "background": "특검은 6·3 지방선거 투표용지 부족 사태를 계기로 출범했다. 2023년 국가정보원과 한국인터넷진흥원 등의 합동 점검에서 선관위가 낸 보안 점수와 실제 점수의 차이가 드러난 바 있다.",
+                "keyFacts": [
+                  "특검은 12일 검사와 포렌식 수사관 등 25명을 보내 선관위 서버와 보안 담당 부서를 압수수색했다.",
+                  "선관위는 2022년 자체 보안 점검 점수를 100점으로 냈지만, 같은 기준으로 다시 평가한 점수는 31.5점이었다.",
+                  "혐의는 허위공문서 작성과 행사다.",
+                  "취약점 진단을 법정 자격이 없는 업체에 맡긴 사실도 수사 대상이다.",
+                  "특검은 간부가 실무자에게 점수를 바꾸라고 지시한 정황을 살피고 있다."
+                ],
+                "outlook": "압수물 분석 뒤 선관위 간부 소환 조사로 이어지는지 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "정치",
+                  "minor": "사법·검찰"
+                },
+                "sources": [
+                  {
+                    "name": "국민일보",
+                    "url": "https://kmib.co.kr/article/20261112500898",
+                    "publishedAt": "2026-11-12",
+                    "primary": true
+                  },
+                  {
+                    "name": "뉴스1",
+                    "url": "https://www.news1.kr/society/court-prosecution/6351880",
+                    "publishedAt": "2026-11-12",
+                    "publishedAtEstimated": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261112070151004",
+                    "publishedAt": "2026-11-12",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/10/15/PYH2026101515240001300_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 7,
+                "title": "성북구 10대 살해 혐의 50대에 구속영장 청구…이틀째 진술 거부",
+                "summary": "서울 성북구에서 15세 청소년을 살해한 혐의로 붙잡힌 50대 남성에 대해 구속영장이 청구됐다.",
+                "whyItMatters": "피해자가 쉼터에서 보호받던 위기 청소년으로 알려지면서, 쉼터를 떠난 청소년을 지키는 장치가 충분한지 논의가 일고 있다.",
+                "background": "사건은 11일 성북구 정릉동의 한 공유숙박업소에서 일어났다. 피해자는 쉼터로 돌아오지 않아 사건 전에 실종 신고가 돼 있었다.",
+                "keyFacts": [
+                  "경찰이 살인 혐의로 구속영장을 신청했고 북부지방공소청이 12일 법원에 청구했다.",
+                  "피의자는 체포 뒤 이틀째 진술을 거부하고 있다.",
+                  "경찰은 피의자가 범행 전날 흉기 등을 산 것으로 파악했다.",
+                  "경찰은 프로파일러를 투입해 범행 동기를 조사할 방침이다."
+                ],
+                "outlook": "구속 여부와 범행 동기, 주변 인물과의 관련성이 수사에서 드러나는지 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "사회",
+                  "minor": "사건·사고"
+                },
+                "sources": [
+                  {
+                    "name": "SBS",
+                    "url": "https://news.sbs.co.kr/news/endPage.do?news_id=N1008843889",
+                    "publishedAt": "2026-11-12",
+                    "primary": true,
+                    "publishedAtEstimated": true
+                  },
+                  {
+                    "name": "경향신문",
+                    "url": "https://www.khan.co.kr/article/202611121137011/",
+                    "publishedAt": "2026-11-12"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261112026352004",
+                    "publishedAt": "2026-11-12",
+                    "imageUrl": "https://img.yna.co.kr/photo/cms/2023/03/20/71/PCM20230320000171990_P2.jpg"
+                  }
+                ]
+              }
+            ],
+            "shortNews": [
+              {
+                "summary": "올해 한국을 찾은 외국인이 연간 기준으로 처음 2천만 명을 넘었다. 1천만 명을 넘은 2012년 이후 14년 만이다.",
+                "category": {
+                  "major": "문화·스포츠",
+                  "minor": "생활"
+                },
+                "sources": [
+                  {
+                    "name": "경북신문",
+                    "url": "https://www.kbsm.net/news/view.php?idx=541536",
+                    "publishedAt": "2026-11-12",
+                    "publishedAtEstimated": true
+                  }
+                ]
+              },
+              {
+                "summary": "진에어, 에어부산, 에어서울의 통합이 국토교통부 합병 인가와 공정거래위원회 기업결합 승인을 모두 받았다.",
+                "category": {
+                  "major": "경제",
+                  "minor": "산업·기업"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261112122300003",
+                    "publishedAt": "2026-11-12",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/11/12/PYH2026111208230001301_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "강신철 국방부 장관이 한미 전시작전통제권 전환에 필요한 3대 조건이 모두 충족됐다고 밝혔다.",
+                "category": {
+                  "major": "정치",
+                  "minor": "행정부"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261112160400001",
+                    "publishedAt": "2026-11-12",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/11/12/PYH2026111206630001300_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "인천 강화군 산란계 농장에서 이달 들어 네 번째 고병원성 조류인플루엔자가 확인됐고, 경북 예천의 소 농장에서는 구제역이 발생했다.",
+                "category": {
+                  "major": "사회",
+                  "minor": "재난·안전"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261112110051030",
+                    "publishedAt": "2026-11-12",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/11/08/PYH2026110803160006100_P2.jpg"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261112181800030",
+                    "publishedAt": "2026-11-12",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/10/29/PYH2026102911650006500_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "더불어민주당 김민석 대표가 언행 논란이 인 최민희 최고위원에 대해 당 윤리감찰단에 즉시 감찰을 지시했다.",
+                "category": {
+                  "major": "정치",
+                  "minor": "국회·정당"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261112180351001",
+                    "publishedAt": "2026-11-12",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/11/06/PYH2026110603560001300_P2.jpg"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "세계",
+            "flow": "중동에서는 사우디 에너지 시설 공격 주장과 호르무즈 해협 불안으로 유가가 뛰었고, 우크라이나 종전 협상은 유럽 참여 문제로 넘어갔으며, 뉴욕 건물 붕괴 사망자는 8명으로 늘었다.",
+            "topStories": [
+              {
+                "rank": 1,
+                "title": "미·이란 협상 기대 꺾이며 국제유가 급등…브렌트유 3.3% 올라",
+                "summary": "미국과 이란의 협상 기대가 꺾이고 사우디 에너지 시설과 호르무즈 해협 선박을 겨냥한 공격 소식이 겹치며 국제유가가 크게 올랐다.",
+                "whyItMatters": "유가는 물가와 금리, 한국의 수입 비용에 바로 영향을 준다. 이달 들어 내리던 유가가 다시 오르면 에너지 가격 부담이 길어질 수 있다.",
+                "background": "미국과 이란의 무력 대치가 이어지면서 세계 원유 수송의 핵심 길목인 호르무즈 해협에서 선박 피격과 기뢰 사고가 잇따랐다. 휴전 기대가 커진 이달 초부터 유가는 크게 내려 두 달 만의 최저 수준까지 갔다가 반등했다.",
+                "keyFacts": [
+                  "12일(현지시간) 브렌트유는 3.3% 올랐다.",
+                  "연합뉴스는 트럼프 대통령이 이란과의 합의가 필요하지 않다는 취지로 말한 것이 협상 기대를 꺾었다고 전했다.",
+                  "로이터는 사우디 에너지 시설 공격과 호르무즈 해협의 차질을 상승 원인으로 꼽았다.",
+                  "호르무즈 해협 일대에서는 피격된 유조선에서 기름이 흘러나와 환경 피해 우려도 커지고 있다."
+                ],
+                "outlook": "미국과 이란의 협상이 다시 열리는지, 사우디 시설 피해가 확인되는지, 해협 통항이 정상으로 돌아오는지 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "국제",
+                  "minor": "중동"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261113010900072",
+                    "publishedAt": "2026-11-13",
+                    "imageUrl": "https://img.yna.co.kr/photo/etc/af/2026/11/05/PAF20261105026201009_P2.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261112182600079",
+                    "publishedAt": "2026-11-12",
+                    "imageUrl": "https://img.yna.co.kr/etc/inner/KR/2026/11/12/AKR20261112182600079_01_i_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 2,
+                "title": "미 특사 \"푸틴, 유럽의 종전 협상 참여 허용\"…러시아는 조건 달아",
+                "summary": "푸틴 대통령을 만난 미국 특사가 다음 우크라이나 종전 협상에 유럽 대표가 참여할 수 있게 됐다고 밝혔지만, 러시아 쪽은 한발 물러선 설명을 내놨다.",
+                "whyItMatters": "유럽은 전쟁 뒤 우크라이나 안보를 떠맡을 당사자인데도 협상에서 빠져 있었다. 유럽이 들어오면 협상의 틀이 바뀐다.",
+                "background": "러시아, 우크라이나, 미국은 아부다비에서 이틀간 3자 협상을 했고 대규모 포로 교환에는 합의했지만 영토 문제 등에서는 차이를 좁히지 못했다. 협상을 중재한 미국 특사들이 이어서 두 나라 정상을 차례로 만나고 있다.",
+                "keyFacts": [
+                  "스티브 위트코프 특사는 12일 모스크바에서 푸틴 대통령을 만난 뒤 유럽 대표의 참여에 합의가 있었다고 말했다.",
+                  "크렘린 쪽은 3자 협상이 이어진다고 확인하면서도, 유럽이 참여하려면 먼저 대표를 정해야 한다고 밝혔다.",
+                  "미국 특사들은 아일랜드 더블린으로 이동해 젤렌스키 대통령에게 회담 결과를 설명한다. 더블린에는 유럽 40여 개국 정상이 모여 있다.",
+                  "젤렌스키 대통령은 군용 위성통신 스타실드에 다시 심각한 장애가 생겨 러시아 드론 요격이 어렵다고 밝혔다."
+                ],
+                "outlook": "유럽이 협상 대표를 정하는지, 다음 협상 날짜가 잡히는지, 스타실드 장애의 원인이 밝혀지는지 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "국제",
+                  "minor": "유럽·러시아"
+                },
+                "sources": [
+                  {
+                    "name": "CNN",
+                    "url": "https://edition.cnn.com/2026/11/12/politics/ukraine-witkoff-kushner-putin-peace-talks-intl",
+                    "publishedAt": "2026-11-12",
+                    "primary": true
+                  },
+                  {
+                    "name": "Military Times",
+                    "url": "https://www.militarytimes.com/global/europe/2026/11/12/putin-lets-europe-join-ukraine-peace-talks-as-kyiv-says-starshield-disrupted-again/",
+                    "publishedAt": "2026-11-12"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261112162100109",
+                    "publishedAt": "2026-11-12",
+                    "imageUrl": "https://img.yna.co.kr/photo/etc/af/2026/11/12/PAF20261112195601009_P2.jpg"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261112174500109",
+                    "publishedAt": "2026-11-12",
+                    "imageUrl": "https://img.yna.co.kr/photo/reuters/2026/11/12/PRU20261112220601009_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 3,
+                "title": "뉴욕 브루클린 건물 붕괴 사망자 8명으로 늘어…어린이 2명 포함",
+                "summary": "뉴욕 브루클린에서 3층 건물이 옆 공사장 쪽으로 무너져 8명이 숨지고 최소 17명이 다쳤다.",
+                "whyItMatters": "도심 공사 현장 옆 주거 건물이 무너진 사고여서, 뉴욕시의 공사 안전 관리와 감독 책임이 도마에 올랐다.",
+                "background": "사고는 11일(현지시간) 오후 브루클린 플랫부시 지역에서 일어났다. 무너진 건물 옆 부지에서는 새 건물을 짓기 위한 터파기 공사가 진행 중이었다.",
+                "keyFacts": [
+                  "조란 맘다니 뉴욕시장은 사망자가 8명이며 어른 6명과 어린이 2명이라고 밝혔다.",
+                  "6명은 현장에서, 2명은 병원에서 숨졌고, 사망자 가운데 2명은 공사 노동자다.",
+                  "부상자는 소방관을 포함해 최소 17명이며, 매체에 따라 18명으로 전한 곳도 있다.",
+                  "건물은 옆 부지의 터파기 구덩이 쪽으로 무너졌고, 시 건축 당국과 수사 기관이 원인을 조사하고 있다."
+                ],
+                "outlook": "잔해 수색이 끝나 실종자 수가 확정되는지, 시공사의 책임과 시의 감독 문제가 드러나는지 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "국제",
+                  "minor": "미국"
+                },
+                "sources": [
+                  {
+                    "name": "NBC News",
+                    "url": "https://www.nbcnews.com/news/us-news/new-york-brooklyn-building-collapse-rcna608909",
+                    "publishedAt": "2026-11-12",
+                    "primary": true,
+                    "publishedAtEstimated": true
+                  },
+                  {
+                    "name": "PBS",
+                    "url": "https://www.pbs.org/newshour/nation/brooklyn-building-collapse-death-toll-rises-to-8-as-rescuers-search-for-survivors",
+                    "publishedAt": "2026-11-12",
+                    "publishedAtEstimated": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261113006700072",
+                    "publishedAt": "2026-11-13",
+                    "imageUrl": "https://img.yna.co.kr/etc/inner/KR/2026/11/13/AKR20261113006700072_01_i_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 4,
+                "title": "시진핑 \"조국 통일은 역사적 임무\"…평화통일·대화도 강조",
+                "summary": "시진핑 중국 국가주석이 쑨원 탄생 160주년 기념식에서 대만 통일을 역사적 임무로 규정하면서 평화적 방식과 대화를 함께 강조했다.",
+                "whyItMatters": "APEC 정상회의와 미중 정상회담, 대만 지방선거를 앞둔 시점의 발언이어서 중국의 대만 정책 수위를 가늠하는 신호로 읽힌다.",
+                "background": "중국은 대만을 자국 영토로 보고 통일을 주장하며, 대만 정부는 이를 받아들이지 않는다. 쑨원은 중국과 대만이 모두 기리는 인물이어서 중국은 그의 기념일을 통일 메시지를 내는 자리로 써 왔다.",
+                "keyFacts": [
+                  "시 주석은 12일 베이징 인민대회당 연설에서 대만 문제 해결과 통일 실현이 중국공산당의 변함없는 임무라고 말했다.",
+                  "평화통일과 일국양제 방침을 유지하고, '하나의 중국' 원칙을 바탕으로 대만 각계와 대화하겠다고 밝혔다.",
+                  "대만 독립 움직임에는 어떤 여지도 주지 않겠다고 경고했다.",
+                  "대만 대륙위원회는 중국이 쑨원의 사상을 왜곡해 통일 선전에 쓴다고 비판했다.",
+                  "로이터에 따르면 주요 7개국 외무장관들은 대만 동쪽에서의 중국 행동이 안정을 위협한다고 밝혔다."
+                ],
+                "outlook": "다음 주 APEC 정상회의와 미중 정상회담에서 대만 문제가 어떻게 다뤄지는지 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "국제",
+                  "minor": "동아시아"
+                },
+                "sources": [
+                  {
+                    "name": "서울경제",
+                    "url": "https://www.sedaily.com/article/20113487",
+                    "publishedAt": "2026-11-12",
+                    "primary": true,
+                    "publishedAtEstimated": true
+                  },
+                  {
+                    "name": "아시아경제",
+                    "url": "https://view.asiae.co.kr/article/2026111214183582705",
+                    "publishedAt": "2026-11-12"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261112116900083",
+                    "publishedAt": "2026-11-12",
+                    "imageUrl": "https://img.yna.co.kr/photo/ap/2026/11/12/PAP20261112143501009_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 5,
+                "title": "유럽 학교 수천 곳에 폭파 위협 이메일…이탈리아는 이틀째",
+                "summary": "이탈리아와 영국 스코틀랜드·북아일랜드의 학교 수천 곳이 폭파 위협 이메일을 받아 대피 소동이 벌어졌다.",
+                "whyItMatters": "여러 나라 학교를 한꺼번에 겨냥한 위협으로 수업이 멈췄다. 당국은 장난으로 보지만 보낸 쪽을 아직 찾지 못했다.",
+                "background": "최근 유럽에서는 기차역과 공항 등에 폭탄 위협이 잇따라 교통이 멈추는 일이 이어졌다. 이탈리아 총리는 이런 위협이 공포를 퍼뜨리려는 것이라고 말했다.",
+                "keyFacts": [
+                  "BBC에 따르면 이탈리아에서는 6천 곳이 넘는 학교가 위협을 받았다.",
+                  "북아일랜드 경찰은 300곳이 넘는 학교에 온 이메일을 장난으로 보고 있다고 밝혔다.",
+                  "세 나라 당국은 실제 위험은 없어 보인다고 설명했다.",
+                  "이탈리아 공립학교에는 12일에도 위협 이메일이 다시 왔고, 배후는 밝혀지지 않았다."
+                ],
+                "outlook": "발신자가 확인되는지, 유럽 나라들이 폭탄 위협 대응을 함께 조율하는지 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "국제",
+                  "minor": "유럽·러시아"
+                },
+                "sources": [
+                  {
+                    "name": "BBC",
+                    "url": "https://www.bbc.co.uk/news/articles/cwz0k79pr8z2o",
+                    "publishedAt": "2026-11-12",
+                    "imageUrl": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/80c9/live/fc093bd0-ddc7-11f1-9053-236ccb99630c.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261112180200109",
+                    "publishedAt": "2026-11-12",
+                    "imageUrl": "https://img.yna.co.kr/photo/etc/xi/2026/11/12/PXI20261112010301009_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 6,
+                "title": "영국 3분기 성장률 0.7%…2년여 만에 가장 빨라",
+                "summary": "영국 경제가 3분기에 0.7% 성장해 2024년 초 이후 가장 빠른 분기 성장률을 기록했다.",
+                "whyItMatters": "중동 전쟁과 높은 물가 속에서도 서비스업이 버티며 예상보다 좋은 성적을 냈다. AI 관련 투자가 성장에 얼마나 보탬이 되는지를 보여 주는 사례이기도 하다.",
+                "background": "영국 통계청은 분기마다 국내총생산 속보치를 낸다. 2분기 성장률은 0.5%였다.",
+                "keyFacts": [
+                  "영국 통계청은 12일 7~9월 국내총생산이 전 분기보다 0.7% 늘었다고 발표했다.",
+                  "서비스업 생산이 0.9% 늘었고, 그중 컴퓨터 프로그래밍·컨설팅 분야가 4.4% 뛰었다.",
+                  "건설업은 0.7% 줄었다.",
+                  "경제 전문가들은 임금 상승이 둔해지고 물가가 올라 앞으로 소비가 눌릴 수 있다고 봤다."
+                ],
+                "outlook": "4분기에도 성장세가 이어지는지, 영국 중앙은행의 금리 결정에 어떤 영향을 주는지 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "경제",
+                  "minor": "거시·정책"
+                },
+                "sources": [
+                  {
+                    "name": "The Irish News",
+                    "url": "https://www.irishnews.com/news/uk/uk-economy-grows-at-fastest-quarterly-rate-in-more-than-two-years-JNCEKYYXCRMDVPWBTQJOB7SZ4Q/",
+                    "publishedAt": "2026-11-12",
+                    "primary": true,
+                    "publishedAtEstimated": true
+                  },
+                  {
+                    "name": "Midweek Herald",
+                    "url": "https://www.midweekherald.co.uk/news/national/26721882.uk-economy-grows-fastest-quarterly-rate-two-years/",
+                    "publishedAt": "2026-11-12",
+                    "publishedAtEstimated": true
+                  }
+                ]
+              }
+            ],
+            "shortNews": [
+              {
+                "summary": "사의를 밝힌 기브란 인도네시아 부통령이 의회에 사임서를 냈고, 후임을 뽑는 절차가 시작됐다.",
+                "category": {
+                  "major": "국제",
+                  "minor": "기타 지역"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261112148400104",
+                    "publishedAt": "2026-11-12",
+                    "imageUrl": "https://img.yna.co.kr/photo/ap/2026/11/12/PAP20261112192901009_P2.jpg"
+                  },
+                  {
+                    "name": "BBC",
+                    "url": "https://www.bbc.co.uk/news/articles/cmvgxgz87qqro",
+                    "publishedAt": "2026-11-12",
+                    "imageUrl": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/ddfe/live/c33427d0-de93-11f1-9afe-1f03bfe02283.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "스콧 베센트 미국 재무장관이 이란의 위협 의혹 때문에 군 기지로 거처를 옮겼다.",
+                "category": {
+                  "major": "국제",
+                  "minor": "미국"
+                },
+                "sources": [
+                  {
+                    "name": "BBC",
+                    "url": "https://www.bbc.co.uk/news/articles/cqr7gr0010r2o",
+                    "publishedAt": "2026-11-12",
+                    "imageUrl": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/274f/live/14e2f1f0-dde6-11f1-9204-cdcddf7d901c.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "미국의 주간 신규 실업수당 청구가 20만 건으로 조금 늘었지만 역사적으로 낮은 수준을 유지했다.",
+                "category": {
+                  "major": "경제",
+                  "minor": "노동·일자리"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261113003400072",
+                    "publishedAt": "2026-11-13",
+                    "imageUrl": "https://img.yna.co.kr/etc/inner/KR/2026/11/13/AKR20261113003400072_01_i_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "이란이 아르헨티나 군대를 테러 조직으로 지정했다. 아르헨티나의 앞선 조치에 7개월 만에 내놓은 맞대응이다.",
+                "category": {
+                  "major": "국제",
+                  "minor": "중동"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261112135100009",
+                    "publishedAt": "2026-11-12",
+                    "imageUrl": "https://img.yna.co.kr/photo/etc/epa/2026/11/09/PEP20261109177601009_P2.jpg"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "IT·AI",
+            "flow": "젠슨 황이 33년 만에 엔비디아를 떠나면서 미국 의회와 정부의 대중국 칩 수출 조사로 불이 옮겨붙었고, 삼성과 구글은 AI 안경을, 구글 딥마인드는 새 유전체 모델을 내놓았다.",
+            "topStories": [
+              {
+                "rank": 1,
+                "title": "젠슨 황, 엔비디아 CEO 사임…크레스 CFO가 임시로 맡아",
+                "summary": "엔비디아가 젠슨 황이 사장 겸 최고경영자와 이사직에서 즉시 물러났다고 발표했고, 주가는 개장 전 10% 넘게 떨어졌다.",
+                "whyItMatters": "엔비디아는 AI 칩 시장을 이끄는 회사이고 황은 창업 때부터 회사를 이끈 인물이다. 수장 교체는 AI 투자 흐름과 반도체 공급망, 한국 메모리 업체에도 영향을 준다.",
+                "background": "황은 중국 사업가와의 관계를 둘러싼 스파이 연루 의혹과 사내 임원과의 부적절한 관계 보도가 이어지며 사퇴 압박을 받아 왔다. 그는 8일 사내 메시지로 혼외 관계를 인정하고 사과했고, 이사회는 거취를 논의해 왔다.",
+                "keyFacts": [
+                  "엔비디아 이사회는 12일(현지시간) 성명으로 황의 즉시 사임을 알렸다. 사임 이유는 발표문에 담기지 않았다.",
+                  "콜레트 크레스 최고재무책임자가 정식 후임이 정해질 때까지 임시 최고경영자를 함께 맡는다.",
+                  "하비 존스 이사가 회사의 첫 이사회 의장에 올랐다.",
+                  "이사회는 회사 안팎에서 정식 후임을 찾기 시작했고, 기밀 유출 여부에 대한 조사도 이어 가고 있다.",
+                  "황은 1993년 회사를 세운 뒤 33년 동안 최고경영자였다."
+                ],
+                "outlook": "정식 후임 선임 일정과 이사회 조사 결과, 황의 의회 증언 여부, 엔비디아 주가와 AI 관련주의 움직임을 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "반도체·하드웨어"
+                },
+                "sources": [
+                  {
+                    "name": "경향신문",
+                    "url": "https://www.khan.co.kr/article/202611122259001",
+                    "publishedAt": "2026-11-12",
+                    "primary": true
+                  },
+                  {
+                    "name": "전자신문",
+                    "url": "https://www.etnews.com/20261112000481",
+                    "publishedAt": "2026-11-12"
+                  },
+                  {
+                    "name": "ZDNet Korea",
+                    "url": "https://zdnet.co.kr/view/?no=20261112233500",
+                    "publishedAt": "2026-11-12"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261112185951071",
+                    "publishedAt": "2026-11-12",
+                    "imageUrl": "https://img.yna.co.kr/photo/etc/af/2026/11/12/PAF20261112278601009_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 2,
+                "title": "미 의회, 황 증언 압박…상무부의 칩 우회 수출 단속 지연도 도마에",
+                "summary": "미국 공화당 위원장들이 젠슨 황의 의회 증언을 요구하며 소환장 가능성을 꺼냈고, 민주당은 정부에 엔비디아 수출 관련 자료를 보존하라고 요구했다.",
+                "whyItMatters": "스캔들이 한 기업의 문제를 넘어 미국의 대중국 AI 칩 수출 통제 전반에 대한 조사로 번지고 있다. 규제가 세지면 엔비디아의 아시아 고객과 공급망이 영향을 받는다.",
+                "background": "미국은 고성능 AI 칩의 중국 수출을 막고 있지만 동남아 등을 거친 우회 반입 의혹이 이어졌다. 싱가포르에 기반을 둔 엔비디아 고객사 메가스피드가 그 중심에 있다.",
+                "keyFacts": [
+                  "하원 공화당 위원장들은 황에게 비공개 설명을 요청했고, 응하지 않으면 소환장을 낼 수 있다고 밝혔다.",
+                  "황이 증언에 동의했는지는 보도가 엇갈린다. 위원장들은 일정을 계속 협의하고 있다고 말했다.",
+                  "악시오스 등은 러트닉 상무장관이 메가스피드를 수출 통제 명단에 올리는 일을 두 달가량 미뤘다고 보도했다.",
+                  "민주당 워런·쿤스 상원의원은 상무부와 국무부 등에 엔비디아 대중국 수출 관련 문서를 보존하라는 서한을 보냈다.",
+                  "메가스피드는 미국 당국의 점검에 협조했고 수출 통제법을 지킨다고 밝혔다."
+                ],
+                "outlook": "황과 러트닉 장관의 의회 증언이 잡히는지, 미국 정부가 동남아 우회 경로 차단 조치를 내놓는지 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "규제·정책"
+                },
+                "sources": [
+                  {
+                    "name": "ABC News",
+                    "url": "https://abcnews.com/Politics/republicans-renew-push-jensen-huangs-testimony-nvidia-ceos/story?id=138083749",
+                    "publishedAt": "2026-11-12",
+                    "primary": true,
+                    "publishedAtEstimated": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261112133200009",
+                    "publishedAt": "2026-11-12",
+                    "imageUrl": "https://img.yna.co.kr/photo/reuters/2026/11/12/PRU20261112141101009_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 3,
+                "title": "삼성·구글 AI 안경 공개…12월 10일 국내 출시, 65만원부터",
+                "summary": "삼성전자가 구글, 젠틀몬스터, 워비파커와 함께 만든 AI 안경 30종을 뉴욕에서 공개했다.",
+                "whyItMatters": "스마트폰 다음 기기로 꼽히는 AI 안경 시장에 삼성과 구글이 본격적으로 들어왔다. 카메라가 달린 안경이 일상에 퍼지면 사생활 보호 문제도 함께 커진다.",
+                "background": "AI 안경은 안경테에 카메라, 마이크, 스피커를 넣고 AI 비서가 보고 들은 것을 바탕으로 답하는 기기다. 삼성과 구글은 안경 브랜드와 손잡고 제품을 준비해 왔다.",
+                "keyFacts": [
+                  "제품 이름은 '인텔리전트 아이웨어'이고 젠틀몬스터 16종, 워비파커 14종이다.",
+                  "한국에는 12월 10일 젠틀몬스터 제품만 나오며 가격은 65만~70만원이다.",
+                  "구글 제미나이가 번역, 길 안내, 자료 요약 등을 돕고, 대표 모델의 무게는 약 41g이다.",
+                  "촬영할 때는 바깥쪽 표시등이 켜지고, 표시등을 가리면 카메라가 꺼진다.",
+                  "만 18세 이상만 쓸 수 있다."
+                ],
+                "outlook": "출시 뒤 판매량과 사생활 침해 논란, 경쟁사의 대응 제품을 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "반도체·하드웨어"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261112140300017",
+                    "publishedAt": "2026-11-12",
+                    "imageUrl": "https://img.yna.co.kr/etc/inner/KR/2026/11/12/AKR20261112140300017_01_i_P2.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "아이티데일리",
+                    "url": "https://www.itdaily.kr/news/articleView.html?idxno=242903",
+                    "publishedAt": "2026-11-12",
+                    "publishedAtEstimated": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261112183500072",
+                    "publishedAt": "2026-11-12",
+                    "imageUrl": "https://img.yna.co.kr/etc/inner/KR/2026/11/12/AKR20261112183500072_11_i_P2.jpg"
+                  }
+                ],
+                "devCheckpoint": "제미나이 기반 기기라 안경용 앱·서비스 연동 방식이 공개되는지 지켜볼 만하다."
+              },
+              {
+                "rank": 4,
+                "title": "구글 딥마인드, 세포 종류별로 DNA 변이 영향 예측하는 '알파게놈 2' 공개",
+                "summary": "구글 딥마인드가 DNA 변이가 유전자 활동에 주는 영향을 세포 종류별로 예측하는 AI 모델 알파게놈 2를 내놓았다.",
+                "whyItMatters": "같은 변이도 세포마다 영향이 다르기 때문에, 세포 단위 예측은 질병의 원인 변이를 찾는 연구를 앞당길 수 있다.",
+                "background": "이전 알파게놈은 조직 전체의 평균값을 예측했다. 새 모델은 DNA 서열과 함께 세포의 상태를 입력으로 받아 그 세포에서의 효과를 계산한다.",
+                "keyFacts": [
+                  "딥마인드는 68개 조직에서 얻은 1억700만 개가 넘는 개별 세포 자료로 모델을 학습시켰다고 밝혔다.",
+                  "한 번에 DNA 글자 100만 개를 읽는다.",
+                  "회사 발표에 따르면 28개 면역세포 종류를 다룬 평가에서 원인 변이를 찾아낸 비율이 16%에서 30%로 올랐다.",
+                  "비상업 연구용으로 API를 통해 제공되며, 진료나 진단용으로 검증된 것은 아니다."
+                ],
+                "outlook": "외부 연구자들의 독립 검증 결과와, 질병 상태의 세포처럼 학습 자료가 적은 영역에서의 성능을 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "AI 모델·연구"
+                },
+                "sources": [
+                  {
+                    "name": "The Decoder",
+                    "url": "https://the-decoder.com/google-deepmind-shifts-genomics-ai-from-bulk-tissue-predictions-to-single-cell-type-resolution-with-alphagenome-2/",
+                    "publishedAt": "2026-11-11",
+                    "primary": true,
+                    "publishedAtEstimated": true
+                  },
+                  {
+                    "name": "MarkTechPost",
+                    "url": "https://www.marktechpost.com/2026/11/11/google-deepmind-alphagenome-2-cell-type-variant-effects/",
+                    "publishedAt": "2026-11-11"
+                  }
+                ],
+                "devCheckpoint": "알파게놈 API로 비상업 연구용 접근이 열려 있다."
+              },
+              {
+                "rank": 5,
+                "title": "무인양품 운영사 해킹…신용카드 정보 109만 건 유출 가능성",
+                "summary": "일본 생활용품 브랜드 무인양품을 운영하는 양품계획이 고객 신용카드 정보 약 109만 건이 유출됐을 수 있다고 발표했다.",
+                "whyItMatters": "다른 서비스에서 새어 나간 아이디와 비밀번호로 로그인하는 흔한 공격에 대형 유통사가 뚫렸고, 카드 번호를 암호화하지 않은 사실도 드러났다.",
+                "background": "여러 사이트에서 같은 아이디와 비밀번호를 쓰는 사람이 많다는 점을 노려, 유출된 계정 목록으로 다른 사이트에 로그인을 시도하는 공격을 일본에서는 '리스트형 공격'이라고 부른다. 일본에서는 최근 유통·가구 업체의 고객 정보 유출 발표가 이어졌다.",
+                "keyFacts": [
+                  "양품계획은 12일 도쿄에서 기자회견을 열어 유출 가능성을 알렸다.",
+                  "109만 건 가운데 지금도 쓸 수 있는 카드는 약 34만5천 건이고, 2021년 7월 이전에 가입한 고객의 카드 번호다.",
+                  "회사는 제3자가 다른 곳에서 얻은 계정 정보로 부정 로그인했다고 설명했다.",
+                  "카드 번호를 보관할 때 해야 하는 암호화를 하지 않았다.",
+                  "회사는 카드 재발행 수수료를 모두 부담하기로 했다."
+                ],
+                "outlook": "실제 부정 사용 피해가 확인되는지, 일본 당국이 조사에 나서는지 본다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "보안"
+                },
+                "sources": [
+                  {
+                    "name": "아시아경제",
+                    "url": "https://view.asiae.co.kr/article/2026111218415075630",
+                    "publishedAt": "2026-11-12",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261112166600009",
+                    "publishedAt": "2026-11-12",
+                    "imageUrl": "https://img.yna.co.kr/etc/inner/KR/2026/11/12/AKR20261112166600009_01_i_P2.jpg"
+                  }
+                ],
+                "devCheckpoint": "카드 번호는 저장하지 않거나 암호화하고, 로그인에는 시도 횟수 제한과 2단계 인증을 둔다."
+              }
+            ],
+            "shortNews": [
+              {
+                "summary": "금융당국이 해킹이나 침해사고가 의심되면 가상자산거래소가 먼저 입출금을 막을 수 있게 허용했다.",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "규제·정책"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261112141700002",
+                    "publishedAt": "2026-11-12",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/11/05/PYH2026110514540001300_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "코인마켓 가상자산거래소 플라이빗에서 해킹으로 고객 40명의 개인정보가 유출됐다.",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "보안"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261112168500002",
+                    "publishedAt": "2026-11-12",
+                    "imageUrl": "https://img.yna.co.kr/etc/inner/KR/2026/11/12/AKR20261112168500002_01_i_P2.jpg"
+                  }
+                ]
+              }
+            ],
+            "unverified": "젠슨 황이 의회 증언에 동의했다는 보도와 아직 일정을 협의 중이라는 보도가 엇갈린다."
+          }
+        ]
+      },
+      "collectedAt": "2026-11-13T06:18:42+09:00",
+      "late": false
     }
   ],
   "extracted": [
@@ -10381,7 +11300,8 @@
     "2026-11-08",
     "2026-11-09",
     "2026-11-10",
-    "2026-11-11"
+    "2026-11-11",
+    "2026-11-12"
   ],
   "scheduled": [
     "2026-11-01",
@@ -10394,6 +11314,7 @@
     "2026-11-08",
     "2026-11-09",
     "2026-11-10",
-    "2026-11-11"
+    "2026-11-11",
+    "2026-11-12"
   ]
 }

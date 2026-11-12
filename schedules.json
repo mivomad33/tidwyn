@@ -103,7 +103,7 @@
     {
       "id": 10,
       "name": "중국 APEC 정상회의",
-      "due": "2026-11",
+      "due": "2026-11-19",
       "major": "국제",
       "outcome": null,
       "postponedTo": null,
@@ -644,7 +644,7 @@
       "name": "G7 외교장관회의 파리 개막",
       "due": "2026-11-09",
       "major": "국제",
-      "outcome": null,
+      "outcome": "result",
       "postponedTo": null,
       "mergedInto": null,
       "deleted": false,
@@ -754,6 +754,39 @@
       "name": "해외 구매 비만약 휴대 반입 허용 시행",
       "due": "2026-11-12",
       "major": "과학·건강",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 70,
+      "name": "한-아세안 정상회의(마닐라)",
+      "due": "2026-11-16",
+      "major": "정치",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 71,
+      "name": "한중 외교장관 베이징 회담",
+      "due": "2026-11-13",
+      "major": "정치",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 72,
+      "name": "삼성 AI 안경 국내 출시",
+      "due": "2026-12-10",
+      "major": "IT·AI",
       "outcome": null,
       "postponedTo": null,
       "mergedInto": null,
@@ -1300,6 +1333,31 @@
     {
       "story": "2026-11-11/한국-4",
       "schedule": 69,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-12/IT·AI-3",
+      "schedule": 72,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-12/세계-4",
+      "schedule": 59,
+      "role": "result"
+    },
+    {
+      "story": "2026-11-12/한국-5",
+      "schedule": 10,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-12/한국-5",
+      "schedule": 70,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-12/한국-5",
+      "schedule": 71,
       "role": "basis"
     }
   ],
