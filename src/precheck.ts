@@ -1,12 +1,9 @@
-import { VIDEO_DAY_FILE_RE, VIDEO_SECTIONS_FILE_RE } from "./siteTypes.ts";
 import fs from "node:fs";
 import path from "node:path";
 import { CONTACT_MAIL } from "./publicSite.ts";
 import { git, gitBuffer } from "./git.ts";
 import { NAME_KEY_FILE } from "./refs.ts";
 import { SNAPSHOT_NAME_RE } from "./snapshot.ts";
-import { DEMAND_COPY_DIR, DEMAND_COPY_RE, DEMAND_DB_FILE } from "./demandStore.ts";
-import { FLOW_WORK_NAMES } from "./demandFlowTypes.ts";
 
 // 공개 전 점검(3단계 4.7-3)과 결과물 검사(4.1-4)가 함께 쓰는 검사.
 // 걸린 값은 출력하지 않는다(파일·커밋과 종류, 줄 번호만). 이 파일에는 걸리는 값을 그대로 적지 않는다(이 파일도 검사 대상이다).
@@ -34,7 +31,6 @@ export type FindingKind =
   | "설명 없음"
   | "canonical이 주소와 다름"
   | "색인 페이지에 noindex"
-  | "HTML에 영상 데이터"
   | "사이트맵 밖 페이지에 noindex나 canonical이 없음"
   | "커밋 이메일이 noreply 주소가 아니다"
   | "홈 폴더 절대 경로"
@@ -47,14 +43,9 @@ export type FindingKind =
   | "허용 목록 밖 메일 주소"
   | "백업 파일 이름"
   | "실행 기록·작업 파일"
-  | "빌더 작업 파일"
-  | "빌더 원문 파일"
-  | "수요 흐름 작업 파일"
-  | "수요 데이터 DB"
   | "지운 이름 키 파일"
   | "키 값이 들어 있음"
   | "Google API 키 모양"
-  | "백업 파일에 영상 기록"
   | "읽지 못한 파일";
 
 export interface Finding {
@@ -85,37 +76,13 @@ const SECRET_PATTERNS: { kind: FindingKind; re: RegExp }[] = [
   // Vercel 토큰(2026-02-09 Vercel 변경 기록 "New token formats and secret scanning"): vcp_(개인), vci_(연동), vca_(앱 접근), vcr_(앱 갱신), vck_(API 키)
   { kind: "Vercel 토큰 모양", re: /\b(?:vcp|vci|vca|vcr|vck)_[A-Za-z0-9]{20,}/ },
   { kind: "개인 키 머리", re: /-{5}BEGIN (?:[A-Z0-9]+ )*PRIVATE KEY-{5}/ },
-  // Google API 키(YouTube 키 포함, 7단계 4.8-2): AIza로 시작하는 39자
+  // Google API 키(7단계 4.8-2): AIza로 시작하는 39자
   { kind: "Google API 키 모양", re: /(?<![0-9A-Za-z_-])AIza[0-9A-Za-z_-]{35}(?![0-9A-Za-z_-])/ },
 ];
 
-/** 백업 파일 이름(backup.ts의 월별 JSON, issues.json, refs.json, schedules.json, indicators.json, corrections.json, builder.json, demand.json, meta.json). 결과물 검사도 쓴다 */
-export const BACKUP_NAME_RE = /^(?:\d{4}-\d{2}\.json|issues\.json|refs\.json|schedules\.json|indicators\.json|corrections\.json|builder\.json|demand\.json|meta\.json)$/;
-/** 영상 기록의 표시(영상 기록·사이트 영상 항목과 8단계 영상 요약 이름). 백업에는 영상 데이터를 넣지 않는다(7단계 4.4-2) */
-const VIDEO_RECORD_RE = /"(?:videoId|video_id|videos|videoSummary|video_summary|videoSections|video_sections)"\s*:/;
-
-/** 백업 파일 자리(data 브랜치 최상위나 backup/ 폴더)인지 */
-function inBackupPlace(file: string): boolean {
-  const parts = file.replaceAll("\\", "/").split("/");
-  return parts.length === 1 || parts.at(-2) === "backup";
-}
-
-/** 백업 자리의 백업 이름 파일인지 */
-export function isBackupPath(file: string): boolean {
-  return BACKUP_NAME_RE.test(file.replaceAll("\\", "/").split("/").at(-1)!) && inBackupPlace(file);
-}
-
-/** 백업 파일에 영상 기록이 들어 있는지(7단계 4.4-2) */
-export function videoBackupFindings(where: string, file: string, content: Buffer): Finding[] {
-  // 날짜별 영상 파일은 사이트 결과물의 site-data/에만 있어야 한다(9.6단계 4.2-3)
-  const name = file.replaceAll("\\", "/").split("/").at(-1)!;
-  if ((VIDEO_DAY_FILE_RE.test(name) || VIDEO_SECTIONS_FILE_RE.test(name)) && inBackupPlace(file)) return [{ where, kind: "백업 파일에 영상 기록" }];
-  if (!isBackupPath(file) || isBinary(content)) return [];
-  return VIDEO_RECORD_RE.test(content.toString("utf8")) ? [{ where, kind: "백업 파일에 영상 기록" }] : [];
-}
+/** 백업 파일 이름(backup.ts의 월별 JSON, issues.json, refs.json, schedules.json, indicators.json, corrections.json, meta.json). 결과물 검사도 쓴다 */
+export const BACKUP_NAME_RE = /^(?:\d{4}-\d{2}\.json|issues\.json|refs\.json|schedules\.json|indicators\.json|corrections\.json|meta\.json)$/;
 const EMAIL_RE = /[A-Za-z0-9._%+-]+@([A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,})/g;
-/** `g`가 없어 `test`를 반복해도 위치가 남지 않는다 */
-const EMAIL_TEST = new RegExp(EMAIL_RE.source);
 /** 공개 글과 정정 사유에 넣지 않는 주소 모양 */
 export const ADDRESS_RE = /https?:\/\/|www\.|\b[a-z0-9-]+\.(?:com|net|org|kr|io|co|ai|dev|app)\b/i;
 
@@ -153,16 +120,6 @@ export function scanText(text: string, home: string | null, secrets: readonly st
   return hits;
 }
 
-/** 메일 주소 모양이 있는지(허용 목록과 상관없다) */
-export function hasEmail(text: string): boolean {
-  return EMAIL_TEST.test(text);
-}
-
-/** 메일 주소 모양이 있거나 공개 검사에 걸리는지 */
-export function failsPublicScan(text: string, home: string | null, secrets: readonly string[] = []): boolean {
-  return hasEmail(text) || scanText(text, home, secrets).size > 0;
-}
-
 /** 홈 폴더 값. 너무 짧은 값(`/` 등)은 모든 경로에 걸리므로 쓰지 않는다 */
 export function homeValue(home: string | undefined): string | null {
   if (home === undefined) return null;
@@ -181,16 +138,7 @@ export function isBinary(content: Buffer): boolean {
   return content.subarray(0, 8000).includes(0);
 }
 
-/** 빌더 작업 파일과 원문 파일(9.8단계 4.5-3). 후보 글과 문서 원문은 공개 저장소와 결과물에 들어가지 않는다 */
-const BUILDER_WORK_RE = /^builder\.(?:candidates\.json|candidates\.md|items\.json|discover\.json|discover\.md|discover\.items\.json)$/;
-const BUILDER_RAW_RE = /^\d{4}-\d{2}-\d{2}-[0-9a-f]{8}\.md\.gz$/;
-/** 수요 흐름 후보 복사본과 흐름 파일(9.97단계 4.4-3, demandFlowTypes.ts의 FLOW_WORK_NAMES). 받은 글에서 뽑은 후보와 AI가 쓴 검사 전 글이다 */
-const DEMAND_FLOW_WORK_RE = new RegExp(`^(?:${Object.values(FLOW_WORK_NAMES).map((n) => n.replaceAll(".", "\\.")).join("|")})$`);
-
-/** 수요 데이터 전용 DB와 그 사본(9.95단계 4.4-2). 저널 파일 이름도 잡는다 */
-const DEMAND_DB_RE = new RegExp(`^${DEMAND_DB_FILE.replace(".", "\\.")}(?:-journal|-wal|-shm)?$`);
-
-/** 이름으로 찾는 것: SQLite 파일, 실행 전 사본, .env 파일, 지운 이름 키 파일(4단계 E15), 빌더 작업·원문 파일, 수요 데이터 DB와 사본, 수요 흐름 작업 파일 */
+/** 이름으로 찾는 것: SQLite 파일, 실행 전 사본, .env 파일, 지운 이름 키 파일(4단계 E15) */
 export function nameKinds(file: string): FindingKind[] {
   const base = path.posix.basename(file.replaceAll("\\", "/"));
   const kinds: FindingKind[] = [];
@@ -198,11 +146,6 @@ export function nameKinds(file: string): FindingKind[] {
   else if (/\.(?:db|db-journal|db-wal|db-shm|sqlite|sqlite3)$/i.test(base)) kinds.push("SQLite 파일");
   if (/^\.env(?:\..+)?$/i.test(base)) kinds.push(".env 파일");
   if (base === NAME_KEY_FILE) kinds.push("지운 이름 키 파일");
-  if (BUILDER_WORK_RE.test(base)) kinds.push("빌더 작업 파일");
-  if (DEMAND_FLOW_WORK_RE.test(base)) kinds.push("수요 흐름 작업 파일");
-  const dirs = file.replaceAll("\\", "/").split("/").slice(0, -1);
-  if (BUILDER_RAW_RE.test(base) || dirs.includes("builder-raw")) kinds.push("빌더 원문 파일");
-  if (DEMAND_DB_RE.test(base) || DEMAND_COPY_RE.test(base) || dirs.includes(DEMAND_COPY_DIR)) kinds.push("수요 데이터 DB");
   return kinds;
 }
 
@@ -375,17 +318,17 @@ export function precheck(input: PrecheckInput): PrecheckResult {
     const content = blobs.get(sha);
     const where = `커밋 ${w.commit} ${w.path}`;
     if (content === undefined) push({ where, kind: "읽지 못한 파일" });
-    else for (const f of [...contentFindings(where, w.path, content, home, true, secrets), ...videoBackupFindings(where, w.path, content)]) push(f);
+    else for (const f of contentFindings(where, w.path, content, home, true, secrets)) push(f);
   }
   for (const t of tracked) {
     const where = `지금 파일 ${t.path}`;
     const indexContent = blobs.get(t.sha);
-    if (indexContent !== undefined) for (const f of [...fileFindings(where, t.path, indexContent, home, true, secrets), ...videoBackupFindings(where, t.path, indexContent)]) push(f);
+    if (indexContent !== undefined) for (const f of fileFindings(where, t.path, indexContent, home, true, secrets)) push(f);
     const file = path.join(repo, t.path);
     const stat = fs.lstatSync(file, { throwIfNoEntry: false }); // 작업 트리에서 지운 파일이면 없다
     if (stat?.isFile()) {
       const content = fs.readFileSync(file);
-      for (const f of [...fileFindings(where, t.path, content, home, true, secrets), ...videoBackupFindings(where, t.path, content)]) push(f);
+      for (const f of fileFindings(where, t.path, content, home, true, secrets)) push(f);
     }
   }
   return { findings, commits: input.commits.length, blobs: blobWhere.size, files: tracked.length };

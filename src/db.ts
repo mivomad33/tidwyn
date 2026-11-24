@@ -9,6 +9,42 @@ export interface Migration {
   up: (db: DatabaseSync) => void;
 }
 
+/** 지운 기능(R1)의 표 이름 앞부분. 이 이름으로 시작하는 표는 DB 업그레이드 15가 지운다 */
+const RETIRED_TABLE_PREFIXES = ["builder_", "repo_snapshot", "demand_flow", "video"];
+
+function retiredTables(db: DatabaseSync): string[] {
+  const rows = db.prepare("SELECT name FROM sqlite_master WHERE type = 'table'").all() as { name: string }[];
+  return rows.map((r) => r.name).filter((n) => RETIRED_TABLE_PREFIXES.some((p) => n.startsWith(p)));
+}
+
+/**
+ * 빌더 항목만 근거였던 일정(R1 T11)을 행째 지운다. `ids`는 빌더 항목과 이어져 있던 일정 id다.
+ * 뉴스 연결이 하나라도 있는 일정, 지운 일정, 흡수된 일정, 다른 일정이 흡수되어 들어간 일정은 건드리지 않는다.
+ * 그 일정을 가리키는 합치기·합치지 않음 기록과 미룬 일정 연결도 지운다. 지운 개수를 돌려준다.
+ */
+export function purgeBuilderOnlySchedules(db: DatabaseSync, ids: Iterable<number>): number {
+  const pick = db.prepare(
+    `SELECT id FROM schedules s
+     WHERE s.id = ? AND s.deleted = 0 AND s.merged_into IS NULL
+       AND NOT EXISTS (SELECT 1 FROM story_schedules ss WHERE ss.schedule_id = s.id)
+       AND NOT EXISTS (SELECT 1 FROM schedules o WHERE o.merged_into = s.id)`,
+  );
+  const dropMerges = db.prepare("DELETE FROM schedule_merges WHERE survivor = ? OR absorbed = ?");
+  const dropNoMerge = db.prepare("DELETE FROM schedule_no_merge WHERE a = ? OR b = ?");
+  const clearPostponed = db.prepare("UPDATE schedules SET postponed_to = NULL WHERE postponed_to = ?");
+  const drop = db.prepare("DELETE FROM schedules WHERE id = ?");
+  let n = 0;
+  for (const id of new Set(ids)) {
+    if (pick.get(id) === undefined) continue;
+    dropMerges.run(id, id);
+    dropNoMerge.run(id, id);
+    clearPostponed.run(id);
+    drop.run(id);
+    n++;
+  }
+  return n;
+}
+
 export const MIGRATIONS: Migration[] = [
   {
     version: 1,
@@ -582,6 +618,20 @@ export const MIGRATIONS: Migration[] = [
           PRIMARY KEY (item_id, position)
         );
       `);
+    },
+  },
+  {
+    // R1 4.2-1(T2·T11): 지운 기능(빌더, 저장소 스냅샷, 수요 흐름, 영상)의 표를 지운다.
+    // 먼저 빌더 항목만 근거인 일정(뉴스 연결이 없는 일정)을 고른 뒤 표를 지우고 그 일정을 행째 지운다.
+    version: 15,
+    up: (db) => {
+      const retired = retiredTables(db);
+      const ids = retired.includes("builder_item_schedules")
+        ? (db.prepare("SELECT DISTINCT schedule_id AS id FROM builder_item_schedules").all() as { id: number }[]).map((r) => r.id)
+        : [];
+      db.exec("PRAGMA defer_foreign_keys = ON");
+      for (const name of retired) db.exec(`DROP TABLE "${name}"`);
+      purgeBuilderOnlySchedules(db, ids);
     },
   },
 ];

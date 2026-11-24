@@ -17,3 +17,8 @@ export function NewTabMark({ spoken = true }: { spoken?: boolean }) {
   const arrow = h("span", { className: "mark", "aria-hidden": true }, " ↗");
   return spoken ? h(Fragment, null, arrow, h("span", { className: "sr-only" }, " (새 탭)")) : arrow;
 }
+
+/** 앱 밖으로 새 탭에서 여는 글 링크 */
+export function ExternalLink({ href, label }: { href: string; label: string }) {
+  return h("a", { href, className: "text-link", target: "_blank", rel: "noopener noreferrer" }, label, h(NewTabMark));
+}

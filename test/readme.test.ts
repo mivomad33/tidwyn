@@ -42,18 +42,17 @@ describe("README", () => {
     assert.ok(ko.links.includes("README.en.md") && en.links.includes("README.md"));
   });
 
-  test("9.8단계 4.7-3 두 파일의 기능 설명과 라이선스 절, LICENSE가 빌더를 같은 뜻으로 다룬다", () => {
+  // R1 4.5-1: 빌더 탭이 없어져 기능 설명에서 빠지고, `data` 브랜치 지난 커밋의 가격·한도 행 고지만 남는다
+  test("두 파일의 라이선스 절과 LICENSE가 지난 가격·한도 행을 같은 뜻으로 다루고, 빌더 기능 설명은 없다", () => {
     const koText = read("README.md");
     const enText = read("README.en.md");
-    assert.match(koText, /^- \*\*빌더:\*\*.*'빌더' 탭/m);
-    assert.match(enText, /^- \*\*Builder:\*\*.*"Builder" tab/m);
-    assert.match(koText, /숫자 행은 공급사 문서에서 옮긴 것이며 권리는 각 공급사에 있습니다\. Gemini 문서의 행은 CC BY 4\.0을 따릅니다\. 빌더 항목의 출처 표기는 \[사이트 소개\]/);
-    assert.match(enText, /number rows in the public backup are copied from vendor documents, and their rights belong to each vendor\. Rows from the Gemini documentation follow CC BY 4\.0\. Source attribution for builder items is on the \[about page\]/);
+    assert.doesNotMatch(koText, /^- \*\*빌더:\*\*/m);
+    assert.doesNotMatch(enText, /^- \*\*Builder:\*\*/m);
+    assert.match(koText, /`data` 브랜치의 지난 커밋\(2026-11-24 전\)에 남은 가격·한도 숫자 행은 공급사 문서에서 옮긴 것이며 권리는 각 공급사에 있습니다\. Gemini 문서의 행은 CC BY 4\.0을 따릅니다\./);
+    assert.match(enText, /The pricing and limit rows left in past commits \(before 2026-11-24\) of the `data` branch are copied from vendor documents, and their rights belong to each vendor\. Rows from the Gemini documentation follow CC BY 4\.0\./);
     const license = read("LICENSE").replace(/\s+/g, " ");
-    assert.ok(license.includes("copied from vendor documents, and their rights belong to each vendor. Rows from the Gemini documentation follow CC BY 4.0."));
-    assert.ok(license.includes("Source attribution for builder items is on the about page"));
-    const bulletLine = (text: string, label: string) => text.split("\n").findIndex((l) => l.startsWith(label));
-    assert.equal(bulletLine(koText, "- **빌더:**"), bulletLine(enText, "- **Builder:**"), "두 파일의 줄 위치가 같다");
+    assert.ok(license.includes("left in past commits (before 2026-11-24) of the `data` branch (`builder.json`) are copied from vendor documents, and their rights belong to each vendor. Rows from the Gemini documentation follow CC BY 4.0."));
+    assert.ok(!license.includes("about page"));
   });
 
   test("저장소 안 링크와 이미지가 실제 파일을 가리킨다", () => {

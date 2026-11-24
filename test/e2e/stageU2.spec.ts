@@ -1,4 +1,4 @@
-// U2단계 화면(E2E, 측정 데이터 E2E): 일정 상자의 처음 상태, 요약·키워드는 뉴스 탭에만, 빌더·수요 항목 접기와 펼칠 때 화면 튐 막기,
+// U2단계 화면(E2E, 측정 데이터 E2E): 일정 상자의 처음 상태, 요약·키워드, 펼칠 때 화면 튐 막기,
 // 거르기 칩(있는 값만, 건수, 첫 칩 글, 사라진 값, 넘침), 누를 곳 44px, 일정 이름 링크의 도착, 섹션 탭 Tab 순서.
 // 측정 데이터(명세서 용어: 감사의 정상 데이터, 2026-11-06까지 18일)로 따로 빌드한 사이트를 E2E_U1_PORT로 띄워 본다(test/e2e/prepare.ts). 데이터는 모두 지어낸 것이다.
 // 브라우저 시계는 2026-11-06(KST 낮)에 고정한다. 일정의 '오늘'과 이번 주 일정이 측정과 같게 하기 위해서다.
@@ -7,7 +7,7 @@ import path from "node:path";
 import type { Browser, BrowserContext, BrowserContextOptions, Locator, Page } from "@playwright/test";
 import { expect, fulfillData, test } from "./base.ts";
 import { E2E_U1_BASE_URL, E2E_U1_DATA_DIR } from "./paths.ts";
-import type { BuilderMonth, DemandMonth, MonthList } from "../../src/siteTypes.ts";
+import type { MonthList } from "../../src/siteTypes.ts";
 
 /** 375는 측정 도구와 같게 터치(hasTouch)로 본다 */
 const PHONE = { width: 375, height: 812 };
@@ -17,34 +17,22 @@ test.use({ baseURL: E2E_U1_BASE_URL, viewport: PHONE, hasTouch: true });
 const NOW = new Date("2026-11-06T12:00:00+09:00");
 const LATEST = "2026-11-06";
 const PAST = "2026-11-03";
-/** 11월 5일: 영상 묶음이 여럿인 날(측정 데이터) */
-const VIDEO_DATE = "2026-11-05";
 
-/** 화면 18곳(명세서 용어) */
-const SCREENS = ["/", "/#videos", "/#builder", "/#demand", "/dates", "/issues", "/issues/28", "/entities", "/entities/1", "/terms", "/schedules", "/indicators", "/indicators/kospi", "/videos/2026-11-06/Fx000000008", "/search?q=가짜", "/about", "/privacy", "/no-such-page"];
+/** 화면 14곳. 명세서 용어 '화면 18곳'에서 R1단계가 지운 영상·빌더·수요 탭과 영상 페이지를 뺐다(R1 4.3-1·4.3-2) */
+const SCREENS = ["/", "/dates", "/issues", "/issues/28", "/entities", "/entities/1", "/terms", "/schedules", "/indicators", "/indicators/kospi", "/search?q=가짜", "/about", "/privacy", "/no-such-page"];
 /** 펼친 상태와 달력 보기(4.4-1). 이름은 openScreen이 알아본다 */
 const OPEN_CARD = "/ (펼친 카드)";
 const OPEN_BOX = "/ (펼친 상자)";
-const OPEN_BUILDER = "/#builder (펼친 항목)";
-const OPEN_DEMAND = "/#demand (펼친 항목)";
 const CALENDAR = "/schedules (달력)";
 const CALENDAR_PICKED = "/schedules (달력, 날짜 고름)";
-const STATES = [OPEN_CARD, OPEN_BOX, OPEN_BUILDER, OPEN_DEMAND, CALENDAR, CALENDAR_PICKED];
+const STATES = [OPEN_CARD, OPEN_BOX, CALENDAR, CALENDAR_PICKED];
 
-/** 섹션 탭 이름(4.3-2: 어떤 칩 글도 이것과 같지 않다) */
-const SECTION_NAMES = ["전체", "한국", "세계", "IT·AI", "영상", "빌더", "수요"];
+/** 섹션 탭 이름(4.3-2: 어떤 칩 글도 이것과 같지 않다). R1 4.3-1: 영상·빌더·수요 탭을 지웠다 */
+const SECTION_NAMES = ["전체", "한국", "세계", "IT·AI"];
 
 const SITE_DATA = path.join(E2E_U1_DATA_DIR, "site-data");
 const readData = <T>(name: string): T => JSON.parse(fs.readFileSync(path.join(SITE_DATA, name), "utf8")) as T;
 const listOf = (date: string) => readData<MonthList>(`list-${date.slice(0, 7)}.json`).days.find((d) => d.date === date)!;
-const MONTHS = ["2026-10", "2026-11"];
-const builderMonths = MONTHS.map((m) => readData<BuilderMonth>(`builder-items-${m}.json`));
-const demandMonths = MONTHS.map((m) => readData<DemandMonth>(`demand-items-${m}.json`));
-/** 날짜 → 도구 변화 / 새 제품·저장소 / 수요 흐름 */
-const TOOLS = Object.assign({}, ...builderMonths.map((b) => b.days)) as BuilderMonth["days"];
-const DISCOVERIES = Object.assign({}, ...builderMonths.map((b) => b.discoveries ?? {})) as NonNullable<BuilderMonth["discoveries"]>;
-const FLOWS = Object.assign({}, ...demandMonths.map((d) => d.days)) as DemandMonth["days"];
-
 test.beforeEach(async ({ page }) => {
   await page.clock.setFixedTime(NOW);
 });
@@ -85,8 +73,6 @@ async function openScreen(page: Page, url: string): Promise<void> {
     await settle(page);
   };
   if (url === OPEN_CARD) return openFirst("/", ".list .item-btn");
-  if (url === OPEN_BUILDER) return openFirst("/#builder", "main .item .item-btn");
-  if (url === OPEN_DEMAND) return openFirst("/#demand", "main .item .item-btn");
   if (url === OPEN_BOX) {
     await page.goto("/");
     await settle(page);
@@ -233,34 +219,29 @@ test.describe("4.1-2 저장 키 정리(S6·S7)", () => {
 });
 
 test.describe("4.1-3 요약·키워드는 뉴스 탭에만", () => {
-  test("/(기본 '한국')·'전체' 탭에는 요약·키워드가 있고 영상·빌더·수요 탭에는 없다. 상자는 모든 탭에 있다", async ({ browser }) => {
+  // R1 4.3-1: 요약·키워드가 없던 영상·빌더·수요 탭을 지워 뉴스 탭만 본다
+  test("/(기본 '한국')·'전체' 탭에는 요약·키워드와 상자가 있다", async ({ browser }) => {
     const seen: Record<string, { headline: number; kw: number; box: number }> = {};
     const count = async (page: Page) => ({ headline: await page.locator("main .headline").count(), kw: await page.locator("main .kw").count(), box: await weekToggle(page).count() });
-    await eachScreen(browser, ["/", "/#videos", "/#builder", "/#demand"], async (page, url) => {
-      if (url === "/") {
-        await expect(page.locator("nav.tabs button[aria-pressed=true]")).toHaveText("한국");
-        seen["/"] = await count(page);
-        await sectionTab(page, "전체").click();
-        await expect(sectionTab(page, "전체")).toHaveAttribute("aria-pressed", "true");
-        seen["전체"] = await count(page);
-        return;
-      }
-      seen[url] = await count(page);
+    await eachScreen(browser, ["/"], async (page) => {
+      await expect(page.locator("nav.tabs button[aria-pressed=true]")).toHaveText("한국");
+      seen["/"] = await count(page);
+      await sectionTab(page, "전체").click();
+      await expect(sectionTab(page, "전체")).toHaveAttribute("aria-pressed", "true");
+      seen["전체"] = await count(page);
     });
     expect(seen).toEqual({
       "/": { headline: 1, kw: 1, box: 1 },
       전체: { headline: 1, kw: 1, box: 1 },
-      "/#videos": { headline: 0, kw: 0, box: 1 },
-      "/#builder": { headline: 0, kw: 0, box: 1 },
-      "/#demand": { headline: 0, kw: 0, box: 1 },
     });
   });
 });
 
 test.describe("4.1-4 첫 화면의 위계(375)", () => {
-  test("첫 뉴스 줄 윗선 ≤ 360, 빌더 탭 첫 항목 ≤ 240, 수요 탭 첫 항목 ≤ 270", async ({ browser }) => {
+  // R1 4.3-1: 빌더·수요 탭을 지워 뉴스 줄만 본다
+  test("첫 뉴스 줄 윗선 ≤ 360", async ({ browser }) => {
     const tops: Record<string, number> = {};
-    const want: Record<string, [string, number]> = { "/": [".list .item", 360], "/#builder": ["main .item", 240], "/#demand": ["main .item", 270] };
+    const want: Record<string, [string, number]> = { "/": [".list .item", 360] };
     await eachScreen(browser, Object.keys(want), async (page, url) => {
       expect(await page.evaluate("window.scrollY")).toBe(0);
       tops[url] = Math.round(await pageTop(page.locator(want[url]![0]).first()));
@@ -269,222 +250,7 @@ test.describe("4.1-4 첫 화면의 위계(375)", () => {
   });
 });
 
-// ---------------------------------------------------------------- 4.2 빌더·수요 항목 접기
-
-/** 키보드로 Tab을 눌러 그 항목의 줄 버튼에 닿는다 */
-async function tabTo(page: Page, key: string, max = 80): Promise<void> {
-  const here = `(() => { const a = document.activeElement; return !!a && a.matches(".item-btn") && a.closest("li")?.id === ${JSON.stringify(`story-${key}`)}; })()`;
-  for (let i = 0; i < max; i++) {
-    if (await page.evaluate(here)) return;
-    await page.keyboard.press("Tab");
-  }
-  throw new Error(`Tab으로 ${key} 줄 버튼에 닿지 못했다`);
-}
-
-test.describe("4.2-1 줄 전체가 펼침 버튼", () => {
-  test("빌더·수요 탭의 모든 항목이 처음에 접혀 있고, 누르면 펼쳐지며 다른 줄을 누르면 앞의 것이 접힌다", async ({ page }) => {
-    const cases = [
-      { url: `/${LATEST}#builder`, keys: TOOLS[LATEST]!.map((x) => x.key) },
-      { url: "/2026-10-27#builder", keys: [...TOOLS["2026-10-27"]!, ...DISCOVERIES["2026-10-27"]!].map((x) => x.key) },
-      { url: `/${LATEST}#demand`, keys: FLOWS[LATEST]!.map((x) => x.key) },
-    ];
-    for (const { url, keys } of cases) {
-      await openScreen(page, url);
-      expect(keys.length, url).toBeGreaterThan(1);
-      await expect(page.locator("main .item")).toHaveCount(keys.length);
-      for (const k of keys) {
-        await expect(itemBtn(page, k), `${url} ${k}`).toHaveAttribute("aria-expanded", "false");
-        await expect(itemOf(page, k).locator(".detail")).toHaveCount(0);
-      }
-      const [a, b] = keys as [string, string];
-      await itemBtn(page, a).click();
-      await expect(itemBtn(page, a)).toHaveAttribute("aria-expanded", "true");
-      await expect(itemOf(page, a).locator(".detail h4.h").first()).toBeVisible();
-      await itemBtn(page, b).click();
-      await expect(itemBtn(page, b)).toHaveAttribute("aria-expanded", "true");
-      await expect(itemOf(page, b).locator(".detail h4.h").first()).toBeVisible();
-      await expect(itemBtn(page, a)).toHaveAttribute("aria-expanded", "false");
-      await expect(itemOf(page, a).locator(".detail")).toHaveCount(0);
-    }
-  });
-
-  test("키보드: Tab으로 줄 버튼에 닿아 Enter로 펼치고, 다음 줄에서 Space로 펼치면 앞의 것이 접힌다", async ({ page }) => {
-    for (const { url, keys } of [
-      { url: `/${LATEST}#builder`, keys: TOOLS[LATEST]!.map((x) => x.key) },
-      { url: `/${LATEST}#demand`, keys: FLOWS[LATEST]!.map((x) => x.key) },
-    ]) {
-      await openScreen(page, url);
-      const [a, b] = keys as [string, string];
-      await page.locator("#main").focus();
-      await tabTo(page, a);
-      await page.keyboard.press("Enter");
-      await expect(itemBtn(page, a)).toHaveAttribute("aria-expanded", "true");
-      await tabTo(page, b);
-      await page.keyboard.press("Space");
-      await expect(itemBtn(page, b)).toHaveAttribute("aria-expanded", "true");
-      await expect(itemBtn(page, a)).toHaveAttribute("aria-expanded", "false");
-    }
-  });
-});
-
-/** 펼친 칸에서 칸 이름(h4) 바로 다음 문단의 글 */
-async function detailField(item: Locator, label: string): Promise<string | null> {
-  return item.evaluate(inPage<string | null>('const h = [...e.querySelectorAll(".detail h4.h")].find((x) => x.textContent.trim() === arg); return h ? h.nextElementSibling.textContent.trim() : null;'), label);
-}
-
-test.describe("4.2-2 접힌 줄의 칸", () => {
-  test("빌더·수요 모든 항목의 접힌 줄 안에 a가 없고, 보이는 칸 제목이 정해진 것뿐이며, '없음' 칸은 빠지고, 정정은 '정정됨'이 남는다", async ({ page }) => {
-    const bad: string[] = [];
-    const check = async (date: string, key: string, want: string[], fixed: boolean) => {
-      const btn = itemBtn(page, key);
-      await expect(btn, `${date} ${key}`).toBeVisible();
-      const got = {
-        links: await btn.locator("a").count(),
-        heads: await btn.locator("h4").count(),
-        fields: (await btn.locator(".fold-k").allTextContents()).map((t) => t.trim()),
-        fix: (await btn.innerText()).includes("정정됨"),
-      };
-      const exp = { links: 0, heads: 0, fields: want, fix: fixed };
-      if (JSON.stringify(got) !== JSON.stringify(exp)) bad.push(`${date} ${key}: ${JSON.stringify(got)} ≠ ${JSON.stringify(exp)}`);
-    };
-    let noneAction = 0;
-    let noneDue = 0;
-    let fixes = 0;
-    const builderDates = [...new Set([...Object.keys(TOOLS), ...Object.keys(DISCOVERIES)])].sort();
-    for (const date of builderDates) {
-      await openScreen(page, `/${date}#builder`);
-      for (const t of TOOLS[date] ?? []) {
-        await check(date, t.key, [...(t.action !== "없음" ? ["지금 할 일"] : []), ...(t.due ? ["기한"] : [])], !!t.corrections?.length);
-        if (t.corrections?.length) fixes++;
-        if (t.action === "없음" || !t.due) {
-          // 펼친 칸에는 '없음' 칸이 그대로 있다
-          await itemBtn(page, t.key).click();
-          await expect(itemBtn(page, t.key)).toHaveAttribute("aria-expanded", "true");
-          if (t.action === "없음") {
-            noneAction++;
-            expect(await detailField(itemOf(page, t.key), "지금 할 일"), `${date} ${t.key} 지금 할 일`).toBe("없음");
-          }
-          if (!t.due) {
-            noneDue++;
-            expect(await detailField(itemOf(page, t.key), "기한"), `${date} ${t.key} 기한`).toBe("없음");
-          }
-        }
-      }
-      for (const d of DISCOVERIES[date] ?? []) {
-        await check(date, d.key, ["용도"], !!d.corrections?.length);
-        if (d.corrections?.length) fixes++;
-      }
-    }
-    for (const date of Object.keys(FLOWS).sort()) {
-      await openScreen(page, `/${date}#demand`);
-      for (const f of FLOWS[date]!) {
-        await check(date, f.key, ["요지", "근거 수준"], !!f.corrections?.length);
-        if (f.corrections?.length) fixes++;
-      }
-    }
-    expect(bad, "접힌 줄").toEqual([]);
-    expect({ noneAction: noneAction > 0, noneDue: noneDue > 0, fixes: fixes > 0 }, "측정 데이터에 '없음' 칸과 정정 항목이 있다").toEqual({ noneAction: true, noneDue: true, fixes: true });
-  });
-
-  test("새 제품·뜨는 저장소의 펼친 칸 출처 링크 주소가 원문 주소(옛 이름 링크의 주소)와 같다", async ({ page }) => {
-    const dates = Object.keys(DISCOVERIES).sort();
-    expect(dates.length).toBeGreaterThan(0);
-    let seen = 0;
-    for (const date of dates) {
-      await openScreen(page, `/${date}#builder`);
-      for (const d of DISCOVERIES[date]!) {
-        await itemBtn(page, d.key).click();
-        await expect(itemBtn(page, d.key)).toHaveAttribute("aria-expanded", "true");
-        const hrefs = await itemOf(page, d.key).locator(".detail .src a").evaluateAll(inPage<string[]>('return e.map((a) => a.getAttribute("href"));'));
-        expect(hrefs, `${date} ${d.key}`).toEqual([d.url]);
-        seen++;
-      }
-    }
-    expect(seen).toBeGreaterThan(0);
-  });
-});
-
-test.describe("4.2-3 펼친 칸", () => {
-  test("펼친 빌더·수요 항목에 출처 링크, 제보 링크, (커뮤니티 근거가 있으면) 표본 설명이 있다", async ({ page }) => {
-    const cases: { url: string; items: { key: string; samples: string[] }[] }[] = [
-      { url: `/${LATEST}#builder`, items: TOOLS[LATEST]!.map((x) => ({ key: x.key, samples: [] })) },
-      { url: "/2026-10-27#builder", items: [...TOOLS["2026-10-27"]!, ...DISCOVERIES["2026-10-27"]!].map((x) => ({ key: x.key, samples: [] })) },
-      { url: `/${LATEST}#demand`, items: FLOWS[LATEST]!.map((x) => ({ key: x.key, samples: (x.community ?? []).map((c) => c.sample) })) },
-      { url: "/2026-10-26#demand", items: FLOWS["2026-10-26"]!.map((x) => ({ key: x.key, samples: (x.community ?? []).map((c) => c.sample) })) },
-    ];
-    expect(cases.some((c) => c.items.some((i) => i.samples.length > 0)), "커뮤니티 근거가 있는 흐름").toBe(true);
-    for (const { url, items } of cases) {
-      await openScreen(page, url);
-      for (const { key, samples } of items) {
-        await itemBtn(page, key).click();
-        await expect(itemBtn(page, key), `${url} ${key}`).toHaveAttribute("aria-expanded", "true");
-        const detail = itemOf(page, key).locator(".detail");
-        expect(await detail.locator(".src a[href^='http']").count(), `${url} ${key} 출처`).toBeGreaterThan(0);
-        await expect(detail.locator("a.report"), `${url} ${key} 제보`).toHaveCount(1);
-        await expect(detail.locator("a.report")).toHaveAttribute("href", /^mailto:/);
-        const heads = (await detail.locator(".dsrc").allTextContents()).join("\n");
-        for (const s of samples) expect(heads, `${url} ${key} 표본 설명`).toContain(s);
-      }
-    }
-  });
-});
-
-test.describe("4.2-4 링크로 들어온 항목은 펼쳐 연다", () => {
-  const remind = Object.entries(TOOLS).flatMap(([date, xs]) => xs.filter((x) => x.reminderOf).map((x) => ({ date, x })))[0]!;
-  const cont = Object.entries(FLOWS).flatMap(([date, xs]) => xs.filter((x) => x.continues).map((x) => ({ date, x })))[0]!;
-
-  test("다시 알림 링크와 수요 이어짐 링크를 누르면 원래 항목이 펼쳐져 보인다", async ({ page }) => {
-    for (const { tab, date, key, link, to } of [
-      { tab: "builder", date: remind.date, key: remind.x.key, link: ".detail .breminder", to: remind.x.reminderOf! },
-      { tab: "demand", date: cont.date, key: cont.x.key, link: ".detail .dcont", to: cont.x.continues! },
-    ]) {
-      await openScreen(page, `/${date}#${tab}`);
-      await itemBtn(page, key).click();
-      await expect(itemBtn(page, key)).toHaveAttribute("aria-expanded", "true");
-      await itemOf(page, key).locator(link).click();
-      await expect(page).toHaveURL(new RegExp(`/${to.date}#${encodeURIComponent(to.key)}$`));
-      await settle(page);
-      await expect(itemBtn(page, to.key)).toHaveAttribute("aria-expanded", "true");
-      await expect(itemOf(page, to.key).locator(".detail h4.h").first()).toBeInViewport();
-    }
-  });
-
-  test("펼친 항목에서 이슈 페이지로 간 뒤 브라우저 뒤로를 누르면 그 항목이 펼쳐진 채다", async ({ page }) => {
-    for (const { tab, key } of [
-      { tab: "builder", key: TOOLS[LATEST]!.find((x) => x.issue)!.key },
-      { tab: "demand", key: FLOWS[LATEST]!.find((x) => x.issue)!.key },
-    ]) {
-      await openScreen(page, `/${LATEST}#${tab}`);
-      await itemBtn(page, key).click();
-      await expect(itemBtn(page, key)).toHaveAttribute("aria-expanded", "true");
-      await itemOf(page, key).locator(".detail .brel a").click();
-      await expect(page).toHaveURL(/\/issues\/\d+$/);
-      await settle(page);
-      await page.goBack();
-      await settle(page);
-      await expect(itemBtn(page, key), `${tab} ${key}`).toHaveAttribute("aria-expanded", "true");
-    }
-  });
-});
-
-test.describe("4.2-5 빌더·수요 탭 목표 값(375)", () => {
-  test("빌더 탭 높이 ≤ 1600, 첫 도구 변화의 접힌 줄 기한 글 윗선 ≤ 420, 수요 탭 높이 ≤ 1800", async ({ browser }) => {
-    const got: Record<string, number> = {};
-    await eachScreen(browser, ["/#builder", "/#demand"], async (page, url) => {
-      got[`${url} 높이`] = await page.evaluate("document.scrollingElement.scrollHeight");
-      if (url === "/#builder") {
-        const first = TOOLS[LATEST]![0]!;
-        expect(first.due).not.toBeNull();
-        const due = itemBtn(page, first.key).locator(".fold-f", { has: page.locator(".fold-k", { hasText: "기한" }) });
-        await expect(due).toHaveCount(1);
-        got["기한 윗선"] = Math.round(await pageTop(due));
-      }
-    });
-    expect(got["/#builder 높이"], JSON.stringify(got)).toBeLessThanOrEqual(1600);
-    expect(got["기한 윗선"], JSON.stringify(got)).toBeLessThanOrEqual(420);
-    expect(got["/#demand 높이"], JSON.stringify(got)).toBeLessThanOrEqual(1800);
-  });
-});
+// ---------------------------------------------------------------- 4.2 펼칠 때 화면 튐 막기
 
 test.describe("4.2-6 펼칠 때 화면 튐 막기(S10, overflow-anchor: none)", () => {
   /** 줄을 화면 y에 오게 스크롤한다. 페이지 끝이라 더 내려가지 못하면 그보다 아래(slack 안)에 둔다 */
@@ -503,7 +269,6 @@ test.describe("4.2-6 펼칠 때 화면 튐 막기(S10, overflow-anchor: none)", 
 
   const cases = [
     { name: "뉴스 줄", url: "/", rows: (page: Page) => page.locator("main ul.list").first().locator(":scope > li") },
-    { name: "수요 탭 첫·둘째 항목", url: "/#demand", rows: (page: Page) => page.locator("main ul.blist > li") },
   ];
 
   for (const c of cases) {
@@ -522,7 +287,7 @@ test.describe("4.2-6 펼칠 때 화면 튐 막기(S10, overflow-anchor: none)", 
 
     test(`${c.name} (a) 둘째 줄을 화면 y 150에 두고 누르면 그 윗선이 누르기 전과 ±2px 안이다`, async ({ page }) => {
       const { first, second } = await start(page);
-      // 수요 탭은 페이지가 짧아 150까지 못 내려갈 수 있어 약 150(최대 270)으로 보고, 그 자리가 같은 y를 지킬 수 있는 자리인지 따로 확인한다
+      // 페이지가 짧으면 150까지 못 내려갈 수 있어 약 150(최대 270)으로 보고, 그 자리가 같은 y를 지킬 수 있는 자리인지 따로 확인한다
       await scrollRowTo(page, second, 150, 120);
       const before = await viewTop(second);
       const shrink = (await first.boundingBox())!.height - (await second.locator(".item-btn").boundingBox())!.height;
@@ -610,11 +375,6 @@ test.describe("4.3-1 있는 값만, 건수", () => {
     }
   });
 
-  test("영상 탭: 칩마다 건수가 있고 누르면 보이는 영상 줄 수가 건수와 같다", async ({ page }) => {
-    await openScreen(page, `/${VIDEO_DATE}#videos`);
-    await checkChipCounts(page, "영상", page.getByRole("group", { name: "영상 묶음" }), () => page.locator("main [data-video]").count());
-  });
-
   test("이슈 목록: 두 줄의 칩마다 건수가 있고(다른 줄이 첫 칩일 때) 누르면 끝까지 펼친 줄 수가 건수와 같다. 다른 줄을 바꿔도 칩이 그대로다", async ({ page }) => {
     await openScreen(page, "/issues");
     const rows = async () => {
@@ -669,7 +429,6 @@ test.describe("4.3-2 첫 칩 글", () => {
   test("칩 줄의 첫 칩은 정해진 글로 시작하고, 모든 칩 글에 건수가 있으며 섹션 탭 이름과 같지 않다", async ({ page }) => {
     const groups = [
       { url: "/", label: "카테고리", first: "모든 분야" },
-      { url: `/${VIDEO_DATE}#videos`, label: "영상 묶음", first: "모든 영상" },
       { url: "/issues", label: "대분류", first: "모든 분야" },
       { url: "/issues", label: "상태", first: "모든 상태" },
       { url: "/schedules", label: "대분류", first: "모든 분야" },
@@ -708,19 +467,6 @@ test.describe("4.3-3 고른 값이 사라지면 첫 칩(S12)", () => {
     await expect(filterChips(group).first()).toHaveAttribute("aria-pressed", "true");
     expect(await page.locator("main ul.list > li").count()).toBeGreaterThan(0);
     await expect(page.getByText("이 분류의 뉴스가 없다.")).toHaveCount(0);
-  });
-
-  test("대분류 칩이 없는 탭(영상)에 갔다 와도 고른 분야는 그대로다(그 탭의 빈 목록으로 첫 칩으로 돌리지 않는다)", async ({ page }) => {
-    await openScreen(page, "/");
-    const group = page.getByRole("group", { name: "카테고리" });
-    const chip = filterChips(group).nth(1);
-    const text = (await chip.textContent())!;
-    await chip.click();
-    await expect(chip).toHaveAttribute("aria-pressed", "true");
-    await page.locator("nav.tabs button", { hasText: /^영상/ }).click();
-    await expect(page.getByRole("group", { name: "영상 묶음" })).toBeVisible();
-    await sectionTab(page, "한국").click();
-    await expect(filterChips(group).filter({ hasText: text })).toHaveAttribute("aria-pressed", "true");
   });
 
   test("인물 목록에 0건인 종류(?kind=)로 들어오면 첫 칩으로 돌아가고 주소도 바뀐다", async ({ page }) => {
@@ -872,7 +618,6 @@ test.describe("강제 색 모드의 알약 링크(design-check·결과 검토)",
     );
 
   for (const [name, url, sel, js] of [
-    ["빌더 관련 이슈", "/2026-11-06#builder-1", "main .brel a", true],
     ["정적 이슈 페이지의 관련 알약", "/issues/28", ".static-page .rel a", false],
   ] as const) {
     test(`${name}: 강제 색 모드에서도 크기가 같고, 넓힌 칸의 테두리가 보이지 않는다(375)`, async ({ browser }) => {
@@ -885,12 +630,6 @@ test.describe("강제 색 모드의 알약 링크(design-check·결과 검토)",
       if (js) await frames(page);
       const forced = await pill(page, sel);
       expect({ w: forced.w, h: forced.h }).toEqual({ w: normal.w, h: normal.h });
-      if (name === "빌더 관련 이슈") {
-        expect(forced.border === forced.canvas || forced.borderWidth === 0).toBe(true);
-        // 테두리를 칠하는 동안에는 링크의 칸이 위의 '관련 이슈' 제목 글자에 닿지 않는다(바탕색 테두리가 글자를 지우지 않게)
-        const gap = await page.locator(sel).first().evaluate(inPage<number>(`const h = e.closest(".rel").previousElementSibling; return e.getBoundingClientRect().top - h.getBoundingClientRect().bottom;`));
-        expect(forced.borderWidth === 0 || gap >= 0, `테두리 ${forced.borderWidth}px, 제목과 틈 ${gap}px`).toBe(true);
-      }
       await context.close();
     });
   }
@@ -912,7 +651,7 @@ async function smallTargets(page: Page, min: number): Promise<string[]> {
 }
 
 test.describe("4.4-1 누를 곳 크기", () => {
-  test("375: 화면 18곳과 펼친 카드·상자·빌더·수요 항목, 달력 보기(날짜 고름 포함)에서 44px 미만 누를 곳이 0개다", async ({ browser }) => {
+  test("375: 화면 14곳과 펼친 카드·상자, 달력 보기(날짜 고름 포함)에서 44px 미만 누를 곳이 0개다", async ({ browser }) => {
     test.setTimeout(180_000);
     const bad: string[] = [];
     await eachScreen(browser, [...SCREENS, ...STATES], async (page, url) => {
@@ -937,38 +676,6 @@ test.describe("4.4-1 누를 곳 크기", () => {
 });
 
 test.describe("4.4-2 넓힌 누를 곳이 이웃과 겹치지 않음", () => {
-  test("빌더 줄 끝의 펼침 표시: 읽음 버튼 칸에 겹친 자리는 읽음이 바뀌고, 겹치지 않은 표시를 누르면 줄이 펼쳐진다", async ({ page }) => {
-    // 새 제품·저장소 줄은 짧아 펼침 표시(줄 끝, 읽음 버튼 아래)가 읽음 버튼의 누를 칸 안에 오고, 도구 변화 줄은 길어 칸 밖에 온다
-    await openScreen(page, "/2026-10-27#builder");
-    const rows = page.locator("main li.bitem");
-    let over = 0;
-    let outside = 0;
-    for (let i = 0; i < (await rows.count()); i++) {
-      const row = rows.nth(i);
-      await row.scrollIntoViewIfNeeded();
-      const rd = (await row.locator(".rd-btn").boundingBox())!;
-      const mk = (await row.locator(".fold-mark").boundingBox())!;
-      const x = mk.x + mk.width / 2;
-      const y = mk.y + mk.height / 2;
-      const inRd = x >= rd.x && x <= rd.x + rd.width && y >= rd.y && y <= rd.y + rd.height;
-      if (inRd) {
-        over++;
-        const before = await row.locator(".rd-btn").getAttribute("aria-pressed");
-        await page.mouse.click(x, y);
-        await expect(row.locator(".rd-btn")).not.toHaveAttribute("aria-pressed", before!);
-        await expect(row.locator(".item-btn")).toHaveAttribute("aria-expanded", "false");
-      } else if (outside === 0) {
-        outside++;
-        await page.mouse.click(x, y);
-        await expect(row.locator(".item-btn")).toHaveAttribute("aria-expanded", "true");
-        await row.locator(".item-btn").click();
-        await expect(row.locator(".item-btn")).toHaveAttribute("aria-expanded", "false");
-      }
-    }
-    expect(over, "펼침 표시가 읽음 버튼 칸 안에 오는 줄").toBeGreaterThan(0);
-    expect(outside, "펼침 표시가 읽음 버튼 칸 밖에 오는 줄").toBeGreaterThan(0);
-  });
-
   /**
    * 보이는 모양의 가운데 점에서 맨 위에 있는 누를 곳이 그 요소인지. 넓힌 여백(padding)을 뺀 안쪽의 가운데이고,
    * 줄을 바꾼 글 링크는 첫 줄 조각의 가운데다. 아니면 그 점에 있는 것을 돌려준다
@@ -1032,7 +739,7 @@ test.describe("4.4-2 넓힌 누를 곳이 이웃과 겹치지 않음", () => {
 const highlighted = (page: Page) => page.locator(".ev.hl");
 
 test.describe("4.5 일정 이름 링크(S5)", () => {
-  test("일정 화면에서 이름은 링크가 아니고, '출처 뉴스 ›'는 그 뉴스가 펼쳐진 브리프로, '빌더 항목 ›'은 그 항목이 펼쳐진 빌더 탭으로 간다", async ({ page }) => {
+  test("일정 화면에서 이름은 링크가 아니고, '출처 뉴스 ›'는 그 뉴스가 펼쳐진 브리프로 간다(R1 4.3-3: '빌더 항목 ›'은 지웠다)", async ({ page }) => {
     await openScreen(page, "/schedules");
     const names = page.locator(".ev .t");
     expect(await names.count()).toBeGreaterThan(0);
@@ -1046,17 +753,6 @@ test.describe("4.5 일정 이름 링크(S5)", () => {
     await expect(page).toHaveURL(new RegExp(`/2026-10-22#${encodeURIComponent("세계-3")}$`));
     await settle(page);
     await expect(itemBtn(page, "세계-3")).toHaveAttribute("aria-expanded", "true");
-
-    // 빌더 항목: 근거 뉴스 없이 빌더 항목에서 온 일정(측정 데이터의 일정 900000, 11월 6일 'builder-1')
-    await openScreen(page, "/schedules/900000");
-    await expect(highlighted(page).getByRole("link", { name: /^출처 뉴스/ })).toHaveCount(0);
-    const builder = highlighted(page).getByRole("link", { name: /^빌더 항목/ });
-    await expect(builder).toHaveText(/^빌더 항목\s*›$/);
-    await builder.click();
-    await expect(page).toHaveURL(new RegExp(`/${LATEST}#builder-1$`));
-    await settle(page);
-    await expect(page.locator("nav.tabs button[aria-pressed=true]")).toHaveText(/^빌더/);
-    await expect(itemBtn(page, "builder-1")).toHaveAttribute("aria-expanded", "true");
   });
 
   test("브리프 상자 일정 줄·펼친 카드의 일정 칩·이슈 페이지 일정 줄·결과 '연기 →'의 이름은 일정 화면의 그 일정(강조 줄)으로 간다", async ({ page }) => {
@@ -1143,15 +839,11 @@ test.describe("4.6 섹션 탭 Tab 순서(S4·S14)", () => {
   }
 });
 
-// 시각 회귀(U2 design-check): 측정 데이터의 브리프 상태 중 다른 스냅샷에 없는 것(상자 접힘·펼침, 빌더·수요 탭의 접힌 줄과 펼친 항목, 탭 일곱 개)을 폭마다 찍는다.
+// 시각 회귀(U2 design-check): 측정 데이터의 브리프 상태 중 다른 스냅샷에 없는 것(상자 접힘·펼침)을 폭마다 찍는다.
 // 375는 점검 촬영과 같게 터치로 본다. 시계는 위 beforeEach가 고정한다.
 const VISUAL_STATES: [string, string][] = [
   ["브리프", "/"],
   ["펼친 상자", OPEN_BOX],
-  ["빌더 탭", "/#builder"],
-  ["펼친 빌더 항목", OPEN_BUILDER],
-  ["수요 탭", "/#demand"],
-  ["펼친 수요 항목", OPEN_DEMAND],
 ];
 for (const [width, opts] of [[375, { viewport: PHONE, hasTouch: true }], [1280, { viewport: DESKTOP, hasTouch: false }]] as const) {
   test.describe(`시각 회귀 U2 ${width}`, () => {

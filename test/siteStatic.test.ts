@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 import { after, before, describe, test } from "node:test";
-import { createElement as h, type ReactNode } from "react";
+import { createElement as h } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { buildSite, listFilesRecursive } from "../site/build.ts";
 import { generateFixtures, writeFixtures, type Fixture } from "../site/dev/fixtures.ts";
@@ -20,7 +20,7 @@ import { buildSearchRecords, buildSiteData } from "../src/siteData.ts";
 import { renderMarkdown } from "../src/markdown.ts";
 import { loadBrief } from "../src/store.ts";
 import { openDb } from "../src/db.ts";
-import type { DayList, DayVideos, IndicatorList, IssueChunk, IssueDetail, MonthDetail, MonthList, SiteDates } from "../src/siteTypes.ts";
+import type { DayList, IndicatorList, IssueChunk, IssueDetail, MonthDetail, MonthList, SiteDates } from "../src/siteTypes.ts";
 import { cleanupTemp, tempDir } from "./helpers.ts";
 import { REF_DATES, refSiteDb } from "./refsFixture.ts";
 
@@ -89,7 +89,7 @@ async function build(opts: Parameters<typeof writeFixtures>[1], edit?: (dataDir:
 describe("정적 HTML", () => {
   let b: Built;
   before(async () => {
-    b = await build({ days: 6, entities: 12, terms: 8, schedules: 24, indicators: 1, indicatorsAll: true, videos: true, corrections: true });
+    b = await build({ days: 6, entities: 12, terms: 8, schedules: 24, indicators: 1, indicatorsAll: true, corrections: true });
   });
   const allHtml = () => listFilesRecursive(b.out).filter((f) => f.endsWith(".html"));
 
@@ -159,26 +159,20 @@ describe("정적 HTML", () => {
     assert.match(html(b.out, "indicators.html"), /FRED/);
   });
 
-  test("4.1-2 R7: 영상 제목, 썸네일, 기사 이미지 주소가 어떤 HTML에도 없다", () => {
-    const videos = fs.readdirSync(path.join(b.out, "site-data")).filter((n) => /^videos-/.test(n)).flatMap((n) => (JSON.parse(fs.readFileSync(path.join(b.out, "site-data", n), "utf8")) as DayVideos).videos);
-    assert.ok(videos.length > 0, "지어낸 영상이 있어야 한다");
+  // R1 4.1-1: 영상이 없어져 기사 이미지만 본다
+  test("4.1-2 R7: 기사 이미지 주소가 어떤 HTML에도 없다", () => {
     const images = [...b.details.values()].flatMap((stories) => Object.values(stories)).flatMap((s) => s.sources.flatMap((x) => x.imageUrl ?? []));
     for (const f of allHtml()) {
       const page = unescape(html(b.out, f));
-      for (const v of videos) {
-        assert.ok(!page.includes(v.title), `${f}: 영상 제목`);
-        assert.ok(!page.includes(v.thumb), `${f}: 썸네일`);
-      }
       for (const url of images) assert.ok(!page.includes(url), `${f}: 기사 이미지`);
       assert.doesNotMatch(page, /<img\b/, f);
     }
   });
 
   test("4.1-2 소개 문구는 화면과 같은 뷰로 만든다", () => {
-    const Link = (({ to, children, ...rest }: { to: string; children?: ReactNode }) => h("a", { href: to, ...rest }, children)) as never;
-    const view = renderToStaticMarkup(h(AboutView, { Link, readMarks: h(ReadMarksText) }));
+    const view = renderToStaticMarkup(h(AboutView, { readMarks: h(ReadMarksText) }));
     assert.ok(html(b.out, "about.html").includes(view));
-    assert.match(fs.readFileSync(path.join(import.meta.dirname, "..", "site", "src", "pages", "AboutPage.tsx"), "utf8"), /<AboutView Link=\{Link\}/);
+    assert.match(fs.readFileSync(path.join(import.meta.dirname, "..", "site", "src", "pages", "AboutPage.tsx"), "utf8"), /<AboutView readMarks=/);
   });
 
   test("4.1-3 머리글과 바닥글 링크만 따라가 모든 색인 페이지에 닿는다", () => {
@@ -543,7 +537,6 @@ describe("4.8-1 결과물 검사", () => {
 
   test("일부러 깨뜨린 결과물마다 실패한다", async () => {
     const out = await fresh();
-    const dated = locsOf(html(out, "sitemap.xml"))[1]!.slice(SITE_URL.length + 1);
     assert.deepEqual(kinds(out), []);
     const cases: [string, (s: string) => string, string][] = [
       ["about.html", (s) => s.replace(/<title>[^<]*<\/title>/, "<title></title>"), "about.html 제목 없음"],
@@ -554,9 +547,6 @@ describe("4.8-1 결과물 검사", () => {
       ["robots.txt", (s) => s.replace(/Sitemap:.*\n/, ""), "robots.txt robots.txt에 사이트맵 줄 없음"],
       ["sitemap.xml", (s) => s.replace(`${SITE_URL}/about`, `${SITE_URL}/about-x`), "sitemap.xml 사이트맵 주소에 파일이 없음"],
       ["sitemap.xml", (s) => s.replace(`<loc>${SITE_URL}/</loc>`, "<loc>https://example.com/</loc>"), "sitemap.xml 사이트맵 주소에 파일이 없음"],
-      [`${dated}.html`, (s) => s.replace("</main>", `<p>{"thumb":"x"}</p></main>`), `${dated}.html HTML에 영상 데이터`],
-      [`${dated}.html`, (s) => s.replace("</main>", "<p>videos.json</p></main>"), `${dated}.html HTML에 영상 데이터`],
-      [`${dated}.html`, (s) => s.replace("</main>", "<p>https://i.ytimg.com/a.jpg</p></main>"), `${dated}.html HTML에 영상 데이터`],
     ];
     for (const [rel, change, expected] of cases) {
       const restore = edit(out, rel, change);
@@ -569,11 +559,6 @@ describe("4.8-1 결과물 검사", () => {
     const restoreDup = edit(out, "sitemap.xml", (s) => s.replace("<url>", `<url><loc>${SITE_URL}/index</loc></url>\n<url>`));
     assert.ok(kinds(out).includes("index.html canonical이 주소와 다름"));
     restoreDup();
-
-    // 뉴스 출처가 YouTube인 것은 영상 데이터가 아니다
-    const restoreSource = edit(out, `${dated}.html`, (s) => s.replace("</main>", '<div class="src"><a href="https://www.youtube.com/watch?v=abc">출처</a></div></main>'));
-    assert.deepEqual(kinds(out), []);
-    restoreSource();
 
     fs.writeFileSync(path.join(out, "stray.html"), "<!doctype html><title>x</title>");
     assert.deepEqual(kinds(out), ["stray.html 사이트맵 밖 페이지에 noindex나 canonical이 없음"]);
@@ -656,11 +641,11 @@ describe("4.7-5 정정의 파생 반영", () => {
 });
 
 describe("4.10-1 파일 수 회귀 방지", () => {
-  test("365일, 이슈·대상 각 3,000개, 영상·빌더 365일치에서 결과물이 15,000개 이하다", { timeout: 300_000 }, async () => {
+  test("365일, 이슈·대상 각 3,000개에서 결과물이 15,000개 이하다", { timeout: 300_000 }, async () => {
     const work = tempDir("tidwyn-count-");
     const dataDir = path.join(work, "data");
     const out = path.join(work, "out");
-    const fx = generateFixtures({ days: 365, contiguous: true, issues: 3000, entities: 3000, videosFull: true, builderFull: true });
+    const fx = generateFixtures({ days: 365, contiguous: true, issues: 3000, entities: 3000 });
     for (const [rel, content] of fx.files) {
       fs.mkdirSync(path.dirname(path.join(dataDir, rel)), { recursive: true });
       fs.writeFileSync(path.join(dataDir, rel), content);

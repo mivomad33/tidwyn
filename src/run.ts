@@ -1,36 +1,13 @@
 import fs from "node:fs";
 import path from "node:path";
-import type { KindReport } from "./builderDiscover.ts";
-import type { DiscoverKind } from "./discoverStore.ts";
-import type { DocReport, SourceReport } from "./builderFetch.ts";
-import type { DemandReport } from "./demandFetch.ts";
-import type { CommunityReport } from "./communityFetch.ts";
-import type { DemandFlowState } from "./demandFlowRun.ts";
-import type { OfficialReport } from "./officialDemand.ts";
 import type { FeedFailure } from "./feeds.ts";
 import type { IndicatorFetchResult } from "./indicatorFetch.ts";
-import type { VideoBundle } from "./siteTypes.ts";
-import type { VideoPurgeResult } from "./videoPurge.ts";
-import type { ChartReport, ExcludeReason, Usage } from "./youtube.ts";
 import type { Violation } from "./validate.ts";
 
 // 실행 기록 파일. start가 만들고, 날짜마다의 결과와 백업 결과를 모아 summary가 읽는다. 데이터 폴더 안에 둔다.
 
 export const RUNS_DIR = "runs";
 export const WORK_DIR = "work";
-
-/** 작업 폴더에서 이름 목록의 파일을 지운다. 지운 수 */
-export function removeWorkFiles(dataDir: string, names: readonly string[]): number {
-  let n = 0;
-  for (const name of names) {
-    const f = path.join(dataDir, WORK_DIR, name);
-    if (fs.existsSync(f)) {
-      fs.rmSync(f, { recursive: true, force: true });
-      n++;
-    }
-  }
-  return n;
-}
 
 export type DateResult =
   | { status: "saved"; markdownPath: string | null; markdownError?: string; images?: number }
@@ -110,205 +87,9 @@ export interface IndicatorJudgeState {
   results: Record<string, JudgeResult>;
 }
 
-/** 스냅샷 명령(9.9단계 4.1-1). 호출 수와 시간은 이어 받기까지 더한 값이다 */
-export interface RepoSnapshotState {
-  status: "noBrief" | "off" | "complete" | "running" | "short" | "crashed";
-  target: string | null;
-  finished: boolean;
-  repos: number;
-  calls: number;
-  elapsedMs: number;
-  reason?: string;
-}
-
-/** 새 종류 받기(9.9단계). 수와 상태만 둔다. 이름과 글은 넣지 않는다 */
-export interface BuilderKindsState {
-  target: string;
-  product: KindReport;
-  repo: KindReport;
-  /** 재료에 요구가 들어 뺀 후보의 키(후보 원본에 있고 공개 검사를 지난 것만, 4.3-3) */
-  excluded?: string[];
-  /** 그 밖의 제외 값 수 */
-  excludedOther?: number;
-}
-
-/** 새 종류 쓰기 프로세스(9.9단계 N11). 수와 코드가 정한 문구만 둔다. rounds: 프로세스를 돌린 횟수 */
-export interface BuilderWriteState {
-  status: "nothing" | "written" | "passed" | "failed";
-  target: string | null;
-  rounds: number;
-  kinds: DiscoverKind[];
-  reason?: string;
-}
-
-/** 빌더 받기(9.8단계 4.1). 소스 글과 재료는 넣지 않는다. 실패 이유와 경고는 받기 명령이 정한 문구다. kindsOnly: 도구 변화는 끝나 새 종류만 받았다(N9) */
-export interface BuilderFetchState {
-  status: "noBrief" | "alreadyDone" | "kindsOnly" | "checked" | "partial" | "failed" | "crashed";
-  target: string | null;
-  sources?: SourceReport[];
-  docs?: DocReport[];
-  warnings?: string[];
-  candidates?: number;
-  cut?: number;
-  reminders?: number;
-  droppedByHost?: number;
-  droppedByKey?: number;
-  droppedByScan?: number;
-  reason?: string;
-}
-
-/** 빌더 쓰기·적용(9.8단계 4.3). 글은 넣지 않고 수만 남긴다 */
-export interface BuilderApplyState {
-  status: "applied" | "alreadyDone" | "failed" | "gaveUp";
-  target: string | null;
-  attempts: number;
-  reason?: string;
-  violations?: Violation[];
-  items?: number;
-  reminders?: number;
-  newSchedules?: number;
-  linked?: number;
-  postponed?: number;
-  moved?: number;
-  newsKept?: number[];
-}
-
-/** 영상 기록 새로 받기(9.6단계 4.2-4). 수와 정해진 이유만 쓴다 */
-export interface VideoRefreshState {
-  status: "none" | "stopped" | "ok" | "failed";
-  targets: number;
-  changed: number;
-  removed: number;
-  units: number;
-  /** 이상으로 보고 적용하지 않은 호출 수와 그 호출이 물은 영상 수 */
-  suspectCalls: number;
-  suspectVideos: number;
-  /** 챕터가 바뀌어 구간 정리를 지운 영상 기록 수(9.7단계 C6) */
-  sectionsRemoved: number;
-  /** 응답에 있지만 읽을 수 없어 그대로 둔 영상 수 */
-  unreadable: number;
-  /** 상한에 닿아 멈췄다 */
-  limited: boolean;
-  keyProblem: boolean;
-  quota: boolean;
-  /** 멈춘 이유(영상 정보 없음) */
-  failure: string | null;
-  /** DB를 다시 써야 한다. 지우기가 실패해 다시 실행해도 남는다 */
-  rewrite?: boolean;
-}
-
-/**
- * 영상 받기 결과(7단계 4.2). 영상 ID·제목은 넣지 않고 수만 남긴다(4.8-3). 차트는 지역과 카테고리 ID 숫자로만 쓴다.
- * alreadyDone은 대상 날짜가 이미 고르기 끝남이라 부르지 않은 것, noBrief는 브리프가 없어 건너뛴 것이다
- */
-export interface VideoFetchState {
-  status: "ok" | "partial" | "failed" | "alreadyDone" | "noBrief";
-  target: string | null;
-  keyProblem?: boolean;
-  quota?: boolean;
-  failures?: string[];
-  missed?: string[];
-  charts?: ChartReport[];
-  searchResults?: Record<string, number>;
-  usage?: Usage;
-  /** 거르기 전(중복을 뺀) 수, 이유별로 뺀 수, 후보 수, 관련 이슈 후보 수 */
-  before?: number;
-  excluded?: Record<ExcludeReason, number>;
-  candidates?: number;
-  issueCandidates?: number;
-}
-
-/** 영상 고르기 결과(7단계 4.3). attempts는 검사를 통과하지 못한 적용 횟수(처음 + 고쳐서 다시 검사 최대 2번) */
-export interface VideoPickState {
-  status: "applied" | "failed" | "alreadyDone";
-  target: string | null;
-  attempts: number;
-  picked?: Record<VideoBundle, number>;
-  /** 관련 이슈를 붙인 영상 수 */
-  withIssues?: number;
-  /** 요약을 붙인 영상 수(8단계 4.5-2) */
-  withSummary?: number;
-  /** 구간 정리를 붙인 영상 수와 구간을 포기한 영상 수(9.7단계 4.3-1) */
-  withSections?: number;
-  sectionsGivenUp?: number;
-  /** 적용 뒤 지운 영상 작업 파일 수 */
-  cleaned?: number;
-  reason?: string;
-  violations?: Violation[];
-}
-
-/**
- * 영상 내용 확인 결과(8단계 4.1). 영상 ID·제목·메모는 쓰지 않고 수만 쓴다(4.4-4). attempts는 확인 후보 검사를 통과하지 못한 횟수,
- * rejected는 고쳐서 다시 검사할 차례, alreadyDone은 고르기 끝남이라 부르지 않은 것이다
- */
-/** 9.7단계 구간 시각 받기(`video-sections`). 수와 정해진 이유만 남긴다 */
-export interface VideoSectionsState {
-  status: "done" | "alreadyDone" | "stopped" | "failed";
-  target: string | null;
-  targets?: number;
-  received?: number;
-  failures?: Record<string, number>;
-  notCalled?: number;
-  stop?: string;
-  timeLimit?: boolean;
-  costCap?: boolean;
-  input?: number;
-  output?: number;
-  usd?: number;
-  reason?: string;
-}
-
-export interface VideoNotesState {
-  status: "rejected" | "done" | "alreadyDone";
-  target: string | null;
-  attempts: number;
-  violations?: Violation[];
-  /** 위반이 세 번 나와 그때까지 받은 메모만 남기고 넘어갔다(4.2-1) */
-  gaveUp?: boolean;
-  candidates?: number;
-  noted?: number;
-  failures?: Record<string, number>;
-  notCalled?: number;
-  stop?: string;
-  timeLimit?: boolean;
-  costCap?: boolean;
-  input?: number;
-  output?: number;
-  usd?: number;
-}
-
-/** 9.95단계 수요 스냅샷(`demand-fetch`). 수와 사유 종류만 남긴다(받은 글은 남기지 않는다) */
-export type DemandFetchState = Omit<DemandReport, "day"> & {
-  status: "done" | "off" | "crashed";
-  /** 받은 날짜(KST). 시험 모드는 null */
-  day: string | null;
-  dbBytes: number | null;
-  reason?: string;
-};
-
-/** 9.96단계 공식 수요(`demand-official`). 같은 실행 기록의 호출을 합친 값이다. 수와 사유 종류만 남긴다 */
-export type OfficialDemandState = Omit<OfficialReport, "day"> & {
-  status: "done" | "off" | "crashed";
-  day: string | null;
-  dbBytes: number | null;
-  /** 이 실행 기록으로 부른 횟수(4.3-2: 세 번째부터는 받지 않는다) */
-  calls: number;
-  reason?: string;
-};
-
-/** 9.98단계 커뮤니티 받기(`demand-community`). 수와 상태, 사유 종류만 남긴다(검색어와 응답은 남기지 않는다) */
-export type CommunityState = Omit<CommunityReport, "target"> & {
-  status: "done" | "off" | "nothing" | "crashed";
-  target: string | null;
-  /** 꺼진 까닭: 시험 모드, 수요 흐름 끄기 */
-  offBy?: "test" | "flowOff";
-  copied: boolean;
-  reason?: string;
-};
-
 /** 사이트 빌드 결과(3단계 4.1, 4.5) */
 export type SiteResult =
-  | { status: "built"; outDir: string; dates: number; issues: number; entities?: number; terms?: number; schedules?: number; upcoming?: number; indicators?: number; videoDates?: number; videos?: number; files: number; bytes: number }
+  | { status: "built"; outDir: string; dates: number; issues: number; entities?: number; terms?: number; schedules?: number; upcoming?: number; indicators?: number; files: number; bytes: number }
   | { status: "failed"; outDir: string; reason: string; findings?: string[] };
 
 /** 배포 뒤 점검(3단계 4.6-3) */
@@ -354,39 +135,14 @@ export interface RunState {
   indicatorFetch?: IndicatorFetchResult;
   /** start 때 지표 판단 안 한 이슈 수(6단계 4.5-1) */
   unjudgedAtStart?: number;
-  /** 7단계: start가 예정한 영상 대상 날짜, 30일 지우기, 영상 받기와 고르기. 앞 단계 실행 기록에는 없다 */
-  videoPlanned?: { date: string | null; done: boolean };
-  /** 9.6단계: 영상 기록 새로 받기. 앞 단계 실행 기록에는 없다 */
-  videoRefresh?: VideoRefreshState;
-  videoPurge?: VideoPurgeResult;
-  videoFetch?: VideoFetchState;
-  /** 8단계: 영상 내용 확인. 앞 단계 실행 기록에는 없다 */
-  videoNotes?: VideoNotesState;
-  videoSections?: VideoSectionsState;
-  videoPick?: VideoPickState;
-  /** 9.8단계: start가 예정한 빌더 대상 날짜, 받기, 적용. 앞 단계 실행 기록에는 없다 */
-  builderPlanned?: { date: string | null; done: boolean };
-  builderFetch?: BuilderFetchState;
-  builderApply?: BuilderApplyState;
-  /** 9.9단계: 스냅샷 명령과 새 종류 받기. 앞 단계 실행 기록에는 없다 */
-  repoSnapshot?: RepoSnapshotState;
-  builderKinds?: BuilderKindsState;
-  builderWrite?: BuilderWriteState;
-  /** 9.95단계: 수요 스냅샷. 앞 단계 실행 기록에는 없다 */
-  demandFetch?: DemandFetchState;
-  /** 9.96단계: 공식 수요와, 그 실행에서 전용 DB 실행 전 사본을 이미 만들었는지(4.1-6). 앞 단계 실행 기록에는 없다 */
-  officialDemand?: OfficialDemandState;
-  /** 9.97단계: 수요 흐름. 앞 단계 실행 기록에는 없다 */
-  demandFlow?: DemandFlowState;
-  /** 9.98단계: 커뮤니티 받기. 앞 단계 실행 기록에는 없다 */
-  demandCommunity?: CommunityState;
-  demandCopied?: boolean;
   /** 지난 날짜 이미지 채우기(3단계). 1·1.5·2단계 실행 기록에는 없다 */
   images?: ImagesResult;
   /** 사이트 빌드·배포·push(3단계). start가 null로 두고 각 명령이 채운다. 앞 단계 실행 기록에는 없다 */
   site?: SiteResult | null;
   deploy?: DeployResult | null;
   push?: PushResult | null;
+  /** 배포만 실행(R1 T9). start --deploy-only가 남기고, 표시가 없으면 평소 실행이다 */
+  deployOnly?: true;
 }
 
 export function workFile(dataDir: string, date: string): string {

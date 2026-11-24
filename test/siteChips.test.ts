@@ -23,7 +23,7 @@ describe("거르기 칩", () => {
 
   test("첫 칩 글은 '전체'가 아니다", () => {
     for (const t of Object.values(ALL_CHIP_TEXT)) assert.ok(!t.startsWith("전체"), t);
-    assert.deepEqual(Object.values(ALL_CHIP_TEXT), ["모든 분야", "모든 상태", "모든 영상", "모든 종류"]);
+    assert.deepEqual(Object.values(ALL_CHIP_TEXT), ["모든 분야", "모든 상태", "모든 종류"]);
   });
 
   test("이슈 목록 두 줄은 전체 목록으로 세어 다른 줄 선택과 관계없다", () => {

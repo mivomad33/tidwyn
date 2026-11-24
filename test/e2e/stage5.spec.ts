@@ -242,7 +242,8 @@ test.describe("보기 기억", () => {
     await expect(viewBtn(page, "달력")).toHaveAttribute("aria-pressed", "true");
     await page.goto("/about");
     await expect(page.getByText("일정 화면의 보기(목록·달력)")).toBeVisible();
-    await expect(page.getByText("일정도 AI가 뉴스와 공식 문서에서 뽑은 것이라")).toBeVisible();
+    // R1단계: 빌더 일정(공식 문서에서 뽑은 일정)을 지워 소개 문구가 '뉴스에서'로 바뀌었다(T11)
+    await expect(page.getByText("일정도 AI가 뉴스에서 뽑은 것이라")).toBeVisible();
     page.once("dialog", (d) => void d.accept());
     await page.getByRole("button", { name: "읽은 기록 지우기" }).click();
     await expect(page.getByText("읽은 기록을 지웠다.")).toBeVisible();

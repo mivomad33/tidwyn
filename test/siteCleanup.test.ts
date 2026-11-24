@@ -8,9 +8,7 @@ import { buildSite, listFilesRecursive } from "../site/build.ts";
 import { writeFixtures } from "../site/dev/fixtures.ts";
 import { EMPTY_CLASS, Empty } from "../site/src/components/emptyView.ts";
 import { StorySources } from "../site/src/components/sourceView.ts";
-import type { LinkLikeProps } from "../site/src/components/termView.ts";
-import { ExternalLink, VideoDetail, VideoList } from "../site/src/components/videoView.ts";
-import type { IssueVideo, SiteVideo } from "../src/siteTypes.ts";
+import { ExternalLink } from "../site/src/components/moreMark.ts";
 import { cleanupTemp, tempDir } from "./helpers.ts";
 
 // U1 4.2(같은 역할 부품): 빈 상태 부품과 '이 날' 띄어쓰기(4.2-7), 앱 밖 링크의 ↗(4.2-8), '/'로 가는 링크의 이름(4.2-9). 지어낸 데이터만 쓴다.
@@ -46,19 +44,6 @@ function blankLinksWithoutArrow(html: string): string[] {
   return bad;
 }
 
-const Link = ({ to, className, children }: LinkLikeProps) => h("a", { href: to, className }, children);
-
-const video: SiteVideo = {
-  id: "vid1",
-  title: "가짜 영상 제목",
-  channel: "가짜 채널",
-  seconds: 2652,
-  thumb: "/t.svg",
-  bundle: "kr",
-  reason: "가짜 추천 이유다.",
-  hasSections: true,
-  videoSummary: "가짜 요약이다.",
-} as SiteVideo;
 
 describe("U1 4.2-7 빈 상태와 '이 날'", () => {
   test("site/src의 화면 문구에 '이날'이 없다('이 날'로 띄어 쓴다)", () => {
@@ -92,19 +77,26 @@ describe("U1 4.2 정적 HTML", () => {
     const work = tempDir("tidwyn-cleanup-");
     const dataDir = path.join(work, "data");
     out = path.join(work, "out");
-    writeFixtures(dataDir, { days: 12, entities: 12, terms: 8, schedules: 24, indicators: 1, indicatorsAll: true, videos: true, corrections: true, builder: true, demand: true });
+    writeFixtures(dataDir, { days: 12, entities: 12, terms: 8, schedules: 24, indicators: 1, indicatorsAll: true, corrections: true });
     await buildSite({ dataDir, outDir: out });
     pages = listFilesRecursive(out).filter((f) => f.endsWith(".html")).map((f) => path.join(out, f));
   });
 
-  test("4.2-7 어느 HTML에도 '이날'이 없고, 빌더·수요의 상태 문구는 '이 날'로 띄어 쓴다", () => {
+  // R1 4.3-1: '이 날'을 쓰던 빌더·수요 상태 문구가 없어져, '이날'이 없는지만 본다
+  test("4.2-7 어느 HTML에도 '이날'이 없다", () => {
     const found = pages.filter((f) => read(f).includes("이날")).map((f) => path.relative(out, f));
     assert.deepEqual(found, []);
-    assert.ok(pages.some((f) => read(f).includes("이 날")), "띄어 쓴 문구가 실제로 나온다");
   });
 
-  test("4.2-7 정적 HTML의 빈 상태는 앱과 같은 클래스·구조다", () => {
-    const empties = pages.flatMap((f) => [...read(f).matchAll(/<p class="(state empty[^"]*)">/g)].map((m) => m[1]!));
+  // R1: 이 지어낸 데이터에서 빈 상태를 내던 빌더·수요 구역을 지워, 목록이 빈 작은 사이트를 따로 만들어 본다
+  test("4.2-7 정적 HTML의 빈 상태는 앱과 같은 클래스·구조다", async () => {
+    const work = tempDir();
+    const dataDir = path.join(work, "data");
+    const emptyOut = path.join(work, "out");
+    writeFixtures(dataDir, { days: 2 });
+    await buildSite({ dataDir, outDir: emptyOut });
+    const emptyPages = listFilesRecursive(emptyOut).filter((f) => f.endsWith(".html")).map((f) => path.join(emptyOut, f));
+    const empties = [...pages, ...emptyPages].flatMap((f) => [...read(f).matchAll(/<p class="(state empty[^"]*)">/g)].map((m) => m[1]!));
     assert.ok(empties.length > 0, "빈 상태가 있는 페이지가 있다");
     for (const c of empties) assert.ok(c === EMPTY_CLASS || c === `${EMPTY_CLASS} inline`, c);
   });
@@ -139,22 +131,13 @@ describe("U1 4.2 정적 HTML", () => {
 });
 
 describe("U1 4.2-8 앱의 앱 밖 링크", () => {
-  test("영상 줄, 영상 페이지 제목과 구간 시각, 약관 링크, 출처 칩이 ↗를 보인다", () => {
-    const issueVideo = { ...video, date: "2026-10-29" } as IssueVideo;
+  // R1 4.1-1·4.3-3: 영상 줄과 영상 페이지가 없어져 약관 링크와 출처 칩만 남는다
+  test("약관 링크와 출처 칩이 ↗를 보인다", () => {
     const html = [
-      renderToStaticMarkup(h(VideoList, { videos: [video], mode: "brief", Link, date: "2026-10-29" })),
-      renderToStaticMarkup(h(VideoList, { videos: [issueVideo], mode: "issue", Link })),
-      renderToStaticMarkup(h(VideoDetail, { video, sections: [{ start: 3725, title: "가짜 구간", gist: "가짜 요지", points: ["가짜 불릿"] }] })),
       renderToStaticMarkup(h(ExternalLink, { href: "https://example.com/terms", label: "가짜 약관" })),
       renderToStaticMarkup(h(StorySources, { sources: [{ name: "가짜 매체", url: "https://example.com/a", publishedAt: "2026-10-29T01:00:00Z", primary: true }] as never, year: "2026" })),
     ].join("");
-    assert.equal((html.match(/target="_blank"/g) ?? []).length, 8, "새 탭 링크 여덟(영상 줄 둘, 영상 페이지의 썸네일·제목·시각·출처 줄 약관, 약관, 출처 칩)");
+    assert.equal((html.match(/target="_blank"/g) ?? []).length, 2, "새 탭 링크 둘(약관, 출처 칩)");
     assert.deepEqual(blankLinksWithoutArrow(html), []);
-    assert.match(html, /<a href="https:\/\/www\.youtube\.com\/watch\?v=vid1" class="vpagethumb" target="_blank" rel="noopener noreferrer" tabindex="-1" aria-hidden="true">/, "썸네일만 있는 링크는 보조 기술에서 숨기고 ↗를 두지 않는다");
-  });
-
-  test("4.2-9 이슈 영상 줄의 날짜 링크는 그 날짜 브리프의 영상 탭으로 가고 '브리프'를 쓴다", () => {
-    const html = renderToStaticMarkup(h(VideoList, { videos: [{ ...video, date: "2026-10-29" } as IssueVideo], mode: "issue", Link }));
-    assert.match(html, /<a href="\/2026-10-29#videos" class="text-link vrec">10월 29일 브리프 영상<\/a>/);
   });
 });

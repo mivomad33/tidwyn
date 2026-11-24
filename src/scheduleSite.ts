@@ -1,5 +1,4 @@
 import type { DatabaseSync } from "node:sqlite";
-import { builderScheduleIds, firstItemOfSchedules } from "./builderStore.ts";
 import { MAJORS, type Major } from "./categories.ts";
 import { allIssues, latestStoredDate, storyKey } from "./issues.ts";
 import { addDays } from "./kst.ts";
@@ -99,15 +98,13 @@ export function buildScheduleData(db: DatabaseSync, briefDates: string[]): Sched
   }
   const linksOf = (id: number) => links.get(id) ?? { basis: [], result: [], notice: [] };
 
-  const builderOnly = builderScheduleIds(db);
-  const firstItems = firstItemOfSchedules(db);
   const live = all.filter(isLiveSchedule);
   const isLive = (id: number) => {
     const s = byId.get(id);
     return s !== undefined && isLiveSchedule(s);
   };
   const outcomeOf = (s: Schedule): ScheduleOutcomeView => {
-    const status = scheduleStatus(s, refDate, builderOnly.has(s.id));
+    const status = scheduleStatus(s, refDate);
     if (status === "result") return { status, news: linksOf(s.id).result.map((x): ScheduleNews => ({ date: x.date, key: x.key, title: x.title })) };
     if (status === "postponed") {
       const to = s.postponedTo === null ? null : resolve(s.postponedTo);
@@ -120,8 +117,7 @@ export function buildScheduleData(db: DatabaseSync, briefDates: string[]): Sched
   for (const s of live) {
     const l = linksOf(s.id);
     const first = l.basis[0] ?? null;
-    const item = firstItems.get(s.id);
-    const known = [first?.date, item?.date].filter((x): x is string => x !== undefined).sort()[0] ?? "";
+    const known = first?.date ?? "";
     const related = [...new Set([...l.basis, ...l.result].map((x) => x.issue).filter((x): x is number => x !== null))].sort((a, b) => a - b);
     items.push({
       id: s.id,
@@ -133,7 +129,6 @@ export function buildScheduleData(db: DatabaseSync, briefDates: string[]): Sched
       issues: related.map(issueRef),
       knownOn: known,
       first: first === null ? null : { date: first.date, key: first.key },
-      ...(item === undefined ? {} : { builder: item }),
     });
   }
   items.sort(compareSchedules);

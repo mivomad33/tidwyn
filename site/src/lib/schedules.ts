@@ -151,12 +151,11 @@ export function outcomeParts(outcome: ScheduleOutcomeView, today: string): Outco
 }
 
 /** 일정 화면 머리의 출처 문구(앱과 정적 HTML이 같다) */
-export const SCHEDULE_META = "뉴스와 공식 문서에서 모은 예정 일정 · 날짜는 현지 기준";
+export const SCHEDULE_META = "뉴스에서 모은 예정 일정 · 날짜는 현지 기준";
 
-/** 일정 화면 줄의 출처 링크(S5): 처음 근거 뉴스면 '출처 뉴스', 근거 뉴스가 없고 빌더 항목이면 '빌더 항목', 둘 다 없으면 null */
-export function sourceLink(item: Pick<ScheduleItem, "first" | "builder">): { text: string; to: string } | null {
+/** 일정 화면 줄의 출처 링크(S5): 처음 근거 뉴스면 '출처 뉴스', 없으면 null */
+export function sourceLink(item: Pick<ScheduleItem, "first">): { text: string; to: string } | null {
   if (item.first) return { text: "출처 뉴스", to: briefPath(item.first.date, item.first.key) };
-  if (item.builder) return { text: "빌더 항목", to: briefPath(item.builder.date, item.builder.key) };
   return null;
 }
 

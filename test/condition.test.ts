@@ -63,7 +63,8 @@ describe("4.1-2 실행 조건", () => {
     gitIn(repo, "switch", "-q", "-c", "feature");
     const link = path.join(tempDir(), "link-to-data");
     fs.mkdirSync(path.join(repo, "data"));
-    fs.symlinkSync(path.join(repo, "data"), link);
+    // 윈도우에서 관리자 권한 없이 만들 수 있는 폴더 링크는 junction이다(다른 운영체제는 이 값을 무시한다)
+    fs.symlinkSync(path.join(repo, "data"), link, "junction");
     for (const value of ["data", "./data/", `../${path.basename(repo)}/data`, link, "DATA", "Data/"]) {
       const s = resolveSettings({ cwd: repo, env: { TIDWYN_DATA_DIR: value }, args: REAL, now: NOW });
       assert.equal(s.isRealDataDir, true, value);

@@ -1,7 +1,6 @@
 // 읽은 뉴스 기록(4.5단계 4.1). 뉴스 식별자(날짜 + 뉴스 키)만 로컬 스토리지 키 하나에 둔다. 화면(DOM) 없이 테스트한다.
 // 저장할 수 없거나 값이 깨졌으면 빈 기록으로 시작하고, 그 탭 안에서만 기억한다(4.1-4).
-import { isBuilderTabKey } from "../../../src/builderTypes.ts";
-import { isFlowItemKey } from "../../../src/demandFlowTypes.ts";
+import { isNewsKey } from "../../../src/categories.ts";
 import { addDays, isValidDate } from "../../../src/kst.ts";
 import { READ_MARKS_KEY } from "./browserKeys.ts";
 
@@ -79,7 +78,7 @@ export interface ReadStore {
   setRead(date: string, key: string, read: boolean): void;
   /** 그날 읽은 뉴스 키(복사본) */
   readKeys(date: string): Set<string>;
-  /** 그날 읽은 뉴스 수. 빌더 항목은 같은 기록을 쓰지만 뉴스가 아니라 세지 않는다(9.8단계 4.6-2) */
+  /** 그날 읽은 뉴스 수. 뉴스 키가 아닌 옛 항목 키(지운 빌더·수요 항목의 읽음)는 세지 않는다(R1 4.3-5) */
   readCount(date: string): number;
   clear(): void;
   subscribe(listener: () => void): () => void;
@@ -132,7 +131,8 @@ export function createReadStore(storage: StorageLike | null, today: string): Rea
       changed();
     },
     readKeys: (date) => new Set(marks.get(date) ?? []),
-    readCount: (date) => [...(marks.get(date) ?? [])].filter((k) => !isBuilderTabKey(k) && !isFlowItemKey(k)).length,
+    // 뉴스 키만 센다(지운 기능의 옛 항목 읽음 기록이 남아 있어도 세지 않는다, R1 4.3-5)
+    readCount: (date) => [...(marks.get(date) ?? [])].filter(isNewsKey).length,
     clear() {
       marks.clear();
       changed();

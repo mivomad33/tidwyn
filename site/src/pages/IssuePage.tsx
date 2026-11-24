@@ -1,9 +1,8 @@
-// 이슈 페이지(4.3-2). 흡수된 이슈 주소는 남는 이슈 주소로 바꾸고 합쳐졌다는 줄을 보인다. 5단계: 타임라인 아래 '일정'(4.7-5). 6단계: 타임라인과 '일정' 사이 '관련 지표'(4.7-4). 7단계: '관련 지표'와 '일정' 사이 '관련 영상'(4.7-2)
+// 이슈 페이지(4.3-2). 흡수된 이슈 주소는 남는 이슈 주소로 바꾸고 합쳐졌다는 줄을 보인다. 5단계: 타임라인 아래 '일정'(4.7-5). 6단계: 타임라인과 '일정' 사이 '관련 지표'(4.7-4)
 import { useEffect, useMemo } from "react";
 import { kstDate } from "../../../src/kst.ts";
 import { BackLink, BriefBackLink, CategoryLine, Empty, ErrorState, Layout, Loading, NewsTitle, ReadCheck, useTitle } from "../components/common.tsx";
 import { IssueIndicators } from "../components/IssueIndicators.tsx";
-import { IssueVideos } from "../components/IssueVideos.tsx";
 import { IssueSchedules } from "../components/scheduleView.ts";
 import { IssueEntityChips } from "../components/termView.ts";
 import { retry, useResource } from "../data.ts";
@@ -107,7 +106,6 @@ export function IssuePage({ id }: { id: number }) {
           <Empty inline>아직 전개가 없다.</Empty>
         )}
         <IssueIndicators indicators={issue.indicators} newsDates={issue.timeline.map((t) => t.date)} />
-        <IssueVideos refs={issue.videoRefs} today={today} />
         <IssueSchedules lines={issue.schedules} today={today} Link={Link} />
         {issueEntityChips(issue.entities).length > 0 && (
           <>

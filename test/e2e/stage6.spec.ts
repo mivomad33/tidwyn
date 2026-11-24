@@ -323,6 +323,8 @@ test.describe("이슈 페이지의 '관련 지표'", () => {
 
 test("머리 메뉴의 '지표'와 사이트 소개의 FRED 고지·약관 링크·동의 한 줄·지표 안내", async ({ page }) => {
   await page.goto("/");
+  // 브리프 데이터가 오기 전에 메뉴를 열면 데이터가 온 뒤 화면이 바뀌며 메뉴가 닫힌다. 브리프가 뜬 뒤 연다
+  await expect(page.getByRole("heading", { level: 1, name: /브리프$/ })).toBeVisible();
   await page.getByRole("button", { name: "메뉴" }).click();
   await page.getByRole("navigation", { name: "사이트 메뉴" }).getByRole("link", { name: "지표", exact: true }).click();
   await expect(page).toHaveURL("/indicators");
@@ -364,5 +366,13 @@ test.describe("375px 폭", () => {
     await page.goto(`/issues/${iinfo.issueThree}`);
     await expect(page.locator(".igraph").first()).toBeVisible();
     await expectNoHorizontalScroll(page, "이슈 페이지");
+  });
+
+  // R1 브라우저 점검에서 발견: 이슈 페이지 '관련 지표' 카드의 제목 링크가 폰에서 24px였다(디자인 기준 44px)
+  test("이슈 페이지 '관련 지표' 카드의 제목 링크는 폰에서 누를 곳이 44px 이상이다", async ({ page }) => {
+    await page.goto(`/issues/${iinfo.issueThree}`);
+    await expect(page.locator(".igh a").first()).toBeVisible();
+    const small = await page.evaluate(`[...document.querySelectorAll(".igh a")].map((e) => [e.textContent.trim(), e.getBoundingClientRect()]).filter(([, r]) => r.width < 44 || r.height < 44).map(([t, r]) => t + " " + Math.round(r.width) + "x" + Math.round(r.height))`);
+    expect(small, "44px 미만").toEqual([]);
   });
 });

@@ -1,5 +1,4 @@
 import type { DatabaseSync } from "node:sqlite";
-import { builderScheduleIds, isBuilderSchedule } from "./builderStore.ts";
 import { MAJORS, isMajor, type Major } from "./categories.ts";
 import { getIssue, inTransaction, linksOfStory, resolveIssue, storiesOfDate, type StoryRef } from "./issues.ts";
 import { addDays, isValidDate } from "./kst.ts";
@@ -146,9 +145,8 @@ export function scheduleCandidates(db: DatabaseSync, date: string): ScheduleCand
   const existing = upcoming.filter((s) => related.has(s.id) || nameMentioned(s.name, text));
   // 기다리는 기간 안일 수 있는 일정만 예정일 색인으로 고른다: 일 단위는 예정일이 그 날짜 - 14일부터 그 날짜까지,
   // 달 단위는 그 범위가 걸친 달(다음 달 14일까지 기다리므로 지난달 일정은 그 날짜가 14일 이하일 때만 후보다)
-  const builderOnly = builderScheduleIds(db);
   const results = schedulesInRange(db, addDays(date, -14), date)
-    .filter((s) => isResultCandidate(s, date) && !builderOnly.has(s.id))
+    .filter((s) => isResultCandidate(s, date))
     .sort((a, b) => a.due.localeCompare(b.due) || a.id - b.id);
   return { stories, existing, results };
 }
@@ -458,11 +456,10 @@ export function checkScheduleFile(db: DatabaseSync, data: unknown, date: string)
     if (s === null) return;
     if (withOutcome.has(s.id)) c.add(`${w} schedule`, `일정 ${s.id}에 결과를 두 번 쓴다`);
     withOutcome.add(s.id);
-    const builderOnly = isBuilderSchedule(db, s.id);
-    const candidate = isResultCandidate(s, date) && !builderOnly;
+    const candidate = isResultCandidate(s, date);
     if (kind === "result") {
       if (!candidate) {
-        const why = builderOnly ? "뉴스 근거가 없는 빌더 일정이다" : s.outcome !== null ? "이미 결과가 있다" : !dueReached(s.due, date) ? "아직 예정일 전이다(결과 연결은 예정일이 그날이거나 지난 일정에만 쓴다)" : "기다리는 기간이 지났다";
+        const why = s.outcome !== null ? "이미 결과가 있다" : !dueReached(s.due, date) ? "아직 예정일 전이다(결과 연결은 예정일이 그날이거나 지난 일정에만 쓴다)" : "기다리는 기간이 지났다";
         c.add(`${w} schedule`, `일정 ${s.id}은(는) ${date}의 결과 후보가 아니다(${why})`);
       }
       const keys = Array.isArray(o.result) ? o.result : [o.result];

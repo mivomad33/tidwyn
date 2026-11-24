@@ -836,7 +836,7 @@ li:focus {
   color: var(--fg);
 }
 
-/* 목록·묶음 안의 빈 상태 변형(빌더·수요 묶음, 달력의 날, 타임라인, U1 4.2-7) */
+/* 목록·묶음 안의 빈 상태 변형(달력의 날, 타임라인, U1 4.2-7) */
 .state.inline {
   padding: 10px 0 14px;
   text-align: left;
@@ -1726,10 +1726,6 @@ ul.isrc {
   font-weight: 700;
 }
 
-.igh a {
-  padding: 4px 0;
-}
-
 .igh small {
   font-weight: 400;
   color: var(--muted);
@@ -1753,125 +1749,6 @@ ul.isrc {
   vertical-align: 1px;
 }
 
-/* 7단계 추천 영상(확정 시안 design/site.html): 썸네일 왼쪽(길이 표시), 제목, 묶음 표시·채널·길이, 그 아래 '추천 이유' 상자.
-   썸네일과 제목은 한 링크다. 링크가 줄 격자의 두 칸을 함께 쓰도록 subgrid로 놓고, 정보 줄(이슈 페이지에서는 "M월 D일 추천" 링크가 든다)은
-   링크 밖에 두되 제목 아래 칸에 놓는다(링크 안에 링크를 두지 않는다). 넓은 화면에서는 썸네일이 커지고 추천 이유가 오른쪽 칸에 붙는다. */
-.vbox {
-  padding: 0 18px;
-}
-
-.vlist {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.vrow {
-  display: grid;
-  grid-template-columns: 128px minmax(0, 1fr);
-  grid-template-rows: auto 1fr auto auto;
-  column-gap: 10px;
-  padding: 10px 0;
-  border-bottom: 1px solid var(--line);
-}
-
-.vlink {
-  grid-column: 1 / -1;
-  grid-row: 1 / 3;
-  display: grid;
-  grid-template-columns: subgrid;
-  grid-template-rows: subgrid;
-}
-
-.vthumb {
-  grid-column: 1;
-  grid-row: 1 / -1;
-  position: relative;
-  display: block;
-  width: 128px;
-  height: 72px;
-  border-radius: 6px;
-  overflow: hidden;
-  background: var(--thumb);
-}
-
-.vthumb img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.vdur {
-  position: absolute;
-  right: 4px;
-  bottom: 4px;
-  font-size: var(--fs-xs);
-  line-height: 1.4;
-  padding: 0 4px;
-  border-radius: 3px;
-  background: var(--dur-bg);
-  color: var(--dur-fg);
-  font-variant-numeric: tabular-nums;
-}
-
-.vt {
-  grid-column: 2;
-  grid-row: 1;
-  font-size: var(--fs-sm);
-  font-weight: 600;
-  line-height: 1.35;
-}
-
-.vm {
-  grid-column: 2;
-  grid-row: 2;
-  align-self: start;
-  margin-top: 3px;
-  font-size: var(--fs-xs);
-  line-height: 1.5;
-  color: var(--muted);
-}
-
-/* 묶음 표시는 누를 수 없는 표시라 면 없이 굵은 글자로 쓴다(U1 4.2-2) */
-.vm .tag {
-  font-size: var(--fs-xs);
-  font-weight: 700;
-  color: var(--fg);
-  margin-right: 6px;
-}
-
-.vm .nw {
-  white-space: nowrap;
-}
-
-/* 위의 제목 링크를 덮지 않게 누를 곳을 아래로만 넓힌다. 마우스로는 추천 이유를 덮지 않는 24px까지만 넓힌다 */
-.vm .vrec {
-  position: relative;
-  z-index: 1;
-  display: inline-flex;
-  min-height: 24px;
-  margin-bottom: -6px;
-}
-
-@media (pointer: coarse) {
-  .vm .vrec {
-    min-height: 44px;
-    margin-bottom: -26px;
-  }
-}
-
-/* 영상이 도착해도 아래 내용이 밀리지 않게 줄 수만큼 자리를 잡는다. 줄 높이는 대략값이다 */
-.vwait {
-  min-height: calc(var(--rows) * 180px);
-}
-
-@media (min-width: 768px) {
-  .vwait {
-    min-height: calc(var(--rows) * 150px);
-  }
-}
-
 .why {
   grid-column: 1 / -1;
   grid-row: 3;
@@ -1889,226 +1766,13 @@ ul.isrc {
   margin-right: 6px;
 }
 
-/* 8단계 '요약 보기': 추천 이유 아래의 글자 버튼과 펼친 요약. 누를 곳은 44px 높이다 */
-.vsum {
-  grid-column: 1 / -1;
-  grid-row: 4;
-  scroll-margin-block: var(--bar-clear) calc(64px + env(safe-area-inset-bottom));
-}
-
-/* 제자리에서 여는 버튼이라 '구간별로 보기 ›'와 같은 색·굵기에 밑줄 없이 끝 ▾로 가른다(U1 4.2-5) */
-.vsumbtn {
-  min-height: 44px;
-  padding: 0 2px;
-  border: 0;
-  background: none;
-  color: var(--muted);
-  font: inherit;
-  font-size: var(--fs-sm);
-  font-weight: 400;
-  cursor: pointer;
-}
-
-.vsumtext {
-  margin: 0 0 2px;
-  font-size: var(--fs-sm);
-  line-height: 1.6;
-  background: var(--chip);
-  border-radius: 8px;
-  padding: 8px 10px;
-}
-
-/* 9.7단계 '구간별로 보기'는 '요약 보기'와 한 줄에 놓는다. 영상 줄 높이가 늘지 않고 누를 곳은 44px 높이다 */
-.vsumbar {
-  display: flex;
-  flex-wrap: wrap;
-  column-gap: 16px;
-}
-
-.vseclink {
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  padding: 0 2px;
-  font-size: var(--fs-sm);
-  white-space: pre;
-}
-
-.vpagethumb {
-  display: block;
-  width: fit-content;
-  max-width: 100%;
-  margin-bottom: 12px;
-}
-
-.vpage .page-title a {
-  color: inherit;
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 2px;
-}
-
-.vpage .why {
-  margin-top: 10px;
-}
-
-.vpagesum {
-  margin: 0;
-  font-size: var(--fs-sm);
-  line-height: 1.65;
-}
-
-.vsecs {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.vsecrow {
-  position: relative;
-  display: grid;
-  grid-template-columns: 84px minmax(0, 1fr);
-  column-gap: 8px;
-  padding: 6px 0;
-  border-bottom: 1px solid var(--line);
-}
-
-.vsectime {
-  display: inline-flex;
-  align-self: start;
-  align-items: flex-start;
-  min-height: 44px;
-  padding-top: 11px;
-  color: var(--accent);
-  font-size: var(--fs-sm);
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-  text-decoration: underline;
-  text-underline-offset: 2px;
-}
-
-/* 줄 전체가 시각 링크다. 눈이 가는 제목을 눌러도 그 장면으로 간다. 구간 글은 선택할 수 있게 위에 둔다 */
-.vsectime::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-}
-
-.vsecrow:active {
-  background: var(--chip);
-}
-
-@media (hover: hover) {
-  .vsecrow:hover .vsectitle {
-    text-decoration: underline;
-    text-underline-offset: 2px;
-  }
-}
-
-.vsecbody {
-  padding-block: 10px;
-  min-width: 0;
-}
-
-.vsectitle {
-  margin: 0;
-  font-size: var(--fs-sm);
-  font-weight: 700;
-  line-height: 1.5;
-}
-
-/* 시각 링크가 덮는 줄 위로 올려 글을 선택하고 복사할 수 있게 한다 */
-.vsecgist,
-.vsecpoints {
-  position: relative;
-  z-index: 1;
-  font-size: var(--fs-sm);
-  line-height: 1.65;
-}
-
-.vsecgist {
-  margin: 4px 0 0;
-}
-
-.vsecpoints {
-  margin: 6px 0 0;
-  padding-left: 18px;
-  list-style-type: disc;
-}
-
-.vsecpoints li + li {
-  margin-top: 4px;
-}
-
-.vsecnote {
-  margin: 0 0 4px;
-  font-size: var(--fs-sm);
-  line-height: 1.65;
-  color: var(--muted);
-}
-
-.vsrc {
-  margin: 8px 0 0;
-  padding-bottom: 6px;
-  font-size: var(--fs-xs);
-  line-height: 1.6;
-  color: var(--muted);
-}
-
-.vsrc a {
-  text-decoration: underline;
-  text-underline-offset: 2px;
-}
-
 @media (min-width: 600px) {
-  .vrow {
-    grid-template-columns: 200px minmax(0, 1fr);
-    grid-template-rows: auto auto auto 1fr;
-    column-gap: 14px;
-  }
-
-  /* 추천 이유와 요약이 놓일 줄까지 걸치므로, 누르는 곳과 초점 표시는 썸네일과 제목으로 좁힌다 */
-  .vlink {
-    grid-row: 1 / 5;
-    pointer-events: none;
-  }
-
-  .vlink > * {
-    pointer-events: auto;
-  }
-
-  .vlink:focus-visible {
-    outline: none;
-  }
-
-  .vlink:focus-visible .vthumb {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
-  }
-
-  .vthumb {
-    width: 200px;
-    height: 112px;
-  }
-
-  .vt {
-    font-size: var(--fs-base);
-  }
 
   .why {
     grid-column: 2;
     align-self: start;
   }
 
-  .vsum {
-    grid-column: 2;
-  }
-}
-
-/* 7단계 바닥글의 동의 문구와 처리방침의 브라우저 기록 목록 */
-.footer p.consent {
-  line-height: 1.6;
 }
 
 .plain .keys {
@@ -2189,18 +1853,13 @@ ul.isrc {
 .mark, .src small { white-space: pre; }
 .story b a { display: inline-flex; align-items: center; min-height: 44px; margin-block: -13px; }
 .src a { position: relative; display: inline-flex; align-items: center; min-height: 44px; margin-block: -9px; padding: 0 8px; border: none; }
+.igh a { display: inline-flex; align-items: center; min-height: 44px; margin-block: -10px; }
 .src a::before { content: ""; position: absolute; inset: 9px 0; border: 1px solid var(--line); border-radius: 6px; pointer-events: none; }
-.footer a { display: inline-flex; justify-content: center; min-width: 24px; white-space: nowrap; }
+.footer a { display: inline-flex; align-items: center; justify-content: center; min-width: 24px; min-height: 24px; white-space: nowrap; }
 @media (max-width: 767px) {
   /* 폭 맞춤은 좌우 padding으로 해 링크 사이 간격을 같게 둔다. 두 글자 링크도 44px를 넘는다 */
   .footer nav { gap: 0; margin-left: -12px; }
   .footer a { align-items: center; min-height: 44px; padding: 0 12px; }
-}
-
-/* 좁은 폭(확대 200% 포함)에서만 날짜를 둘째 줄로 내린다. 375 이상은 그대로다 */
-@media (max-width: 767.98px) {
-  .vsecrow { grid-template-columns: minmax(0, 1fr); }
-  .vsecbody { padding-top: 4px; }
 }
 
 @media (max-width: 339.98px) {
@@ -2209,7 +1868,6 @@ ul.isrc {
   .bar-center { order: 3; flex-basis: 100%; }
   /* 머리글이 두 줄이라 앵커 이동 때 가리지 않게 올린다 */
   html { --bar-clear: 96px; }
-  .vm .nw { white-space: normal; }
   /* 오른쪽 세로줄을 유지할 폭이 없다. 표시가 내려가면 글 시작선에 붙인다 */
   .fix-mark { margin-left: 0; }
 }
@@ -2231,87 +1889,22 @@ ul.isrc {
 .static-more a { display: inline-flex; align-items: center; min-height: 44px; }
 .static-jump { padding: 0 18px; }
 .static-brief .brief-section > h2.list-h { margin: 0; padding-top: 24px; border-top: 1px solid var(--line); font-size: var(--fs-md); color: var(--fg); }
-.static-brief .bgroup-h { font-size: var(--fs-base); color: var(--fg); }
 .static-brief .cat-row, .static-brief .short-meta { padding-right: 0; }
 .static-page a.nrow:not(.row-link) { min-height: 44px; margin-block: -4px; }
-.brel { margin-block: -7px; }
 .term-h { font-size: var(--fs-md); font-weight: 700; color: var(--fg); }
 .term-jump a { font-size: var(--fs-base); }
 .static-page .ev { border-radius: 0; }
 .static-page .rel { gap: 0 6px; }
-.static-page .rel a, .rel.brel a { margin: 0; box-shadow: none; background-clip: border-box; position: relative; display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; padding: 0 10px; border: none; }
-.static-page .rel a::before, .brel a::before { content: ""; position: absolute; inset: 7px 0; border: 1px solid var(--line); border-radius: 999px; pointer-events: none; }
+.static-page .rel a { margin: 0; box-shadow: none; background-clip: border-box; position: relative; display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; padding: 0 10px; border: none; }
+.static-page .rel a::before { content: ""; position: absolute; inset: 7px 0; border: 1px solid var(--line); border-radius: 999px; pointer-events: none; }
 
 /* 본문 건너뛰기: 키보드로 닿을 때만 보인다 */
-.skip { position: fixed; top: 8px; left: 8px; z-index: 30; transform: translateY(-200%); padding: 12px 16px; background: var(--accent); color: var(--on-accent); border-radius: 8px; font-size: var(--fs-base); font-weight: 700; }
+.skip { position: fixed; top: 8px; left: 8px; z-index: 30; transform: translateY(-200%); display: flex; align-items: center; min-height: 44px; padding: 12px 16px; background: var(--accent); color: var(--on-accent); border-radius: 8px; font-size: var(--fs-base); font-weight: 700; }
 .skip:focus { transform: none; }
 .skip:focus-visible { outline-color: var(--fg); }
 
-/* 9.8단계 빌더 항목, 9.9단계 묶음(`docs/design.md`의 '빌더 항목'). 줄은 뉴스 줄이고 칸은 펼친 카드의 머리말과 문단을 그대로 쓴다 */
-.breminder { display: inline-flex; align-items: center; align-self: flex-start; min-height: 44px; margin-block: -8px -14px; }
-.bdue { display: inline-flex; align-items: center; min-height: 44px; margin-block: -13px; }
-/* 기한 링크는 min-height로 넓히므로 문장 안 링크의 위아래 여백을 더하지 않는다(문단이 한 줄 높이를 지킨다) */
-.p a.text-link.bdue, .p a.text-link.dcont { padding-block: 0; } /* 이미 44px 칸인 글 링크(기한, 이어짐)는 글 링크의 아래 여백을 더하지 않는다 */
-.bintro-l { display: inline-block; padding-block: 14px; margin-block: -14px; }
-.bgroup + .bgroup { margin-top: 24px; border-top: 1px solid var(--line); }
-/* 묶음 제목은 구역 제목 .h 모양이다(U1 4.2-6) */
-.bgroup-h { margin: 24px 0 0; padding: 0 18px; }
-.bgroup .state { padding-inline: 18px; }
-.bgroup .state.error p { margin-bottom: 0; }
-.bname { overflow-wrap: anywhere; }
-.bname-l { display: inline-block; padding-block: 12px; margin-block: -12px; color: inherit; text-decoration: underline; text-underline-offset: 2px; }
-.bmark .fix-mark { margin-left: 0; }
 .about section:focus { outline: none; }
-.blist .detail > .h:first-child { margin-top: 0; }
-.blist:last-child .item:last-child { border-bottom: none; }
 .src + .report { margin-top: 9px; }
-/* 빌더와 영상 탭이 함께 있는 날(여섯 개): 좁은 폭에서도 한 줄에 들어가게 탭 좌우 여백을 줄이고 남는 폭을 탭이 나눠 갖는다 */
-@media (max-width: 374.98px) {
-  .tabs:has(button:nth-child(6)) button { flex: 1 1 auto; padding-inline: 4px; }
-}
-/* 9.97단계 수요 항목(`docs/design.md`의 '수요 항목'). 줄과 칸은 빌더 항목과 같고, 근거 줄은 소스마다 이름·숫자·기간을 한 묶음으로 둔다 */
-.dlines { padding-left: 0; list-style: none; }
-.dlines li + li { margin-top: 8px; }
-.dlines span { display: block; }
-.dhead { font-weight: 600; overflow-wrap: anywhere; }
-.dwin { font-size: var(--fs-xs); color: var(--muted); }
-.dnote { margin: 4px 0 0; font-size: var(--fs-xs); line-height: 1.6; color: var(--muted); }
-/* 9.98단계 커뮤니티 근거 줄의 첫 줄(소스 · 표본 설명)과 꺾임 표시, 소개의 분야별 사각지대 표. 표는 세 칸이라 좁은 폭에서도 칸 안에서 줄을 바꾼다 */
-.dsrc { overflow-wrap: anywhere; }
-.dturn { margin-top: 2px; }
-.demand-community li + li { margin-top: 4px; }
-.dcover-h { margin-top: 20px; }
-.plain .dcover-note { margin-top: 16px; }
-.dcover { width: 100%; margin: 8px 0 0; border-collapse: collapse; table-layout: fixed; font-size: var(--fs-sm); line-height: 1.5; }
-.dcover th, .dcover td { padding: 8px 8px 8px 0; text-align: left; vertical-align: top; border-top: 1px solid var(--line); overflow-wrap: anywhere; }
-.dcover th:last-child, .dcover td:last-child { padding-right: 0; }
-.dcover thead th { border-top: none; font-size: var(--fs-xs); font-weight: 700; color: var(--muted); }
-.dcover tbody th { font-weight: 600; }
-.dcover-n { display: inline-block; max-width: 100%; }
-.dcover thead th:first-child { width: 28%; }
-.dcover thead th:last-child { width: 30%; }
-.dcont { display: inline-flex; align-items: center; min-height: 44px; margin-block: -12px; }
-/* 수요 탭까지 일곱 개인 날: 휴대폰 폭에서 탭 좌우 여백을 줄이고 남는 폭을 나눠 한 줄을 지킨다 */
-@media (max-width: 479.98px) {
-  .tabs:has(button:nth-child(7)) button { flex: 1 1 auto; min-width: 44px; padding-inline: 3px; }
-}
-@media (max-width: 359.98px) {
-  .tabs:has(button:nth-child(7)) { font-size: var(--fs-sm); }
-  .tabs:has(button:nth-child(7)) button { padding-inline: 1px; }
-}
-/* U2 4.2-1·2: 접힌 빌더·수요 줄. 제목 아래에 먼저 볼 칸만 흐린 칸 이름과 함께 한 줄씩, 줄 끝에 펼침 표시 */
-.fold { display: flex; flex-direction: column; gap: 4px; margin-top: 6px; font-size: var(--fs-sm); line-height: 1.5; color: var(--fg); }
-.fold:empty { display: none; }
-.fold-k { color: var(--muted); font-weight: 600; font-size: var(--fs-xs); }
-/* 접힌 줄의 칸은 두 줄까지(긴 글에서도 훑기 쉽게). 전체 글은 펼친 칸에 있다 */
-.fold-f { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; text-overflow: ellipsis; }
-/* 펼침 표시는 줄 끝, 읽음 버튼 아래 빈 칸에 둔다(글 칸을 한 줄 늘리지 않는다) */
-.bitem .item-btn { position: relative; }
-/* 짧은 줄에서는 펼침 표시가 읽음 버튼의 누를 칸에 겹친다. 겹친 자리는 읽음 버튼이 받고, 나머지 자리의 표시는 줄을 편다 */
-.bitem .rd-btn { position: relative; z-index: 1; }
-.fold-mark { position: absolute; right: -28px; bottom: 14px; width: 12px; text-align: center; font-size: var(--fs-xs); line-height: 1.5; color: var(--muted); }
-.bitem .detail > .breminder:first-child { margin-top: 0; margin-bottom: 4px; }
-
 /*
  * U2 4.4(C7): 누를 곳 44px. 보이는 글자·모양·줄 높이는 그대로 두고 누를 칸만 넓힌다.
  * - 바탕·테두리가 있는 부품(칩, 고르기, 관련 칩): 위아래에 투명 테두리를 더하고 바탕은 padding 칸까지만 칠한다(background-clip).
@@ -2368,33 +1961,32 @@ ul.isrc {
 .week-toggle { min-height: 44px; margin-block: -6px; }
 .box-fold { min-width: 44px; min-height: 44px; margin-block: -6px; margin-right: -6px; }
 .wrow { padding-block: 12px; min-height: 44px; margin-block: -7px; position: relative; }
-.box-foot a { padding-block: 14px; margin-block: -8px; }
+.box-foot a { padding-block: 15px; margin-block: -9px; } /* 낮은 글꼴(윈도우)에서도 44px를 채우게 1px씩 더 둔다 */
 /* 펼친 카드의 관련 줄만 여백이 없어 넓힌다(목록·타임라인의 줄은 이미 44px 이상) */
 .story li a.nrow:not(.row-link) { padding-block: 10px; margin-block: -10px; }
 .ev-link { padding-block: 12px; margin-block: -2px; }
 .res-row a.res { padding: 5px 0 27px; margin: -5px 0 -27px; }
 .cal .d { height: 44px; }
 
-/* 44px는 폰(767px 이하)에서만이다. 그 밖의 폭은 24px만 채워(글자 칸 15~17px) 위아래 줄의 링크와 거의 겹치지 않게 한다 */
+/* 44px는 폰(767px 이하)에서만이다. 그 밖의 폭은 24px만 채워(글자 칸 14~17px) 위아래 줄의 링크와 거의 겹치지 않게 한다.
+   글자 칸은 글꼴마다 1px쯤 다르다(윈도우의 한글 글꼴이 맥보다 낮다). 그래서 낮은 글꼴에서도 채우도록 1px 더 둔다 */
 .p a.text-link,
 small a.text-link,
-.vsrc a.text-link,
-.isrc a.text-link { padding-bottom: 9px; }
+.isrc a.text-link { padding-bottom: 10px; }
 @media (max-width: 767.98px) {
   .p a.text-link,
   small a.text-link,
-  .vsrc a.text-link,
-  .isrc a.text-link { padding-bottom: 29px; }
+  .isrc a.text-link { padding-bottom: 30px; }
 }
 /* 짧은 글 링크는 옆으로도 넓힌다(인라인 좌우 여백은 같은 크기로 상쇄해 글자 위치가 그대로다) */
-.p a.text-link { padding-inline: 9px; margin-inline: -9px; }
+.p a.text-link { padding-inline: 10px; margin-inline: -10px; }
 
 /* 고대비(강제 색) 모드에서는 안쪽 그림자가 없어지고 투명 테두리가 시스템 색으로 칠해진다. 그래서 이 모드에서는 넓힌 누를 칸 전체를 1px 테두리 상자로 그리고
    (줄어든 테두리 몫은 안쪽 여백으로 채워 누를 칸 크기를 지킨다), 고른 것은 시스템 강조색으로 칠한다. 포커스 윤곽은 고르지 않은 것은 공통 `:focus-visible` 그대로다 */
 @media (forced-colors: active) {
   .chips button { border-width: 1px; padding: 11px 10px; }
   .segmented button { border-width: 0; margin-block: 0; min-height: 44px; }
-  .rel a, .rel button { border-width: 1px; padding: 13px 15px; margin: 0; } /* 정적 페이지와 빌더의 알약(::before가 보이는 테두리)은 더 높은 특이도의 규칙이 이겨 그대로다 */
+  .rel a, .rel button { border-width: 1px; padding: 13px 15px; margin: 0; } /* 정적 페이지의 알약(::before가 보이는 테두리)은 더 높은 특이도의 규칙이 이겨 그대로다 */
   .segmented { overflow: hidden; }
   .segmented button, .segmented button:first-child, .segmented button:last-child { border-radius: 0; }
   .chips button.on, .segmented button.on, .rel .on { forced-color-adjust: none; background: Highlight; color: HighlightText; border-color: Highlight; box-shadow: none; }

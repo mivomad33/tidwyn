@@ -1,7 +1,7 @@
 // 페이지별 정적 HTML(4.1). 사이트 데이터로 색인 페이지마다 파일을 만들어 자바스크립트를 돌리지 않는 수집기도 내용을 읽게 한다.
 // 앱은 이 위에 지금과 같은 화면을 그린다: 정적 본문은 #root 안에 있어 앱의 첫 렌더가 지우고, 그 전에는 head의 html.app 규칙이 숨긴다.
 // 앱 코드를 받지 못하거나 코드를 처음 실행하다 오류가 나면 head의 오류 처리가 html.app을 지워 정적 본문이 보인다.
-// 본문은 공용 뷰(components/*.ts)를 그대로 그려 문구를 두 벌로 두지 않는다. 영상, 기사 이미지, 오늘에 따라 바뀌는 것은 넣지 않는다(R7).
+// 본문은 공용 뷰(components/*.ts)를 그대로 그려 문구를 두 벌로 두지 않는다. 기사 이미지, 오늘에 따라 바뀌는 것은 넣지 않는다(R7).
 import fs from "node:fs";
 import path from "node:path";
 import { createElement as h, type CSSProperties, type ReactNode } from "react";
@@ -9,14 +9,10 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { indicatorDef } from "../src/indicators.ts";
 import { ROBOTS_FILE, pageFile } from "../src/publicSite.ts";
 import {
-  BUILDER_ITEMS_FILE_RE,
-  DEMAND_ITEMS_FILE_RE,
   SITE_DATA_DIR,
   TERM_GROUPS,
   siteFiles,
-  type BuilderMonth,
   type DayList,
-  type DemandMonth,
   type EntityChunk,
   type EntityDetail,
   type EntityListPage,
@@ -33,9 +29,6 @@ import {
   type ScheduleIndex,
   type ScheduleItem,
   type ScheduleMonth,
-  type SiteBuilderItem,
-  type SiteDiscoveryItem,
-  type SiteFlowItem,
   type SiteDates,
   type SiteIssueList,
   type StoryDetail,
@@ -47,26 +40,22 @@ import { RSS_FILE, buildRss, buildSitemaps, robotsTxt, type RssDay, type Sitemap
 import { articleLd, metaDescription, pageLd, renderHead, type HeadInfo } from "./head.ts";
 import { APP_FILE, NOT_FOUND_FILE } from "./hosting.ts";
 import { AboutView, ReadMarksText } from "./src/components/aboutView.ts";
-import { BuilderBody, BuilderFieldLine, BuilderGroups, BuilderIntro, BuilderReminder, DiscoveryBody, DiscoveryMark, DiscoveryName } from "./src/components/builderView.ts";
 import { FixMark, FixNotes } from "./src/components/correctionView.ts";
 import { Empty } from "./src/components/emptyView.ts";
 import { BackMark, MoreMark } from "./src/components/moreMark.ts";
 import { StorySources } from "./src/components/sourceView.ts";
-import { DemandBody, DemandCategoryLine, DemandIntro, DemandList } from "./src/components/demandView.ts";
 import { FredNotice, SourceNote } from "./src/components/indicatorView.ts";
 import { NOT_FOUND_LABEL, NotFoundView, RecoverLinks } from "./src/components/notFoundView.ts";
 import { FooterView, PrivacyView } from "./src/components/policyView.ts";
 import { ReportLink } from "./src/components/reportLink.ts";
 import { EntityChips, IssueEntityChips, type LinkLike } from "./src/components/termView.ts";
-import { BUILDER_TAB } from "./src/lib/builder.ts";
-import { DEMAND_TAB } from "./src/lib/demand.ts";
 import { entityListLine, entityMetaLine, joinEntityPages } from "./src/lib/entities.ts";
 import { issueListLine, issueMetaLine } from "./src/lib/issues.ts";
 import { briefTitle, entityLabel, fullKoreanDate, groupDatesByMonth, issueLabel, latestTitle, latestYear, monthDay, monthDayWeekday, monthLabel, pageTitle, shortDate, yearOf } from "./src/lib/format.ts";
 import { groupCards, indicatorRefYear, readingDateText, readingValueText } from "./src/lib/indicators.ts";
 import { MENU, SKIP_LABEL } from "./src/lib/menu.ts";
 import { PRIVACY_TITLE, PRIVACY_UPDATED, SITE_URL, shortReportHref, storyReportHref } from "./src/lib/policy.ts";
-import { BUILDER_HASH, DEMAND_HASH, adjacentDates, briefPath, entityPath, indicatorPath, issuePath, privacyPath } from "./src/lib/routes.ts";
+import { adjacentDates, briefPath, entityPath, indicatorPath, issuePath, privacyPath } from "./src/lib/routes.ts";
 import { SCHEDULE_META, chipDue, sourceLink } from "./src/lib/schedules.ts";
 import { categoryVar } from "./src/lib/theme.ts";
 
@@ -76,12 +65,6 @@ interface SiteInput {
   dates: SiteDates;
   days: Map<string, DayList>;
   details: Map<string, Record<string, StoryDetail>>;
-  /** 9.8단계: 날짜 → 빌더 항목 */
-  builder: Map<string, SiteBuilderItem[]>;
-  /** 9.9단계: 날짜 → 새 제품·뜨는 저장소 항목 */
-  discoveries: Map<string, SiteDiscoveryItem[]>;
-  /** 9.97단계: 날짜 → 수요 흐름 항목 */
-  demand: Map<string, SiteFlowItem[]>;
   issues: IssueDetail[];
   issueMerged: SiteIssueList["merged"];
   entities: EntityDetail[];
@@ -105,14 +88,6 @@ function loadInput(dataDir: string): SiteInput {
   for (const list of matching<MonthList>(/^list-\d{4}-\d{2}\.json$/)) for (const d of list.days) days.set(d.date, d);
   const details = new Map<string, Record<string, StoryDetail>>();
   for (const m of matching<MonthDetail>(/^detail-\d{4}-\d{2}\.json$/)) for (const [date, stories] of Object.entries(m.days)) details.set(date, stories);
-  const builder = new Map<string, SiteBuilderItem[]>();
-  const discoveries = new Map<string, SiteDiscoveryItem[]>();
-  for (const m of matching<BuilderMonth>(BUILDER_ITEMS_FILE_RE)) {
-    for (const [date, items] of Object.entries(m.days)) builder.set(date, items);
-    for (const [date, items] of Object.entries(m.discoveries ?? {})) discoveries.set(date, items);
-  }
-  const demand = new Map<string, SiteFlowItem[]>();
-  for (const m of matching<DemandMonth>(DEMAND_ITEMS_FILE_RE)) for (const [date, items] of Object.entries(m.days)) demand.set(date, items);
 
   const issueList = read<SiteIssueList>(siteFiles.issueList, { issues: [], merged: {} });
   const issueById = new Map<number, IssueDetail>();
@@ -138,7 +113,7 @@ function loadInput(dataDir: string): SiteInput {
   const scheduleIndex = read<ScheduleIndex>(siteFiles.scheduleIndex, { total: 0, months: [], majors: [] });
   const scheduleMonths = scheduleIndex.months.map((m) => read<ScheduleMonth>(siteFiles.scheduleMonth(m.month), { month: m.month, items: [] }));
   const indicators = read<IndicatorList>(siteFiles.indicatorList, { asOf: null, indicators: [] });
-  return { dates, days, details, builder, discoveries, demand, issues, issueMerged: issueList.merged, entities, entityMerged, terms, termGroups, scheduleMonths, indicators };
+  return { dates, days, details, issues, issueMerged: issueList.merged, entities, entityMerged, terms, termGroups, scheduleMonths, indicators };
 }
 
 function latest(values: readonly (string | null | undefined)[]): string | null {
@@ -250,45 +225,13 @@ function ShortStory({ story }: { story: ListStory }) {
   );
 }
 
-/** 빌더 절(B6). 앱의 빌더 탭과 같은 칸이고 탭 대신 구역이다. 기록이 없는 날은 그리지 않는다(B12) */
-function BuilderSection({ day, items, discoveries }: { day: DayList; items: SiteBuilderItem[]; discoveries: SiteDiscoveryItem[] }) {
-  const builder = day.builder;
-  if (!builder) return null;
-  return h(
-    "section",
-    { className: "brief-section" },
-    h("h2", { className: "h list-h", id: BUILDER_HASH }, BUILDER_TAB),
-    h(BuilderIntro, { Link: A }),
-    h(BuilderGroups, {
-      builder,
-      tools: items,
-      discoveries,
-      toolRow: (x) => h("li", { key: x.key, id: x.key, className: "item" }, h(BuilderFieldLine, { item: x }), h("h3", { className: "title" }, x.title), h(BuilderReminder, { item: x, Link: A }), h("div", { className: "detail" }, h(BuilderBody, { item: x, date: day.date, Link: A }))),
-      discoveryRow: (x) => h("li", { key: x.key, id: x.key, className: "item" }, h(DiscoveryMark, { item: x }), h("h3", { className: "title bname" }, h(DiscoveryName, { item: x })), h("div", { className: "detail" }, h(DiscoveryBody, { item: x, date: day.date, Link: A }))),
-    }),
-  );
-}
-
-/** 수요 절(4.4-1). 앱의 수요 탭과 같은 칸이고 탭 대신 구역이다. 기록이 없는 날은 그리지 않는다 */
-function DemandSection({ day, items }: { day: DayList; items: SiteFlowItem[] }) {
-  const demand = day.demand;
-  if (!demand) return null;
-  return h(
-    "section",
-    { className: "brief-section" },
-    h("h2", { className: "h list-h", id: DEMAND_HASH }, DEMAND_TAB),
-    h(DemandIntro, { Link: A }),
-    h(DemandList, { demand, items, row: (x) => h("li", { key: x.key, id: x.key, className: "item" }, h(DemandCategoryLine, { item: x }), h("h3", { className: "title" }, x.title), h("div", { className: "detail" }, h(DemandBody, { item: x, date: day.date, Link: A }))) }),
-  );
-}
-
 function DateNav({ date, prev, next }: { date: string; prev: string | null; next: string | null }) {
   const arrow = (to: string | null, glyph: string, label: string) =>
     to ? h("a", { href: briefPath(to), className: "arrow", "aria-label": `${label} ${monthDay(to)}` }, glyph) : h("span", { className: "arrow off", "aria-hidden": true }, glyph);
   return h("span", { className: "datebtn" }, arrow(prev, "‹", "이전 날짜"), h("a", { href: "/dates", className: "date-link", "aria-label": `${monthDayWeekday(date)}, 날짜 목록 보기` }, monthDayWeekday(date)), arrow(next, "›", "다음 날짜"));
 }
 
-function BriefBody({ day, details, builder, discoveries, demand, prev, next }: { day: DayList; details: Record<string, StoryDetail>; builder: SiteBuilderItem[]; discoveries: SiteDiscoveryItem[]; demand: SiteFlowItem[]; prev: string | null; next: string | null }) {
+function BriefBody({ day, details, prev, next }: { day: DayList; details: Record<string, StoryDetail>; prev: string | null; next: string | null }) {
   const date = day.date;
   const sectionId = (i: number) => `section-${i + 1}`;
   return h(
@@ -296,7 +239,7 @@ function BriefBody({ day, details, builder, discoveries, demand, prev, next }: {
     { className: "static-brief" },
     h("h1", { className: "page-title pad" }, `${monthDayWeekday(day.date)} 브리프`),
     h("div", { className: "headline" }, day.headline, day.keywords.length > 0 ? h("div", { className: "kw", "aria-label": "키워드" }, day.keywords.map((k) => h("span", { key: k }, k))) : null),
-    day.sections.length > 1 ? h("nav", { className: "rel static-jump", "aria-label": "구역으로 가기" }, day.sections.map((sec, i) => h("a", { key: sec.name, href: `#${sectionId(i)}` }, sec.name)), day.builder ? h("a", { href: `#${BUILDER_HASH}` }, BUILDER_TAB) : null, day.demand ? h("a", { href: `#${DEMAND_HASH}` }, DEMAND_TAB) : null) : null,
+    day.sections.length > 1 ? h("nav", { className: "rel static-jump", "aria-label": "구역으로 가기" }, day.sections.map((sec, i) => h("a", { key: sec.name, href: `#${sectionId(i)}` }, sec.name))) : null,
     day.sections.map((sec, i) => {
       const tops = sec.stories.filter((s) => s.kind === "top");
       const shorts = sec.stories.filter((s) => s.kind === "short");
@@ -310,8 +253,6 @@ function BriefBody({ day, details, builder, discoveries, demand, prev, next }: {
         sec.unverified ? h("p", { className: "flow note" }, `확인되지 않은 내용: ${sec.unverified}`) : null,
       );
     }),
-    h(BuilderSection, { day, items: builder, discoveries }),
-    h(DemandSection, { day, items: demand }),
     h("nav", { className: "static-more", "aria-label": "다른 날짜" }, prev ? h("a", { href: briefPath(prev), className: "text-link" }, `‹ ${monthDay(prev)}`) : h("span"), next ? h("a", { href: briefPath(next), className: "text-link" }, `${monthDay(next)} ›`) : null),
   );
 }
@@ -512,7 +453,7 @@ function buildPages(input: SiteInput): StaticPage[] {
   const fixesOf = (news: { date: string; key: string }[]) => news.map((n) => fixOn.get(`${n.date}/${n.key}`));
 
   const dates = input.dates.dates;
-  const briefMods = new Map(dates.map((d) => [d, latest([d, ...(input.days.get(d)?.sections ?? []).flatMap((s) => s.stories.map((x) => x.corrections?.[0]?.on)), ...[...(input.builder.get(d) ?? []), ...(input.discoveries.get(d) ?? []), ...(input.demand.get(d) ?? [])].map((x) => x.corrections?.[0]?.on)])]));
+  const briefMods = new Map(dates.map((d) => [d, latest([d, ...(input.days.get(d)?.sections ?? []).flatMap((s) => s.stories.map((x) => x.corrections?.[0]?.on))])]));
   const brief = (pathname: string, date: string, title: string, website: boolean) => {
     const day = input.days.get(date);
     if (!day) return;
@@ -527,7 +468,7 @@ function buildPages(input: SiteInput): StaticPage[] {
       lastmod: modified,
       ogType: website ? "website" : "article",
       ld: (d) => (website ? pageLd("WebSite", { path: pathname, name: "Tidwyn", description: d }) : articleLd({ path: pathname, headline, description: d, published: date, modified })),
-      body: h(Shell, { center: h(DateNav, { date, prev, next }) }, h(BriefBody, { day, details: input.details.get(date) ?? {}, builder: input.builder.get(date) ?? [], discoveries: input.discoveries.get(date) ?? [], demand: input.demand.get(date) ?? [], prev, next })),
+      body: h(Shell, { center: h(DateNav, { date, prev, next }) }, h(BriefBody, { day, details: input.details.get(date) ?? {}, prev, next })),
     });
   };
   const home = input.dates.latestDate;
@@ -573,7 +514,7 @@ function buildPages(input: SiteInput): StaticPage[] {
   }
 
   list({ path: "/terms", label: "용어 사전", description: "뉴스에 나온 어려운 말을 쉬운 말로 풀어 쓴 용어 사전", lastmod: latest(input.termGroups.flatMap((g) => g.terms.map((t) => t.first?.date))), body: h(TermsBody, { input }) });
-  list({ path: "/schedules", label: "일정", description: "뉴스와 공식 문서에서 모은 앞으로의 일정과 지난 일정", lastmod: latest(input.scheduleMonths.flatMap((m) => m.items.map((i) => i.knownOn))), body: h(SchedulesBody, { months: input.scheduleMonths }) });
+  list({ path: "/schedules", label: "일정", description: "뉴스에서 모은 앞으로의 일정과 지난 일정", lastmod: latest(input.scheduleMonths.flatMap((m) => m.items.map((i) => i.knownOn))), body: h(SchedulesBody, { months: input.scheduleMonths }) });
 
   // 월간 지표의 날짜는 `YYYY-MM`이라 그달 1일로 둔다. 네이버 사이트맵 제출은 일까지 있는 날짜만 받는다
   const indicatorMod = (c: IndicatorCard) => (showsValue(c) ? c.last!.date.padEnd(10, "-01") : null);
@@ -592,8 +533,8 @@ function buildPages(input: SiteInput): StaticPage[] {
   }
 
   const aboutDescription = "Tidwyn은 AI가 매일 한국·세계·IT·AI 뉴스를 모아 쉬운 말로 바꿔 쓴 요약이다. 오류 정정과 연락 방법을 적었다";
-  add({ path: "/about", title: pageTitle("사이트 소개"), description: aboutDescription, lastmod: PRIVACY_UPDATED, ld: (d) => pageLd("AboutPage", { path: "/about", name: "사이트 소개", description: d }), body: h(Shell, { left: back("/", "브리프") }, h(AboutView, { Link: A, readMarks: h(ReadMarksText) })) });
-  add({ path: privacyPath(), title: pageTitle(PRIVACY_TITLE), description: "Tidwyn이 다루는 정보와 브라우저에 두는 기록, YouTube 영상과 메일 처리 방침", lastmod: PRIVACY_UPDATED, ld: (d) => pageLd("WebPage", { path: privacyPath(), name: PRIVACY_TITLE, description: d }), body: h(Shell, { left: back("/", "브리프") }, h(PlainBody, null, h(PrivacyView, { Link: A }))) });
+  add({ path: "/about", title: pageTitle("사이트 소개"), description: aboutDescription, lastmod: PRIVACY_UPDATED, ld: (d) => pageLd("AboutPage", { path: "/about", name: "사이트 소개", description: d }), body: h(Shell, { left: back("/", "브리프") }, h(AboutView, { readMarks: h(ReadMarksText) })) });
+  add({ path: privacyPath(), title: pageTitle(PRIVACY_TITLE), description: "Tidwyn이 다루는 정보와 브라우저에 두는 기록, 메일 처리 방침", lastmod: PRIVACY_UPDATED, ld: (d) => pageLd("WebPage", { path: privacyPath(), name: PRIVACY_TITLE, description: d }), body: h(Shell, { left: back("/", "브리프") }, h(PlainBody, null, h(PrivacyView, { Link: A }))) });
 
   // 흡수된 주소: 200이고 canonical이 남는 주소다. 앱은 지금처럼 남는 것을 보인다(4.3-4)
   const merged = <T extends { id: number; name: string }>(map: MergedMap, byId: Map<number, T>, base: (id: number) => string, kindLabel: string, label: (x: T) => string, backTo: [string, string]) => {
@@ -643,7 +584,7 @@ export function writeStaticSite(outDir: string): void {
   write(ROBOTS_FILE, robotsTxt());
   const rssDays: RssDay[] = input.dates.dates.flatMap((date) => {
     const day = input.days.get(date);
-    return day ? [{ date, titles: [...day.sections.flatMap((s) => s.stories.filter((x) => x.kind === "top").map((x) => x.title)), ...(input.builder.get(date) ?? []).map((x) => `빌더: ${x.title}`), ...(input.discoveries.get(date) ?? []).map((x) => `빌더: ${x.name}`), ...(input.demand.get(date) ?? []).map((x) => `수요: ${x.title}`)] }] : [];
+    return day ? [{ date, titles: day.sections.flatMap((s) => s.stories.filter((x) => x.kind === "top").map((x) => x.title)) }] : [];
   });
   write(RSS_FILE, buildRss(rssDays));
 }

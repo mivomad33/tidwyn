@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import type { DatabaseSync } from "node:sqlite";
 import type { StoredBrief } from "./brief.ts";
-import { openDb } from "./db.ts";
+import { openDb, purgeBuilderOnlySchedules } from "./db.ts";
 import { git, gitTry } from "./git.ts";
 import {
   FIRST_LINKED_KEY,
@@ -18,12 +18,10 @@ import {
 } from "./issues.ts";
 import type { Category } from "./brief.ts";
 import type { Major } from "./categories.ts";
-import { buildBuilderBackup, hasBuilderData, restoreBuilderBackup, type BuilderBackup } from "./builderStore.ts";
 import { listScheduleMerges, type ScheduleMergeRow } from "./scheduleMerge.ts";
 import { allSchedules, hasScheduleData, markScheduled, scheduledDates, storiesOfSchedule, type ScheduleOutcome, type ScheduleRole } from "./schedules.ts";
 import { allCorrections, hasCorrections, type StoredCorrection } from "./corrections.ts";
 import { listMerges, type MergeRecord } from "./merge.ts";
-import { buildDemandBackup, hasFlowData, restoreDemandBackup, type DemandBackup } from "./demandFlowStore.ts";
 import { buildIndicatorsBackup, hasIndicatorData, restoreIndicatorsBackup, type IndicatorsBackup } from "./indicatorStore.ts";
 import { listRefMerges, type RefMergeRecord } from "./refMerge.ts";
 import { allEntities, allTerms, extractedDates, hasRefData, markExtracted, storiesOfRef, type EntityKind, type RefItem } from "./refs.ts";
@@ -45,14 +43,17 @@ import { getFirstCollectionDate, loadBrief, recordFirstCollectionDate, saveBrief
 // 후보 복사본, 흐름 파일, 전용 DB(받은 원문)는 넣지 않는다.
 // 형식 10(9.98단계 4.6-1, S8): demand.json의 흐름 항목에 커뮤니티 근거 줄과 꺾임 표시, 날짜 상태에 비교에 넣지 못한 커뮤니티 소스를 더한다.
 // 전용 DB의 커뮤니티 건수 표는 넣지 않는다.
+// 형식 11(R1 4.2-2): 지운 기능(빌더, 수요 흐름)의 builder.json·demand.json을 쓰지 않는다. 형식 7~10 백업을 복원할 때
+// demand.json은 읽지 않고, builder.json에서는 항목의 일정 연결만 읽어 빌더 항목만 근거인 일정을 지운다(T11).
 
-export const BACKUP_FORMAT_VERSION = 10;
+export const BACKUP_FORMAT_VERSION = 11;
 /**
  * 복원할 수 있는 형식 버전. 형식 1 백업은 이슈 없이, 형식 1·2 백업은 대상·용어 없이 모든 날짜가 뽑기 안 함으로,
  * 형식 1·2·3 백업은 일정 없이 모든 날짜가 일정 뽑기 안 함으로, 형식 1~4 백업은 지표 값 없이 모든 이슈가 지표 판단 안 함으로,
- * 형식 1~5 백업은 정정 기록 없이, 형식 1~6 백업은 빌더 기록 없이, 형식 7 백업은 새 제품·뜨는 저장소 기록 없이, 형식 1~8 백업은 수요 흐름 기록 없이, 형식 9 백업은 커뮤니티 근거 줄과 꺾임 표시 없이 복원된다
+ * 형식 1~5 백업은 정정 기록 없이, 형식 1~6 백업은 빌더 기록 없이, 형식 7 백업은 새 제품·뜨는 저장소 기록 없이, 형식 1~8 백업은 수요 흐름 기록 없이, 형식 9 백업은 커뮤니티 근거 줄과 꺾임 표시 없이 복원된다.
+ * 형식 7~10 백업의 빌더·수요 흐름 기록은 복원하지 않는다(R1)
  */
-const READABLE_VERSIONS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+const READABLE_VERSIONS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
 export const BACKUP_DIR = "backup";
 export const DATA_REF = "refs/heads/data";
 const META_FILE = "meta.json";
@@ -61,8 +62,15 @@ const REFS_FILE = "refs.json";
 const SCHEDULES_FILE = "schedules.json";
 const INDICATORS_FILE = "indicators.json";
 const CORRECTIONS_FILE = "corrections.json";
+/** 지운 기능(R1)의 옛 백업 파일. 쓰지 않고, 복원할 때 builder.json의 일정 연결만 읽는다 */
 const BUILDER_FILE = "builder.json";
 const DEMAND_FILE = "demand.json";
+
+/** 옛 builder.json에서 읽는 칸: 항목마다 이어진 일정 */
+interface OldBuilderBackup {
+  formatVersion: number;
+  items?: { schedules?: number[] }[];
+}
 const MONTH_RE = /^\d{4}-\d{2}\.json$/;
 
 interface MetaFile {
@@ -275,8 +283,6 @@ export function buildBackup(db: DatabaseSync): Map<string, string> {
   if (hasScheduleData(db)) files.set(SCHEDULES_FILE, toJson(buildSchedulesFile(db)));
   if (hasIndicatorData(db)) files.set(INDICATORS_FILE, toJson(buildIndicatorsBackup(db, BACKUP_FORMAT_VERSION)));
   if (hasCorrections(db)) files.set(CORRECTIONS_FILE, toJson({ formatVersion: BACKUP_FORMAT_VERSION, corrections: allCorrections(db) } satisfies CorrectionsFile));
-  if (hasBuilderData(db)) files.set(BUILDER_FILE, toJson(buildBuilderBackup(db, BACKUP_FORMAT_VERSION)));
-  if (hasFlowData(db)) files.set(DEMAND_FILE, toJson(buildDemandBackup(db, BACKUP_FORMAT_VERSION)));
   const extracted = extractedDates(db);
   const scheduled = scheduledDates(db);
   const byMonth = new Map<string, StoredBrief[]>();
@@ -409,11 +415,8 @@ export function restoreBackup(files: Map<string, string>, outPath: string, force
   const corrections = correctionsText === undefined ? null : (JSON.parse(correctionsText) as CorrectionsFile);
   if (corrections !== null) checkVersion(CORRECTIONS_FILE, corrections);
   const builderText = files.get(BUILDER_FILE);
-  const builder = builderText === undefined ? null : (JSON.parse(builderText) as BuilderBackup);
+  const builder = builderText === undefined ? null : (JSON.parse(builderText) as OldBuilderBackup);
   if (builder !== null) checkVersion(BUILDER_FILE, builder);
-  const demandText = files.get(DEMAND_FILE);
-  const demand = demandText === undefined ? null : (JSON.parse(demandText) as DemandBackup);
-  if (demand !== null) checkVersion(DEMAND_FILE, demand);
   const tmp = `${outPath}.restoring`;
   fs.rmSync(tmp, { force: true });
   const db = openDb(tmp);
@@ -428,7 +431,7 @@ export function restoreBackup(files: Map<string, string>, outPath: string, force
     }
     if (meta.firstLinkedOn !== undefined) setMeta(db, FIRST_LINKED_KEY, meta.firstLinkedOn);
     if (meta.mergeCheckedOn !== undefined) setMeta(db, MERGE_CHECKED_KEY, meta.mergeCheckedOn);
-    if (issues !== null || refs !== null || schedules !== null || indicators !== null || corrections !== null || builder !== null || demand !== null || months.some((m) => m.extracted !== undefined || m.scheduled !== undefined)) {
+    if (issues !== null || refs !== null || schedules !== null || indicators !== null || corrections !== null || builder !== null || months.some((m) => m.extracted !== undefined || m.scheduled !== undefined)) {
       db.exec("BEGIN");
       try {
         if (issues !== null) restoreIssues(db, issues);
@@ -436,8 +439,8 @@ export function restoreBackup(files: Map<string, string>, outPath: string, force
         if (schedules !== null) restoreSchedules(db, schedules);
         if (indicators !== null) restoreIndicatorsBackup(db, indicators);
         if (corrections !== null) restoreCorrections(db, corrections);
-        if (builder !== null) restoreBuilderBackup(db, builder);
-        if (demand !== null) restoreDemandBackup(db, demand);
+        // demand.json(옛 형식)은 읽지 않는다. builder.json은 일정 연결만 읽어 빌더 항목만 근거인 일정을 지운다(R1 T11)
+        if (builder !== null) purgeBuilderOnlySchedules(db, (builder.items ?? []).flatMap((x) => x.schedules ?? []));
         for (const m of months) for (const d of m.extracted ?? []) markExtracted(db, d);
         for (const m of months) for (const d of m.scheduled ?? []) markScheduled(db, d);
         db.exec("COMMIT");

@@ -1,5 +1,5 @@
 // U2 4.3(C8): 거르기 칩 줄의 칩과 건수. 지금 목록에 있는 값만 칩이 되고 칩마다 건수가 붙는다. 첫 칩은 그 줄이 무엇의 전체인지 쓴다.
-// 모든 거르기 칩 줄(브리프 대분류·영상 묶음, 이슈 목록 대분류·상태, 일정 화면 대분류, 인물 목록 종류)이 이 함수와 글을 쓴다(S1).
+// 모든 거르기 칩 줄(브리프 대분류, 이슈 목록 대분류·상태, 일정 화면 대분류, 인물 목록 종류)이 이 함수와 글을 쓴다(S1).
 
 /** 칩 하나: 값, 건수, 보일 글('IT·AI 3') */
 export interface ChipOption<T extends string> {
@@ -12,7 +12,6 @@ export interface ChipOption<T extends string> {
 export const ALL_CHIP_TEXT = {
   major: "모든 분야",
   status: "모든 상태",
-  video: "모든 영상",
   kind: "모든 종류",
 } as const;
 

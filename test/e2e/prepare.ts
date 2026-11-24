@@ -6,7 +6,7 @@ import path from "node:path";
 import { buildSite } from "../../site/build.ts";
 import { writeFixtures } from "../../site/dev/fixtures.ts";
 import type { E2eInfo } from "./info.ts";
-import { E2E_BUILDER_DATA_DIR, E2E_BUILDER_INFO_FILE, E2E_BUILDER_OUT_DIR, E2E_DEMAND_DATA_DIR, E2E_DEMAND_INFO_FILE, E2E_DEMAND_OUT_DIR, E2E_DATA_DIR, E2E_U1_DATA_DIR, E2E_U1_OUT_DIR, E2E_INDICATOR_DATA_DIR, E2E_INDICATOR_INFO_FILE, E2E_INFO_FILE, E2E_OUT_DIR, E2E_ROOT, E2E_SCHEDULE_DATA_DIR, E2E_SCHEDULE_INFO_FILE, E2E_VIDEO_DATA_DIR, E2E_VIDEO_INFO_FILE } from "./paths.ts";
+import { E2E_DATA_DIR, E2E_U1_DATA_DIR, E2E_U1_OUT_DIR, E2E_INDICATOR_DATA_DIR, E2E_INDICATOR_INFO_FILE, E2E_INFO_FILE, E2E_OUT_DIR, E2E_ROOT, E2E_SCHEDULE_DATA_DIR, E2E_SCHEDULE_INFO_FILE } from "./paths.ts";
 import type { DayList, EntityChunk, EntityListPage, EntityNewsChunk, IssueChunk, MonthDetail, MonthList, SiteIssueList, StoryDetail, TermGroupFile, TermIndex } from "../../src/siteTypes.ts";
 
 /** 고정 날짜(같은 데이터로 매번 같은 결과가 나오게) */
@@ -19,8 +19,8 @@ function readJson<T>(rel: string): T {
 async function main(): Promise<void> {
   fs.rmSync(E2E_ROOT, { recursive: true, force: true });
   fs.mkdirSync(E2E_DATA_DIR, { recursive: true });
-  // 7단계: 추천 영상도 둔다(받은 날은 END 기준. 브라우저 시계는 base.ts가 END에 고정한다)
-  const fx = writeFixtures(E2E_DATA_DIR, { end: END, days: 7, entities: 30, terms: 24, videos: true, corrections: true });
+  // 정정 표시도 둔다(브라우저 시계는 base.ts가 END에 고정한다)
+  const fx = writeFixtures(E2E_DATA_DIR, { end: END, days: 7, entities: 30, terms: 24, corrections: true });
   await buildSite({ dataDir: E2E_DATA_DIR, outDir: E2E_OUT_DIR });
 
   const { twice } = fx.info.terms;
@@ -52,8 +52,6 @@ async function main(): Promise<void> {
   const issueChunk = readJson<IssueChunk>("issue-0.json");
   const issueWithEntities = issueList.issues.map((i) => issueChunk.issues[String(i.id)]!).find((i) => (i.entities?.length ?? 0) > 0)!;
 
-  const v = fx.info.videos;
-  if (!v?.broken || !v.noVideoDate || !v.oneBundleDate || !v.zeroBundleDate || !v.absorbed || v.many === null || v.one === null) throw new Error("영상 상태(썸네일 실패, 영상 없는 날짜, 한 묶음·0개 묶음 날짜, 흡수된 이슈의 영상, 6개 이상·1개인 이슈)가 지어낸 데이터에 없다");
   const merged = fx.info.merged!;
   const survivor = issueChunk.issues[String(merged.into)]!;
   const entityMerged = fx.info.entities.merged!;
@@ -90,7 +88,6 @@ async function main(): Promise<void> {
       merged: { id: merged.id, into: merged.into, intoName: survivor.name },
       first: issueList.issues[0]!,
     },
-    videos: fx.info.videos!,
   };
   fs.writeFileSync(E2E_INFO_FILE, JSON.stringify(info, null, 2) + "\n");
 
@@ -105,24 +102,8 @@ async function main(): Promise<void> {
   if (!ii?.off || !ii.empty || ii.issueOne === null || ii.issueThree === null || ii.noRelated === null || ii.krHoliday === null) throw new Error("지표 상태(공개 끔, 값 없음, 그래프 1·3개 이슈, 관련 이슈 없음, 휴장일)가 지어낸 데이터에 없다");
   fs.writeFileSync(E2E_INDICATOR_INFO_FILE, JSON.stringify({ dates: ifx.dates, merged: ifx.info.merged, ...ii }, null, 2) + "\n");
 
-  // 9.6단계: 지난 달 브리프의 새로 받은 영상과 여러 달에 걸친 관련 영상이 있는 데이터. 화면 파일은 같으므로 사이트 데이터만 만든다
-  const vfx = writeFixtures(E2E_VIDEO_DATA_DIR, { end: END, days: 45, entities: 30, terms: 24, videosArchive: true });
-  const av = vfx.info.videos;
-  if (!av?.pastDate || !av.stale || av.spread === null) throw new Error("지난 달 영상 날짜, 30일 지난 날짜, 여러 달 관련 영상 이슈가 지어낸 데이터에 없다");
-  fs.writeFileSync(E2E_VIDEO_INFO_FILE, JSON.stringify(av, null, 2) + "\n");
-
-  // 9.8단계: 빌더가 있는 사이트를 따로 빌드한다
-  const bfx = writeFixtures(E2E_BUILDER_DATA_DIR, { end: END, days: 18, contiguous: true, schedules: 12, videos: true, builder: true });
-  await buildSite({ dataDir: E2E_BUILDER_DATA_DIR, outDir: E2E_BUILDER_OUT_DIR });
-  fs.writeFileSync(E2E_BUILDER_INFO_FILE, JSON.stringify(bfx.info.builder, null, 2) + "\n");
-
-  // 9.97단계: 수요 흐름이 있는 사이트를 따로 빌드한다(빌더·영상과 함께라 가장 최근 날짜가 탭 일곱 개인 날이다)
-  const dfx = writeFixtures(E2E_DEMAND_DATA_DIR, { end: END, days: 18, contiguous: true, schedules: 12, videos: true, builder: true, demand: true });
-  await buildSite({ dataDir: E2E_DEMAND_DATA_DIR, outDir: E2E_DEMAND_OUT_DIR });
-  fs.writeFileSync(E2E_DEMAND_INFO_FILE, JSON.stringify(dfx.info.demand, null, 2) + "\n");
-
-  // U1단계: 측정 데이터(명세서 용어, 감사 report.md '실행 조건'의 정상 데이터)로 빌드한다. 끝 날짜가 고정이라 테스트의 기대값(11월 3일 '세계', 11월 5일 영상)이 그대로다
-  writeFixtures(E2E_U1_DATA_DIR, { end: "2026-11-06", days: 18, contiguous: true, videos: true, builder: true, demand: true, corrections: true, schedules: 12, indicators: 8, entities: 30, terms: 30, hub: true });
+  // U1단계: 측정 데이터(명세서 용어, 감사 report.md '실행 조건'의 정상 데이터)로 빌드한다. 끝 날짜가 고정이라 테스트의 기대값(11월 3일 '세계' 등)이 그대로다
+  writeFixtures(E2E_U1_DATA_DIR, { end: "2026-11-06", days: 18, contiguous: true, corrections: true, schedules: 12, indicators: 8, entities: 30, terms: 30, hub: true });
   await buildSite({ dataDir: E2E_U1_DATA_DIR, outDir: E2E_U1_OUT_DIR });
   console.log(`E2E 준비 완료: ${E2E_OUT_DIR}`);
 }

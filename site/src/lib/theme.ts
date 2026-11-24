@@ -24,11 +24,6 @@ export interface Palette {
   plot: string;
   /** 9.5단계: 강조색 면 위의 글자(없는 페이지의 주 버튼) */
   onAccent: string;
-  /** 7단계: 썸네일 자리(이미지를 불러오지 못했을 때 보이는 빈 상자) */
-  thumb: string;
-  /** 7단계: 썸네일 위 길이 표시의 글자와 바탕(이미지 위에 놓여 이미지와 관계없이 읽히게 불투명하다) */
-  durFg: string;
-  durBg: string;
   categories: Record<Major, string>;
 }
 
@@ -47,9 +42,6 @@ export const LIGHT: Palette = {
   down: "#1d4ed8",
   plot: "#1d1d1f",
   onAccent: "#ffffff",
-  thumb: "#d9d9de",
-  durFg: "#ffffff",
-  durBg: "#1d1d1f",
   categories: {
     "정치": "#7c3aed",
     "경제": "#c2410c",
@@ -76,9 +68,6 @@ export const DARK: Palette = {
   down: "#7aa7ff",
   plot: "#ececee",
   onAccent: "#161618",
-  thumb: "#34343a",
-  durFg: "#ffffff",
-  durBg: "#000000",
   categories: {
     "정치": "#a78bfa",
     "경제": "#fb923c",
@@ -95,7 +84,7 @@ export function categoryVar(major: Major): string {
 }
 
 function vars(p: Palette): string {
-  const base = `--bg:${p.bg};--fg:${p.fg};--muted:${p.muted};--line:${p.line};--chip:${p.chip};--accent:${p.accent};--accentbg:${p.accentbg};--check:${p.check};--check-ink:${p.checkInk};--ring:${p.ring};--up:${p.up};--down:${p.down};--plot:${p.plot};--on-accent:${p.onAccent};--thumb:${p.thumb};--dur-fg:${p.durFg};--dur-bg:${p.durBg};`;
+  const base = `--bg:${p.bg};--fg:${p.fg};--muted:${p.muted};--line:${p.line};--chip:${p.chip};--accent:${p.accent};--accentbg:${p.accentbg};--check:${p.check};--check-ink:${p.checkInk};--ring:${p.ring};--up:${p.up};--down:${p.down};--plot:${p.plot};--on-accent:${p.onAccent};`;
   return base + MAJORS.map((m, i) => `--cat-${i}:${p.categories[m]};`).join("");
 }
 
@@ -139,17 +128,7 @@ export function textPairs(p: Palette): { name: string; fg: string; bg: string }[
   for (const m of MAJORS) pairs.push({ name: `분류 ${m}/강조된 일정`, fg: p.categories[m], bg: p.accentbg }, { name: `분류 ${m}/상자`, fg: p.categories[m], bg: p.chip });
   // 6단계: 지표의 오름·내림 글자(카드·페이지는 바탕, 브리프 위 상자의 칩은 상자 바탕)
   pairs.push({ name: "오름", fg: p.up, bg: p.bg }, { name: "오름/상자", fg: p.up, bg: p.chip }, { name: "내림", fg: p.down, bg: p.bg }, { name: "내림/상자", fg: p.down, bg: p.chip });
-  // 7단계: 영상 줄의 묶음 표시, 정보 줄(채널·길이), 추천 이유 상자(글자와 '추천 이유' 머리), 썸네일 위 길이, 출처 줄
   pairs.push(
-    { name: "영상 묶음 표시", fg: p.accent, bg: p.accentbg },
-    { name: "영상 정보 줄", fg: p.muted, bg: p.bg },
-    { name: "추천 이유", fg: p.fg, bg: p.chip },
-    { name: "추천 이유 머리", fg: p.accent, bg: p.chip },
-    { name: "영상 길이", fg: p.durFg, bg: p.durBg },
-    { name: "영상 출처 줄", fg: p.muted, bg: p.bg },
-    // 8단계: '요약 보기' 버튼과 펼친 요약
-    { name: "요약 버튼", fg: p.accent, bg: p.bg },
-    { name: "영상 요약", fg: p.fg, bg: p.chip },
     // 9.5단계: 정정 표시, 짧은 소식의 사유, 제보 링크, 메일 상자, 없는 페이지의 주 버튼
     { name: "정정 표시", fg: p.fg, bg: p.bg },
     { name: "짧은 소식 사유", fg: p.muted, bg: p.bg },

@@ -25,5 +25,13 @@ export function isNewMinor(major: Major, minor: string): boolean {
 export const SECTIONS = ["한국", "세계", "IT·AI"] as const;
 export type SectionName = (typeof SECTIONS)[number];
 
+/** 뉴스 키 모양: 섹션 이름-번호(주요 뉴스) 또는 섹션 이름-s번호(짧은 소식) */
+const NEWS_KEY_RE = new RegExp(`^(?:${SECTIONS.map((x) => x.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|")})-s?[1-9][0-9]*$`);
+
+/** 날짜 안의 뉴스 키(`한국-1`, `한국-s1`)인지. 뉴스가 아닌 옛 항목 키(읽음 기록, 정정 파일)를 가를 때 쓴다 */
+export function isNewsKey(key: string): boolean {
+  return NEWS_KEY_RE.test(key);
+}
+
 export const CONFIDENCE_LEVELS = ["여러 출처 확인", "보도에 따르면"] as const;
 export type Confidence = (typeof CONFIDENCE_LEVELS)[number];

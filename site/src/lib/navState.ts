@@ -6,7 +6,7 @@
 // - brief: 브리프 기록만 가진다. 그 브리프의 날짜·탭·그때의 최근 날짜·고른 칩. 브리프 화면이 바뀔 때마다 고쳐 쓴다
 
 import { dateText, yearOf } from "./format.ts";
-import { briefPath, briefVideosPath, isValidDate } from "./routes.ts";
+import { briefPath, isValidDate } from "./routes.ts";
 
 /** 들어온 브리프: 떠날 때의 날짜·탭과 그때의 최근 날짜, 그 브리프 기록의 식별자 */
 export interface EnteredBrief {
@@ -30,8 +30,6 @@ export interface BriefMark {
   date?: string;
   tab?: string;
   latestDate?: string;
-  /** 영상 묶음 칩(그 날짜의 것) */
-  chip?: string | null;
   /** 대분류 칩 */
   major?: string | null;
   /** U2 S6: 이번 주 일정|지표 상자를 펼쳤는지(이 기록에만 둔다. 날짜 화살표는 다음 기록으로 넘긴다) */
@@ -73,7 +71,6 @@ export function briefMarkOf(state: unknown): BriefMark | null {
   if (isStr(o.date) && isValidDate(o.date)) mark.date = o.date;
   if (isStr(o.tab)) mark.tab = o.tab;
   if (isStr(o.latestDate)) mark.latestDate = o.latestDate;
-  if (isStr(o.chip) || o.chip === null) mark.chip = o.chip;
   if (isStr(o.major) || o.major === null) mark.major = o.major;
   if (o.weekOpen === true) mark.weekOpen = true;
   return mark;
@@ -131,8 +128,6 @@ export function briefBackLabel(date: string | null, latestDate: string | null): 
 export interface BriefBackInput {
   /** 지금 기록의 state */
   state: unknown;
-  /** 들어온 브리프를 모를 때 갈 날짜(영상 페이지: 그 영상 날짜의 영상 탭). latestDate는 최근 날짜(아직 모르면 null) */
-  fallback?: { date: string; latestDate: string | null };
 }
 
 export interface BriefBack {
@@ -146,15 +141,14 @@ export interface BriefBack {
   tab: string | null;
 }
 
-/** '‹ 브리프'의 글과 도착(S1·S2). 바로 앞 기록이 들어온 브리프면 되돌리고, 아니면 들어온 날짜·탭, 모르면 fallback, 그것도 없으면 최근 브리프다 */
-export function resolveBriefBack({ state, fallback }: BriefBackInput): BriefBack {
+/** '‹ 브리프'의 글과 도착(S1·S2). 바로 앞 기록이 들어온 브리프면 되돌리고, 아니면 들어온 날짜·탭, 모르면 최근 브리프다 */
+export function resolveBriefBack({ state }: BriefBackInput): BriefBack {
   const nav = navOf(state);
   const entered = nav?.entered ?? null;
   if (entered) {
     const latest = entered.date === entered.latestDate;
     return { label: briefBackLabel(entered.date, entered.latestDate), to: latest ? "/" : briefPath(entered.date), back: nav?.prev?.id === entered.entry, tab: entered.tab };
   }
-  if (fallback) return { label: briefBackLabel(fallback.date, fallback.latestDate), to: briefVideosPath(fallback.date), back: false, tab: null };
   return { label: "브리프", to: "/", back: false, tab: null };
 }
 

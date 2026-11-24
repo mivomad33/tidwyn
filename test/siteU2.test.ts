@@ -11,11 +11,10 @@ import { cleanupTemp, tempDir } from "./helpers.ts";
 after(cleanupTemp);
 
 describe("4.5 일정 화면의 출처 링크", () => {
-  test("근거 뉴스가 있으면 '출처 뉴스', 없고 빌더 항목이면 '빌더 항목', 둘 다 없으면 없다", () => {
+  // R1 4.3-3: 빌더 항목 근거가 없어져 '출처 뉴스'만 남는다
+  test("근거 뉴스가 있으면 '출처 뉴스', 없으면 없다", () => {
     const news = { date: "2026-10-01", key: "한국-top-1" };
-    const item = { date: "2026-10-27", key: "builder-1" };
-    assert.deepEqual(sourceLink({ first: news, builder: item }), { text: "출처 뉴스", to: `/2026-10-01#${encodeURIComponent(news.key)}` });
-    assert.deepEqual(sourceLink({ first: null, builder: item }), { text: "빌더 항목", to: "/2026-10-27#builder-1" });
+    assert.deepEqual(sourceLink({ first: news }), { text: "출처 뉴스", to: `/2026-10-01#${encodeURIComponent(news.key)}` });
     assert.equal(sourceLink({ first: null }), null);
   });
 
@@ -25,7 +24,7 @@ describe("4.5 일정 화면의 출처 링크", () => {
       const work = tempDir("tidwyn-u2-");
       const dataDir = path.join(work, "data");
       const out = path.join(work, "out");
-      writeFixtures(dataDir, { days: 12, schedules: 24, builder: true });
+      writeFixtures(dataDir, { days: 12, schedules: 24 });
       await buildSite({ dataDir, outDir: out });
       const file = listFilesRecursive(out).find((f) => /^schedules(\/index)?\.html$/.test(f));
       assert.ok(file, "정적 일정 목록이 있다");
@@ -39,9 +38,8 @@ describe("4.5 일정 화면의 출처 링크", () => {
         assert.match(r, /<span class="t">[^<]+<\/span>/, r);
         assert.doesNotMatch(r, /<a [^>]*class="t"/, r);
       }
-      const links = rows.flatMap((r) => [...r.matchAll(/<a href="(\/[^"]*#[^"]+)" class="text-link">(출처 뉴스|빌더 항목)<span class="mark" aria-hidden="true"> ›<\/span><\/a>/g)].map((m) => ({ to: m[1]!, text: m[2]! })));
+      const links = rows.flatMap((r) => [...r.matchAll(/<a href="(\/[^"]*#[^"]+)" class="text-link">(출처 뉴스)<span class="mark" aria-hidden="true"> ›<\/span><\/a>/g)].map((m) => ({ to: m[1]!, text: m[2]! })));
       assert.ok(links.some((l) => l.text === "출처 뉴스"), "출처 뉴스 링크가 있다");
-      for (const l of links) if (l.text === "빌더 항목") assert.match(l.to, /#builder-\d+$/);
     });
   });
 });

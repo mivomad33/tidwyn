@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, test } from "node:test";
-import { ISSUE_CHUNK_SIZE, VIDEO_DAY_FILE_RE, issueChunkOf, siteFiles } from "../src/siteTypes.ts";
+import { ISSUE_CHUNK_SIZE, issueChunkOf, siteFiles } from "../src/siteTypes.ts";
 import type { DayList, IssueChunk, IssueDetail, IssueListItem, ListStory, SiteIssueList, SiteSource, StoryDetail } from "../src/siteTypes.ts";
 import { HOSTING_CONFIG_FILE, resolveStatic, vercelConfig } from "../site/hosting.ts";
 import { analyticsEnabled, stripSearchQuery } from "../site/src/lib/analytics.ts";
@@ -290,8 +290,6 @@ describe("사이트 데이터 주소와 호스팅 설정", () => {
     assert.equal(dataUrl.dates(), `/site-data/${siteFiles.dates}`);
     assert.equal(dataUrl.list("2026-10"), `/site-data/${siteFiles.list("2026-10")}`);
     assert.equal(dataUrl.detail("2026-10"), `/site-data/${siteFiles.detail("2026-10")}`);
-    assert.equal(dataUrl.videoDay("2026-10-27"), `/site-data/${siteFiles.videoDay("2026-10-27")}`);
-    assert.ok(VIDEO_DAY_FILE_RE.test(siteFiles.videoDay("2026-10-27")));
     assert.equal(dataUrl.issueList(), `/site-data/${siteFiles.issueList}`);
     assert.equal(dataUrl.issueChunk(3), `/site-data/${siteFiles.issueChunk(3)}`);
     assert.equal(ISSUE_CHUNK, ISSUE_CHUNK_SIZE);
@@ -307,14 +305,16 @@ describe("사이트 데이터 주소와 호스팅 설정", () => {
     assert.deepEqual(resolveStatic("/about/", exists), file("about.html"), "끝의 /는 같은 페이지다");
     for (const p of ["/search", "/terms/7", "/schedules/7"]) assert.deepEqual(resolveStatic(p, exists), file("app.html"), p);
     assert.deepEqual(resolveStatic("/site-data/dates.json", exists), file("site-data/dates.json"));
-    for (const p of ["/nope", "/2026-02-30", "/issues/99", "/terms/x", "/site-data/list-1999-01.json", "/pagefind/x.pf_fragment", "/assets/nope.js", "/../package.json", `/${HOSTING_CONFIG_FILE}`]) assert.deepEqual(resolveStatic(p, exists), missing, p);
+    for (const p of ["/nope", "/2026-02-30", "/issues/99", "/terms/x", "/site-data/list-1999-01.json", "/pagefind/x.pf_fragment", "/assets/nope.js", "/videos/2026-10-27/abc", "/../package.json", `/${HOSTING_CONFIG_FILE}`]) assert.deepEqual(resolveStatic(p, exists), missing, p);
   });
   test("4.3-5 vercel.json: 확장자 없는 주소, 앱 전용 주소, 수집 제외 헤더", () => {
     const cfg = vercelConfig() as { cleanUrls: boolean; trailingSlash: boolean; rewrites: { source: string; destination: string }[]; headers: { source: string; headers: { key: string; value: string }[] }[] };
     assert.equal(cfg.cleanUrls, true);
     assert.equal(cfg.trailingSlash, false);
-    assert.deepEqual(cfg.rewrites.map((r) => r.destination), ["/app", "/app", "/app", "/app"]);
-    assert.deepEqual(cfg.rewrites.map((r) => r.source), ["/search", "/terms/:id(\\d+)", "/schedules/:id(\\d+)", "/videos/:date(\\d{4}-\\d{2}-\\d{2})/:id([A-Za-z0-9_-]{1,32})"]);
+    // R1 4.3-2: 영상 페이지 주소(/videos/…)는 앱으로 보내지 않아 404다
+    assert.deepEqual(cfg.rewrites.map((r) => r.destination), ["/app", "/app", "/app"]);
+    assert.deepEqual(cfg.rewrites.map((r) => r.source), ["/search", "/terms/:id(\\d+)", "/schedules/:id(\\d+)"]);
+    assert.ok(!cfg.rewrites.some((r) => r.source.startsWith("/videos")));
     assert.equal(cfg.headers.length, 2);
     for (const rule of cfg.headers) {
       assert.deepEqual(rule.headers, [{ key: "X-Robots-Tag", value: "noindex" }]);

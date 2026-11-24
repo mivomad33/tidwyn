@@ -9,7 +9,6 @@ import { writeFixtures } from "../site/dev/fixtures.ts";
 import { BriefBox } from "../site/src/components/briefBox.ts";
 import { IndicatorCardView } from "../site/src/components/indicatorView.ts";
 import type { LinkLikeProps } from "../site/src/components/termView.ts";
-import { builderDueText } from "../site/src/lib/builder.ts";
 import { entityListLine, entityMetaLine } from "../site/src/lib/entities.ts";
 import { axisDates, dateText, dateTextWeekday, dayOrMonthText, shortDate } from "../site/src/lib/format.ts";
 import { changeLabel, chipDateNote, collapsedParts } from "../site/src/lib/indicators.ts";
@@ -69,8 +68,6 @@ describe("U1 4.3-1 날짜 표기 함수(앱·정적 공통, site/src/lib/format.
     assert.equal(chipDue("2027-01-02", "2026"), "'27 01-02");
     assert.equal(chipDue("2027-01", "2026"), "2027년 1월 중");
     assert.equal(chipDue("2026-11", "2026"), "11월 중");
-    assert.equal(builderDueText({ date: "2027-01-02", state: "confirmed" }, "2026"), "2027년 1월 2일 · 확정");
-    assert.equal(builderDueText({ date: "2026-11", state: "tentative" }, "2026"), "11월 · 잠정");
   });
 
   test("브리프 화면의 '이번 주 일정' 줄은 펼친 카드의 일정 칩처럼 브리프 날짜의 해가 기준이다(오늘의 해가 아니다)", () => {
@@ -163,7 +160,7 @@ describe("U1 4.3-3 정적 HTML 본문에 'YYYY-MM-DD'가 없다", () => {
     const dataDir = path.join(work, "data");
     out = path.join(work, "out");
     // 해를 넘는 날짜(앞 해와 새해가 섞임)로 다른 해의 표기까지 덮는다
-    writeFixtures(dataDir, { end: "2026-01-03", days: 20, contiguous: true, entities: 12, terms: 8, schedules: 24, indicators: 1, indicatorsAll: true, videos: true, corrections: true, builder: true, demand: true });
+    writeFixtures(dataDir, { end: "2026-01-03", days: 20, contiguous: true, entities: 12, terms: 8, schedules: 24, indicators: 1, indicatorsAll: true, corrections: true });
     await buildSite({ dataDir, outDir: out });
     // 데이터에서 온 이름·제목(저장소 이름 등)에 든 날짜 모양은 사이트가 쓴 글이 아니라 뺀다: 날짜만인 값이 아닌, 날짜 모양을 품은 데이터 글자
     const seen = new Set<string>();

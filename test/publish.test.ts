@@ -485,3 +485,42 @@ describe("3단계 4.5-4 요약의 한도 경고", () => {
     assert.doesNotMatch(ctx.text(), /사이트 빌드|배포:|push:/);
   });
 });
+
+describe("R1 4.4-4 배포만 실행", () => {
+  test("start --deploy-only → backup → site → deploy → push → summary가 수집 없이 끝까지 돌고, 요약은 수집 단계를 하지 않은 것으로 보인다", async () => {
+    const repo = realRepo();
+    const bare = addOrigin(repo);
+    const f = fakes();
+    await collect(repo, f);
+    // 이틀 뒤: 10-28, 10-29가 빠진 날짜다
+    const later = new Date(NOW.getTime() + 2 * 86_400_000);
+    const s = await run(repo, ["start", "--deploy-only"], f, {}, later);
+    assert.equal(s.code, 0, s.text);
+    assert.match(s.text, /배포만 실행: 수집하지 않고/);
+    const runFile = /실행 기록: (.+)/.exec(s.text)![1]!;
+    const state = readRun(runFile);
+    assert.equal(state.deployOnly, true);
+    assert.deepEqual(state.targetDates, ["2026-10-28", "2026-10-29"]);
+    assert.deepEqual([state.linkDates, state.extractDates, state.scheduleDates], [[], [], []]);
+    assert.ok(fs.readdirSync(path.join(repo, "data", "snapshots")).some((n) => n.startsWith("tidwyn-20261030-")), "start가 실행 전 사본을 남긴다");
+    const b = await run(repo, ["backup", "--run", runFile], f, {}, later);
+    assert.equal(b.code, 0, b.text);
+    const r = await publishSteps(repo, runFile, f);
+    assert.equal(r.site.code, 0, r.site.text);
+    assert.equal(r.deploy.code, 0, r.deploy.text);
+    assert.equal(r.push.code, 0, r.push.text);
+    assert.equal(remoteCount(bare), 1);
+    const sum = r.summary.text;
+    assert.match(sum, /- 이번 실행에서 수집하지 않음\(다음 실행이 다시 잡는다\): 2026-10-28, 2026-10-29/);
+    for (const step of ["이슈 연결", "인물·용어 뽑기", "일정 뽑기", "지표", "합치기", "이미지"]) assert.match(sum, new RegExp(`- ${step}: 배포만 실행이라 하지 않음`), step);
+    assert.match(sum, /- 배포: https:\/\/tidwyn\.vercel\.app에 운영 배포함/);
+    assert.doesNotMatch(sum, /실패/);
+    // 다음 평소 실행은 그 날짜들을 다시 잡고, 표시가 없으니 요약은 지금 그대로(결과가 없는 대상 날짜는 실패)다
+    const next = await run(repo, ["start"], f, {}, later);
+    const nextRun = /실행 기록: (.+)/.exec(next.text)![1]!;
+    assert.deepEqual(readRun(nextRun).targetDates, ["2026-10-28", "2026-10-29"]);
+    assert.equal(readRun(nextRun).deployOnly, undefined);
+    const nextSum = await run(repo, ["summary", "--run", nextRun], f, {}, later);
+    assert.match(nextSum.text, /- 실패한 날짜\(다음 실행에서 다시 수집한다\):\n {2}- 2026-10-28: 결과가 기록되지 않았다/);
+  });
+});

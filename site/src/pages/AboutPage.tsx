@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { ReadMarksText, AboutView } from "../components/aboutView.ts";
 import { BriefBackLink, Layout, useTitle } from "../components/common.tsx";
 import { readStore } from "../readMarks.ts";
-import { Link, useLocation } from "../router.tsx";
+import { useLocation } from "../router.tsx";
 
 export function AboutPage() {
   useTitle("사이트 소개");
@@ -18,7 +18,7 @@ export function AboutPage() {
   }, [hash]);
   return (
     <Layout left={<BriefBackLink />}>
-      <AboutView Link={Link} readMarks={<ReadMarksSection />} />
+      <AboutView readMarks={<ReadMarksSection />} />
     </Layout>
   );
 }

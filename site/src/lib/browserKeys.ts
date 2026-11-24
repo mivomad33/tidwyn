@@ -3,7 +3,7 @@
 
 /** 읽은 뉴스 기록(4.5단계). 사이트 소개의 '읽은 기록 지우기'가 지운다 */
 export const READ_MARKS_KEY = "tidwyn.read";
-/** 브리프에서 마지막으로 고른 섹션 탭(4.5단계, 7단계 '영상'·9.8단계 '빌더'·9.97단계 '수요' 탭 포함) */
+/** 브리프에서 마지막으로 고른 섹션 탭(4.5단계). 지금 없는 탭의 옛 값은 기본 탭으로 읽는다(R1 T7) */
 export const BRIEF_TAB_KEY = "tidwyn.briefTab";
 /** 일정 화면에서 마지막으로 고른 보기(5단계) */
 export const SCHEDULE_VIEW_KEY = "tidwyn.scheduleView";
@@ -21,7 +21,7 @@ export interface BrowserKey {
 /** 이 사이트가 쓰는 로컬 스토리지 키 전부(처리방침에 이 순서로 보인다) */
 export const BROWSER_KEYS: readonly BrowserKey[] = [
   { key: READ_MARKS_KEY, what: "읽은 뉴스 표시(뉴스 날짜와 뉴스 키만 둔다. 뉴스 날짜로 1년이 지난 기록은 저절로 지워진다)" },
-  { key: BRIEF_TAB_KEY, what: "브리프에서 마지막으로 고른 탭(전체·한국·세계·IT·AI·영상·빌더·수요)" },
+  { key: BRIEF_TAB_KEY, what: "브리프에서 마지막으로 고른 탭(전체·한국·세계·IT·AI)" },
   { key: SCHEDULE_VIEW_KEY, what: "일정 화면에서 마지막으로 고른 보기(목록·달력)" },
   { key: BOX_TAB_KEY, what: "브리프 위 상자에서 마지막으로 고른 탭(일정·지표)" },
 ];
