@@ -140,6 +140,18 @@ node src/cli.ts backup
 
 `data/`가 지워졌거나 새 컴퓨터에 클론했으면 백업에서 DB를 만든다. 의존성 설치 없이 돈다.
 
+새로 클론했으면 먼저 다음 둘을 한다. 클론에는 로컬 `data` 브랜치가 없어 `check`가 복원이 필요한 줄 모르고 통과하므로, 이대로 `/brief`가 돌면 빈 DB로 시작해 운영 사이트를 덮어쓴다. 커밋 이메일이 noreply가 아니면 공개 전 점검이 push를 막는다.
+
+```bash
+git branch --track data origin/data
+```
+
+```bash
+git config --local user.email 344780894+mivomad33@users.noreply.github.com
+```
+
+그 뒤 `pnpm install`, 아래 복원, `render --all`을 하고, `.env.local`의 키(위 "데이터 폴더와 환경 변수"와 각 소스 절)를 사용자가 다시 넣는다.
+
 ```bash
 node src/cli.ts restore
 ```
