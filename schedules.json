@@ -105,7 +105,7 @@
       "name": "중국 APEC 정상회의",
       "due": "2026-11-19",
       "major": "국제",
-      "outcome": null,
+      "outcome": "result",
       "postponedTo": null,
       "mergedInto": null,
       "deleted": false,
@@ -501,7 +501,7 @@
       "name": "2027학년도 대학수학능력시험",
       "due": "2026-11-19",
       "major": "사회",
-      "outcome": null,
+      "outcome": "result",
       "postponedTo": null,
       "mergedInto": null,
       "deleted": false,
@@ -578,7 +578,7 @@
       "name": "COP31 튀르키예 안탈리아 폐막",
       "due": "2026-11-20",
       "major": "과학·건강",
-      "outcome": null,
+      "outcome": "result",
       "postponedTo": null,
       "mergedInto": null,
       "deleted": false,
@@ -589,7 +589,7 @@
       "name": "대법원 전원합의체 한덕수 상고심 2차 심리",
       "due": "2026-11-19",
       "major": "사회",
-      "outcome": null,
+      "outcome": "result",
       "postponedTo": null,
       "mergedInto": null,
       "deleted": false,
@@ -633,7 +633,7 @@
       "name": "엔비디아 분기 실적 발표",
       "due": "2026-11-17",
       "major": "IT·AI",
-      "outcome": null,
+      "outcome": "result",
       "postponedTo": null,
       "mergedInto": null,
       "deleted": false,
@@ -688,7 +688,7 @@
       "name": "트럼프·시진핑·푸틴 선전 3자 회담",
       "due": "2026-11-19",
       "major": "국제",
-      "outcome": null,
+      "outcome": "result",
       "postponedTo": null,
       "mergedInto": null,
       "deleted": false,
@@ -743,6 +743,226 @@
       "name": "카드포인트 지역화폐 전환 서비스 시작",
       "due": "2027-05",
       "major": "경제",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 79,
+      "name": "국회 예결위 예산안조정소위 심사 시작",
+      "due": "2026-11-16",
+      "major": "정치",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 80,
+      "name": "축구 대표팀 카타르 평가전",
+      "due": "2026-11-17",
+      "major": "문화·스포츠",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 81,
+      "name": "테슬라 사이버캡 개인 고객 인도 시작",
+      "due": "2026-12",
+      "major": "IT·AI",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 82,
+      "name": "이스라엘 연정 구성 1차 시한",
+      "due": "2026-12-06",
+      "major": "국제",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 83,
+      "name": "대법원 김건희 3대 의혹 사건 상고심 선고",
+      "due": "2026-11-19",
+      "major": "사회",
+      "outcome": "result",
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 84,
+      "name": "SK하이닉스 용인 협력사 공동 시험시설 개소",
+      "due": "2027-05",
+      "major": "경제",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 85,
+      "name": "조작기소 특검법 공포·재의요구 시한",
+      "due": "2026-11-21",
+      "major": "정치",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 86,
+      "name": "한중 정상회담(선전)",
+      "due": "2026-11-18",
+      "major": "정치",
+      "outcome": "result",
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 87,
+      "name": "젠슨 황 미 하원 조사 출석",
+      "due": "2026-12-01",
+      "major": "IT·AI",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 88,
+      "name": "앤트로픽 나스닥 첫 거래",
+      "due": "2026-11-19",
+      "major": "IT·AI",
+      "outcome": "result",
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 89,
+      "name": "미국 새 의회 출범과 하원의장 선출",
+      "due": "2027-01-03",
+      "major": "국제",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 90,
+      "name": "미중 정상회담(선전)",
+      "due": "2026-11-19",
+      "major": "국제",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 91,
+      "name": "2027학년도 수능 성적 발표",
+      "due": "2026-12-11",
+      "major": "사회",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 92,
+      "name": "국민의힘 서울 장외집회",
+      "due": "2026-12-05",
+      "major": "정치",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 93,
+      "name": "상장사 자사주 매수 주문 한도 완화 시행",
+      "due": "2026-11-24",
+      "major": "경제",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 94,
+      "name": "서울교통공사 노사 최종 교섭",
+      "due": "2026-11-24",
+      "major": "경제",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 95,
+      "name": "평양국제마라톤대회",
+      "due": "2027-10",
+      "major": "문화·스포츠",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 96,
+      "name": "카카오페이·토스 주민등록증 진위 확인 시작",
+      "due": "2026-11-23",
+      "major": "IT·AI",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 97,
+      "name": "네이버페이 주민등록증 진위 확인 도입",
+      "due": "2026-12",
+      "major": "IT·AI",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 98,
+      "name": "젠슨 황 상원 은행위원회 청문회",
+      "due": "2026-12-03",
+      "major": "IT·AI",
       "outcome": null,
       "postponedTo": null,
       "mergedInto": null,
@@ -1359,6 +1579,261 @@
     {
       "story": "2026-11-13/IT·AI-2",
       "schedule": 77,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-14/한국-1",
+      "schedule": 10,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-14/한국-1",
+      "schedule": 73,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-14/한국-2",
+      "schedule": 27,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-14/한국-2",
+      "schedule": 79,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-14/한국-s2",
+      "schedule": 80,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-14/IT·AI-6",
+      "schedule": 81,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-15/세계-4",
+      "schedule": 70,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-15/세계-5",
+      "schedule": 82,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-15/한국-2",
+      "schedule": 55,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-15/한국-5",
+      "schedule": 10,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-15/한국-5",
+      "schedule": 73,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-15/IT·AI-1",
+      "schedule": 68,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-16/세계-1",
+      "schedule": 10,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-16/세계-1",
+      "schedule": 73,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-16/세계-5",
+      "schedule": 68,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-16/한국-2",
+      "schedule": 55,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-16/한국-4",
+      "schedule": 63,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-16/한국-4",
+      "schedule": 83,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-16/한국-5",
+      "schedule": 84,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-16/IT·AI-2",
+      "schedule": 68,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-17/한국-1",
+      "schedule": 55,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-17/한국-4",
+      "schedule": 85,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-17/한국-5",
+      "schedule": 73,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-17/한국-5",
+      "schedule": 86,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-17/IT·AI-1",
+      "schedule": 68,
+      "role": "result"
+    },
+    {
+      "story": "2026-11-17/IT·AI-1",
+      "schedule": 87,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-18/세계-1",
+      "schedule": 10,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-18/세계-1",
+      "schedule": 73,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-18/세계-1",
+      "schedule": 90,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-18/세계-4",
+      "schedule": 89,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-18/한국-1",
+      "schedule": 86,
+      "role": "result"
+    },
+    {
+      "story": "2026-11-18/한국-7",
+      "schedule": 55,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-18/IT·AI-2",
+      "schedule": 90,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-18/IT·AI-3",
+      "schedule": 88,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-19/세계-1",
+      "schedule": 10,
+      "role": "result"
+    },
+    {
+      "story": "2026-11-19/세계-1",
+      "schedule": 73,
+      "role": "result"
+    },
+    {
+      "story": "2026-11-19/한국-1",
+      "schedule": 83,
+      "role": "result"
+    },
+    {
+      "story": "2026-11-19/한국-2",
+      "schedule": 63,
+      "role": "result"
+    },
+    {
+      "story": "2026-11-19/한국-3",
+      "schedule": 55,
+      "role": "result"
+    },
+    {
+      "story": "2026-11-19/한국-3",
+      "schedule": 91,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-19/IT·AI-1",
+      "schedule": 88,
+      "role": "result"
+    },
+    {
+      "story": "2026-11-20/한국-2",
+      "schedule": 91,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-21/한국-4",
+      "schedule": 92,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-22/세계-1",
+      "schedule": 62,
+      "role": "result"
+    },
+    {
+      "story": "2026-11-22/한국-2",
+      "schedule": 93,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-22/한국-5",
+      "schedule": 94,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-22/한국-s2",
+      "schedule": 95,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-22/IT·AI-5",
+      "schedule": 96,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-22/IT·AI-5",
+      "schedule": 97,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-23/IT·AI-1",
+      "schedule": 87,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-23/IT·AI-1",
+      "schedule": 98,
       "role": "basis"
     }
   ],
