@@ -1,5 +1,5 @@
 {
-  "formatVersion": 10,
+  "formatVersion": 11,
   "schedules": [
     {
       "id": 1,
@@ -332,28 +332,6 @@
       "deletedOn": null
     },
     {
-      "id": 31,
-      "name": "OpenAI GPT-5 mini·nano·pro 지원 종료",
-      "due": "2026-12-11",
-      "major": "IT·AI",
-      "outcome": null,
-      "postponedTo": null,
-      "mergedInto": null,
-      "deleted": false,
-      "deletedOn": null
-    },
-    {
-      "id": 32,
-      "name": "OpenAI GPT-4.1·GPT-4o 지원 종료",
-      "due": "2027-01-14",
-      "major": "IT·AI",
-      "outcome": null,
-      "postponedTo": null,
-      "mergedInto": null,
-      "deleted": false,
-      "deletedOn": null
-    },
-    {
       "id": 33,
       "name": "국회 예결위 예산안 종합정책질의 시작",
       "due": "2026-11-04",
@@ -370,28 +348,6 @@
       "due": "2026-11-10",
       "major": "국제",
       "outcome": "result",
-      "postponedTo": null,
-      "mergedInto": null,
-      "deleted": false,
-      "deletedOn": null
-    },
-    {
-      "id": 35,
-      "name": "OpenAI GPT Image 구형 모델 지원 종료",
-      "due": "2026-12-01",
-      "major": "IT·AI",
-      "outcome": null,
-      "postponedTo": null,
-      "mergedInto": null,
-      "deleted": false,
-      "deletedOn": null
-    },
-    {
-      "id": 36,
-      "name": "OpenAI GPT-5.1·5.3-Codex·5.4-Nano 지원 종료",
-      "due": "2027-04-01",
-      "major": "IT·AI",
-      "outcome": null,
       "postponedTo": null,
       "mergedInto": null,
       "deleted": false,
@@ -424,39 +380,6 @@
       "name": "다우·CJ 컨소시엄 중앙일보 인수 계약",
       "due": "2026-11-05",
       "major": "경제",
-      "outcome": null,
-      "postponedTo": null,
-      "mergedInto": null,
-      "deleted": false,
-      "deletedOn": null
-    },
-    {
-      "id": 40,
-      "name": "OpenAI tts-1·gpt-4o-mini-tts 지원 종료",
-      "due": "2027-01-06",
-      "major": "IT·AI",
-      "outcome": null,
-      "postponedTo": null,
-      "mergedInto": null,
-      "deleted": false,
-      "deletedOn": null
-    },
-    {
-      "id": 41,
-      "name": "OpenAI gpt-4o 오디오·실시간 모델 지원 종료",
-      "due": "2027-01-20",
-      "major": "IT·AI",
-      "outcome": null,
-      "postponedTo": null,
-      "mergedInto": null,
-      "deleted": false,
-      "deletedOn": null
-    },
-    {
-      "id": 42,
-      "name": "Node.js 2026년 11월 보안 릴리스",
-      "due": "2026-11-11",
-      "major": "IT·AI",
       "outcome": null,
       "postponedTo": null,
       "mergedInto": null,
@@ -524,28 +447,6 @@
       "due": "2026-11-06",
       "major": "정치",
       "outcome": "result",
-      "postponedTo": null,
-      "mergedInto": null,
-      "deleted": false,
-      "deletedOn": null
-    },
-    {
-      "id": 49,
-      "name": "OpenAI gpt-5.5-cyber-preview 지원 종료",
-      "due": "2027-02-01",
-      "major": "IT·AI",
-      "outcome": null,
-      "postponedTo": null,
-      "mergedInto": null,
-      "deleted": false,
-      "deletedOn": null
-    },
-    {
-      "id": 50,
-      "name": "OpenAI 받아쓰기 모델·번역 엔드포인트 종료",
-      "due": "2027-02-26",
-      "major": "IT·AI",
-      "outcome": null,
       "postponedTo": null,
       "mergedInto": null,
       "deleted": false,
@@ -728,17 +629,6 @@
       "deletedOn": null
     },
     {
-      "id": 67,
-      "name": "OpenAI gpt-image-2 지원 종료",
-      "due": "2027-02-10",
-      "major": "IT·AI",
-      "outcome": null,
-      "postponedTo": null,
-      "mergedInto": null,
-      "deleted": false,
-      "deletedOn": null
-    },
-    {
       "id": 68,
       "name": "엔비디아 분기 실적 발표",
       "due": "2026-11-17",
@@ -801,16 +691,6 @@
       "role": "basis"
     },
     {
-      "story": "2026-10-28/IT·AI-1",
-      "schedule": 1,
-      "role": "result"
-    },
-    {
-      "story": "2026-10-28/IT·AI-3",
-      "schedule": 8,
-      "role": "basis"
-    },
-    {
       "story": "2026-10-28/세계-1",
       "schedule": 5,
       "role": "basis"
@@ -848,6 +728,16 @@
     {
       "story": "2026-10-28/한국-s5",
       "schedule": 4,
+      "role": "basis"
+    },
+    {
+      "story": "2026-10-28/IT·AI-1",
+      "schedule": 1,
+      "role": "result"
+    },
+    {
+      "story": "2026-10-28/IT·AI-3",
+      "schedule": 8,
       "role": "basis"
     },
     {
@@ -946,16 +836,6 @@
       "role": "basis"
     },
     {
-      "story": "2026-10-31/IT·AI-1",
-      "schedule": 22,
-      "role": "basis"
-    },
-    {
-      "story": "2026-10-31/IT·AI-1",
-      "schedule": 23,
-      "role": "basis"
-    },
-    {
       "story": "2026-10-31/세계-1",
       "schedule": 6,
       "role": "basis"
@@ -981,9 +861,14 @@
       "role": "basis"
     },
     {
-      "story": "2026-11-01/IT·AI-1",
+      "story": "2026-10-31/IT·AI-1",
       "schedule": 22,
-      "role": "result"
+      "role": "basis"
+    },
+    {
+      "story": "2026-10-31/IT·AI-1",
+      "schedule": 23,
+      "role": "basis"
     },
     {
       "story": "2026-11-01/세계-1",
@@ -1041,9 +926,9 @@
       "role": "basis"
     },
     {
-      "story": "2026-11-02/IT·AI-s1",
-      "schedule": 30,
-      "role": "basis"
+      "story": "2026-11-01/IT·AI-1",
+      "schedule": 22,
+      "role": "result"
     },
     {
       "story": "2026-11-02/세계-2",
@@ -1063,6 +948,11 @@
     {
       "story": "2026-11-02/한국-s2",
       "schedule": 25,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-02/IT·AI-s1",
+      "schedule": 30,
       "role": "basis"
     },
     {
@@ -1121,11 +1011,6 @@
       "role": "basis"
     },
     {
-      "story": "2026-11-05/IT·AI-5",
-      "schedule": 47,
-      "role": "basis"
-    },
-    {
       "story": "2026-11-05/세계-2",
       "schedule": 45,
       "role": "basis"
@@ -1161,6 +1046,11 @@
       "role": "basis"
     },
     {
+      "story": "2026-11-05/IT·AI-5",
+      "schedule": 47,
+      "role": "basis"
+    },
+    {
       "story": "2026-11-06/세계-1",
       "schedule": 52,
       "role": "basis"
@@ -1189,11 +1079,6 @@
       "story": "2026-11-06/한국-2",
       "schedule": 51,
       "role": "basis"
-    },
-    {
-      "story": "2026-11-07/IT·AI-4",
-      "schedule": 30,
-      "role": "notice"
     },
     {
       "story": "2026-11-07/세계-1",
@@ -1226,9 +1111,9 @@
       "role": "basis"
     },
     {
-      "story": "2026-11-08/IT·AI-5",
-      "schedule": 58,
-      "role": "basis"
+      "story": "2026-11-07/IT·AI-4",
+      "schedule": 30,
+      "role": "notice"
     },
     {
       "story": "2026-11-08/세계-4",
@@ -1248,6 +1133,11 @@
     {
       "story": "2026-11-08/한국-s3",
       "schedule": 60,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-08/IT·AI-5",
+      "schedule": 58,
       "role": "basis"
     },
     {
@@ -1321,11 +1211,6 @@
       "role": "basis"
     },
     {
-      "story": "2026-11-11/IT·AI-1",
-      "schedule": 68,
-      "role": "basis"
-    },
-    {
       "story": "2026-11-11/한국-3",
       "schedule": 7,
       "role": "basis"
@@ -1336,8 +1221,8 @@
       "role": "basis"
     },
     {
-      "story": "2026-11-12/IT·AI-3",
-      "schedule": 72,
+      "story": "2026-11-11/IT·AI-1",
+      "schedule": 68,
       "role": "basis"
     },
     {
@@ -1358,6 +1243,11 @@
     {
       "story": "2026-11-12/한국-5",
       "schedule": 71,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-12/IT·AI-3",
+      "schedule": 72,
       "role": "basis"
     }
   ],

@@ -1,5 +1,5 @@
 {
-  "formatVersion": 10,
+  "formatVersion": 11,
   "entities": [
     {
       "id": 1,
@@ -7848,78 +7848,6 @@
   ],
   "entityLinks": [
     {
-      "story": "2026-10-27/IT·AI-1",
-      "entity": 50
-    },
-    {
-      "story": "2026-10-27/IT·AI-1",
-      "entity": 51
-    },
-    {
-      "story": "2026-10-27/IT·AI-1",
-      "entity": 52
-    },
-    {
-      "story": "2026-10-27/IT·AI-2",
-      "entity": 53
-    },
-    {
-      "story": "2026-10-27/IT·AI-3",
-      "entity": 50
-    },
-    {
-      "story": "2026-10-27/IT·AI-3",
-      "entity": 54
-    },
-    {
-      "story": "2026-10-27/IT·AI-3",
-      "entity": 55
-    },
-    {
-      "story": "2026-10-27/IT·AI-3",
-      "entity": 56
-    },
-    {
-      "story": "2026-10-27/IT·AI-4",
-      "entity": 57
-    },
-    {
-      "story": "2026-10-27/IT·AI-4",
-      "entity": 58
-    },
-    {
-      "story": "2026-10-27/IT·AI-5",
-      "entity": 59
-    },
-    {
-      "story": "2026-10-27/IT·AI-5",
-      "entity": 60
-    },
-    {
-      "story": "2026-10-27/IT·AI-s1",
-      "entity": 40
-    },
-    {
-      "story": "2026-10-27/IT·AI-s2",
-      "entity": 57
-    },
-    {
-      "story": "2026-10-27/IT·AI-s2",
-      "entity": 61
-    },
-    {
-      "story": "2026-10-27/IT·AI-s2",
-      "entity": 62
-    },
-    {
-      "story": "2026-10-27/IT·AI-s3",
-      "entity": 50
-    },
-    {
-      "story": "2026-10-27/IT·AI-s3",
-      "entity": 52
-    },
-    {
       "story": "2026-10-27/세계-1",
       "entity": 24
     },
@@ -8128,100 +8056,76 @@
       "entity": 23
     },
     {
-      "story": "2026-10-28/IT·AI-1",
-      "entity": 57
+      "story": "2026-10-27/IT·AI-1",
+      "entity": 50
     },
     {
-      "story": "2026-10-28/IT·AI-1",
-      "entity": 61
+      "story": "2026-10-27/IT·AI-1",
+      "entity": 51
     },
     {
-      "story": "2026-10-28/IT·AI-1",
-      "entity": 62
+      "story": "2026-10-27/IT·AI-1",
+      "entity": 52
     },
     {
-      "story": "2026-10-28/IT·AI-2",
+      "story": "2026-10-27/IT·AI-2",
       "entity": 53
     },
     {
-      "story": "2026-10-28/IT·AI-2",
-      "entity": 62
-    },
-    {
-      "story": "2026-10-28/IT·AI-2",
-      "entity": 111
-    },
-    {
-      "story": "2026-10-28/IT·AI-2",
-      "entity": 112
-    },
-    {
-      "story": "2026-10-28/IT·AI-3",
-      "entity": 57
-    },
-    {
-      "story": "2026-10-28/IT·AI-4",
+      "story": "2026-10-27/IT·AI-3",
       "entity": 50
     },
     {
-      "story": "2026-10-28/IT·AI-4",
+      "story": "2026-10-27/IT·AI-3",
       "entity": 54
     },
     {
-      "story": "2026-10-28/IT·AI-4",
+      "story": "2026-10-27/IT·AI-3",
+      "entity": 55
+    },
+    {
+      "story": "2026-10-27/IT·AI-3",
+      "entity": 56
+    },
+    {
+      "story": "2026-10-27/IT·AI-4",
+      "entity": 57
+    },
+    {
+      "story": "2026-10-27/IT·AI-4",
+      "entity": 58
+    },
+    {
+      "story": "2026-10-27/IT·AI-5",
+      "entity": 59
+    },
+    {
+      "story": "2026-10-27/IT·AI-5",
+      "entity": 60
+    },
+    {
+      "story": "2026-10-27/IT·AI-s1",
+      "entity": 40
+    },
+    {
+      "story": "2026-10-27/IT·AI-s2",
+      "entity": 57
+    },
+    {
+      "story": "2026-10-27/IT·AI-s2",
+      "entity": 61
+    },
+    {
+      "story": "2026-10-27/IT·AI-s2",
       "entity": 62
     },
     {
-      "story": "2026-10-28/IT·AI-4",
-      "entity": 65
-    },
-    {
-      "story": "2026-10-28/IT·AI-4",
-      "entity": 113
-    },
-    {
-      "story": "2026-10-28/IT·AI-4",
-      "entity": 114
-    },
-    {
-      "story": "2026-10-28/IT·AI-5",
-      "entity": 38
-    },
-    {
-      "story": "2026-10-28/IT·AI-5",
-      "entity": 65
-    },
-    {
-      "story": "2026-10-28/IT·AI-5",
-      "entity": 115
-    },
-    {
-      "story": "2026-10-28/IT·AI-5",
-      "entity": 116
-    },
-    {
-      "story": "2026-10-28/IT·AI-6",
-      "entity": 62
-    },
-    {
-      "story": "2026-10-28/IT·AI-7",
-      "entity": 117
-    },
-    {
-      "story": "2026-10-28/IT·AI-s2",
-      "entity": 42
-    },
-    {
-      "story": "2026-10-28/IT·AI-s2",
-      "entity": 118
-    },
-    {
-      "story": "2026-10-28/IT·AI-s3",
-      "entity": 119
-    },
-    {
-      "story": "2026-10-28/IT·AI-s4",
+      "story": "2026-10-27/IT·AI-s3",
       "entity": 50
+    },
+    {
+      "story": "2026-10-27/IT·AI-s3",
+      "entity": 52
     },
     {
       "story": "2026-10-28/세계-1",
@@ -8504,92 +8408,100 @@
       "entity": 5
     },
     {
-      "story": "2026-10-29/IT·AI-1",
-      "entity": 12
+      "story": "2026-10-28/IT·AI-1",
+      "entity": 57
     },
     {
-      "story": "2026-10-29/IT·AI-1",
-      "entity": 149
+      "story": "2026-10-28/IT·AI-1",
+      "entity": 61
     },
     {
-      "story": "2026-10-29/IT·AI-2",
+      "story": "2026-10-28/IT·AI-1",
       "entity": 62
     },
     {
-      "story": "2026-10-29/IT·AI-2",
-      "entity": 111
-    },
-    {
-      "story": "2026-10-29/IT·AI-3",
-      "entity": 119
-    },
-    {
-      "story": "2026-10-29/IT·AI-3",
-      "entity": 150
-    },
-    {
-      "story": "2026-10-29/IT·AI-4",
-      "entity": 151
-    },
-    {
-      "story": "2026-10-29/IT·AI-4",
-      "entity": 152
-    },
-    {
-      "story": "2026-10-29/IT·AI-5",
-      "entity": 153
-    },
-    {
-      "story": "2026-10-29/IT·AI-5",
-      "entity": 154
-    },
-    {
-      "story": "2026-10-29/IT·AI-6",
-      "entity": 48
-    },
-    {
-      "story": "2026-10-29/IT·AI-6",
-      "entity": 65
-    },
-    {
-      "story": "2026-10-29/IT·AI-6",
-      "entity": 114
-    },
-    {
-      "story": "2026-10-29/IT·AI-6",
-      "entity": 155
-    },
-    {
-      "story": "2026-10-29/IT·AI-7",
-      "entity": 50
-    },
-    {
-      "story": "2026-10-29/IT·AI-7",
-      "entity": 156
-    },
-    {
-      "story": "2026-10-29/IT·AI-8",
-      "entity": 157
-    },
-    {
-      "story": "2026-10-29/IT·AI-s1",
-      "entity": 158
-    },
-    {
-      "story": "2026-10-29/IT·AI-s1",
-      "entity": 159
-    },
-    {
-      "story": "2026-10-29/IT·AI-s2",
+      "story": "2026-10-28/IT·AI-2",
       "entity": 53
     },
     {
-      "story": "2026-10-29/IT·AI-s3",
-      "entity": 59
+      "story": "2026-10-28/IT·AI-2",
+      "entity": 62
     },
     {
-      "story": "2026-10-29/IT·AI-s3",
-      "entity": 146
+      "story": "2026-10-28/IT·AI-2",
+      "entity": 111
+    },
+    {
+      "story": "2026-10-28/IT·AI-2",
+      "entity": 112
+    },
+    {
+      "story": "2026-10-28/IT·AI-3",
+      "entity": 57
+    },
+    {
+      "story": "2026-10-28/IT·AI-4",
+      "entity": 50
+    },
+    {
+      "story": "2026-10-28/IT·AI-4",
+      "entity": 54
+    },
+    {
+      "story": "2026-10-28/IT·AI-4",
+      "entity": 62
+    },
+    {
+      "story": "2026-10-28/IT·AI-4",
+      "entity": 65
+    },
+    {
+      "story": "2026-10-28/IT·AI-4",
+      "entity": 113
+    },
+    {
+      "story": "2026-10-28/IT·AI-4",
+      "entity": 114
+    },
+    {
+      "story": "2026-10-28/IT·AI-5",
+      "entity": 38
+    },
+    {
+      "story": "2026-10-28/IT·AI-5",
+      "entity": 65
+    },
+    {
+      "story": "2026-10-28/IT·AI-5",
+      "entity": 115
+    },
+    {
+      "story": "2026-10-28/IT·AI-5",
+      "entity": 116
+    },
+    {
+      "story": "2026-10-28/IT·AI-6",
+      "entity": 62
+    },
+    {
+      "story": "2026-10-28/IT·AI-7",
+      "entity": 117
+    },
+    {
+      "story": "2026-10-28/IT·AI-s2",
+      "entity": 42
+    },
+    {
+      "story": "2026-10-28/IT·AI-s2",
+      "entity": 118
+    },
+    {
+      "story": "2026-10-28/IT·AI-s3",
+      "entity": 119
+    },
+    {
+      "story": "2026-10-28/IT·AI-s4",
+      "entity": 50
     },
     {
       "story": "2026-10-29/세계-1",
@@ -8872,72 +8784,92 @@
       "entity": 9
     },
     {
-      "story": "2026-10-30/IT·AI-1",
-      "entity": 65
-    },
-    {
-      "story": "2026-10-30/IT·AI-1",
-      "entity": 151
-    },
-    {
-      "story": "2026-10-30/IT·AI-2",
+      "story": "2026-10-29/IT·AI-1",
       "entity": 12
     },
     {
-      "story": "2026-10-30/IT·AI-2",
+      "story": "2026-10-29/IT·AI-1",
       "entity": 149
     },
     {
-      "story": "2026-10-30/IT·AI-2",
-      "entity": 176
+      "story": "2026-10-29/IT·AI-2",
+      "entity": 62
     },
     {
-      "story": "2026-10-30/IT·AI-2",
-      "entity": 177
+      "story": "2026-10-29/IT·AI-2",
+      "entity": 111
     },
     {
-      "story": "2026-10-30/IT·AI-3",
+      "story": "2026-10-29/IT·AI-3",
+      "entity": 119
+    },
+    {
+      "story": "2026-10-29/IT·AI-3",
+      "entity": 150
+    },
+    {
+      "story": "2026-10-29/IT·AI-4",
+      "entity": 151
+    },
+    {
+      "story": "2026-10-29/IT·AI-4",
+      "entity": 152
+    },
+    {
+      "story": "2026-10-29/IT·AI-5",
+      "entity": 153
+    },
+    {
+      "story": "2026-10-29/IT·AI-5",
+      "entity": 154
+    },
+    {
+      "story": "2026-10-29/IT·AI-6",
+      "entity": 48
+    },
+    {
+      "story": "2026-10-29/IT·AI-6",
+      "entity": 65
+    },
+    {
+      "story": "2026-10-29/IT·AI-6",
+      "entity": 114
+    },
+    {
+      "story": "2026-10-29/IT·AI-6",
+      "entity": 155
+    },
+    {
+      "story": "2026-10-29/IT·AI-7",
       "entity": 50
     },
     {
-      "story": "2026-10-30/IT·AI-3",
-      "entity": 113
+      "story": "2026-10-29/IT·AI-7",
+      "entity": 156
     },
     {
-      "story": "2026-10-30/IT·AI-4",
-      "entity": 50
+      "story": "2026-10-29/IT·AI-8",
+      "entity": 157
     },
     {
-      "story": "2026-10-30/IT·AI-4",
-      "entity": 178
+      "story": "2026-10-29/IT·AI-s1",
+      "entity": 158
     },
     {
-      "story": "2026-10-30/IT·AI-5",
-      "entity": 12
+      "story": "2026-10-29/IT·AI-s1",
+      "entity": 159
     },
     {
-      "story": "2026-10-30/IT·AI-5",
+      "story": "2026-10-29/IT·AI-s2",
       "entity": 53
     },
     {
-      "story": "2026-10-30/IT·AI-6",
-      "entity": 62
+      "story": "2026-10-29/IT·AI-s3",
+      "entity": 59
     },
     {
-      "story": "2026-10-30/IT·AI-s1",
-      "entity": 56
-    },
-    {
-      "story": "2026-10-30/IT·AI-s1",
-      "entity": 179
-    },
-    {
-      "story": "2026-10-30/IT·AI-s2",
-      "entity": 62
-    },
-    {
-      "story": "2026-10-30/IT·AI-s2",
-      "entity": 180
+      "story": "2026-10-29/IT·AI-s3",
+      "entity": 146
     },
     {
       "story": "2026-10-30/세계-1",
@@ -9108,104 +9040,72 @@
       "entity": 9
     },
     {
-      "story": "2026-10-31/IT·AI-1",
+      "story": "2026-10-30/IT·AI-1",
+      "entity": 65
+    },
+    {
+      "story": "2026-10-30/IT·AI-1",
+      "entity": 151
+    },
+    {
+      "story": "2026-10-30/IT·AI-2",
       "entity": 12
     },
     {
-      "story": "2026-10-31/IT·AI-1",
+      "story": "2026-10-30/IT·AI-2",
       "entity": 149
     },
     {
-      "story": "2026-10-31/IT·AI-1",
+      "story": "2026-10-30/IT·AI-2",
       "entity": 176
     },
     {
-      "story": "2026-10-31/IT·AI-1",
-      "entity": 214
+      "story": "2026-10-30/IT·AI-2",
+      "entity": 177
     },
     {
-      "story": "2026-10-31/IT·AI-2",
-      "entity": 56
+      "story": "2026-10-30/IT·AI-3",
+      "entity": 50
     },
     {
-      "story": "2026-10-31/IT·AI-2",
-      "entity": 212
-    },
-    {
-      "story": "2026-10-31/IT·AI-3",
-      "entity": 64
-    },
-    {
-      "story": "2026-10-31/IT·AI-3",
+      "story": "2026-10-30/IT·AI-3",
       "entity": 113
     },
     {
-      "story": "2026-10-31/IT·AI-3",
-      "entity": 191
+      "story": "2026-10-30/IT·AI-4",
+      "entity": 50
     },
     {
-      "story": "2026-10-31/IT·AI-3",
-      "entity": 192
+      "story": "2026-10-30/IT·AI-4",
+      "entity": 178
     },
     {
-      "story": "2026-10-31/IT·AI-3",
-      "entity": 193
+      "story": "2026-10-30/IT·AI-5",
+      "entity": 12
     },
     {
-      "story": "2026-10-31/IT·AI-3",
-      "entity": 195
+      "story": "2026-10-30/IT·AI-5",
+      "entity": 53
     },
     {
-      "story": "2026-10-31/IT·AI-4",
-      "entity": 63
+      "story": "2026-10-30/IT·AI-6",
+      "entity": 62
     },
     {
-      "story": "2026-10-31/IT·AI-4",
-      "entity": 64
-    },
-    {
-      "story": "2026-10-31/IT·AI-4",
-      "entity": 213
-    },
-    {
-      "story": "2026-10-31/IT·AI-5",
+      "story": "2026-10-30/IT·AI-s1",
       "entity": 56
     },
     {
-      "story": "2026-10-31/IT·AI-5",
+      "story": "2026-10-30/IT·AI-s1",
       "entity": 179
     },
     {
-      "story": "2026-10-31/IT·AI-6",
-      "entity": 113
-    },
-    {
-      "story": "2026-10-31/IT·AI-7",
-      "entity": 202
-    },
-    {
-      "story": "2026-10-31/IT·AI-7",
-      "entity": 203
-    },
-    {
-      "story": "2026-10-31/IT·AI-s1",
-      "entity": 63
-    },
-    {
-      "story": "2026-10-31/IT·AI-s1",
-      "entity": 64
-    },
-    {
-      "story": "2026-10-31/IT·AI-s2",
-      "entity": 215
-    },
-    {
-      "story": "2026-10-31/IT·AI-s2",
-      "entity": 216
-    },
-    {
-      "story": "2026-10-31/IT·AI-s3",
+      "story": "2026-10-30/IT·AI-s2",
       "entity": 62
+    },
+    {
+      "story": "2026-10-30/IT·AI-s2",
+      "entity": 180
     },
     {
       "story": "2026-10-31/세계-1",
@@ -9488,64 +9388,104 @@
       "entity": 204
     },
     {
-      "story": "2026-11-01/IT·AI-1",
+      "story": "2026-10-31/IT·AI-1",
       "entity": 12
     },
     {
-      "story": "2026-11-01/IT·AI-1",
-      "entity": 41
-    },
-    {
-      "story": "2026-11-01/IT·AI-1",
+      "story": "2026-10-31/IT·AI-1",
       "entity": 149
     },
     {
-      "story": "2026-11-01/IT·AI-1",
-      "entity": 234
+      "story": "2026-10-31/IT·AI-1",
+      "entity": 176
     },
     {
-      "story": "2026-11-01/IT·AI-2",
-      "entity": 50
+      "story": "2026-10-31/IT·AI-1",
+      "entity": 214
     },
     {
-      "story": "2026-11-01/IT·AI-2",
-      "entity": 113
+      "story": "2026-10-31/IT·AI-2",
+      "entity": 56
     },
     {
-      "story": "2026-11-01/IT·AI-3",
-      "entity": 50
+      "story": "2026-10-31/IT·AI-2",
+      "entity": 212
     },
     {
-      "story": "2026-11-01/IT·AI-3",
-      "entity": 227
-    },
-    {
-      "story": "2026-11-01/IT·AI-4",
-      "entity": 63
-    },
-    {
-      "story": "2026-11-01/IT·AI-4",
+      "story": "2026-10-31/IT·AI-3",
       "entity": 64
     },
     {
-      "story": "2026-11-01/IT·AI-4",
-      "entity": 226
+      "story": "2026-10-31/IT·AI-3",
+      "entity": 113
     },
     {
-      "story": "2026-11-01/IT·AI-5",
-      "entity": 57
+      "story": "2026-10-31/IT·AI-3",
+      "entity": 191
     },
     {
-      "story": "2026-11-01/IT·AI-5",
-      "entity": 60
+      "story": "2026-10-31/IT·AI-3",
+      "entity": 192
     },
     {
-      "story": "2026-11-01/IT·AI-s3",
-      "entity": 12
+      "story": "2026-10-31/IT·AI-3",
+      "entity": 193
     },
     {
-      "story": "2026-11-01/IT·AI-s3",
-      "entity": 219
+      "story": "2026-10-31/IT·AI-3",
+      "entity": 195
+    },
+    {
+      "story": "2026-10-31/IT·AI-4",
+      "entity": 63
+    },
+    {
+      "story": "2026-10-31/IT·AI-4",
+      "entity": 64
+    },
+    {
+      "story": "2026-10-31/IT·AI-4",
+      "entity": 213
+    },
+    {
+      "story": "2026-10-31/IT·AI-5",
+      "entity": 56
+    },
+    {
+      "story": "2026-10-31/IT·AI-5",
+      "entity": 179
+    },
+    {
+      "story": "2026-10-31/IT·AI-6",
+      "entity": 113
+    },
+    {
+      "story": "2026-10-31/IT·AI-7",
+      "entity": 202
+    },
+    {
+      "story": "2026-10-31/IT·AI-7",
+      "entity": 203
+    },
+    {
+      "story": "2026-10-31/IT·AI-s1",
+      "entity": 63
+    },
+    {
+      "story": "2026-10-31/IT·AI-s1",
+      "entity": 64
+    },
+    {
+      "story": "2026-10-31/IT·AI-s2",
+      "entity": 215
+    },
+    {
+      "story": "2026-10-31/IT·AI-s2",
+      "entity": 216
+    },
+    {
+      "story": "2026-10-31/IT·AI-s3",
+      "entity": 62
     },
     {
       "story": "2026-11-01/세계-1",
@@ -9732,44 +9672,64 @@
       "entity": 232
     },
     {
-      "story": "2026-11-02/IT·AI-1",
+      "story": "2026-11-01/IT·AI-1",
+      "entity": 12
+    },
+    {
+      "story": "2026-11-01/IT·AI-1",
       "entity": 41
     },
     {
-      "story": "2026-11-02/IT·AI-1",
+      "story": "2026-11-01/IT·AI-1",
       "entity": 149
     },
     {
-      "story": "2026-11-02/IT·AI-1",
-      "entity": 202
-    },
-    {
-      "story": "2026-11-02/IT·AI-1",
+      "story": "2026-11-01/IT·AI-1",
       "entity": 234
     },
     {
-      "story": "2026-11-02/IT·AI-2",
+      "story": "2026-11-01/IT·AI-2",
       "entity": 50
     },
     {
-      "story": "2026-11-02/IT·AI-2",
-      "entity": 52
+      "story": "2026-11-01/IT·AI-2",
+      "entity": 113
     },
     {
-      "story": "2026-11-02/IT·AI-4",
-      "entity": 29
+      "story": "2026-11-01/IT·AI-3",
+      "entity": 50
     },
     {
-      "story": "2026-11-02/IT·AI-4",
-      "entity": 30
+      "story": "2026-11-01/IT·AI-3",
+      "entity": 227
     },
     {
-      "story": "2026-11-02/IT·AI-5",
-      "entity": 242
+      "story": "2026-11-01/IT·AI-4",
+      "entity": 63
     },
     {
-      "story": "2026-11-02/IT·AI-s1",
-      "entity": 56
+      "story": "2026-11-01/IT·AI-4",
+      "entity": 64
+    },
+    {
+      "story": "2026-11-01/IT·AI-4",
+      "entity": 226
+    },
+    {
+      "story": "2026-11-01/IT·AI-5",
+      "entity": 57
+    },
+    {
+      "story": "2026-11-01/IT·AI-5",
+      "entity": 60
+    },
+    {
+      "story": "2026-11-01/IT·AI-s3",
+      "entity": 12
+    },
+    {
+      "story": "2026-11-01/IT·AI-s3",
+      "entity": 219
     },
     {
       "story": "2026-11-02/세계-1",
@@ -9908,88 +9868,44 @@
       "entity": 243
     },
     {
-      "story": "2026-11-03/IT·AI-1",
-      "entity": 12
-    },
-    {
-      "story": "2026-11-03/IT·AI-1",
+      "story": "2026-11-02/IT·AI-1",
       "entity": 41
     },
     {
-      "story": "2026-11-03/IT·AI-1",
+      "story": "2026-11-02/IT·AI-1",
       "entity": 149
     },
     {
-      "story": "2026-11-03/IT·AI-1",
+      "story": "2026-11-02/IT·AI-1",
+      "entity": 202
+    },
+    {
+      "story": "2026-11-02/IT·AI-1",
       "entity": 234
     },
     {
-      "story": "2026-11-03/IT·AI-1",
-      "entity": 270
+      "story": "2026-11-02/IT·AI-2",
+      "entity": 50
     },
     {
-      "story": "2026-11-03/IT·AI-2",
-      "entity": 103
+      "story": "2026-11-02/IT·AI-2",
+      "entity": 52
     },
     {
-      "story": "2026-11-03/IT·AI-2",
-      "entity": 259
+      "story": "2026-11-02/IT·AI-4",
+      "entity": 29
     },
     {
-      "story": "2026-11-03/IT·AI-2",
-      "entity": 260
+      "story": "2026-11-02/IT·AI-4",
+      "entity": 30
     },
     {
-      "story": "2026-11-03/IT·AI-3",
-      "entity": 42
+      "story": "2026-11-02/IT·AI-5",
+      "entity": 242
     },
     {
-      "story": "2026-11-03/IT·AI-3",
-      "entity": 63
-    },
-    {
-      "story": "2026-11-03/IT·AI-3",
-      "entity": 138
-    },
-    {
-      "story": "2026-11-03/IT·AI-3",
-      "entity": 261
-    },
-    {
-      "story": "2026-11-03/IT·AI-4",
-      "entity": 62
-    },
-    {
-      "story": "2026-11-03/IT·AI-4",
-      "entity": 262
-    },
-    {
-      "story": "2026-11-03/IT·AI-4",
-      "entity": 263
-    },
-    {
-      "story": "2026-11-03/IT·AI-4",
-      "entity": 264
-    },
-    {
-      "story": "2026-11-03/IT·AI-5",
-      "entity": 57
-    },
-    {
-      "story": "2026-11-03/IT·AI-5",
-      "entity": 265
-    },
-    {
-      "story": "2026-11-03/IT·AI-s1",
-      "entity": 65
-    },
-    {
-      "story": "2026-11-03/IT·AI-s2",
-      "entity": 65
-    },
-    {
-      "story": "2026-11-03/IT·AI-s2",
-      "entity": 266
+      "story": "2026-11-02/IT·AI-s1",
+      "entity": 56
     },
     {
       "story": "2026-11-03/세계-1",
@@ -10200,72 +10116,88 @@
       "entity": 236
     },
     {
-      "story": "2026-11-04/IT·AI-1",
-      "entity": 218
+      "story": "2026-11-03/IT·AI-1",
+      "entity": 12
     },
     {
-      "story": "2026-11-04/IT·AI-1",
-      "entity": 292
+      "story": "2026-11-03/IT·AI-1",
+      "entity": 41
     },
     {
-      "story": "2026-11-04/IT·AI-2",
-      "entity": 293
+      "story": "2026-11-03/IT·AI-1",
+      "entity": 149
     },
     {
-      "story": "2026-11-04/IT·AI-2",
-      "entity": 294
+      "story": "2026-11-03/IT·AI-1",
+      "entity": 234
     },
     {
-      "story": "2026-11-04/IT·AI-2",
-      "entity": 295
+      "story": "2026-11-03/IT·AI-1",
+      "entity": 270
     },
     {
-      "story": "2026-11-04/IT·AI-3",
-      "entity": 296
+      "story": "2026-11-03/IT·AI-2",
+      "entity": 103
     },
     {
-      "story": "2026-11-04/IT·AI-4",
-      "entity": 112
+      "story": "2026-11-03/IT·AI-2",
+      "entity": 259
     },
     {
-      "story": "2026-11-04/IT·AI-4",
-      "entity": 297
+      "story": "2026-11-03/IT·AI-2",
+      "entity": 260
     },
     {
-      "story": "2026-11-04/IT·AI-5",
-      "entity": 156
+      "story": "2026-11-03/IT·AI-3",
+      "entity": 42
     },
     {
-      "story": "2026-11-04/IT·AI-5",
-      "entity": 298
+      "story": "2026-11-03/IT·AI-3",
+      "entity": 63
     },
     {
-      "story": "2026-11-04/IT·AI-6",
-      "entity": 299
+      "story": "2026-11-03/IT·AI-3",
+      "entity": 138
     },
     {
-      "story": "2026-11-04/IT·AI-6",
-      "entity": 300
+      "story": "2026-11-03/IT·AI-3",
+      "entity": 261
     },
     {
-      "story": "2026-11-04/IT·AI-s1",
+      "story": "2026-11-03/IT·AI-4",
       "entity": 62
     },
     {
-      "story": "2026-11-04/IT·AI-s1",
-      "entity": 118
+      "story": "2026-11-03/IT·AI-4",
+      "entity": 262
     },
     {
-      "story": "2026-11-04/IT·AI-s2",
-      "entity": 301
+      "story": "2026-11-03/IT·AI-4",
+      "entity": 263
     },
     {
-      "story": "2026-11-04/IT·AI-s3",
-      "entity": 302
+      "story": "2026-11-03/IT·AI-4",
+      "entity": 264
     },
     {
-      "story": "2026-11-04/IT·AI-s3",
-      "entity": 303
+      "story": "2026-11-03/IT·AI-5",
+      "entity": 57
+    },
+    {
+      "story": "2026-11-03/IT·AI-5",
+      "entity": 265
+    },
+    {
+      "story": "2026-11-03/IT·AI-s1",
+      "entity": 65
+    },
+    {
+      "story": "2026-11-03/IT·AI-s2",
+      "entity": 65
+    },
+    {
+      "story": "2026-11-03/IT·AI-s2",
+      "entity": 266
     },
     {
       "story": "2026-11-04/세계-1",
@@ -10468,76 +10400,72 @@
       "entity": 279
     },
     {
-      "story": "2026-11-05/IT·AI-1",
-      "entity": 113
+      "story": "2026-11-04/IT·AI-1",
+      "entity": 218
     },
     {
-      "story": "2026-11-05/IT·AI-1",
-      "entity": 330
+      "story": "2026-11-04/IT·AI-1",
+      "entity": 292
     },
     {
-      "story": "2026-11-05/IT·AI-2",
-      "entity": 48
+      "story": "2026-11-04/IT·AI-2",
+      "entity": 293
     },
     {
-      "story": "2026-11-05/IT·AI-2",
-      "entity": 331
+      "story": "2026-11-04/IT·AI-2",
+      "entity": 294
     },
     {
-      "story": "2026-11-05/IT·AI-2",
-      "entity": 332
+      "story": "2026-11-04/IT·AI-2",
+      "entity": 295
     },
     {
-      "story": "2026-11-05/IT·AI-2",
-      "entity": 333
+      "story": "2026-11-04/IT·AI-3",
+      "entity": 296
     },
     {
-      "story": "2026-11-05/IT·AI-3",
-      "entity": 48
+      "story": "2026-11-04/IT·AI-4",
+      "entity": 112
     },
     {
-      "story": "2026-11-05/IT·AI-3",
-      "entity": 65
+      "story": "2026-11-04/IT·AI-4",
+      "entity": 297
     },
     {
-      "story": "2026-11-05/IT·AI-4",
-      "entity": 334
+      "story": "2026-11-04/IT·AI-5",
+      "entity": 156
     },
     {
-      "story": "2026-11-05/IT·AI-4",
-      "entity": 335
+      "story": "2026-11-04/IT·AI-5",
+      "entity": 298
     },
     {
-      "story": "2026-11-05/IT·AI-5",
-      "entity": 56
+      "story": "2026-11-04/IT·AI-6",
+      "entity": 299
     },
     {
-      "story": "2026-11-05/IT·AI-5",
+      "story": "2026-11-04/IT·AI-6",
+      "entity": 300
+    },
+    {
+      "story": "2026-11-04/IT·AI-s1",
       "entity": 62
     },
     {
-      "story": "2026-11-05/IT·AI-5",
-      "entity": 327
+      "story": "2026-11-04/IT·AI-s1",
+      "entity": 118
     },
     {
-      "story": "2026-11-05/IT·AI-5",
-      "entity": 336
+      "story": "2026-11-04/IT·AI-s2",
+      "entity": 301
     },
     {
-      "story": "2026-11-05/IT·AI-5",
-      "entity": 337
+      "story": "2026-11-04/IT·AI-s3",
+      "entity": 302
     },
     {
-      "story": "2026-11-05/IT·AI-6",
-      "entity": 41
-    },
-    {
-      "story": "2026-11-05/IT·AI-6",
-      "entity": 338
-    },
-    {
-      "story": "2026-11-05/IT·AI-s1",
-      "entity": 339
+      "story": "2026-11-04/IT·AI-s3",
+      "entity": 303
     },
     {
       "story": "2026-11-05/세계-1",
@@ -10744,108 +10672,76 @@
       "entity": 317
     },
     {
-      "story": "2026-11-06/IT·AI-1",
-      "entity": 50
-    },
-    {
-      "story": "2026-11-06/IT·AI-1",
-      "entity": 65
-    },
-    {
-      "story": "2026-11-06/IT·AI-1",
-      "entity": 219
-    },
-    {
-      "story": "2026-11-06/IT·AI-1",
-      "entity": 331
-    },
-    {
-      "story": "2026-11-06/IT·AI-1",
-      "entity": 335
-    },
-    {
-      "story": "2026-11-06/IT·AI-1",
-      "entity": 356
-    },
-    {
-      "story": "2026-11-06/IT·AI-2",
-      "entity": 53
-    },
-    {
-      "story": "2026-11-06/IT·AI-3",
-      "entity": 53
-    },
-    {
-      "story": "2026-11-06/IT·AI-3",
-      "entity": 62
-    },
-    {
-      "story": "2026-11-06/IT·AI-3",
-      "entity": 112
-    },
-    {
-      "story": "2026-11-06/IT·AI-3",
+      "story": "2026-11-05/IT·AI-1",
       "entity": 113
     },
     {
-      "story": "2026-11-06/IT·AI-4",
-      "entity": 131
+      "story": "2026-11-05/IT·AI-1",
+      "entity": 330
     },
     {
-      "story": "2026-11-06/IT·AI-4",
+      "story": "2026-11-05/IT·AI-2",
+      "entity": 48
+    },
+    {
+      "story": "2026-11-05/IT·AI-2",
+      "entity": 331
+    },
+    {
+      "story": "2026-11-05/IT·AI-2",
+      "entity": 332
+    },
+    {
+      "story": "2026-11-05/IT·AI-2",
+      "entity": 333
+    },
+    {
+      "story": "2026-11-05/IT·AI-3",
+      "entity": 48
+    },
+    {
+      "story": "2026-11-05/IT·AI-3",
+      "entity": 65
+    },
+    {
+      "story": "2026-11-05/IT·AI-4",
+      "entity": 334
+    },
+    {
+      "story": "2026-11-05/IT·AI-4",
+      "entity": 335
+    },
+    {
+      "story": "2026-11-05/IT·AI-5",
+      "entity": 56
+    },
+    {
+      "story": "2026-11-05/IT·AI-5",
+      "entity": 62
+    },
+    {
+      "story": "2026-11-05/IT·AI-5",
+      "entity": 327
+    },
+    {
+      "story": "2026-11-05/IT·AI-5",
       "entity": 336
     },
     {
-      "story": "2026-11-06/IT·AI-5",
-      "entity": 357
+      "story": "2026-11-05/IT·AI-5",
+      "entity": 337
     },
     {
-      "story": "2026-11-06/IT·AI-5",
-      "entity": 358
+      "story": "2026-11-05/IT·AI-6",
+      "entity": 41
     },
     {
-      "story": "2026-11-06/IT·AI-6",
-      "entity": 359
+      "story": "2026-11-05/IT·AI-6",
+      "entity": 338
     },
     {
-      "story": "2026-11-06/IT·AI-7",
-      "entity": 219
-    },
-    {
-      "story": "2026-11-06/IT·AI-7",
-      "entity": 360
-    },
-    {
-      "story": "2026-11-06/IT·AI-s1",
-      "entity": 111
-    },
-    {
-      "story": "2026-11-06/IT·AI-s1",
-      "entity": 298
-    },
-    {
-      "story": "2026-11-06/IT·AI-s2",
-      "entity": 65
-    },
-    {
-      "story": "2026-11-06/IT·AI-s2",
-      "entity": 356
-    },
-    {
-      "story": "2026-11-06/IT·AI-s3",
-      "entity": 65
-    },
-    {
-      "story": "2026-11-06/IT·AI-s3",
-      "entity": 266
-    },
-    {
-      "story": "2026-11-06/IT·AI-s4",
-      "entity": 12
-    },
-    {
-      "story": "2026-11-06/IT·AI-s4",
-      "entity": 149
+      "story": "2026-11-05/IT·AI-s1",
+      "entity": 339
     },
     {
       "story": "2026-11-06/세계-1",
@@ -11076,68 +10972,108 @@
       "entity": 346
     },
     {
-      "story": "2026-11-07/IT·AI-1",
-      "entity": 113
-    },
-    {
-      "story": "2026-11-07/IT·AI-1",
-      "entity": 331
-    },
-    {
-      "story": "2026-11-07/IT·AI-1",
-      "entity": 382
-    },
-    {
-      "story": "2026-11-07/IT·AI-1",
-      "entity": 383
-    },
-    {
-      "story": "2026-11-07/IT·AI-2",
-      "entity": 40
-    },
-    {
-      "story": "2026-11-07/IT·AI-2",
+      "story": "2026-11-06/IT·AI-1",
       "entity": 50
     },
     {
-      "story": "2026-11-07/IT·AI-2",
+      "story": "2026-11-06/IT·AI-1",
+      "entity": 65
+    },
+    {
+      "story": "2026-11-06/IT·AI-1",
+      "entity": 219
+    },
+    {
+      "story": "2026-11-06/IT·AI-1",
+      "entity": 331
+    },
+    {
+      "story": "2026-11-06/IT·AI-1",
+      "entity": 335
+    },
+    {
+      "story": "2026-11-06/IT·AI-1",
+      "entity": 356
+    },
+    {
+      "story": "2026-11-06/IT·AI-2",
+      "entity": 53
+    },
+    {
+      "story": "2026-11-06/IT·AI-3",
+      "entity": 53
+    },
+    {
+      "story": "2026-11-06/IT·AI-3",
+      "entity": 62
+    },
+    {
+      "story": "2026-11-06/IT·AI-3",
+      "entity": 112
+    },
+    {
+      "story": "2026-11-06/IT·AI-3",
       "entity": 113
     },
     {
-      "story": "2026-11-07/IT·AI-2",
-      "entity": 280
+      "story": "2026-11-06/IT·AI-4",
+      "entity": 131
     },
     {
-      "story": "2026-11-07/IT·AI-3",
-      "entity": 57
+      "story": "2026-11-06/IT·AI-4",
+      "entity": 336
     },
     {
-      "story": "2026-11-07/IT·AI-4",
-      "entity": 56
+      "story": "2026-11-06/IT·AI-5",
+      "entity": 357
     },
     {
-      "story": "2026-11-07/IT·AI-5",
+      "story": "2026-11-06/IT·AI-5",
+      "entity": 358
+    },
+    {
+      "story": "2026-11-06/IT·AI-6",
+      "entity": 359
+    },
+    {
+      "story": "2026-11-06/IT·AI-7",
+      "entity": 219
+    },
+    {
+      "story": "2026-11-06/IT·AI-7",
+      "entity": 360
+    },
+    {
+      "story": "2026-11-06/IT·AI-s1",
+      "entity": 111
+    },
+    {
+      "story": "2026-11-06/IT·AI-s1",
+      "entity": 298
+    },
+    {
+      "story": "2026-11-06/IT·AI-s2",
+      "entity": 65
+    },
+    {
+      "story": "2026-11-06/IT·AI-s2",
+      "entity": 356
+    },
+    {
+      "story": "2026-11-06/IT·AI-s3",
+      "entity": 65
+    },
+    {
+      "story": "2026-11-06/IT·AI-s3",
+      "entity": 266
+    },
+    {
+      "story": "2026-11-06/IT·AI-s4",
+      "entity": 12
+    },
+    {
+      "story": "2026-11-06/IT·AI-s4",
       "entity": 149
-    },
-    {
-      "story": "2026-11-07/IT·AI-5",
-      "entity": 384
-    },
-    {
-      "story": "2026-11-07/IT·AI-6",
-      "entity": 385
-    },
-    {
-      "story": "2026-11-07/IT·AI-6",
-      "entity": 386
-    },
-    {
-      "story": "2026-11-07/IT·AI-s1",
-      "entity": 387
-    },
-    {
-      "story": "2026-11-07/IT·AI-s2",
-      "entity": 388
     },
     {
       "story": "2026-11-07/세계-1",
@@ -11376,80 +11312,68 @@
       "entity": 84
     },
     {
-      "story": "2026-11-08/IT·AI-1",
-      "entity": 65
-    },
-    {
-      "story": "2026-11-08/IT·AI-1",
-      "entity": 114
-    },
-    {
-      "story": "2026-11-08/IT·AI-1",
-      "entity": 407
-    },
-    {
-      "story": "2026-11-08/IT·AI-1",
-      "entity": 408
-    },
-    {
-      "story": "2026-11-08/IT·AI-2",
-      "entity": 50
-    },
-    {
-      "story": "2026-11-08/IT·AI-3",
-      "entity": 40
-    },
-    {
-      "story": "2026-11-08/IT·AI-3",
-      "entity": 138
-    },
-    {
-      "story": "2026-11-08/IT·AI-3",
-      "entity": 409
-    },
-    {
-      "story": "2026-11-08/IT·AI-3",
-      "entity": 410
-    },
-    {
-      "story": "2026-11-08/IT·AI-4",
-      "entity": 411
-    },
-    {
-      "story": "2026-11-08/IT·AI-5",
-      "entity": 149
-    },
-    {
-      "story": "2026-11-08/IT·AI-5",
-      "entity": 202
-    },
-    {
-      "story": "2026-11-08/IT·AI-5",
-      "entity": 359
-    },
-    {
-      "story": "2026-11-08/IT·AI-5",
-      "entity": 363
-    },
-    {
-      "story": "2026-11-08/IT·AI-6",
+      "story": "2026-11-07/IT·AI-1",
       "entity": 113
     },
     {
-      "story": "2026-11-08/IT·AI-s1",
-      "entity": 357
+      "story": "2026-11-07/IT·AI-1",
+      "entity": 331
     },
     {
-      "story": "2026-11-08/IT·AI-s1",
-      "entity": 358
+      "story": "2026-11-07/IT·AI-1",
+      "entity": 382
     },
     {
-      "story": "2026-11-08/IT·AI-s2",
-      "entity": 118
+      "story": "2026-11-07/IT·AI-1",
+      "entity": 383
     },
     {
-      "story": "2026-11-08/IT·AI-s2",
-      "entity": 290
+      "story": "2026-11-07/IT·AI-2",
+      "entity": 40
+    },
+    {
+      "story": "2026-11-07/IT·AI-2",
+      "entity": 50
+    },
+    {
+      "story": "2026-11-07/IT·AI-2",
+      "entity": 113
+    },
+    {
+      "story": "2026-11-07/IT·AI-2",
+      "entity": 280
+    },
+    {
+      "story": "2026-11-07/IT·AI-3",
+      "entity": 57
+    },
+    {
+      "story": "2026-11-07/IT·AI-4",
+      "entity": 56
+    },
+    {
+      "story": "2026-11-07/IT·AI-5",
+      "entity": 149
+    },
+    {
+      "story": "2026-11-07/IT·AI-5",
+      "entity": 384
+    },
+    {
+      "story": "2026-11-07/IT·AI-6",
+      "entity": 385
+    },
+    {
+      "story": "2026-11-07/IT·AI-6",
+      "entity": 386
+    },
+    {
+      "story": "2026-11-07/IT·AI-s1",
+      "entity": 387
+    },
+    {
+      "story": "2026-11-07/IT·AI-s2",
+      "entity": 388
     },
     {
       "story": "2026-11-08/세계-1",
@@ -11676,100 +11600,80 @@
       "entity": 182
     },
     {
-      "story": "2026-11-09/IT·AI-1",
-      "entity": 40
-    },
-    {
-      "story": "2026-11-09/IT·AI-1",
-      "entity": 41
-    },
-    {
-      "story": "2026-11-09/IT·AI-1",
-      "entity": 48
-    },
-    {
-      "story": "2026-11-09/IT·AI-1",
+      "story": "2026-11-08/IT·AI-1",
       "entity": 65
     },
     {
-      "story": "2026-11-09/IT·AI-1",
+      "story": "2026-11-08/IT·AI-1",
       "entity": 114
     },
     {
-      "story": "2026-11-09/IT·AI-2",
-      "entity": 62
+      "story": "2026-11-08/IT·AI-1",
+      "entity": 407
     },
     {
-      "story": "2026-11-09/IT·AI-2",
-      "entity": 296
+      "story": "2026-11-08/IT·AI-1",
+      "entity": 408
     },
     {
-      "story": "2026-11-09/IT·AI-3",
+      "story": "2026-11-08/IT·AI-2",
       "entity": 50
     },
     {
-      "story": "2026-11-09/IT·AI-3",
-      "entity": 309
+      "story": "2026-11-08/IT·AI-3",
+      "entity": 40
     },
     {
-      "story": "2026-11-09/IT·AI-4",
-      "entity": 107
+      "story": "2026-11-08/IT·AI-3",
+      "entity": 138
     },
     {
-      "story": "2026-11-09/IT·AI-4",
-      "entity": 131
+      "story": "2026-11-08/IT·AI-3",
+      "entity": 409
     },
     {
-      "story": "2026-11-09/IT·AI-4",
-      "entity": 137
+      "story": "2026-11-08/IT·AI-3",
+      "entity": 410
     },
     {
-      "story": "2026-11-09/IT·AI-4",
-      "entity": 218
+      "story": "2026-11-08/IT·AI-4",
+      "entity": 411
     },
     {
-      "story": "2026-11-09/IT·AI-4",
-      "entity": 400
+      "story": "2026-11-08/IT·AI-5",
+      "entity": 149
     },
     {
-      "story": "2026-11-09/IT·AI-4",
-      "entity": 429
+      "story": "2026-11-08/IT·AI-5",
+      "entity": 202
     },
     {
-      "story": "2026-11-09/IT·AI-5",
-      "entity": 65
+      "story": "2026-11-08/IT·AI-5",
+      "entity": 359
     },
     {
-      "story": "2026-11-09/IT·AI-5",
-      "entity": 430
+      "story": "2026-11-08/IT·AI-5",
+      "entity": 363
     },
     {
-      "story": "2026-11-09/IT·AI-5",
-      "entity": 431
+      "story": "2026-11-08/IT·AI-6",
+      "entity": 113
     },
     {
-      "story": "2026-11-09/IT·AI-5",
-      "entity": 432
+      "story": "2026-11-08/IT·AI-s1",
+      "entity": 357
     },
     {
-      "story": "2026-11-09/IT·AI-5",
-      "entity": 433
+      "story": "2026-11-08/IT·AI-s1",
+      "entity": 358
     },
     {
-      "story": "2026-11-09/IT·AI-6",
-      "entity": 56
+      "story": "2026-11-08/IT·AI-s2",
+      "entity": 118
     },
     {
-      "story": "2026-11-09/IT·AI-s1",
-      "entity": 156
-    },
-    {
-      "story": "2026-11-09/IT·AI-s2",
-      "entity": 434
-    },
-    {
-      "story": "2026-11-09/IT·AI-s2",
-      "entity": 435
+      "story": "2026-11-08/IT·AI-s2",
+      "entity": 290
     },
     {
       "story": "2026-11-09/세계-1",
@@ -12008,88 +11912,100 @@
       "entity": 420
     },
     {
-      "story": "2026-11-10/IT·AI-1",
+      "story": "2026-11-09/IT·AI-1",
+      "entity": 40
+    },
+    {
+      "story": "2026-11-09/IT·AI-1",
       "entity": 41
     },
     {
-      "story": "2026-11-10/IT·AI-1",
+      "story": "2026-11-09/IT·AI-1",
       "entity": 48
     },
     {
-      "story": "2026-11-10/IT·AI-1",
+      "story": "2026-11-09/IT·AI-1",
       "entity": 65
     },
     {
-      "story": "2026-11-10/IT·AI-1",
+      "story": "2026-11-09/IT·AI-1",
       "entity": 114
     },
     {
-      "story": "2026-11-10/IT·AI-1",
-      "entity": 451
+      "story": "2026-11-09/IT·AI-2",
+      "entity": 62
     },
     {
-      "story": "2026-11-10/IT·AI-2",
+      "story": "2026-11-09/IT·AI-2",
+      "entity": 296
+    },
+    {
+      "story": "2026-11-09/IT·AI-3",
       "entity": 50
     },
     {
-      "story": "2026-11-10/IT·AI-2",
-      "entity": 52
+      "story": "2026-11-09/IT·AI-3",
+      "entity": 309
     },
     {
-      "story": "2026-11-10/IT·AI-2",
-      "entity": 156
-    },
-    {
-      "story": "2026-11-10/IT·AI-2",
-      "entity": 452
-    },
-    {
-      "story": "2026-11-10/IT·AI-3",
-      "entity": 158
-    },
-    {
-      "story": "2026-11-10/IT·AI-3",
-      "entity": 202
-    },
-    {
-      "story": "2026-11-10/IT·AI-3",
-      "entity": 453
-    },
-    {
-      "story": "2026-11-10/IT·AI-4",
-      "entity": 113
-    },
-    {
-      "story": "2026-11-10/IT·AI-4",
-      "entity": 220
-    },
-    {
-      "story": "2026-11-10/IT·AI-4",
-      "entity": 454
-    },
-    {
-      "story": "2026-11-10/IT·AI-5",
-      "entity": 113
-    },
-    {
-      "story": "2026-11-10/IT·AI-5",
-      "entity": 331
-    },
-    {
-      "story": "2026-11-10/IT·AI-s1",
-      "entity": 356
-    },
-    {
-      "story": "2026-11-10/IT·AI-s2",
-      "entity": 459
-    },
-    {
-      "story": "2026-11-10/IT·AI-s3",
+      "story": "2026-11-09/IT·AI-4",
       "entity": 107
     },
     {
-      "story": "2026-11-10/IT·AI-s3",
+      "story": "2026-11-09/IT·AI-4",
+      "entity": 131
+    },
+    {
+      "story": "2026-11-09/IT·AI-4",
+      "entity": 137
+    },
+    {
+      "story": "2026-11-09/IT·AI-4",
       "entity": 218
+    },
+    {
+      "story": "2026-11-09/IT·AI-4",
+      "entity": 400
+    },
+    {
+      "story": "2026-11-09/IT·AI-4",
+      "entity": 429
+    },
+    {
+      "story": "2026-11-09/IT·AI-5",
+      "entity": 65
+    },
+    {
+      "story": "2026-11-09/IT·AI-5",
+      "entity": 430
+    },
+    {
+      "story": "2026-11-09/IT·AI-5",
+      "entity": 431
+    },
+    {
+      "story": "2026-11-09/IT·AI-5",
+      "entity": 432
+    },
+    {
+      "story": "2026-11-09/IT·AI-5",
+      "entity": 433
+    },
+    {
+      "story": "2026-11-09/IT·AI-6",
+      "entity": 56
+    },
+    {
+      "story": "2026-11-09/IT·AI-s1",
+      "entity": 156
+    },
+    {
+      "story": "2026-11-09/IT·AI-s2",
+      "entity": 434
+    },
+    {
+      "story": "2026-11-09/IT·AI-s2",
+      "entity": 435
     },
     {
       "story": "2026-11-10/세계-1",
@@ -12300,80 +12216,88 @@
       "entity": 84
     },
     {
-      "story": "2026-11-11/IT·AI-1",
-      "entity": 65
+      "story": "2026-11-10/IT·AI-1",
+      "entity": 41
     },
     {
-      "story": "2026-11-11/IT·AI-1",
-      "entity": 114
-    },
-    {
-      "story": "2026-11-11/IT·AI-1",
-      "entity": 206
-    },
-    {
-      "story": "2026-11-11/IT·AI-1",
-      "entity": 469
-    },
-    {
-      "story": "2026-11-11/IT·AI-1",
-      "entity": 470
-    },
-    {
-      "story": "2026-11-11/IT·AI-2",
-      "entity": 294
-    },
-    {
-      "story": "2026-11-11/IT·AI-3",
-      "entity": 50
-    },
-    {
-      "story": "2026-11-11/IT·AI-3",
-      "entity": 62
-    },
-    {
-      "story": "2026-11-11/IT·AI-3",
-      "entity": 119
-    },
-    {
-      "story": "2026-11-11/IT·AI-4",
-      "entity": 202
-    },
-    {
-      "story": "2026-11-11/IT·AI-4",
-      "entity": 363
-    },
-    {
-      "story": "2026-11-11/IT·AI-4",
-      "entity": 453
-    },
-    {
-      "story": "2026-11-11/IT·AI-5",
-      "entity": 42
-    },
-    {
-      "story": "2026-11-11/IT·AI-5",
+      "story": "2026-11-10/IT·AI-1",
       "entity": 48
     },
     {
-      "story": "2026-11-11/IT·AI-5",
+      "story": "2026-11-10/IT·AI-1",
       "entity": 65
     },
     {
-      "story": "2026-11-11/IT·AI-s1",
-      "entity": 471
+      "story": "2026-11-10/IT·AI-1",
+      "entity": 114
     },
     {
-      "story": "2026-11-11/IT·AI-s2",
-      "entity": 203
+      "story": "2026-11-10/IT·AI-1",
+      "entity": 451
     },
     {
-      "story": "2026-11-11/IT·AI-s2",
-      "entity": 472
+      "story": "2026-11-10/IT·AI-2",
+      "entity": 50
     },
     {
-      "story": "2026-11-11/IT·AI-s3",
-      "entity": 472
+      "story": "2026-11-10/IT·AI-2",
+      "entity": 52
+    },
+    {
+      "story": "2026-11-10/IT·AI-2",
+      "entity": 156
+    },
+    {
+      "story": "2026-11-10/IT·AI-2",
+      "entity": 452
+    },
+    {
+      "story": "2026-11-10/IT·AI-3",
+      "entity": 158
+    },
+    {
+      "story": "2026-11-10/IT·AI-3",
+      "entity": 202
+    },
+    {
+      "story": "2026-11-10/IT·AI-3",
+      "entity": 453
+    },
+    {
+      "story": "2026-11-10/IT·AI-4",
+      "entity": 113
+    },
+    {
+      "story": "2026-11-10/IT·AI-4",
+      "entity": 220
+    },
+    {
+      "story": "2026-11-10/IT·AI-4",
+      "entity": 454
+    },
+    {
+      "story": "2026-11-10/IT·AI-5",
+      "entity": 113
+    },
+    {
+      "story": "2026-11-10/IT·AI-5",
+      "entity": 331
+    },
+    {
+      "story": "2026-11-10/IT·AI-s1",
+      "entity": 356
+    },
+    {
+      "story": "2026-11-10/IT·AI-s2",
+      "entity": 459
+    },
+    {
+      "story": "2026-11-10/IT·AI-s3",
+      "entity": 107
+    },
+    {
+      "story": "2026-11-10/IT·AI-s3",
+      "entity": 218
     },
     {
       "story": "2026-11-11/세계-1",
@@ -12528,84 +12452,80 @@
       "entity": 277
     },
     {
-      "story": "2026-11-12/IT·AI-1",
+      "story": "2026-11-11/IT·AI-1",
       "entity": 65
     },
     {
-      "story": "2026-11-12/IT·AI-1",
+      "story": "2026-11-11/IT·AI-1",
       "entity": 114
     },
     {
-      "story": "2026-11-12/IT·AI-1",
-      "entity": 486
+      "story": "2026-11-11/IT·AI-1",
+      "entity": 206
     },
     {
-      "story": "2026-11-12/IT·AI-1",
-      "entity": 487
+      "story": "2026-11-11/IT·AI-1",
+      "entity": 469
     },
     {
-      "story": "2026-11-12/IT·AI-2",
-      "entity": 114
+      "story": "2026-11-11/IT·AI-1",
+      "entity": 470
     },
     {
-      "story": "2026-11-12/IT·AI-2",
-      "entity": 138
+      "story": "2026-11-11/IT·AI-2",
+      "entity": 294
     },
     {
-      "story": "2026-11-12/IT·AI-2",
-      "entity": 155
+      "story": "2026-11-11/IT·AI-3",
+      "entity": 50
     },
     {
-      "story": "2026-11-12/IT·AI-2",
-      "entity": 281
-    },
-    {
-      "story": "2026-11-12/IT·AI-2",
-      "entity": 401
-    },
-    {
-      "story": "2026-11-12/IT·AI-2",
-      "entity": 410
-    },
-    {
-      "story": "2026-11-12/IT·AI-3",
+      "story": "2026-11-11/IT·AI-3",
       "entity": 62
     },
     {
-      "story": "2026-11-12/IT·AI-3",
-      "entity": 64
+      "story": "2026-11-11/IT·AI-3",
+      "entity": 119
     },
     {
-      "story": "2026-11-12/IT·AI-3",
-      "entity": 488
-    },
-    {
-      "story": "2026-11-12/IT·AI-3",
-      "entity": 489
-    },
-    {
-      "story": "2026-11-12/IT·AI-4",
-      "entity": 62
-    },
-    {
-      "story": "2026-11-12/IT·AI-4",
-      "entity": 490
-    },
-    {
-      "story": "2026-11-12/IT·AI-5",
-      "entity": 219
-    },
-    {
-      "story": "2026-11-12/IT·AI-5",
-      "entity": 491
-    },
-    {
-      "story": "2026-11-12/IT·AI-s1",
+      "story": "2026-11-11/IT·AI-4",
       "entity": 202
     },
     {
-      "story": "2026-11-12/IT·AI-s2",
-      "entity": 492
+      "story": "2026-11-11/IT·AI-4",
+      "entity": 363
+    },
+    {
+      "story": "2026-11-11/IT·AI-4",
+      "entity": 453
+    },
+    {
+      "story": "2026-11-11/IT·AI-5",
+      "entity": 42
+    },
+    {
+      "story": "2026-11-11/IT·AI-5",
+      "entity": 48
+    },
+    {
+      "story": "2026-11-11/IT·AI-5",
+      "entity": 65
+    },
+    {
+      "story": "2026-11-11/IT·AI-s1",
+      "entity": 471
+    },
+    {
+      "story": "2026-11-11/IT·AI-s2",
+      "entity": 203
+    },
+    {
+      "story": "2026-11-11/IT·AI-s2",
+      "entity": 472
+    },
+    {
+      "story": "2026-11-11/IT·AI-s3",
+      "entity": 472
     },
     {
       "story": "2026-11-12/세계-1",
@@ -12826,54 +12746,89 @@
     {
       "story": "2026-11-12/한국-s5",
       "entity": 481
+    },
+    {
+      "story": "2026-11-12/IT·AI-1",
+      "entity": 65
+    },
+    {
+      "story": "2026-11-12/IT·AI-1",
+      "entity": 114
+    },
+    {
+      "story": "2026-11-12/IT·AI-1",
+      "entity": 486
+    },
+    {
+      "story": "2026-11-12/IT·AI-1",
+      "entity": 487
+    },
+    {
+      "story": "2026-11-12/IT·AI-2",
+      "entity": 114
+    },
+    {
+      "story": "2026-11-12/IT·AI-2",
+      "entity": 138
+    },
+    {
+      "story": "2026-11-12/IT·AI-2",
+      "entity": 155
+    },
+    {
+      "story": "2026-11-12/IT·AI-2",
+      "entity": 281
+    },
+    {
+      "story": "2026-11-12/IT·AI-2",
+      "entity": 401
+    },
+    {
+      "story": "2026-11-12/IT·AI-2",
+      "entity": 410
+    },
+    {
+      "story": "2026-11-12/IT·AI-3",
+      "entity": 62
+    },
+    {
+      "story": "2026-11-12/IT·AI-3",
+      "entity": 64
+    },
+    {
+      "story": "2026-11-12/IT·AI-3",
+      "entity": 488
+    },
+    {
+      "story": "2026-11-12/IT·AI-3",
+      "entity": 489
+    },
+    {
+      "story": "2026-11-12/IT·AI-4",
+      "entity": 62
+    },
+    {
+      "story": "2026-11-12/IT·AI-4",
+      "entity": 490
+    },
+    {
+      "story": "2026-11-12/IT·AI-5",
+      "entity": 219
+    },
+    {
+      "story": "2026-11-12/IT·AI-5",
+      "entity": 491
+    },
+    {
+      "story": "2026-11-12/IT·AI-s1",
+      "entity": 202
+    },
+    {
+      "story": "2026-11-12/IT·AI-s2",
+      "entity": 492
     }
   ],
   "termLinks": [
-    {
-      "story": "2026-10-27/IT·AI-1",
-      "term": 27,
-      "surface": "S-1"
-    },
-    {
-      "story": "2026-10-27/IT·AI-1",
-      "term": 28,
-      "surface": "기업공개"
-    },
-    {
-      "story": "2026-10-27/IT·AI-1",
-      "term": 29,
-      "surface": "영업손실"
-    },
-    {
-      "story": "2026-10-27/IT·AI-2",
-      "term": 30,
-      "surface": "희망퇴직"
-    },
-    {
-      "story": "2026-10-27/IT·AI-3",
-      "term": 31,
-      "surface": "특수목적회사"
-    },
-    {
-      "story": "2026-10-27/IT·AI-3",
-      "term": 32,
-      "surface": "증자"
-    },
-    {
-      "story": "2026-10-27/IT·AI-4",
-      "term": 33,
-      "surface": "폴더블폰"
-    },
-    {
-      "story": "2026-10-27/IT·AI-5",
-      "term": 34,
-      "surface": "AI 에이전트"
-    },
-    {
-      "story": "2026-10-27/IT·AI-5",
-      "term": 35,
-      "surface": "공개 모델"
-    },
     {
       "story": "2026-10-27/세계-1",
       "term": 16,
@@ -13005,74 +12960,49 @@
       "surface": "압수수색"
     },
     {
-      "story": "2026-10-28/IT·AI-1",
-      "term": 61,
-      "surface": "인앱결제"
+      "story": "2026-10-27/IT·AI-1",
+      "term": 27,
+      "surface": "S-1"
     },
     {
-      "story": "2026-10-28/IT·AI-1",
-      "term": 62,
-      "surface": "과징금"
+      "story": "2026-10-27/IT·AI-1",
+      "term": 28,
+      "surface": "기업공개"
     },
     {
-      "story": "2026-10-28/IT·AI-1",
-      "term": 63,
-      "surface": "시정명령"
+      "story": "2026-10-27/IT·AI-1",
+      "term": 29,
+      "surface": "영업손실"
     },
     {
-      "story": "2026-10-28/IT·AI-2",
-      "term": 64,
-      "surface": "잉여현금흐름"
+      "story": "2026-10-27/IT·AI-2",
+      "term": 30,
+      "surface": "희망퇴직"
     },
     {
-      "story": "2026-10-28/IT·AI-2",
-      "term": 65,
-      "surface": "설비투자"
+      "story": "2026-10-27/IT·AI-3",
+      "term": 31,
+      "surface": "특수목적회사"
     },
     {
-      "story": "2026-10-28/IT·AI-2",
-      "term": 66,
-      "surface": "주당순이익"
+      "story": "2026-10-27/IT·AI-3",
+      "term": 32,
+      "surface": "증자"
     },
     {
-      "story": "2026-10-28/IT·AI-3",
-      "term": 67,
-      "surface": "OLED"
+      "story": "2026-10-27/IT·AI-4",
+      "term": 33,
+      "surface": "폴더블폰"
     },
     {
-      "story": "2026-10-28/IT·AI-3",
-      "term": 68,
-      "surface": "탠덤 OLED"
-    },
-    {
-      "story": "2026-10-28/IT·AI-4",
-      "term": 69,
-      "surface": "TPU"
-    },
-    {
-      "story": "2026-10-28/IT·AI-4",
-      "term": 70,
-      "surface": "GPU"
-    },
-    {
-      "story": "2026-10-28/IT·AI-5",
-      "term": 71,
-      "surface": "추가 자료 요구"
-    },
-    {
-      "story": "2026-10-28/IT·AI-6",
-      "term": 72,
-      "surface": "취약점"
-    },
-    {
-      "story": "2026-10-28/IT·AI-6",
-      "term": 73,
-      "surface": "모델 가중치"
-    },
-    {
-      "story": "2026-10-28/IT·AI-7",
+      "story": "2026-10-27/IT·AI-5",
       "term": 34,
-      "surface": "에이전트"
+      "surface": "AI 에이전트"
+    },
+    {
+      "story": "2026-10-27/IT·AI-5",
+      "term": 35,
+      "surface": "공개 모델"
     },
     {
       "story": "2026-10-28/세계-2",
@@ -13220,89 +13150,74 @@
       "surface": "범인도피"
     },
     {
-      "story": "2026-10-29/IT·AI-1",
-      "term": 94,
-      "surface": "핫월렛"
+      "story": "2026-10-28/IT·AI-1",
+      "term": 61,
+      "surface": "인앱결제"
     },
     {
-      "story": "2026-10-29/IT·AI-1",
-      "term": 95,
-      "surface": "스테이블코인"
+      "story": "2026-10-28/IT·AI-1",
+      "term": 62,
+      "surface": "과징금"
     },
     {
-      "story": "2026-10-29/IT·AI-2",
+      "story": "2026-10-28/IT·AI-1",
+      "term": 63,
+      "surface": "시정명령"
+    },
+    {
+      "story": "2026-10-28/IT·AI-2",
       "term": 64,
       "surface": "잉여현금흐름"
     },
     {
-      "story": "2026-10-29/IT·AI-2",
+      "story": "2026-10-28/IT·AI-2",
       "term": 65,
       "surface": "설비투자"
     },
     {
-      "story": "2026-10-29/IT·AI-2",
-      "term": 96,
-      "surface": "시가총액"
-    },
-    {
-      "story": "2026-10-29/IT·AI-3",
-      "term": 64,
-      "surface": "잉여현금흐름"
-    },
-    {
-      "story": "2026-10-29/IT·AI-3",
-      "term": 65,
-      "surface": "설비투자"
-    },
-    {
-      "story": "2026-10-29/IT·AI-3",
+      "story": "2026-10-28/IT·AI-2",
       "term": 66,
       "surface": "주당순이익"
     },
     {
-      "story": "2026-10-29/IT·AI-4",
-      "term": 66,
-      "surface": "주당순이익"
+      "story": "2026-10-28/IT·AI-3",
+      "term": 67,
+      "surface": "OLED"
     },
     {
-      "story": "2026-10-29/IT·AI-4",
-      "term": 97,
-      "surface": "파운드리"
+      "story": "2026-10-28/IT·AI-3",
+      "term": 68,
+      "surface": "탠덤 OLED"
     },
     {
-      "story": "2026-10-29/IT·AI-4",
-      "term": 98,
-      "surface": "매출총이익률"
+      "story": "2026-10-28/IT·AI-4",
+      "term": 69,
+      "surface": "TPU"
     },
     {
-      "story": "2026-10-29/IT·AI-5",
-      "term": 99,
-      "surface": "단일 로그인"
-    },
-    {
-      "story": "2026-10-29/IT·AI-6",
+      "story": "2026-10-28/IT·AI-4",
       "term": 70,
       "surface": "GPU"
     },
     {
-      "story": "2026-10-29/IT·AI-7",
-      "term": 27,
-      "surface": "S-1"
+      "story": "2026-10-28/IT·AI-5",
+      "term": 71,
+      "surface": "추가 자료 요구"
     },
     {
-      "story": "2026-10-29/IT·AI-8",
+      "story": "2026-10-28/IT·AI-6",
+      "term": 72,
+      "surface": "취약점"
+    },
+    {
+      "story": "2026-10-28/IT·AI-6",
       "term": 73,
-      "surface": "가중치"
+      "surface": "모델 가중치"
     },
     {
-      "story": "2026-10-29/IT·AI-8",
-      "term": 100,
-      "surface": "전문가 혼합"
-    },
-    {
-      "story": "2026-10-29/IT·AI-8",
-      "term": 101,
-      "surface": "파라미터"
+      "story": "2026-10-28/IT·AI-7",
+      "term": 34,
+      "surface": "에이전트"
     },
     {
       "story": "2026-10-29/세계-1",
@@ -13445,34 +13360,89 @@
       "surface": "기금형 퇴직연금"
     },
     {
-      "story": "2026-10-30/IT·AI-1",
+      "story": "2026-10-29/IT·AI-1",
+      "term": 94,
+      "surface": "핫월렛"
+    },
+    {
+      "story": "2026-10-29/IT·AI-1",
+      "term": 95,
+      "surface": "스테이블코인"
+    },
+    {
+      "story": "2026-10-29/IT·AI-2",
+      "term": 64,
+      "surface": "잉여현금흐름"
+    },
+    {
+      "story": "2026-10-29/IT·AI-2",
+      "term": 65,
+      "surface": "설비투자"
+    },
+    {
+      "story": "2026-10-29/IT·AI-2",
       "term": 96,
       "surface": "시가총액"
     },
     {
-      "story": "2026-10-30/IT·AI-2",
-      "term": 107,
-      "surface": "준비금 증명"
+      "story": "2026-10-29/IT·AI-3",
+      "term": 64,
+      "surface": "잉여현금흐름"
     },
     {
-      "story": "2026-10-30/IT·AI-4",
-      "term": 108,
-      "surface": "공급망 공격"
+      "story": "2026-10-29/IT·AI-3",
+      "term": 65,
+      "surface": "설비투자"
     },
     {
-      "story": "2026-10-30/IT·AI-4",
-      "term": 109,
-      "surface": "SSH 키"
+      "story": "2026-10-29/IT·AI-3",
+      "term": 66,
+      "surface": "주당순이익"
     },
     {
-      "story": "2026-10-30/IT·AI-5",
-      "term": 110,
-      "surface": "피싱"
+      "story": "2026-10-29/IT·AI-4",
+      "term": 66,
+      "surface": "주당순이익"
     },
     {
-      "story": "2026-10-30/IT·AI-6",
-      "term": 69,
-      "surface": "TPU"
+      "story": "2026-10-29/IT·AI-4",
+      "term": 97,
+      "surface": "파운드리"
+    },
+    {
+      "story": "2026-10-29/IT·AI-4",
+      "term": 98,
+      "surface": "매출총이익률"
+    },
+    {
+      "story": "2026-10-29/IT·AI-5",
+      "term": 99,
+      "surface": "단일 로그인"
+    },
+    {
+      "story": "2026-10-29/IT·AI-6",
+      "term": 70,
+      "surface": "GPU"
+    },
+    {
+      "story": "2026-10-29/IT·AI-7",
+      "term": 27,
+      "surface": "S-1"
+    },
+    {
+      "story": "2026-10-29/IT·AI-8",
+      "term": 73,
+      "surface": "가중치"
+    },
+    {
+      "story": "2026-10-29/IT·AI-8",
+      "term": 100,
+      "surface": "전문가 혼합"
+    },
+    {
+      "story": "2026-10-29/IT·AI-8",
+      "term": 101,
+      "surface": "파라미터"
     },
     {
       "story": "2026-10-30/세계-1",
@@ -13540,34 +13510,34 @@
       "surface": "상고심"
     },
     {
-      "story": "2026-10-31/IT·AI-1",
-      "term": 94,
-      "surface": "핫월렛"
+      "story": "2026-10-30/IT·AI-1",
+      "term": 96,
+      "surface": "시가총액"
     },
     {
-      "story": "2026-10-31/IT·AI-1",
+      "story": "2026-10-30/IT·AI-2",
       "term": 107,
       "surface": "준비금 증명"
     },
     {
-      "story": "2026-10-31/IT·AI-2",
-      "term": 64,
-      "surface": "잉여현금흐름"
+      "story": "2026-10-30/IT·AI-4",
+      "term": 108,
+      "surface": "공급망 공격"
     },
     {
-      "story": "2026-10-31/IT·AI-2",
-      "term": 65,
-      "surface": "설비투자"
+      "story": "2026-10-30/IT·AI-4",
+      "term": 109,
+      "surface": "SSH 키"
     },
     {
-      "story": "2026-10-31/IT·AI-2",
-      "term": 118,
-      "surface": "투자등급"
+      "story": "2026-10-30/IT·AI-5",
+      "term": 110,
+      "surface": "피싱"
     },
     {
-      "story": "2026-10-31/IT·AI-4",
-      "term": 119,
-      "surface": "낸드 플래시"
+      "story": "2026-10-30/IT·AI-6",
+      "term": 69,
+      "surface": "TPU"
     },
     {
       "story": "2026-10-31/세계-2",
@@ -13615,19 +13585,34 @@
       "surface": "보완수사 요구"
     },
     {
-      "story": "2026-11-01/IT·AI-3",
-      "term": 34,
-      "surface": "에이전트"
+      "story": "2026-10-31/IT·AI-1",
+      "term": 94,
+      "surface": "핫월렛"
     },
     {
-      "story": "2026-11-01/IT·AI-4",
-      "term": 122,
-      "surface": "엔지니어링 샘플"
+      "story": "2026-10-31/IT·AI-1",
+      "term": 107,
+      "surface": "준비금 증명"
     },
     {
-      "story": "2026-11-01/IT·AI-4",
-      "term": 123,
-      "surface": "4F²"
+      "story": "2026-10-31/IT·AI-2",
+      "term": 64,
+      "surface": "잉여현금흐름"
+    },
+    {
+      "story": "2026-10-31/IT·AI-2",
+      "term": 65,
+      "surface": "설비투자"
+    },
+    {
+      "story": "2026-10-31/IT·AI-2",
+      "term": 118,
+      "surface": "투자등급"
+    },
+    {
+      "story": "2026-10-31/IT·AI-4",
+      "term": 119,
+      "surface": "낸드 플래시"
     },
     {
       "story": "2026-11-01/세계-1",
@@ -13655,19 +13640,19 @@
       "surface": "국정조사"
     },
     {
-      "story": "2026-11-02/IT·AI-1",
-      "term": 126,
-      "surface": "순유출"
+      "story": "2026-11-01/IT·AI-3",
+      "term": 34,
+      "surface": "에이전트"
     },
     {
-      "story": "2026-11-02/IT·AI-2",
-      "term": 27,
-      "surface": "S-1"
+      "story": "2026-11-01/IT·AI-4",
+      "term": 122,
+      "surface": "엔지니어링 샘플"
     },
     {
-      "story": "2026-11-02/IT·AI-2",
-      "term": 29,
-      "surface": "영업손실"
+      "story": "2026-11-01/IT·AI-4",
+      "term": 123,
+      "surface": "4F²"
     },
     {
       "story": "2026-11-02/세계-1",
@@ -13710,39 +13695,19 @@
       "surface": "특별검사"
     },
     {
-      "story": "2026-11-03/IT·AI-2",
-      "term": 132,
-      "surface": "사물인터넷"
+      "story": "2026-11-02/IT·AI-1",
+      "term": 126,
+      "surface": "순유출"
     },
     {
-      "story": "2026-11-03/IT·AI-3",
-      "term": 119,
-      "surface": "낸드"
+      "story": "2026-11-02/IT·AI-2",
+      "term": 27,
+      "surface": "S-1"
     },
     {
-      "story": "2026-11-03/IT·AI-3",
-      "term": 133,
-      "surface": "클린룸"
-    },
-    {
-      "story": "2026-11-03/IT·AI-4",
-      "term": 134,
-      "surface": "텍스트·데이터 마이닝"
-    },
-    {
-      "story": "2026-11-03/IT·AI-4",
-      "term": 135,
-      "surface": "법률자문관"
-    },
-    {
-      "story": "2026-11-03/IT·AI-5",
-      "term": 66,
-      "surface": "주당순이익"
-    },
-    {
-      "story": "2026-11-03/IT·AI-5",
-      "term": 98,
-      "surface": "매출총이익률"
+      "story": "2026-11-02/IT·AI-2",
+      "term": 29,
+      "surface": "영업손실"
     },
     {
       "story": "2026-11-03/세계-1",
@@ -13800,29 +13765,39 @@
       "surface": "미래대응기금"
     },
     {
-      "story": "2026-11-04/IT·AI-3",
+      "story": "2026-11-03/IT·AI-2",
+      "term": 132,
+      "surface": "사물인터넷"
+    },
+    {
+      "story": "2026-11-03/IT·AI-3",
+      "term": 119,
+      "surface": "낸드"
+    },
+    {
+      "story": "2026-11-03/IT·AI-3",
+      "term": 133,
+      "surface": "클린룸"
+    },
+    {
+      "story": "2026-11-03/IT·AI-4",
+      "term": 134,
+      "surface": "텍스트·데이터 마이닝"
+    },
+    {
+      "story": "2026-11-03/IT·AI-4",
+      "term": 135,
+      "surface": "법률자문관"
+    },
+    {
+      "story": "2026-11-03/IT·AI-5",
       "term": 66,
       "surface": "주당순이익"
     },
     {
-      "story": "2026-11-04/IT·AI-3",
-      "term": 70,
-      "surface": "GPU"
-    },
-    {
-      "story": "2026-11-04/IT·AI-5",
-      "term": 140,
-      "surface": "Massive MIMO"
-    },
-    {
-      "story": "2026-11-04/IT·AI-6",
-      "term": 108,
-      "surface": "공급망 공격"
-    },
-    {
-      "story": "2026-11-04/IT·AI-6",
-      "term": 141,
-      "surface": "콘텐츠 전송망"
+      "story": "2026-11-03/IT·AI-5",
+      "term": 98,
+      "surface": "매출총이익률"
     },
     {
       "story": "2026-11-04/세계-4",
@@ -13885,19 +13860,29 @@
       "surface": "탄도미사일"
     },
     {
-      "story": "2026-11-05/IT·AI-1",
-      "term": 72,
-      "surface": "취약점"
+      "story": "2026-11-04/IT·AI-3",
+      "term": 66,
+      "surface": "주당순이익"
     },
     {
-      "story": "2026-11-05/IT·AI-1",
-      "term": 150,
-      "surface": "침투 테스트"
+      "story": "2026-11-04/IT·AI-3",
+      "term": 70,
+      "surface": "GPU"
     },
     {
-      "story": "2026-11-05/IT·AI-5",
-      "term": 151,
-      "surface": "수정헌법 1조"
+      "story": "2026-11-04/IT·AI-5",
+      "term": 140,
+      "surface": "Massive MIMO"
+    },
+    {
+      "story": "2026-11-04/IT·AI-6",
+      "term": 108,
+      "surface": "공급망 공격"
+    },
+    {
+      "story": "2026-11-04/IT·AI-6",
+      "term": 141,
+      "surface": "콘텐츠 전송망"
     },
     {
       "story": "2026-11-05/세계-1",
@@ -13985,24 +13970,19 @@
       "surface": "쟁의행위"
     },
     {
-      "story": "2026-11-06/IT·AI-1",
-      "term": 158,
-      "surface": "CDS"
+      "story": "2026-11-05/IT·AI-1",
+      "term": 72,
+      "surface": "취약점"
     },
     {
-      "story": "2026-11-06/IT·AI-3",
-      "term": 159,
-      "surface": "네오클라우드"
+      "story": "2026-11-05/IT·AI-1",
+      "term": 150,
+      "surface": "침투 테스트"
     },
     {
-      "story": "2026-11-06/IT·AI-4",
-      "term": 160,
-      "surface": "디지털서비스법"
-    },
-    {
-      "story": "2026-11-06/IT·AI-6",
-      "term": 161,
-      "surface": "콜드월렛"
+      "story": "2026-11-05/IT·AI-5",
+      "term": 151,
+      "surface": "수정헌법 1조"
     },
     {
       "story": "2026-11-06/세계-1",
@@ -14055,14 +14035,24 @@
       "surface": "핵추진잠수함"
     },
     {
-      "story": "2026-11-07/IT·AI-2",
-      "term": 168,
-      "surface": "거부권"
+      "story": "2026-11-06/IT·AI-1",
+      "term": 158,
+      "surface": "CDS"
     },
     {
-      "story": "2026-11-07/IT·AI-3",
-      "term": 169,
-      "surface": "자동완성"
+      "story": "2026-11-06/IT·AI-3",
+      "term": 159,
+      "surface": "네오클라우드"
+    },
+    {
+      "story": "2026-11-06/IT·AI-4",
+      "term": 160,
+      "surface": "디지털서비스법"
+    },
+    {
+      "story": "2026-11-06/IT·AI-6",
+      "term": 161,
+      "surface": "콜드월렛"
     },
     {
       "story": "2026-11-07/세계-1",
@@ -14120,19 +14110,14 @@
       "surface": "고병원성 조류인플루엔자"
     },
     {
-      "story": "2026-11-08/IT·AI-5",
-      "term": 94,
-      "surface": "핫월렛"
+      "story": "2026-11-07/IT·AI-2",
+      "term": 168,
+      "surface": "거부권"
     },
     {
-      "story": "2026-11-08/IT·AI-5",
-      "term": 173,
-      "surface": "정보보호 최고책임자"
-    },
-    {
-      "story": "2026-11-08/IT·AI-6",
-      "term": 174,
-      "surface": "월간 활성 이용자"
+      "story": "2026-11-07/IT·AI-3",
+      "term": 169,
+      "surface": "자동완성"
     },
     {
       "story": "2026-11-08/세계-1",
@@ -14180,29 +14165,19 @@
       "surface": "특검"
     },
     {
-      "story": "2026-11-09/IT·AI-2",
-      "term": 36,
-      "surface": "HBM"
+      "story": "2026-11-08/IT·AI-5",
+      "term": 94,
+      "surface": "핫월렛"
     },
     {
-      "story": "2026-11-09/IT·AI-2",
-      "term": 69,
-      "surface": "TPU"
+      "story": "2026-11-08/IT·AI-5",
+      "term": 173,
+      "surface": "정보보호 최고책임자"
     },
     {
-      "story": "2026-11-09/IT·AI-3",
-      "term": 72,
-      "surface": "취약점"
-    },
-    {
-      "story": "2026-11-09/IT·AI-3",
-      "term": 110,
-      "surface": "피싱"
-    },
-    {
-      "story": "2026-11-09/IT·AI-5",
-      "term": 35,
-      "surface": "오픈웨이트"
+      "story": "2026-11-08/IT·AI-6",
+      "term": 174,
+      "surface": "월간 활성 이용자"
     },
     {
       "story": "2026-11-09/세계-2",
@@ -14270,19 +14245,29 @@
       "surface": "결심공판"
     },
     {
-      "story": "2026-11-10/IT·AI-2",
-      "term": 187,
-      "surface": "완전 희석"
+      "story": "2026-11-09/IT·AI-2",
+      "term": 36,
+      "surface": "HBM"
     },
     {
-      "story": "2026-11-10/IT·AI-4",
-      "term": 34,
-      "surface": "AI 에이전트"
+      "story": "2026-11-09/IT·AI-2",
+      "term": 69,
+      "surface": "TPU"
     },
     {
-      "story": "2026-11-10/IT·AI-5",
-      "term": 188,
-      "surface": "선급금"
+      "story": "2026-11-09/IT·AI-3",
+      "term": 72,
+      "surface": "취약점"
+    },
+    {
+      "story": "2026-11-09/IT·AI-3",
+      "term": 110,
+      "surface": "피싱"
+    },
+    {
+      "story": "2026-11-09/IT·AI-5",
+      "term": 35,
+      "surface": "오픈웨이트"
     },
     {
       "story": "2026-11-10/세계-1",
@@ -14365,24 +14350,19 @@
       "surface": "기업결합"
     },
     {
-      "story": "2026-11-11/IT·AI-1",
-      "term": 193,
-      "surface": "시간외 거래"
+      "story": "2026-11-10/IT·AI-2",
+      "term": 187,
+      "surface": "완전 희석"
     },
     {
-      "story": "2026-11-11/IT·AI-2",
-      "term": 70,
-      "surface": "GPU"
+      "story": "2026-11-10/IT·AI-4",
+      "term": 34,
+      "surface": "AI 에이전트"
     },
     {
-      "story": "2026-11-11/IT·AI-3",
-      "term": 28,
-      "surface": "기업공개"
-    },
-    {
-      "story": "2026-11-11/IT·AI-5",
-      "term": 194,
-      "surface": "수출 통제"
+      "story": "2026-11-10/IT·AI-5",
+      "term": 188,
+      "surface": "선급금"
     },
     {
       "story": "2026-11-11/세계-2",
@@ -14410,19 +14390,24 @@
       "surface": "GLP-1"
     },
     {
-      "story": "2026-11-12/IT·AI-2",
+      "story": "2026-11-11/IT·AI-1",
+      "term": 193,
+      "surface": "시간외 거래"
+    },
+    {
+      "story": "2026-11-11/IT·AI-2",
+      "term": 70,
+      "surface": "GPU"
+    },
+    {
+      "story": "2026-11-11/IT·AI-3",
+      "term": 28,
+      "surface": "기업공개"
+    },
+    {
+      "story": "2026-11-11/IT·AI-5",
       "term": 194,
       "surface": "수출 통제"
-    },
-    {
-      "story": "2026-11-12/IT·AI-4",
-      "term": 39,
-      "surface": "API"
-    },
-    {
-      "story": "2026-11-12/IT·AI-5",
-      "term": 200,
-      "surface": "리스트형 공격"
     },
     {
       "story": "2026-11-12/세계-1",
@@ -14478,6 +14463,21 @@
       "story": "2026-11-12/한국-7",
       "term": 197,
       "surface": "구속영장"
+    },
+    {
+      "story": "2026-11-12/IT·AI-2",
+      "term": 194,
+      "surface": "수출 통제"
+    },
+    {
+      "story": "2026-11-12/IT·AI-4",
+      "term": 39,
+      "surface": "API"
+    },
+    {
+      "story": "2026-11-12/IT·AI-5",
+      "term": 200,
+      "surface": "리스트형 공격"
     }
   ],
   "merges": [],

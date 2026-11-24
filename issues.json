@@ -1,5 +1,5 @@
 {
-  "formatVersion": 10,
+  "formatVersion": 11,
   "issues": [
     {
       "id": 1,
@@ -4267,46 +4267,6 @@
   ],
   "links": [
     {
-      "story": "2026-10-27/IT·AI-1",
-      "issue": 20,
-      "primary": true
-    },
-    {
-      "story": "2026-10-27/IT·AI-2",
-      "issue": 21,
-      "primary": true
-    },
-    {
-      "story": "2026-10-27/IT·AI-3",
-      "issue": 22,
-      "primary": true
-    },
-    {
-      "story": "2026-10-27/IT·AI-4",
-      "issue": 23,
-      "primary": true
-    },
-    {
-      "story": "2026-10-27/IT·AI-5",
-      "issue": 24,
-      "primary": true
-    },
-    {
-      "story": "2026-10-27/IT·AI-s1",
-      "issue": 25,
-      "primary": true
-    },
-    {
-      "story": "2026-10-27/IT·AI-s2",
-      "issue": 26,
-      "primary": true
-    },
-    {
-      "story": "2026-10-27/IT·AI-s3",
-      "issue": 20,
-      "primary": true
-    },
-    {
       "story": "2026-10-27/세계-1",
       "issue": 11,
       "primary": true
@@ -4402,63 +4362,43 @@
       "primary": true
     },
     {
-      "story": "2026-10-28/IT·AI-1",
+      "story": "2026-10-27/IT·AI-1",
+      "issue": 20,
+      "primary": true
+    },
+    {
+      "story": "2026-10-27/IT·AI-2",
+      "issue": 21,
+      "primary": true
+    },
+    {
+      "story": "2026-10-27/IT·AI-3",
+      "issue": 22,
+      "primary": true
+    },
+    {
+      "story": "2026-10-27/IT·AI-4",
+      "issue": 23,
+      "primary": true
+    },
+    {
+      "story": "2026-10-27/IT·AI-5",
+      "issue": 24,
+      "primary": true
+    },
+    {
+      "story": "2026-10-27/IT·AI-s1",
+      "issue": 25,
+      "primary": true
+    },
+    {
+      "story": "2026-10-27/IT·AI-s2",
       "issue": 26,
       "primary": true
     },
     {
-      "story": "2026-10-28/IT·AI-2",
-      "issue": 21,
-      "primary": true
-    },
-    {
-      "story": "2026-10-28/IT·AI-3",
-      "issue": 45,
-      "primary": true
-    },
-    {
-      "story": "2026-10-28/IT·AI-4",
-      "issue": 46,
-      "primary": true
-    },
-    {
-      "story": "2026-10-28/IT·AI-5",
-      "issue": 47,
-      "primary": true
-    },
-    {
-      "story": "2026-10-28/IT·AI-6",
-      "issue": 48,
-      "primary": true
-    },
-    {
-      "story": "2026-10-28/IT·AI-7",
-      "issue": 49,
-      "primary": true
-    },
-    {
-      "story": "2026-10-28/IT·AI-s1",
-      "issue": 50,
-      "primary": true
-    },
-    {
-      "story": "2026-10-28/IT·AI-s2",
-      "issue": 51,
-      "primary": true
-    },
-    {
-      "story": "2026-10-28/IT·AI-s3",
-      "issue": 21,
-      "primary": true
-    },
-    {
-      "story": "2026-10-28/IT·AI-s4",
-      "issue": 52,
-      "primary": true
-    },
-    {
-      "story": "2026-10-28/IT·AI-s5",
-      "issue": 53,
+      "story": "2026-10-27/IT·AI-s3",
+      "issue": 20,
       "primary": true
     },
     {
@@ -4577,63 +4517,63 @@
       "primary": true
     },
     {
-      "story": "2026-10-29/IT·AI-1",
-      "issue": 70,
+      "story": "2026-10-28/IT·AI-1",
+      "issue": 26,
       "primary": true
     },
     {
-      "story": "2026-10-29/IT·AI-2",
+      "story": "2026-10-28/IT·AI-2",
       "issue": 21,
       "primary": true
     },
     {
-      "story": "2026-10-29/IT·AI-3",
-      "issue": 21,
+      "story": "2026-10-28/IT·AI-3",
+      "issue": 45,
       "primary": true
     },
     {
-      "story": "2026-10-29/IT·AI-4",
-      "issue": 71,
+      "story": "2026-10-28/IT·AI-4",
+      "issue": 46,
       "primary": true
     },
     {
-      "story": "2026-10-29/IT·AI-5",
-      "issue": 72,
+      "story": "2026-10-28/IT·AI-5",
+      "issue": 47,
       "primary": true
     },
     {
-      "story": "2026-10-29/IT·AI-6",
+      "story": "2026-10-28/IT·AI-6",
+      "issue": 48,
+      "primary": true
+    },
+    {
+      "story": "2026-10-28/IT·AI-7",
+      "issue": 49,
+      "primary": true
+    },
+    {
+      "story": "2026-10-28/IT·AI-s1",
+      "issue": 50,
+      "primary": true
+    },
+    {
+      "story": "2026-10-28/IT·AI-s2",
       "issue": 51,
       "primary": true
     },
     {
-      "story": "2026-10-29/IT·AI-7",
-      "issue": 20,
-      "primary": false
-    },
-    {
-      "story": "2026-10-29/IT·AI-7",
-      "issue": 22,
+      "story": "2026-10-28/IT·AI-s3",
+      "issue": 21,
       "primary": true
     },
     {
-      "story": "2026-10-29/IT·AI-8",
-      "issue": 73,
+      "story": "2026-10-28/IT·AI-s4",
+      "issue": 52,
       "primary": true
     },
     {
-      "story": "2026-10-29/IT·AI-s1",
+      "story": "2026-10-28/IT·AI-s5",
       "issue": 53,
-      "primary": true
-    },
-    {
-      "story": "2026-10-29/IT·AI-s2",
-      "issue": 22,
-      "primary": true
-    },
-    {
-      "story": "2026-10-29/IT·AI-s3",
-      "issue": 74,
       "primary": true
     },
     {
@@ -4767,53 +4707,63 @@
       "primary": true
     },
     {
-      "story": "2026-10-30/IT·AI-1",
-      "issue": 21,
-      "primary": false
-    },
-    {
-      "story": "2026-10-30/IT·AI-1",
-      "issue": 71,
-      "primary": true
-    },
-    {
-      "story": "2026-10-30/IT·AI-2",
+      "story": "2026-10-29/IT·AI-1",
       "issue": 70,
       "primary": true
     },
     {
-      "story": "2026-10-30/IT·AI-3",
-      "issue": 22,
+      "story": "2026-10-29/IT·AI-2",
+      "issue": 21,
+      "primary": true
+    },
+    {
+      "story": "2026-10-29/IT·AI-3",
+      "issue": 21,
+      "primary": true
+    },
+    {
+      "story": "2026-10-29/IT·AI-4",
+      "issue": 71,
+      "primary": true
+    },
+    {
+      "story": "2026-10-29/IT·AI-5",
+      "issue": 72,
+      "primary": true
+    },
+    {
+      "story": "2026-10-29/IT·AI-6",
+      "issue": 51,
+      "primary": true
+    },
+    {
+      "story": "2026-10-29/IT·AI-7",
+      "issue": 20,
       "primary": false
     },
     {
-      "story": "2026-10-30/IT·AI-3",
-      "issue": 88,
+      "story": "2026-10-29/IT·AI-7",
+      "issue": 22,
       "primary": true
     },
     {
-      "story": "2026-10-30/IT·AI-4",
-      "issue": 89,
+      "story": "2026-10-29/IT·AI-8",
+      "issue": 73,
       "primary": true
     },
     {
-      "story": "2026-10-30/IT·AI-5",
-      "issue": 90,
+      "story": "2026-10-29/IT·AI-s1",
+      "issue": 53,
       "primary": true
     },
     {
-      "story": "2026-10-30/IT·AI-6",
-      "issue": 91,
+      "story": "2026-10-29/IT·AI-s2",
+      "issue": 22,
       "primary": true
     },
     {
-      "story": "2026-10-30/IT·AI-s1",
-      "issue": 92,
-      "primary": true
-    },
-    {
-      "story": "2026-10-30/IT·AI-s2",
-      "issue": 93,
+      "story": "2026-10-29/IT·AI-s3",
+      "issue": 74,
       "primary": true
     },
     {
@@ -4942,58 +4892,53 @@
       "primary": true
     },
     {
-      "story": "2026-10-31/IT·AI-1",
+      "story": "2026-10-30/IT·AI-1",
+      "issue": 21,
+      "primary": false
+    },
+    {
+      "story": "2026-10-30/IT·AI-1",
+      "issue": 71,
+      "primary": true
+    },
+    {
+      "story": "2026-10-30/IT·AI-2",
       "issue": 70,
       "primary": true
     },
     {
-      "story": "2026-10-31/IT·AI-2",
-      "issue": 21,
-      "primary": true
-    },
-    {
-      "story": "2026-10-31/IT·AI-2",
+      "story": "2026-10-30/IT·AI-3",
       "issue": 22,
       "primary": false
     },
     {
-      "story": "2026-10-31/IT·AI-3",
-      "issue": 111,
+      "story": "2026-10-30/IT·AI-3",
+      "issue": 88,
       "primary": true
     },
     {
-      "story": "2026-10-31/IT·AI-4",
-      "issue": 112,
+      "story": "2026-10-30/IT·AI-4",
+      "issue": 89,
       "primary": true
     },
     {
-      "story": "2026-10-31/IT·AI-5",
+      "story": "2026-10-30/IT·AI-5",
+      "issue": 90,
+      "primary": true
+    },
+    {
+      "story": "2026-10-30/IT·AI-6",
+      "issue": 91,
+      "primary": true
+    },
+    {
+      "story": "2026-10-30/IT·AI-s1",
       "issue": 92,
       "primary": true
     },
     {
-      "story": "2026-10-31/IT·AI-6",
-      "issue": 113,
-      "primary": true
-    },
-    {
-      "story": "2026-10-31/IT·AI-7",
-      "issue": 28,
-      "primary": true
-    },
-    {
-      "story": "2026-10-31/IT·AI-s1",
-      "issue": 27,
-      "primary": true
-    },
-    {
-      "story": "2026-10-31/IT·AI-s2",
-      "issue": 114,
-      "primary": true
-    },
-    {
-      "story": "2026-10-31/IT·AI-s3",
-      "issue": 115,
+      "story": "2026-10-30/IT·AI-s2",
+      "issue": 93,
       "primary": true
     },
     {
@@ -5122,48 +5067,58 @@
       "primary": true
     },
     {
-      "story": "2026-11-01/IT·AI-1",
+      "story": "2026-10-31/IT·AI-1",
       "issue": 70,
       "primary": true
     },
     {
-      "story": "2026-11-01/IT·AI-2",
+      "story": "2026-10-31/IT·AI-2",
+      "issue": 21,
+      "primary": true
+    },
+    {
+      "story": "2026-10-31/IT·AI-2",
       "issue": 22,
       "primary": false
     },
     {
-      "story": "2026-11-01/IT·AI-2",
-      "issue": 88,
+      "story": "2026-10-31/IT·AI-3",
+      "issue": 111,
       "primary": true
     },
     {
-      "story": "2026-11-01/IT·AI-3",
-      "issue": 126,
+      "story": "2026-10-31/IT·AI-4",
+      "issue": 112,
       "primary": true
     },
     {
-      "story": "2026-11-01/IT·AI-4",
-      "issue": 127,
+      "story": "2026-10-31/IT·AI-5",
+      "issue": 92,
       "primary": true
     },
     {
-      "story": "2026-11-01/IT·AI-5",
-      "issue": 128,
+      "story": "2026-10-31/IT·AI-6",
+      "issue": 113,
       "primary": true
     },
     {
-      "story": "2026-11-01/IT·AI-s1",
-      "issue": 129,
+      "story": "2026-10-31/IT·AI-7",
+      "issue": 28,
       "primary": true
     },
     {
-      "story": "2026-11-01/IT·AI-s2",
-      "issue": 22,
+      "story": "2026-10-31/IT·AI-s1",
+      "issue": 27,
       "primary": true
     },
     {
-      "story": "2026-11-01/IT·AI-s3",
-      "issue": 130,
+      "story": "2026-10-31/IT·AI-s2",
+      "issue": 114,
+      "primary": true
+    },
+    {
+      "story": "2026-10-31/IT·AI-s3",
+      "issue": 115,
       "primary": true
     },
     {
@@ -5272,33 +5227,48 @@
       "primary": true
     },
     {
-      "story": "2026-11-02/IT·AI-1",
+      "story": "2026-11-01/IT·AI-1",
       "issue": 70,
       "primary": true
     },
     {
-      "story": "2026-11-02/IT·AI-2",
-      "issue": 20,
+      "story": "2026-11-01/IT·AI-2",
+      "issue": 22,
+      "primary": false
+    },
+    {
+      "story": "2026-11-01/IT·AI-2",
+      "issue": 88,
       "primary": true
     },
     {
-      "story": "2026-11-02/IT·AI-3",
-      "issue": 138,
+      "story": "2026-11-01/IT·AI-3",
+      "issue": 126,
       "primary": true
     },
     {
-      "story": "2026-11-02/IT·AI-4",
-      "issue": 139,
+      "story": "2026-11-01/IT·AI-4",
+      "issue": 127,
       "primary": true
     },
     {
-      "story": "2026-11-02/IT·AI-5",
-      "issue": 140,
+      "story": "2026-11-01/IT·AI-5",
+      "issue": 128,
       "primary": true
     },
     {
-      "story": "2026-11-02/IT·AI-s1",
-      "issue": 141,
+      "story": "2026-11-01/IT·AI-s1",
+      "issue": 129,
+      "primary": true
+    },
+    {
+      "story": "2026-11-01/IT·AI-s2",
+      "issue": 22,
+      "primary": true
+    },
+    {
+      "story": "2026-11-01/IT·AI-s3",
+      "issue": 130,
       "primary": true
     },
     {
@@ -5387,38 +5357,33 @@
       "primary": true
     },
     {
-      "story": "2026-11-03/IT·AI-1",
+      "story": "2026-11-02/IT·AI-1",
       "issue": 70,
       "primary": true
     },
     {
-      "story": "2026-11-03/IT·AI-2",
+      "story": "2026-11-02/IT·AI-2",
+      "issue": 20,
+      "primary": true
+    },
+    {
+      "story": "2026-11-02/IT·AI-3",
       "issue": 138,
       "primary": true
     },
     {
-      "story": "2026-11-03/IT·AI-3",
-      "issue": 150,
+      "story": "2026-11-02/IT·AI-4",
+      "issue": 139,
       "primary": true
     },
     {
-      "story": "2026-11-03/IT·AI-4",
-      "issue": 151,
+      "story": "2026-11-02/IT·AI-5",
+      "issue": 140,
       "primary": true
     },
     {
-      "story": "2026-11-03/IT·AI-5",
-      "issue": 152,
-      "primary": true
-    },
-    {
-      "story": "2026-11-03/IT·AI-s1",
-      "issue": 51,
-      "primary": true
-    },
-    {
-      "story": "2026-11-03/IT·AI-s2",
-      "issue": 153,
+      "story": "2026-11-02/IT·AI-s1",
+      "issue": 141,
       "primary": true
     },
     {
@@ -5507,53 +5472,38 @@
       "primary": true
     },
     {
-      "story": "2026-11-04/IT·AI-1",
+      "story": "2026-11-03/IT·AI-1",
+      "issue": 70,
+      "primary": true
+    },
+    {
+      "story": "2026-11-03/IT·AI-2",
       "issue": 138,
       "primary": true
     },
     {
-      "story": "2026-11-04/IT·AI-2",
-      "issue": 83,
-      "primary": false
-    },
-    {
-      "story": "2026-11-04/IT·AI-2",
-      "issue": 162,
+      "story": "2026-11-03/IT·AI-3",
+      "issue": 150,
       "primary": true
     },
     {
-      "story": "2026-11-04/IT·AI-3",
-      "issue": 163,
+      "story": "2026-11-03/IT·AI-4",
+      "issue": 151,
       "primary": true
     },
     {
-      "story": "2026-11-04/IT·AI-4",
+      "story": "2026-11-03/IT·AI-5",
+      "issue": 152,
+      "primary": true
+    },
+    {
+      "story": "2026-11-03/IT·AI-s1",
       "issue": 51,
       "primary": true
     },
     {
-      "story": "2026-11-04/IT·AI-5",
-      "issue": 164,
-      "primary": true
-    },
-    {
-      "story": "2026-11-04/IT·AI-6",
-      "issue": 165,
-      "primary": true
-    },
-    {
-      "story": "2026-11-04/IT·AI-s1",
-      "issue": 166,
-      "primary": true
-    },
-    {
-      "story": "2026-11-04/IT·AI-s2",
-      "issue": 167,
-      "primary": true
-    },
-    {
-      "story": "2026-11-04/IT·AI-s3",
-      "issue": 168,
+      "story": "2026-11-03/IT·AI-s2",
+      "issue": 153,
       "primary": true
     },
     {
@@ -5672,43 +5622,53 @@
       "primary": true
     },
     {
-      "story": "2026-11-05/IT·AI-1",
-      "issue": 180,
-      "primary": true
-    },
-    {
-      "story": "2026-11-05/IT·AI-2",
-      "issue": 181,
-      "primary": true
-    },
-    {
-      "story": "2026-11-05/IT·AI-3",
-      "issue": 51,
-      "primary": true
-    },
-    {
-      "story": "2026-11-05/IT·AI-4",
-      "issue": 182,
-      "primary": true
-    },
-    {
-      "story": "2026-11-05/IT·AI-5",
-      "issue": 183,
-      "primary": true
-    },
-    {
-      "story": "2026-11-05/IT·AI-6",
+      "story": "2026-11-04/IT·AI-1",
       "issue": 138,
       "primary": true
     },
     {
-      "story": "2026-11-05/IT·AI-s1",
-      "issue": 184,
+      "story": "2026-11-04/IT·AI-2",
+      "issue": 83,
+      "primary": false
+    },
+    {
+      "story": "2026-11-04/IT·AI-2",
+      "issue": 162,
       "primary": true
     },
     {
-      "story": "2026-11-05/IT·AI-s2",
-      "issue": 185,
+      "story": "2026-11-04/IT·AI-3",
+      "issue": 163,
+      "primary": true
+    },
+    {
+      "story": "2026-11-04/IT·AI-4",
+      "issue": 51,
+      "primary": true
+    },
+    {
+      "story": "2026-11-04/IT·AI-5",
+      "issue": 164,
+      "primary": true
+    },
+    {
+      "story": "2026-11-04/IT·AI-6",
+      "issue": 165,
+      "primary": true
+    },
+    {
+      "story": "2026-11-04/IT·AI-s1",
+      "issue": 166,
+      "primary": true
+    },
+    {
+      "story": "2026-11-04/IT·AI-s2",
+      "issue": 167,
+      "primary": true
+    },
+    {
+      "story": "2026-11-04/IT·AI-s3",
+      "issue": 168,
       "primary": true
     },
     {
@@ -5827,73 +5787,43 @@
       "primary": true
     },
     {
-      "story": "2026-11-06/IT·AI-1",
-      "issue": 20,
-      "primary": false
-    },
-    {
-      "story": "2026-11-06/IT·AI-1",
-      "issue": 118,
+      "story": "2026-11-05/IT·AI-1",
+      "issue": 180,
       "primary": true
     },
     {
-      "story": "2026-11-06/IT·AI-2",
-      "issue": 162,
+      "story": "2026-11-05/IT·AI-2",
+      "issue": 181,
       "primary": true
     },
     {
-      "story": "2026-11-06/IT·AI-3",
-      "issue": 22,
+      "story": "2026-11-05/IT·AI-3",
+      "issue": 51,
       "primary": true
     },
     {
-      "story": "2026-11-06/IT·AI-3",
-      "issue": 162,
-      "primary": false
-    },
-    {
-      "story": "2026-11-06/IT·AI-4",
-      "issue": 199,
+      "story": "2026-11-05/IT·AI-4",
+      "issue": 182,
       "primary": true
     },
     {
-      "story": "2026-11-06/IT·AI-5",
-      "issue": 200,
+      "story": "2026-11-05/IT·AI-5",
+      "issue": 183,
       "primary": true
     },
     {
-      "story": "2026-11-06/IT·AI-6",
-      "issue": 201,
+      "story": "2026-11-05/IT·AI-6",
+      "issue": 138,
       "primary": true
     },
     {
-      "story": "2026-11-06/IT·AI-7",
-      "issue": 202,
+      "story": "2026-11-05/IT·AI-s1",
+      "issue": 184,
       "primary": true
     },
     {
-      "story": "2026-11-06/IT·AI-s1",
-      "issue": 203,
-      "primary": true
-    },
-    {
-      "story": "2026-11-06/IT·AI-s2",
-      "issue": 204,
-      "primary": true
-    },
-    {
-      "story": "2026-11-06/IT·AI-s3",
-      "issue": 153,
-      "primary": true
-    },
-    {
-      "story": "2026-11-06/IT·AI-s4",
-      "issue": 70,
-      "primary": true
-    },
-    {
-      "story": "2026-11-06/IT·AI-s5",
-      "issue": 205,
+      "story": "2026-11-05/IT·AI-s2",
+      "issue": 185,
       "primary": true
     },
     {
@@ -6017,43 +5947,73 @@
       "primary": true
     },
     {
-      "story": "2026-11-07/IT·AI-1",
-      "issue": 88,
+      "story": "2026-11-06/IT·AI-1",
+      "issue": 20,
+      "primary": false
+    },
+    {
+      "story": "2026-11-06/IT·AI-1",
+      "issue": 118,
       "primary": true
     },
     {
-      "story": "2026-11-07/IT·AI-2",
+      "story": "2026-11-06/IT·AI-2",
       "issue": 162,
       "primary": true
     },
     {
-      "story": "2026-11-07/IT·AI-3",
-      "issue": 216,
+      "story": "2026-11-06/IT·AI-3",
+      "issue": 22,
       "primary": true
     },
     {
-      "story": "2026-11-07/IT·AI-4",
-      "issue": 141,
+      "story": "2026-11-06/IT·AI-3",
+      "issue": 162,
+      "primary": false
+    },
+    {
+      "story": "2026-11-06/IT·AI-4",
+      "issue": 199,
       "primary": true
     },
     {
-      "story": "2026-11-07/IT·AI-5",
+      "story": "2026-11-06/IT·AI-5",
+      "issue": 200,
+      "primary": true
+    },
+    {
+      "story": "2026-11-06/IT·AI-6",
+      "issue": 201,
+      "primary": true
+    },
+    {
+      "story": "2026-11-06/IT·AI-7",
+      "issue": 202,
+      "primary": true
+    },
+    {
+      "story": "2026-11-06/IT·AI-s1",
+      "issue": 203,
+      "primary": true
+    },
+    {
+      "story": "2026-11-06/IT·AI-s2",
+      "issue": 204,
+      "primary": true
+    },
+    {
+      "story": "2026-11-06/IT·AI-s3",
+      "issue": 153,
+      "primary": true
+    },
+    {
+      "story": "2026-11-06/IT·AI-s4",
       "issue": 70,
       "primary": true
     },
     {
-      "story": "2026-11-07/IT·AI-6",
-      "issue": 217,
-      "primary": true
-    },
-    {
-      "story": "2026-11-07/IT·AI-s1",
-      "issue": 162,
-      "primary": true
-    },
-    {
-      "story": "2026-11-07/IT·AI-s2",
-      "issue": 218,
+      "story": "2026-11-06/IT·AI-s5",
+      "issue": 205,
       "primary": true
     },
     {
@@ -6167,58 +6127,43 @@
       "primary": true
     },
     {
-      "story": "2026-11-08/IT·AI-1",
-      "issue": 51,
-      "primary": false
-    },
-    {
-      "story": "2026-11-08/IT·AI-1",
-      "issue": 228,
+      "story": "2026-11-07/IT·AI-1",
+      "issue": 88,
       "primary": true
     },
     {
-      "story": "2026-11-08/IT·AI-2",
-      "issue": 22,
-      "primary": true
-    },
-    {
-      "story": "2026-11-08/IT·AI-2",
+      "story": "2026-11-07/IT·AI-2",
       "issue": 162,
-      "primary": false
-    },
-    {
-      "story": "2026-11-08/IT·AI-3",
-      "issue": 229,
       "primary": true
     },
     {
-      "story": "2026-11-08/IT·AI-4",
-      "issue": 230,
+      "story": "2026-11-07/IT·AI-3",
+      "issue": 216,
       "primary": true
     },
     {
-      "story": "2026-11-08/IT·AI-5",
-      "issue": 28,
+      "story": "2026-11-07/IT·AI-4",
+      "issue": 141,
       "primary": true
     },
     {
-      "story": "2026-11-08/IT·AI-5",
-      "issue": 201,
-      "primary": false
-    },
-    {
-      "story": "2026-11-08/IT·AI-6",
-      "issue": 231,
+      "story": "2026-11-07/IT·AI-5",
+      "issue": 70,
       "primary": true
     },
     {
-      "story": "2026-11-08/IT·AI-s1",
-      "issue": 200,
+      "story": "2026-11-07/IT·AI-6",
+      "issue": 217,
       "primary": true
     },
     {
-      "story": "2026-11-08/IT·AI-s2",
+      "story": "2026-11-07/IT·AI-s1",
       "issue": 162,
+      "primary": true
+    },
+    {
+      "story": "2026-11-07/IT·AI-s2",
+      "issue": 218,
       "primary": true
     },
     {
@@ -6342,48 +6287,58 @@
       "primary": true
     },
     {
-      "story": "2026-11-09/IT·AI-1",
+      "story": "2026-11-08/IT·AI-1",
       "issue": 51,
       "primary": false
     },
     {
-      "story": "2026-11-09/IT·AI-1",
+      "story": "2026-11-08/IT·AI-1",
       "issue": 228,
       "primary": true
     },
     {
-      "story": "2026-11-09/IT·AI-2",
-      "issue": 46,
+      "story": "2026-11-08/IT·AI-2",
+      "issue": 22,
       "primary": true
     },
     {
-      "story": "2026-11-09/IT·AI-3",
-      "issue": 239,
-      "primary": true
-    },
-    {
-      "story": "2026-11-09/IT·AI-4",
-      "issue": 138,
-      "primary": true
-    },
-    {
-      "story": "2026-11-09/IT·AI-5",
-      "issue": 240,
-      "primary": true
-    },
-    {
-      "story": "2026-11-09/IT·AI-6",
-      "issue": 241,
-      "primary": true
-    },
-    {
-      "story": "2026-11-09/IT·AI-s1",
+      "story": "2026-11-08/IT·AI-2",
       "issue": 162,
+      "primary": false
+    },
+    {
+      "story": "2026-11-08/IT·AI-3",
+      "issue": 229,
       "primary": true
     },
     {
-      "story": "2026-11-09/IT·AI-s2",
-      "issue": 242,
+      "story": "2026-11-08/IT·AI-4",
+      "issue": 230,
+      "primary": true
+    },
+    {
+      "story": "2026-11-08/IT·AI-5",
+      "issue": 28,
+      "primary": true
+    },
+    {
+      "story": "2026-11-08/IT·AI-5",
+      "issue": 201,
+      "primary": false
+    },
+    {
+      "story": "2026-11-08/IT·AI-6",
+      "issue": 231,
+      "primary": true
+    },
+    {
+      "story": "2026-11-08/IT·AI-s1",
+      "issue": 200,
+      "primary": true
+    },
+    {
+      "story": "2026-11-08/IT·AI-s2",
+      "issue": 162,
       "primary": true
     },
     {
@@ -6497,48 +6452,48 @@
       "primary": true
     },
     {
-      "story": "2026-11-10/IT·AI-1",
+      "story": "2026-11-09/IT·AI-1",
       "issue": 51,
       "primary": false
     },
     {
-      "story": "2026-11-10/IT·AI-1",
+      "story": "2026-11-09/IT·AI-1",
       "issue": 228,
       "primary": true
     },
     {
-      "story": "2026-11-10/IT·AI-2",
-      "issue": 20,
+      "story": "2026-11-09/IT·AI-2",
+      "issue": 46,
       "primary": true
     },
     {
-      "story": "2026-11-10/IT·AI-3",
-      "issue": 28,
+      "story": "2026-11-09/IT·AI-3",
+      "issue": 239,
       "primary": true
     },
     {
-      "story": "2026-11-10/IT·AI-4",
-      "issue": 256,
-      "primary": true
-    },
-    {
-      "story": "2026-11-10/IT·AI-5",
-      "issue": 257,
-      "primary": true
-    },
-    {
-      "story": "2026-11-10/IT·AI-s1",
-      "issue": 258,
-      "primary": true
-    },
-    {
-      "story": "2026-11-10/IT·AI-s2",
-      "issue": 259,
-      "primary": true
-    },
-    {
-      "story": "2026-11-10/IT·AI-s3",
+      "story": "2026-11-09/IT·AI-4",
       "issue": 138,
+      "primary": true
+    },
+    {
+      "story": "2026-11-09/IT·AI-5",
+      "issue": 240,
+      "primary": true
+    },
+    {
+      "story": "2026-11-09/IT·AI-6",
+      "issue": 241,
+      "primary": true
+    },
+    {
+      "story": "2026-11-09/IT·AI-s1",
+      "issue": 162,
+      "primary": true
+    },
+    {
+      "story": "2026-11-09/IT·AI-s2",
+      "issue": 242,
       "primary": true
     },
     {
@@ -6647,42 +6602,47 @@
       "primary": true
     },
     {
-      "story": "2026-11-11/IT·AI-1",
+      "story": "2026-11-10/IT·AI-1",
+      "issue": 51,
+      "primary": false
+    },
+    {
+      "story": "2026-11-10/IT·AI-1",
       "issue": 228,
       "primary": true
     },
     {
-      "story": "2026-11-11/IT·AI-2",
-      "issue": 269,
-      "primary": true
-    },
-    {
-      "story": "2026-11-11/IT·AI-3",
+      "story": "2026-11-10/IT·AI-2",
       "issue": 20,
       "primary": true
     },
     {
-      "story": "2026-11-11/IT·AI-4",
+      "story": "2026-11-10/IT·AI-3",
       "issue": 28,
       "primary": true
     },
     {
-      "story": "2026-11-11/IT·AI-5",
-      "issue": 51,
+      "story": "2026-11-10/IT·AI-4",
+      "issue": 256,
       "primary": true
     },
     {
-      "story": "2026-11-11/IT·AI-s1",
-      "issue": 270,
+      "story": "2026-11-10/IT·AI-5",
+      "issue": 257,
       "primary": true
     },
     {
-      "story": "2026-11-11/IT·AI-s2",
-      "issue": 271,
+      "story": "2026-11-10/IT·AI-s1",
+      "issue": 258,
       "primary": true
     },
     {
-      "story": "2026-11-11/IT·AI-s3",
+      "story": "2026-11-10/IT·AI-s2",
+      "issue": 259,
+      "primary": true
+    },
+    {
+      "story": "2026-11-10/IT·AI-s3",
       "issue": 138,
       "primary": true
     },
@@ -6772,43 +6732,43 @@
       "primary": true
     },
     {
-      "story": "2026-11-12/IT·AI-1",
+      "story": "2026-11-11/IT·AI-1",
       "issue": 228,
       "primary": true
     },
     {
-      "story": "2026-11-12/IT·AI-2",
+      "story": "2026-11-11/IT·AI-2",
+      "issue": 269,
+      "primary": true
+    },
+    {
+      "story": "2026-11-11/IT·AI-3",
+      "issue": 20,
+      "primary": true
+    },
+    {
+      "story": "2026-11-11/IT·AI-4",
+      "issue": 28,
+      "primary": true
+    },
+    {
+      "story": "2026-11-11/IT·AI-5",
       "issue": 51,
       "primary": true
     },
     {
-      "story": "2026-11-12/IT·AI-2",
-      "issue": 228,
-      "primary": false
-    },
-    {
-      "story": "2026-11-12/IT·AI-3",
-      "issue": 284,
+      "story": "2026-11-11/IT·AI-s1",
+      "issue": 270,
       "primary": true
     },
     {
-      "story": "2026-11-12/IT·AI-4",
-      "issue": 285,
+      "story": "2026-11-11/IT·AI-s2",
+      "issue": 271,
       "primary": true
     },
     {
-      "story": "2026-11-12/IT·AI-5",
-      "issue": 286,
-      "primary": true
-    },
-    {
-      "story": "2026-11-12/IT·AI-s1",
-      "issue": 28,
-      "primary": true
-    },
-    {
-      "story": "2026-11-12/IT·AI-s2",
-      "issue": 28,
+      "story": "2026-11-11/IT·AI-s3",
+      "issue": 138,
       "primary": true
     },
     {
@@ -6939,6 +6899,46 @@
     {
       "story": "2026-11-12/한국-s5",
       "issue": 187,
+      "primary": true
+    },
+    {
+      "story": "2026-11-12/IT·AI-1",
+      "issue": 228,
+      "primary": true
+    },
+    {
+      "story": "2026-11-12/IT·AI-2",
+      "issue": 51,
+      "primary": true
+    },
+    {
+      "story": "2026-11-12/IT·AI-2",
+      "issue": 228,
+      "primary": false
+    },
+    {
+      "story": "2026-11-12/IT·AI-3",
+      "issue": 284,
+      "primary": true
+    },
+    {
+      "story": "2026-11-12/IT·AI-4",
+      "issue": 285,
+      "primary": true
+    },
+    {
+      "story": "2026-11-12/IT·AI-5",
+      "issue": 286,
+      "primary": true
+    },
+    {
+      "story": "2026-11-12/IT·AI-s1",
+      "issue": 28,
+      "primary": true
+    },
+    {
+      "story": "2026-11-12/IT·AI-s2",
+      "issue": 28,
       "primary": true
     }
   ],
