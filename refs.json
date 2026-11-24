@@ -6100,6 +6100,258 @@
       "describedOn": "2026-11-13",
       "describedStory": "2026-11-12/IT·AI-s2",
       "mergedInto": null
+    },
+    {
+      "id": 493,
+      "kind": "기관",
+      "name": "재정경제부",
+      "aliases": [
+        "재경부"
+      ],
+      "description": "대한민국의 경제 정책과 재정을 맡는 중앙행정기관",
+      "describedOn": "2026-11-24",
+      "describedStory": "2026-11-13/한국-3",
+      "mergedInto": null
+    },
+    {
+      "id": 494,
+      "kind": "인물",
+      "name": "이혜훈",
+      "aliases": [
+        "Lee Hye-hoon"
+      ],
+      "description": "전 기획예산처 장관 후보자",
+      "describedOn": "2026-11-24",
+      "describedStory": "2026-11-13/한국-7",
+      "mergedInto": null
+    },
+    {
+      "id": 495,
+      "kind": "기관",
+      "name": "서울경찰청",
+      "aliases": [
+        "Seoul Metropolitan Police Agency"
+      ],
+      "description": "서울 지역 치안을 맡는 경찰 기관",
+      "describedOn": "2026-11-24",
+      "describedStory": "2026-11-13/한국-7",
+      "mergedInto": null
+    },
+    {
+      "id": 496,
+      "kind": "인물",
+      "name": "한성숙",
+      "aliases": [
+        "Han Seong-sook"
+      ],
+      "description": "대한민국 국무총리",
+      "describedOn": "2026-11-24",
+      "describedStory": "2026-11-13/한국-8",
+      "mergedInto": null
+    },
+    {
+      "id": 497,
+      "kind": "기관",
+      "name": "미국 연방항공청",
+      "aliases": [
+        "연방항공청",
+        "FAA",
+        "Federal Aviation Administration"
+      ],
+      "description": "미국의 민간 항공과 항공 교통 관제를 맡는 정부 기관",
+      "describedOn": "2026-11-24",
+      "describedStory": "2026-11-13/세계-1",
+      "mergedInto": null
+    },
+    {
+      "id": 498,
+      "kind": "인물",
+      "name": "숀 더피",
+      "aliases": [
+        "Sean Duffy"
+      ],
+      "description": "미국 교통부 장관",
+      "describedOn": "2026-11-24",
+      "describedStory": "2026-11-13/세계-1",
+      "mergedInto": null
+    },
+    {
+      "id": 499,
+      "kind": "인물",
+      "name": "안토니우 코스타",
+      "aliases": [
+        "António Costa",
+        "코스타"
+      ],
+      "description": "EU 정상회의 상임의장",
+      "describedOn": "2026-11-24",
+      "describedStory": "2026-11-13/세계-2",
+      "mergedInto": null
+    },
+    {
+      "id": 500,
+      "kind": "인물",
+      "name": "크리스 밴홀런",
+      "aliases": [
+        "Chris Van Hollen",
+        "밴홀런"
+      ],
+      "description": "미국 민주당 상원의원(메릴랜드)",
+      "describedOn": "2026-11-24",
+      "describedStory": "2026-11-13/세계-5",
+      "mergedInto": null
+    },
+    {
+      "id": 501,
+      "kind": "인물",
+      "name": "로런 보버트",
+      "aliases": [
+        "Lauren Boebert",
+        "보버트"
+      ],
+      "description": "미국 공화당 하원의원(콜로라도)",
+      "describedOn": "2026-11-24",
+      "describedStory": "2026-11-13/세계-5",
+      "mergedInto": null
+    },
+    {
+      "id": 502,
+      "kind": "인물",
+      "name": "타밈 빈 하마드 알사니",
+      "aliases": [
+        "Tamim bin Hamad Al Thani",
+        "셰이크 타밈"
+      ],
+      "description": "카타르 국왕(에미르)",
+      "describedOn": "2026-11-24",
+      "describedStory": "2026-11-13/세계-6",
+      "mergedInto": null
+    },
+    {
+      "id": 503,
+      "kind": "국가",
+      "name": "네덜란드",
+      "aliases": [
+        "Netherlands"
+      ],
+      "description": "서유럽 북해 연안의 나라",
+      "describedOn": "2026-11-24",
+      "describedStory": "2026-11-13/세계-7",
+      "mergedInto": null
+    },
+    {
+      "id": 504,
+      "kind": "인물",
+      "name": "롭 예턴",
+      "aliases": [
+        "Rob Jetten",
+        "예턴"
+      ],
+      "description": "네덜란드 총리",
+      "describedOn": "2026-11-24",
+      "describedStory": "2026-11-13/세계-7",
+      "mergedInto": null
+    },
+    {
+      "id": 505,
+      "kind": "기관",
+      "name": "네덜란드 자유민주당",
+      "aliases": [
+        "VVD",
+        "자유민주국민당"
+      ],
+      "description": "네덜란드의 중도우파 정당",
+      "describedOn": "2026-11-24",
+      "describedStory": "2026-11-13/세계-7",
+      "mergedInto": null
+    },
+    {
+      "id": 506,
+      "kind": "기관",
+      "name": "국제형사재판소",
+      "aliases": [
+        "ICC",
+        "International Criminal Court"
+      ],
+      "description": "전쟁범죄·집단학살 등 국제 범죄를 재판하는 상설 국제 법원",
+      "describedOn": "2026-11-24",
+      "describedStory": "2026-11-13/세계-s2",
+      "mergedInto": null
+    },
+    {
+      "id": 507,
+      "kind": "인물",
+      "name": "팀 스콧",
+      "aliases": [
+        "Tim Scott"
+      ],
+      "description": "미국 공화당 상원의원, 상원 은행위원장",
+      "describedOn": "2026-11-24",
+      "describedStory": "2026-11-13/IT·AI-2",
+      "mergedInto": null
+    },
+    {
+      "id": 508,
+      "kind": "인물",
+      "name": "르네 하스",
+      "aliases": [
+        "Rene Haas"
+      ],
+      "description": "Arm 최고경영자",
+      "describedOn": "2026-11-24",
+      "describedStory": "2026-11-13/IT·AI-3",
+      "mergedInto": null
+    },
+    {
+      "id": 509,
+      "kind": "기관",
+      "name": "Arm",
+      "aliases": [
+        "암",
+        "Arm Holdings"
+      ],
+      "description": "반도체 설계 자산을 만드는 영국의 반도체 기업",
+      "describedOn": "2026-11-24",
+      "describedStory": "2026-11-13/IT·AI-3",
+      "mergedInto": null
+    },
+    {
+      "id": 510,
+      "kind": "기관",
+      "name": "사파이어 슬리트",
+      "aliases": [
+        "Sapphire Sleet",
+        "UNC1069"
+      ],
+      "description": "북한과 연계된 것으로 지목된 해커 조직",
+      "describedOn": "2026-11-24",
+      "describedStory": "2026-11-13/IT·AI-4",
+      "mergedInto": null
+    },
+    {
+      "id": 511,
+      "kind": "기관",
+      "name": "국토지리정보원",
+      "aliases": [
+        "NGII"
+      ],
+      "description": "국가 기본 지도와 측량을 맡는 국토교통부 소속 기관",
+      "describedOn": "2026-11-24",
+      "describedStory": "2026-11-13/IT·AI-6",
+      "mergedInto": null
+    },
+    {
+      "id": 512,
+      "kind": "기관",
+      "name": "세레브라스",
+      "aliases": [
+        "Cerebras",
+        "Cerebras Systems"
+      ],
+      "description": "미국의 AI 칩 기업",
+      "describedOn": "2026-11-24",
+      "describedStory": "2026-11-13/IT·AI-s1",
+      "mergedInto": null
     }
   ],
   "terms": [
@@ -7843,6 +8095,81 @@
         "credential stuffing"
       ],
       "description": "다른 곳에서 유출된 아이디와 비밀번호 목록을 여러 사이트에 넣어 보며 로그인을 시도하는 공격이다. 여러 사이트에서 같은 비밀번호를 쓰는 사람이 피해를 본다.",
+      "mergedInto": null
+    },
+    {
+      "id": 201,
+      "name": "상장폐지",
+      "aliases": [
+        "상폐",
+        "delisting"
+      ],
+      "description": "증권거래소에 올라 있던 주식을 거래 대상에서 빼는 것이다. 실적이 나쁘거나 공시 의무를 어긴 기업 등이 대상이 되며, 이후 그 주식은 거래소에서 사고팔 수 없다.",
+      "mergedInto": null
+    },
+    {
+      "id": 202,
+      "name": "증권시장안정펀드",
+      "aliases": [
+        "증안펀드"
+      ],
+      "description": "주가가 크게 떨어질 때 금융회사들이 돈을 모아 주식을 사들여 시장을 떠받치는 기금이다. 급락을 막고 투자 심리를 안정시키려고 쓴다.",
+      "mergedInto": null
+    },
+    {
+      "id": 203,
+      "name": "그린북",
+      "aliases": [
+        "최근 경제동향"
+      ],
+      "description": "정부가 매달 내는 '최근 경제동향' 보고서의 별칭이다. 생산·소비·투자·수출 등 지표를 바탕으로 정부의 경기 판단을 담는다.",
+      "mergedInto": null
+    },
+    {
+      "id": 204,
+      "name": "몰수보전",
+      "aliases": [
+        "기소 전 몰수보전"
+      ],
+      "description": "범죄로 얻은 재산을 재판 전에 팔거나 숨기지 못하도록 법원이 처분을 막아 두는 조치다. 재판에서 몰수가 확정되면 국가가 그 재산을 가져간다.",
+      "mergedInto": null
+    },
+    {
+      "id": 205,
+      "name": "농축 우라늄",
+      "aliases": [
+        "고농축 우라늄",
+        "enriched uranium"
+      ],
+      "description": "핵분열을 일으키는 우라늄-235의 비율을 높인 우라늄이다. 발전용은 보통 5% 안팎이고, 90% 가까이 높이면 핵무기에 쓸 수 있다.",
+      "mergedInto": null
+    },
+    {
+      "id": 206,
+      "name": "비확산",
+      "aliases": [
+        "핵 비확산",
+        "non-proliferation"
+      ],
+      "description": "핵무기와 그 기술이 새로운 나라나 집단으로 퍼지지 않게 막는 것이다. 핵확산금지조약(NPT)이 대표적인 국제 규범이다.",
+      "mergedInto": null
+    },
+    {
+      "id": 207,
+      "name": "부유세",
+      "aliases": [
+        "wealth tax"
+      ],
+      "description": "일정 규모 이상의 재산을 가진 사람에게 재산 자체를 기준으로 매기는 세금이다. 소득이 아니라 보유 자산에 세금을 매긴다는 점이 다르다.",
+      "mergedInto": null
+    },
+    {
+      "id": 208,
+      "name": "딥페이크",
+      "aliases": [
+        "deepfake"
+      ],
+      "description": "AI로 실제 사람의 얼굴이나 목소리를 흉내 내 만든 가짜 영상·음성이다. 사기나 허위 정보 유포에 악용되기도 한다.",
       "mergedInto": null
     }
   ],
@@ -12826,6 +13153,334 @@
     {
       "story": "2026-11-12/IT·AI-s2",
       "entity": 492
+    },
+    {
+      "story": "2026-11-13/세계-1",
+      "entity": 153
+    },
+    {
+      "story": "2026-11-13/세계-1",
+      "entity": 497
+    },
+    {
+      "story": "2026-11-13/세계-1",
+      "entity": 498
+    },
+    {
+      "story": "2026-11-13/세계-2",
+      "entity": 29
+    },
+    {
+      "story": "2026-11-13/세계-2",
+      "entity": 131
+    },
+    {
+      "story": "2026-11-13/세계-2",
+      "entity": 255
+    },
+    {
+      "story": "2026-11-13/세계-2",
+      "entity": 423
+    },
+    {
+      "story": "2026-11-13/세계-2",
+      "entity": 424
+    },
+    {
+      "story": "2026-11-13/세계-2",
+      "entity": 499
+    },
+    {
+      "story": "2026-11-13/세계-3",
+      "entity": 21
+    },
+    {
+      "story": "2026-11-13/세계-3",
+      "entity": 107
+    },
+    {
+      "story": "2026-11-13/세계-3",
+      "entity": 181
+    },
+    {
+      "story": "2026-11-13/세계-4",
+      "entity": 32
+    },
+    {
+      "story": "2026-11-13/세계-4",
+      "entity": 40
+    },
+    {
+      "story": "2026-11-13/세계-4",
+      "entity": 141
+    },
+    {
+      "story": "2026-11-13/세계-4",
+      "entity": 477
+    },
+    {
+      "story": "2026-11-13/세계-5",
+      "entity": 280
+    },
+    {
+      "story": "2026-11-13/세계-5",
+      "entity": 286
+    },
+    {
+      "story": "2026-11-13/세계-5",
+      "entity": 500
+    },
+    {
+      "story": "2026-11-13/세계-5",
+      "entity": 501
+    },
+    {
+      "story": "2026-11-13/세계-6",
+      "entity": 217
+    },
+    {
+      "story": "2026-11-13/세계-6",
+      "entity": 221
+    },
+    {
+      "story": "2026-11-13/세계-6",
+      "entity": 232
+    },
+    {
+      "story": "2026-11-13/세계-6",
+      "entity": 502
+    },
+    {
+      "story": "2026-11-13/세계-7",
+      "entity": 503
+    },
+    {
+      "story": "2026-11-13/세계-7",
+      "entity": 504
+    },
+    {
+      "story": "2026-11-13/세계-7",
+      "entity": 505
+    },
+    {
+      "story": "2026-11-13/세계-s1",
+      "entity": 175
+    },
+    {
+      "story": "2026-11-13/세계-s2",
+      "entity": 506
+    },
+    {
+      "story": "2026-11-13/세계-s5",
+      "entity": 375
+    },
+    {
+      "story": "2026-11-13/세계-s5",
+      "entity": 376
+    },
+    {
+      "story": "2026-11-13/한국-1",
+      "entity": 84
+    },
+    {
+      "story": "2026-11-13/한국-1",
+      "entity": 202
+    },
+    {
+      "story": "2026-11-13/한국-1",
+      "entity": 225
+    },
+    {
+      "story": "2026-11-13/한국-2",
+      "entity": 63
+    },
+    {
+      "story": "2026-11-13/한국-2",
+      "entity": 64
+    },
+    {
+      "story": "2026-11-13/한국-2",
+      "entity": 65
+    },
+    {
+      "story": "2026-11-13/한국-2",
+      "entity": 114
+    },
+    {
+      "story": "2026-11-13/한국-2",
+      "entity": 225
+    },
+    {
+      "story": "2026-11-13/한국-3",
+      "entity": 493
+    },
+    {
+      "story": "2026-11-13/한국-4",
+      "entity": 8
+    },
+    {
+      "story": "2026-11-13/한국-4",
+      "entity": 246
+    },
+    {
+      "story": "2026-11-13/한국-4",
+      "entity": 247
+    },
+    {
+      "story": "2026-11-13/한국-4",
+      "entity": 481
+    },
+    {
+      "story": "2026-11-13/한국-5",
+      "entity": 12
+    },
+    {
+      "story": "2026-11-13/한국-5",
+      "entity": 462
+    },
+    {
+      "story": "2026-11-13/한국-6",
+      "entity": 12
+    },
+    {
+      "story": "2026-11-13/한국-6",
+      "entity": 48
+    },
+    {
+      "story": "2026-11-13/한국-6",
+      "entity": 475
+    },
+    {
+      "story": "2026-11-13/한국-6",
+      "entity": 476
+    },
+    {
+      "story": "2026-11-13/한국-6",
+      "entity": 477
+    },
+    {
+      "story": "2026-11-13/한국-7",
+      "entity": 494
+    },
+    {
+      "story": "2026-11-13/한국-7",
+      "entity": 495
+    },
+    {
+      "story": "2026-11-13/한국-8",
+      "entity": 496
+    },
+    {
+      "story": "2026-11-13/한국-s5",
+      "entity": 204
+    },
+    {
+      "story": "2026-11-13/한국-s5",
+      "entity": 392
+    },
+    {
+      "story": "2026-11-13/한국-s5",
+      "entity": 394
+    },
+    {
+      "story": "2026-11-13/IT·AI-1",
+      "entity": 53
+    },
+    {
+      "story": "2026-11-13/IT·AI-2",
+      "entity": 114
+    },
+    {
+      "story": "2026-11-13/IT·AI-2",
+      "entity": 138
+    },
+    {
+      "story": "2026-11-13/IT·AI-2",
+      "entity": 155
+    },
+    {
+      "story": "2026-11-13/IT·AI-2",
+      "entity": 410
+    },
+    {
+      "story": "2026-11-13/IT·AI-2",
+      "entity": 466
+    },
+    {
+      "story": "2026-11-13/IT·AI-2",
+      "entity": 507
+    },
+    {
+      "story": "2026-11-13/IT·AI-3",
+      "entity": 65
+    },
+    {
+      "story": "2026-11-13/IT·AI-3",
+      "entity": 114
+    },
+    {
+      "story": "2026-11-13/IT·AI-3",
+      "entity": 408
+    },
+    {
+      "story": "2026-11-13/IT·AI-3",
+      "entity": 472
+    },
+    {
+      "story": "2026-11-13/IT·AI-3",
+      "entity": 508
+    },
+    {
+      "story": "2026-11-13/IT·AI-3",
+      "entity": 509
+    },
+    {
+      "story": "2026-11-13/IT·AI-4",
+      "entity": 12
+    },
+    {
+      "story": "2026-11-13/IT·AI-4",
+      "entity": 41
+    },
+    {
+      "story": "2026-11-13/IT·AI-4",
+      "entity": 510
+    },
+    {
+      "story": "2026-11-13/IT·AI-5",
+      "entity": 113
+    },
+    {
+      "story": "2026-11-13/IT·AI-6",
+      "entity": 62
+    },
+    {
+      "story": "2026-11-13/IT·AI-6",
+      "entity": 511
+    },
+    {
+      "story": "2026-11-13/IT·AI-7",
+      "entity": 156
+    },
+    {
+      "story": "2026-11-13/IT·AI-s1",
+      "entity": 53
+    },
+    {
+      "story": "2026-11-13/IT·AI-s1",
+      "entity": 512
+    },
+    {
+      "story": "2026-11-13/IT·AI-s2",
+      "entity": 119
+    },
+    {
+      "story": "2026-11-13/IT·AI-s3",
+      "entity": 95
+    },
+    {
+      "story": "2026-11-13/IT·AI-s4",
+      "entity": 50
     }
   ],
   "termLinks": [
@@ -14478,6 +15133,76 @@
       "story": "2026-11-12/IT·AI-5",
       "term": 200,
       "surface": "리스트형 공격"
+    },
+    {
+      "story": "2026-11-13/세계-3",
+      "term": 205,
+      "surface": "농축 우라늄"
+    },
+    {
+      "story": "2026-11-13/세계-4",
+      "term": 206,
+      "surface": "비확산"
+    },
+    {
+      "story": "2026-11-13/세계-7",
+      "term": 17,
+      "surface": "연립정부"
+    },
+    {
+      "story": "2026-11-13/세계-7",
+      "term": 207,
+      "surface": "부유세"
+    },
+    {
+      "story": "2026-11-13/한국-1",
+      "term": 201,
+      "surface": "상장폐지"
+    },
+    {
+      "story": "2026-11-13/한국-1",
+      "term": 202,
+      "surface": "증권시장안정펀드"
+    },
+    {
+      "story": "2026-11-13/한국-2",
+      "term": 127,
+      "surface": "순매도"
+    },
+    {
+      "story": "2026-11-13/한국-3",
+      "term": 203,
+      "surface": "그린북"
+    },
+    {
+      "story": "2026-11-13/한국-7",
+      "term": 25,
+      "surface": "공소시효"
+    },
+    {
+      "story": "2026-11-13/한국-7",
+      "term": 204,
+      "surface": "몰수보전"
+    },
+    {
+      "story": "2026-11-13/IT·AI-2",
+      "term": 194,
+      "surface": "수출 통제"
+    },
+    {
+      "story": "2026-11-13/IT·AI-3",
+      "term": 70,
+      "surface": "GPU"
+    },
+    {
+      "story": "2026-11-13/IT·AI-4",
+      "term": 208,
+      "surface": "딥페이크"
+    },
+    {
+      "story": "2026-11-13/IT·AI-5",
+      "term": 34,
+      "surface": "AI 에이전트"
     }
   ],
   "merges": [],

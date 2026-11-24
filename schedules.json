@@ -666,7 +666,7 @@
       "name": "한중 외교장관 베이징 회담",
       "due": "2026-11-13",
       "major": "정치",
-      "outcome": null,
+      "outcome": "result",
       "postponedTo": null,
       "mergedInto": null,
       "deleted": false,
@@ -677,6 +677,72 @@
       "name": "삼성 AI 안경 국내 출시",
       "due": "2026-12-10",
       "major": "IT·AI",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 73,
+      "name": "트럼프·시진핑·푸틴 선전 3자 회담",
+      "due": "2026-11-19",
+      "major": "국제",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 74,
+      "name": "IAEA 이사회",
+      "due": "2026-11-19",
+      "major": "국제",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 75,
+      "name": "EU 정상회의",
+      "due": "2026-11-26",
+      "major": "국제",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 76,
+      "name": "미국 민주당 상원 원내대표 경선",
+      "due": "2026-12",
+      "major": "국제",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 77,
+      "name": "러트닉 상무장관 상원 은행위원회 청문회",
+      "due": "2026-12-10",
+      "major": "IT·AI",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 78,
+      "name": "카드포인트 지역화폐 전환 서비스 시작",
+      "due": "2027-05",
+      "major": "경제",
       "outcome": null,
       "postponedTo": null,
       "mergedInto": null,
@@ -1248,6 +1314,51 @@
     {
       "story": "2026-11-12/IT·AI-3",
       "schedule": 72,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-13/세계-2",
+      "schedule": 75,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-13/세계-3",
+      "schedule": 74,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-13/세계-4",
+      "schedule": 10,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-13/세계-4",
+      "schedule": 73,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-13/세계-5",
+      "schedule": 76,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-13/한국-6",
+      "schedule": 10,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-13/한국-6",
+      "schedule": 71,
+      "role": "result"
+    },
+    {
+      "story": "2026-11-13/한국-8",
+      "schedule": 78,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-13/IT·AI-2",
+      "schedule": 77,
       "role": "basis"
     }
   ],
