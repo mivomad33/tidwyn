@@ -200,7 +200,8 @@ describe("4.3-1 쓰기 프로세스(N11)", () => {
     assert.deepEqual(env2, { PATH: "/bin" });
   });
 
-  test("실제 실행 함수: 표준 입력이 닫히고 표준 출력이 명령 출력과 실행 기록에 없으며 시간 상한에서 끊긴다", async () => {
+  // 가짜 claude가 /bin/sh 스크립트라 윈도우에서는 돌릴 수 없다
+  test("실제 실행 함수: 표준 입력이 닫히고 표준 출력이 명령 출력과 실행 기록에 없으며 시간 상한에서 끊긴다", { skip: process.platform === "win32" }, async () => {
     const { s, runFile } = await ready();
     const bin = tempDir();
     const capture = path.join(tempDir(), "seen");
@@ -293,14 +294,18 @@ describe("4.3-1 쓰기 프로세스(N11)", () => {
     const { s, runFile } = await ready();
     const root = tempDir();
     fs.writeFileSync(path.join(root, "CLAUDE.md"), "지침");
-    const saved = process.env.TMPDIR;
-    process.env.TMPDIR = root;
+    // os.tmpdir()은 macOS에서 TMPDIR, 윈도우에서 TEMP·TMP를 본다
+    const saved = { TMPDIR: process.env.TMPDIR, TEMP: process.env.TEMP, TMP: process.env.TMP };
+    Object.assign(process.env, { TMPDIR: root, TEMP: root, TMP: root });
     try {
       const fake = fakeWriter(() => items());
       assert.equal(cmd(s, "builder-write", runFile, fake).code, 1);
       assert.equal(fake.reqs.length, 0);
     } finally {
-      process.env.TMPDIR = saved;
+      for (const [k, v] of Object.entries(saved)) {
+        if (v === undefined) delete process.env[k];
+        else process.env[k] = v;
+      }
     }
   });
 

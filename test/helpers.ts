@@ -30,7 +30,14 @@ export function writeFakePublicFiles(outDir: string): void {
 }
 
 export function cleanupTemp(): void {
-  for (const dir of created.splice(0)) fs.rmSync(dir, { recursive: true, force: true });
+  for (const dir of created.splice(0)) {
+    try {
+      fs.rmSync(dir, { recursive: true, force: true });
+    } catch (e) {
+      // 윈도우는 아직 열려 있는 SQLite 파일을 지우지 못한다. 시스템 임시 폴더라 남겨 둔다
+      if (process.platform !== "win32" || !["EPERM", "EBUSY"].includes((e as NodeJS.ErrnoException).code ?? "")) throw e;
+    }
+  }
 }
 
 export function sh(cwd: string, cmd: string, args: string[]): string {
@@ -61,7 +68,7 @@ export function commitCount(repo: string, ref = "--all"): number {
 
 export function listFiles(dir: string): string[] {
   if (!fs.existsSync(dir)) return [];
-  return fs.readdirSync(dir, { recursive: true, withFileTypes: false }).map(String).sort();
+  return fs.readdirSync(dir, { recursive: true, withFileTypes: false }).map((f) => String(f).replaceAll(path.sep, "/")).sort();
 }
 
 export interface TestCtx extends Context {

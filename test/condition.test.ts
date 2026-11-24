@@ -8,6 +8,8 @@ import { main } from "../src/cli.ts";
 import { parseArgs, resolveSettings } from "../src/settings.ts";
 import { NOW, PROJECT_ROOT, cleanupTemp, commitCount, gitIn, listFiles, makeCtx, tempDir, tempRepo } from "./helpers.ts";
 
+const escapeRe = (t: string) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
 after(cleanupTemp);
 
 const REAL = { test: false, startDate: null };
@@ -163,9 +165,9 @@ describe("4.1-8 시험 모드와 인자", () => {
     const ctx = makeCtx(repo);
     assert.equal(main(["start"], ctx), 0);
     const head = gitIn(repo, "rev-parse", "--short", "HEAD").trim();
-    assert.match(ctx.text(), new RegExp(`데이터 폴더: ${path.join(repo, "data")}`));
+    assert.match(ctx.text(), new RegExp(`데이터 폴더: ${escapeRe(path.join(repo, "data"))}`));
     assert.match(ctx.text(), new RegExp(`코드: main @ ${head}\\n`));
-    assert.match(ctx.text(), new RegExp(`백업 저장소: ${repo}`));
+    assert.match(ctx.text(), new RegExp(`백업 저장소: ${escapeRe(repo)}`));
   });
 });
 

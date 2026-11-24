@@ -54,7 +54,7 @@ function noFakeText(...texts: string[]): void {
 
 function hashTree(dir: string): Record<string, string> {
   const out: Record<string, string> = {};
-  for (const f of fs.readdirSync(dir, { recursive: true }).map(String).sort()) {
+  for (const f of fs.readdirSync(dir, { recursive: true }).map((x) => String(x).replaceAll(path.sep, "/")).sort()) {
     const p = path.join(dir, f);
     if (fs.statSync(p).isFile()) out[f] = crypto.createHash("sha256").update(fs.readFileSync(p)).digest("hex");
   }

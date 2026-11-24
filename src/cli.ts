@@ -151,7 +151,7 @@ export interface Context {
   feedGapMs?: number;
   /** 사이트 빌더(3단계 4.1). 없으면 `node site/build.ts --data <입력> --out <결과물>` */
   buildSite?: SiteBuilder;
-  /** vercel CLI 실행(3단계 4.6-1). 없으면 node_modules/.bin/vercel */
+  /** vercel CLI 실행(3단계 4.6-1). 없으면 node_modules/vercel의 진입점 */
   runVercel?: VercelRunner;
   /** 배포 뒤 점검의 HTTP GET(3단계 4.6-3). 없으면 fetch */
   httpGet?: HttpGet;

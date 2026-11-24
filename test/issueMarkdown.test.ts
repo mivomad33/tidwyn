@@ -125,8 +125,8 @@ describe("2단계 4.4-2 이슈 마크다운과 목록", () => {
     renderAll(db, dir);
     assert.deepEqual(read(), first);
     assert.equal(fs.existsSync(path.join(dir, "issues", "999.md")), false);
-    assert.ok(first[path.join("issues", "index.md")]);
-    assert.match(first[path.join("briefs", "2026-10-27.md")]!, /이어지는 이야기/);
+    assert.ok(first["issues/index.md"]);
+    assert.match(first["briefs/2026-10-27.md"]!, /이어지는 이야기/);
     db.close();
   });
 });

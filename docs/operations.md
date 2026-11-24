@@ -6,6 +6,7 @@
 
 - **권한 건너뛰기 모드:** `/brief`는 Claude Code의 권한 건너뛰기 모드(bypassPermissions)로 실행한다는 전제로 만들었다. 프로젝트 허용 목록(`.claude/settings.json`)은 두지 않는다. 다른 모드에서는 실행 중 승인 요청이 뜰 수 있다.
 - **Node 24와 pnpm:** Node 버전은 `.node-version`(24)에 고정되어 있다. 의존성은 `pnpm install`로만 설치한다. 실행 경로(`src/`)는 Node 내장 기능만 쓴다. 그래서 실행 조건 확인과 복원은 의존성 설치 없이도 돈다.
+- **윈도우:** macOS와 윈도우 둘 다에서 돈다. 윈도우에서는 git의 `core.autocrlf`를 끄고(켜져 있으면 변경 사항이 있다고 보여 실행이 거부된다), pnpm은 단독 실행 파일(`pnpm.exe`, winget `pnpm.pnpm`)을, Claude Code는 `claude.exe`(winget `Anthropic.ClaudeCode`)를 쓴다. npm으로 설치한 `pnpm.cmd`·`claude.cmd`는 코드가 셸 없이 부를 수 없다.
 
 ## 매일 실행: `/brief`
 
@@ -855,7 +856,7 @@ node src/cli.ts deploy --dir data/site --db data/tidwyn.db
 
 - `site`는 빌드 뒤 결과물 검사(DB 파일, 백업 파일, 영상 작업 파일, 비밀 값 모양, 출처 API 키 값(ECOS·FRED·YouTube·Gemini), 홈 폴더 경로, 허용 목록 밖 메일 주소)와 공개 페이지 검사(색인 페이지의 제목·설명·canonical, `sitemap.xml`의 주소마다 파일이 있음, `noindex` 없음, `robots.txt`가 수집을 막지 않음, HTML에 영상 데이터 없음)를 한다. 걸리면 실패한다.
 - `deploy --dir`는 실행 기록과 모드에 상관없이 배포한다. 배포 전에 결과물 검사를 다시 하고, 배포 뒤 운영 주소의 첫 화면과 최근 날짜가 그 DB와 같은지 점검한다(별칭이 새 배포로 바뀌는 시간을 기다려 5초 간격으로 6번까지 확인한다).
-- Vercel CLI는 프로젝트 `devDependencies`(`node_modules/.bin/vercel`)를 쓴다. 로그인이 풀렸으면 `node_modules/.bin/vercel login`으로 다시 로그인한다(사용자가 한다).
+- Vercel CLI는 프로젝트 `devDependencies`(`node_modules/vercel`)를 쓴다. 로그인이 풀렸으면 `pnpm exec vercel login`으로 다시 로그인한다(사용자가 한다).
 
 ### 미리보기 배포
 
@@ -911,11 +912,11 @@ node site/dev/serve.ts .test-data/site-dev-out
 ### 이전 배포로 되돌리기
 
 ```bash
-node_modules/.bin/vercel ls tidwyn --scope mivomad33
+pnpm exec vercel ls tidwyn --scope mivomad33
 ```
 
 ```bash
-node_modules/.bin/vercel rollback <배포 주소> --scope mivomad33 --yes
+pnpm exec vercel rollback <배포 주소> --scope mivomad33 --yes
 ```
 
 - 되돌린 뒤에는 운영 주소가 자동으로 새 배포를 따라가지 않는다. 다음 `deploy`가 운영 주소를 다시 새 배포로 옮긴다(`--prod` 배포).
@@ -1026,7 +1027,7 @@ node src/cli.ts precheck
 | DB가 망가졌다 | 실행 전 사본으로 되돌리거나 `node src/cli.ts restore --force` |
 | 요약에 사이트 빌드 실패가 나왔다 | 배포와 push는 건너뛰었다(push는 따로 돈다). 이유를 보고 작업 브랜치에서 고친다. 고친 뒤 위 "손으로 빌드·배포하기"로 바로 올리거나 다음 실행을 기다린다 |
 | 결과물 검사나 공개 전 점검이 뉴스 글 속 메일 주소 모양에 걸렸다 | 아래 "메일 주소 모양에 걸렸을 때" |
-| 요약에 배포 실패가 나왔다(로그인 풀림, 네트워크, Vercel 장애) | 운영 주소는 이전 배포 그대로다. 로그인이 풀렸으면 `node_modules/.bin/vercel login`(사용자). 다음 실행이 다시 배포한다. 바로 하려면 "손으로 빌드·배포하기" |
+| 요약에 배포 실패가 나왔다(로그인 풀림, 네트워크, Vercel 장애) | 운영 주소는 이전 배포 그대로다. 로그인이 풀렸으면 `pnpm exec vercel login`(사용자). 다음 실행이 다시 배포한다. 바로 하려면 "손으로 빌드·배포하기" |
 | 요약에 배포 뒤 점검 실패가 나왔다 | 위 "배포 뒤 점검이 실패했을 때" |
 | 요약에 `data` push 실패가 나왔다(네트워크, 인증) | 커밋은 로컬에 남아 있고 다음 실행이 밀린 커밋을 push한다. 인증이면 `gh auth status`로 확인한다(다시 로그인은 사용자) |
 | 요약에 결과물 크기·파일 수 경고가 나왔다 | 위 "Vercel 한도와 넘을 때 할 일" |

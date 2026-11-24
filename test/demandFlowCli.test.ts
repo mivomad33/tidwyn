@@ -108,7 +108,7 @@ const buildSite = ({ inputDir, outDir }: { inputDir: string; outDir: string }) =
 function hashTree(dir: string, skip: (rel: string) => boolean = () => false): Record<string, string> {
   const out: Record<string, string> = {};
   if (!fs.existsSync(dir)) return out;
-  for (const rel of fs.readdirSync(dir, { recursive: true }).map(String).sort()) {
+  for (const rel of fs.readdirSync(dir, { recursive: true }).map((f) => String(f).replaceAll(path.sep, "/")).sort()) {
     const p = path.join(dir, rel);
     if (!fs.statSync(p).isFile() || skip(rel)) continue;
     if (/(^|\/)list-\d{4}-\d{2}\.json$/.test(rel)) {

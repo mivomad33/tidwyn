@@ -76,9 +76,10 @@ export const nodeSiteBuilder: SiteBuilder = ({ repoDir, inputDir, outDir }) => {
 };
 
 export const cliVercel: VercelRunner = (args, repoDir) => {
-  const bin = path.join(repoDir, "node_modules", ".bin", "vercel");
+  // .bin/vercel은 macOS에서만 실행 파일이고 윈도우에서는 셸 스크립트라, 패키지의 JS 진입점을 지금 Node로 직접 돌린다
+  const bin = path.join(repoDir, "node_modules", "vercel", "dist", "vc.js");
   if (!fs.existsSync(bin)) return { status: null, stdout: "", stderr: "", error: `vercel CLI가 없다: ${bin} (pnpm install)` };
-  const r = spawnSync(bin, args, { cwd: repoDir, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"], timeout: 15 * 60 * 1000, maxBuffer: 64 * 1024 * 1024 });
+  const r = spawnSync(process.execPath, [bin, ...args], { cwd: repoDir, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"], timeout: 15 * 60 * 1000, maxBuffer: 64 * 1024 * 1024 });
   const out: ProcessResult = { status: r.status, stdout: r.stdout ?? "", stderr: r.stderr ?? "" };
   if (r.error) out.error = r.error.message;
   return out;
