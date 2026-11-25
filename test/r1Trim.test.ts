@@ -33,7 +33,7 @@ const RETIRED_WORDS: readonly [string, RegExp][] = [
   ["demand", /demand/i],
   ["community", /community/i],
   ["영상", /영상/],
-  ["빌더", /빌더/],
+  // "빌더"는 B1(2026-11-25)이 저장소 탭 이름으로 다시 쓴다(B1 명세서 3.4)
   ["수요", /수요(?!일)/],
   ["새 제품", /새 제품/],
   ["뜨는 저장소", /뜨는 저장소/],

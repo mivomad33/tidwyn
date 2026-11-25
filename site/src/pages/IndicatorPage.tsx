@@ -12,7 +12,7 @@ import type { IndicatorCard, IndicatorList, IndicatorSeries } from "../lib/types
 import { Link } from "../router.tsx";
 import { NotFoundPage } from "./NotFoundPage.tsx";
 
-export const NO_VALUES_TEXT = "아직 값이 없다.";
+export const NO_VALUES_TEXT = "아직 값이 없습니다.";
 
 export function IndicatorPage({ id }: { id: string }) {
   const listUrl = dataUrl.indicatorList();
@@ -81,8 +81,8 @@ function Chart({ card, series, refYear }: { card: IndicatorCard; series: Indicat
   return (
     <>
       <Segmented<Period> label="기간" className="seg ind-seg" options={PERIODS.map((p) => ({ value: p.id, label: p.label }))} value={period} onChange={setPeriod} />
-      {points.length === 0 ? <Empty>이 기간에 값이 없다.</Empty> : <LineChart meta={card} points={points} height={220} grid refYear={refYear} />}
-      {points.length === 1 && <p className="ind-note">이 기간에는 값이 하나뿐이다.</p>}
+      {points.length === 0 ? <Empty>이 기간에 값이 없습니다.</Empty> : <LineChart meta={card} points={points} height={220} grid refYear={refYear} />}
+      {points.length === 1 && <p className="ind-note">이 기간에는 값이 하나뿐입니다.</p>}
     </>
   );
 }

@@ -11,6 +11,8 @@ export type {
   IssueIndicator,
   Continues,
   DayList,
+  DayRepoItem,
+  DayRepos,
   EntityChunk,
   EntityDetail,
   EntityFilter,

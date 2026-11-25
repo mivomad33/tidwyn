@@ -33,7 +33,7 @@ export function IndicatorsPage() {
       <div className="ind">
         <h1 className="page-title">지표</h1>
         <p className="ind-meta">{asOfLine(res.data)}</p>
-        {cards.length === 0 && <Empty>아직 지표 값이 없다.</Empty>}
+        {cards.length === 0 && <Empty>아직 지표 값이 없습니다.</Empty>}
         {groupCards(cards).map((g) => (
           <section key={g.group} aria-labelledby={`ind-${g.group}`}>
             <h2 id={`ind-${g.group}`} className="h">

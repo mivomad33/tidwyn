@@ -20,5 +20,12 @@ export const E2E_INDICATOR_INFO_FILE = path.join(E2E_ROOT, "indicator-info.json"
 export const E2E_U1_DATA_DIR = path.join(E2E_ROOT, "u1-data");
 export const E2E_U1_OUT_DIR = path.join(E2E_ROOT, "u1-out");
 export const E2E_U1_PORT = 4322;
+/** B1단계: 빌더 탭 저장소 기록(실음·새로 오른 것 없음·받지 못함·기록 없는 날)과 일정·지표가 있는 지어낸 데이터로 빌드한 사이트. 검색 색인까지 있어야 해서 따로 빌드해 다른 포트로 띄운다 */
+export const E2E_B1_DATA_DIR = path.join(E2E_ROOT, "b1-data");
+export const E2E_B1_OUT_DIR = path.join(E2E_ROOT, "b1-out");
+export const E2E_B1_INFO_FILE = path.join(E2E_ROOT, "b1-info.json");
+export const E2E_B1_PORT = 4323;
+/** 옛 코드(기능이 없을 때)의 결과물로 같은 테스트를 돌려 실패를 볼 때만 바꾼다(`E2E_B1_BASE_URL=http://127.0.0.1:<포트> pnpm e2e test/e2e/stageB1.spec.ts`) */
+export const E2E_B1_BASE_URL = process.env.E2E_B1_BASE_URL ?? `http://127.0.0.1:${E2E_B1_PORT}`;
 /** 옛 코드(기능이 없을 때)의 결과물로 같은 테스트를 돌려 실패를 볼 때만 바꾼다(`E2E_U1_BASE_URL=http://127.0.0.1:<포트> pnpm e2e test/e2e/stageU1.spec.ts`) */
 export const E2E_U1_BASE_URL = process.env.E2E_U1_BASE_URL ?? `http://127.0.0.1:${E2E_U1_PORT}`;

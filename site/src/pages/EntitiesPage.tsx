@@ -71,7 +71,7 @@ function EntityPages({ filter }: { filter: EntityFilter }) {
   if (first.status === "error") return <ErrorState onRetry={() => retry([firstUrl])} />;
   if (first.status !== "ok") return <Loading />;
   const { total, pages } = first.data;
-  if (total === 0) return <Empty>{filter === "all" ? "아직 인물·기관·국가가 없다." : "이 종류에 해당하는 항목이 없다."}</Empty>;
+  if (total === 0) return <Empty>{filter === "all" ? "아직 인물·기관·국가가 없습니다." : "이 종류에 해당하는 항목이 없습니다."}</Empty>;
   const pageNos = Array.from({ length: Math.min(shown, pages) }, (_, i) => i);
   return (
     <>

@@ -131,7 +131,7 @@ describe("정적 HTML", () => {
     assert.ok(hrefsOf(html(b.out, "issues.html")).includes(`/issues/${issue.id}`));
 
     const terms = html(b.out, "terms.html");
-    assert.doesNotMatch(terms, /아직 용어가 없다/);
+    assert.doesNotMatch(terms, /아직 용어가 없습니다/);
     assert.match(terms, /<dt>[^<]+<\/dt><dd>[^<]+/, "용어 설명까지 담는다");
     assert.match(html(b.out, "schedules.html"), /class="ev"/);
     assert.match(html(b.out, "dates.html"), new RegExp(`href="/${b.dates.latestDate}"`));
@@ -204,13 +204,13 @@ describe("정적 HTML", () => {
     for (const p of b.indexed) assert.ok(!hrefsOf(html(b.out, pageFile(p))).some((href) => href.startsWith("/search")), p);
     const page = html(b.out, "404.html");
     assert.ok(!hrefsOf(page).some((href) => href.startsWith("/search")));
-    assert.match(page, /지난 뉴스는 날짜 목록에서 찾을 수 있다/);
+    assert.match(page, /지난 뉴스는 날짜 목록에서 찾을 수 있습니다/);
   });
 
   test("앱 틀에도 정적 안내가 있어 앱을 못 받아도 빈 화면이 아니고, 쓸 수 없는 검색 대신 갈 곳을 보여 준다", () => {
     const page = html(b.out, "app.html");
     assert.match(page, /<div id="root"><div class="static-page">/);
-    assert.match(page, /<h1 class="page-title">이 화면을 열지 못했다<\/h1>/);
+    assert.match(page, /<h1 class="page-title">이 화면을 열지 못했습니다<\/h1>/);
     const hrefs = hrefsOf(page);
     for (const href of ["/", "/dates", "/issues"]) assert.ok(hrefs.includes(href), href);
     assert.ok(!hrefs.some((href) => href.startsWith("/search")));
@@ -341,7 +341,7 @@ describe("정적 HTML", () => {
 
   test("4.3-3 없는 페이지는 정적 HTML만으로 읽힌다. 비공개 지표와 없는 번호는 파일이 없어 404다", () => {
     const page = html(b.out, "404.html");
-    assert.match(page, /<h1[^>]*>이 주소에는 페이지가 없다<\/h1>/);
+    assert.match(page, /<h1[^>]*>이 주소에는 페이지가 없습니다<\/h1>/);
     assert.match(titleOf(page), /없는 페이지/);
     const exists = (p: string) => fs.existsSync(path.join(b.out, p));
     for (const p of ["/nope", "/2026-02-30", "/1999-01-01", "/issues/99999", "/entities/99999", "/indicators/none"]) assert.deepEqual(resolveStatic(p, exists), { kind: "notFound", path: "404.html" }, p);
@@ -447,11 +447,11 @@ describe("4.1-1 빈 데이터", () => {
     db.close();
     const out = path.join(dir, "out");
     await buildSite({ dataDir, outDir: out });
-    assert.match(html(out, "index.html"), /아직 저장된 브리프가 없다/);
-    assert.match(html(out, "issues.html"), /아직 이슈가 없다/);
-    assert.match(html(out, "entities.html"), /아직 인물·기관·국가가 없다/);
-    assert.match(html(out, "terms.html"), /아직 용어가 없다/);
-    assert.match(html(out, "schedules.html"), /아직 일정이 없다/);
+    assert.match(html(out, "index.html"), /아직 저장된 브리프가 없습니다/);
+    assert.match(html(out, "issues.html"), /아직 이슈가 없습니다/);
+    assert.match(html(out, "entities.html"), /아직 인물·기관·국가가 없습니다/);
+    assert.match(html(out, "terms.html"), /아직 용어가 없습니다/);
+    assert.match(html(out, "schedules.html"), /아직 일정이 없습니다/);
     const rss = html(out, "rss.xml");
     assertWellFormed(rss);
     assert.doesNotMatch(rss, /<item>/);

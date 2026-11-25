@@ -80,9 +80,11 @@ const SECRET_PATTERNS: { kind: FindingKind; re: RegExp }[] = [
   { kind: "Google API 키 모양", re: /(?<![0-9A-Za-z_-])AIza[0-9A-Za-z_-]{35}(?![0-9A-Za-z_-])/ },
 ];
 
-/** 백업 파일 이름(backup.ts의 월별 JSON, issues.json, refs.json, schedules.json, indicators.json, corrections.json, meta.json). 결과물 검사도 쓴다 */
-export const BACKUP_NAME_RE = /^(?:\d{4}-\d{2}\.json|issues\.json|refs\.json|schedules\.json|indicators\.json|corrections\.json|meta\.json)$/;
-const EMAIL_RE = /[A-Za-z0-9._%+-]+@([A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,})/g;
+/** 백업 파일 이름(backup.ts의 월별 JSON, issues.json, refs.json, schedules.json, indicators.json, corrections.json, repos.json, meta.json). 결과물 검사도 쓴다 */
+export const BACKUP_NAME_RE = /^(?:\d{4}-\d{2}\.json|issues\.json|refs\.json|schedules\.json|indicators\.json|corrections\.json|repos\.json|meta\.json)$/;
+/** 저장소 단계(B1 4.1-3)의 작업 파일: 후보 파일(피드의 README·한 줄 설명)과 Claude가 쓰는 항목 파일. 어느 폴더에 있든 이름으로 찾는다 */
+const REPO_WORK_NAMES = new Set(["repo-candidates.json", "repo-items.json"]);
+export const EMAIL_RE = /[A-Za-z0-9._%+-]+@([A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,})/g;
 /** 공개 글과 정정 사유에 넣지 않는 주소 모양 */
 export const ADDRESS_RE = /https?:\/\/|www\.|\b[a-z0-9-]+\.(?:com|net|org|kr|io|co|ai|dev|app)\b/i;
 
@@ -138,7 +140,7 @@ export function isBinary(content: Buffer): boolean {
   return content.subarray(0, 8000).includes(0);
 }
 
-/** 이름으로 찾는 것: SQLite 파일, 실행 전 사본, .env 파일, 지운 이름 키 파일(4단계 E15) */
+/** 이름으로 찾는 것: SQLite 파일, 실행 전 사본, .env 파일, 지운 이름 키 파일(4단계 E15), 저장소 작업 파일(B1 4.1-3) */
 export function nameKinds(file: string): FindingKind[] {
   const base = path.posix.basename(file.replaceAll("\\", "/"));
   const kinds: FindingKind[] = [];
@@ -146,6 +148,7 @@ export function nameKinds(file: string): FindingKind[] {
   else if (/\.(?:db|db-journal|db-wal|db-shm|sqlite|sqlite3)$/i.test(base)) kinds.push("SQLite 파일");
   if (/^\.env(?:\..+)?$/i.test(base)) kinds.push(".env 파일");
   if (base === NAME_KEY_FILE) kinds.push("지운 이름 키 파일");
+  if (REPO_WORK_NAMES.has(base)) kinds.push("실행 기록·작업 파일");
   return kinds;
 }
 

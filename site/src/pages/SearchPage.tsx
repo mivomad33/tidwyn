@@ -1,15 +1,17 @@
 // 검색(4.3-3, P6, 4단계 4.6-4). Pagefind가 고른 묶음 레코드(날짜·이슈·대상·용어 묶음)에서 맞는 것을 하나씩 되찾아
-// "인물·기관·국가", "용어", "이슈", "뉴스"로 나눠 보인다.
+// "인물·기관·국가", "용어", "이슈", "뉴스", "빌더"(B1: 그날 빌더 탭의 저장소)로 나눠 보인다.
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { BriefBackLink, Empty, ErrorState, Layout, Loading, NewsTitle, ReadCheck, useFocusNewRow, useTitle } from "../components/common.tsx";
 import { loadJson } from "../data.ts";
+import { repoRankText } from "../components/repoView.ts";
+import { BUILDER_HASH } from "../lib/brief.ts";
 import { monthDayWeekday } from "../lib/format.ts";
 import { dataUrl } from "../lib/paths.ts";
 import { briefPath, entityPath, issuePath, searchPath, termPath } from "../lib/routes.ts";
-import { matchDayStories, matchEntities, matchIssues, matchTerms, monthOf, parseHit, queryTerms, type SearchHit } from "../lib/search.ts";
+import { matchDayStories, matchEntities, matchIssues, matchRepos, matchTerms, monthOf, parseHit, queryTerms, type SearchHit } from "../lib/search.ts";
 import { excerpt } from "../lib/terms.ts";
 import { categoryVar } from "../lib/theme.ts";
-import type { EntityChunk, EntityDetail, IssueChunk, IssueDetail, ListStory, MonthDetail, MonthList, SiteIssueList, TermGroupFile, TermItem } from "../lib/types.ts";
+import type { DayRepoItem, EntityChunk, EntityDetail, IssueChunk, IssueDetail, ListStory, MonthDetail, MonthList, SiteIssueList, TermGroupFile, TermItem } from "../lib/types.ts";
 import { searchRecords, type PagefindResult } from "../pagefind.ts";
 import { Link, navigate } from "../router.tsx";
 
@@ -21,15 +23,21 @@ interface NewsResult {
   story: ListStory;
 }
 
+interface RepoResult {
+  date: string;
+  item: DayRepoItem;
+}
+
 interface Found {
   news: NewsResult[];
+  repos: RepoResult[];
   issues: IssueDetail[];
   entities: EntityDetail[];
   terms: TermItem[];
 }
 
 function joinFound(a: Found, b: Found): Found {
-  return { news: [...a.news, ...b.news], issues: [...a.issues, ...b.issues], entities: [...a.entities, ...b.entities], terms: [...a.terms, ...b.terms] };
+  return { news: [...a.news, ...b.news], repos: [...a.repos, ...b.repos], issues: [...a.issues, ...b.issues], entities: [...a.entities, ...b.entities], terms: [...a.terms, ...b.terms] };
 }
 
 async function resolveRecords(records: PagefindResult[], terms: string[]): Promise<Found> {
@@ -40,7 +48,8 @@ async function resolveRecords(records: PagefindResult[], terms: string[]): Promi
   const issueHits = hits.filter((h) => h.kind === "issues");
   const entityHits = hits.filter((h) => h.kind === "entities");
   const termHits = hits.filter((h) => h.kind === "terms");
-  const [newsParts, issueParts, entityParts, termParts] = await Promise.all([
+  const repoHits = hits.filter((h) => h.kind === "repos");
+  const [newsParts, issueParts, entityParts, termParts, repoParts] = await Promise.all([
     Promise.all(
       newsHits.map(async (h) => {
         const month = monthOf(h.date);
@@ -57,10 +66,16 @@ async function resolveRecords(records: PagefindResult[], terms: string[]): Promi
       : Promise.resolve([]),
     Promise.all(entityHits.map(async (h) => matchEntities(await loadJson<EntityChunk>(dataUrl.entityChunk(h.chunk)), terms))),
     Promise.all(termHits.map(async (h) => matchTerms(await loadJson<TermGroupFile>(dataUrl.termGroup(h.group)), terms))),
+    Promise.all(
+      repoHits.map(async (h) => {
+        const day = (await loadJson<MonthList>(dataUrl.list(monthOf(h.date)))).days.find((d) => d.date === h.date);
+        return day ? matchRepos(day, terms).map((item) => ({ date: h.date, item })) : [];
+      }),
+    ),
   ]);
   for (const part of newsParts) news.push(...part);
   for (const part of issueParts) issues.push(...part);
-  return { news, issues, entities: entityParts.flat(), terms: termParts.flat() };
+  return { news, repos: repoParts.flat(), issues, entities: entityParts.flat(), terms: termParts.flat() };
 }
 
 type State =
@@ -136,9 +151,9 @@ export function SearchPage({ q }: { q: string }) {
           찾기
         </button>
       </form>
-      {state.status === "idle" && q === "" && <p className="flow">뉴스(제목, 요약, 본문), 이슈(이름, 다른 이름, 요약), 인물·기관·국가(이름, 별칭, 한 줄 설명), 용어(이름, 별칭, 설명)를 찾는다.</p>}
+      {state.status === "idle" && q === "" && <p className="flow">뉴스(제목, 요약, 본문), 이슈(이름, 다른 이름, 요약), 인물·기관·국가(이름, 별칭, 한 줄 설명), 용어(이름, 별칭, 설명), 빌더 탭의 저장소(이름, 설명)를 찾습니다.</p>}
       {state.status === "loading" && <Loading label="찾는 중…" />}
-      {state.status === "error" && <ErrorState message="검색 색인을 불러오지 못했다. 네트워크를 확인하고 다시 시도해 주세요." onRetry={() => setAttempt((n) => n + 1)} />}
+      {state.status === "error" && <ErrorState message="검색 색인을 불러오지 못했습니다. 네트워크를 확인하고 다시 시도해 주세요." onRetry={() => setAttempt((n) => n + 1)} />}
       {state.status === "ok" && <Results state={state} q={q} onMore={loadMore} />}
     </Layout>
   );
@@ -147,9 +162,9 @@ export function SearchPage({ q }: { q: string }) {
 function Results({ state, q, onMore }: { state: Extract<State, { status: "ok" }>; q: string; onMore: () => void }) {
   const { found, records, done, more } = state;
   const hasMore = done < records.length;
-  const none = !found.issues.length && !found.news.length && !found.entities.length && !found.terms.length;
+  const none = !found.issues.length && !found.news.length && !found.entities.length && !found.terms.length && !found.repos.length;
   const moreFocus = useFocusNewRow<HTMLDivElement>("li.item", q);
-  if (none && !hasMore) return <Empty>"{q}"에 맞는 결과가 없다.</Empty>;
+  if (none && !hasMore) return <Empty>"{q}"에 맞는 결과가 없습니다.</Empty>;
   return (
     <div aria-live="polite" ref={moreFocus.ref}>
       {found.entities.length > 0 && (
@@ -228,14 +243,31 @@ function Results({ state, q, onMore }: { state: Extract<State, { status: "ok" }>
           </ul>
         </section>
       )}
-      {none && <Empty>앞쪽 결과에서 맞는 것을 찾지 못했다. 더 보기로 이어서 찾는다.</Empty>}
+      {found.repos.length > 0 && (
+        <section aria-labelledby="r-repos">
+          <h2 id="r-repos" className="h list-h">
+            빌더
+          </h2>
+          <ul className="list">
+            {sortNews(found.repos).map((r) => (
+              <li key={`${r.date}-${r.item.name}`} className="item">
+                <Link to={briefPath(r.date, BUILDER_HASH)} className="item-btn">
+                  <span className="cat muted-cat">{monthDayWeekday(r.date)} · {repoRankText(r.item.rank)}</span>
+                  <span className="title small">{r.item.name}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+      {none && <Empty>앞쪽 결과에서 맞는 것을 찾지 못했습니다. 더 보기로 이어서 찾습니다.</Empty>}
       {hasMore && (
         <div className="more">
           {more === "loading" ? (
             <Loading label="더 찾는 중…" />
           ) : (
             <>
-              {more === "error" && <p className="p">더 불러오지 못했다.</p>}
+              {more === "error" && <p className="p">더 불러오지 못했습니다.</p>}
               <button
                 type="button"
                 className="retry"

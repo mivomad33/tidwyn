@@ -332,6 +332,87 @@ li:focus {
   margin: 18px 0 2px;
 }
 
+/* B1 빌더 탭: 굵은 목록 제목 아래 저장소 항목. 뉴스 줄처럼 구분선과 여백으로만 나누고 설명은 늘 보인다(G15).
+   이름은 GitHub 트렌딩처럼 파란 'owner / name'(이름만 굵게), 밑줄은 마우스를 올릴 때만(글 링크 한 모양의 예외, 사용자 결정 2026-11-25).
+   긴 이름은 body의 overflow-wrap으로 가로 스크롤 없이 줄을 바꾼다 */
+.repo-head {
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  line-height: 1.4;
+  padding: 0 18px;
+  margin: 18px 0 2px;
+}
+
+.repo {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--line);
+}
+
+/* 이름 앞 저장소 아이콘: 흐린 글자색, 왼쪽 칸에서 이름 첫 줄 가운데에 맞춘다(줄 높이 17px×1.4에서 16px 아이콘) */
+.repo-icon {
+  flex: none;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+/* 이름과 순위 배지: 아이콘 오른쪽 칸에서 줄을 바꾼다 */
+.repo-title {
+  min-width: 0;
+}
+
+/* 순위 배지: 이름 끝에 붙는 작은 둥근 면(누를 수 없는 표시에 알약을 쓰는 예외, 사용자 결정 2026-11-25).
+   '어제에 이어' 배지(.badge)와 같은 글자 크기이고, 파란 이름 옆이라 강조색 대신 상자 바탕과 흐린 글자를 쓴다 */
+.repo-rank {
+  display: inline-block;
+  vertical-align: 3px;
+  font-size: var(--fs-xs);
+  line-height: 16px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--chip);
+  color: var(--muted);
+  font-weight: 600;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.repo-desc {
+  margin-top: 4px;
+}
+
+/* 이름은 뉴스 제목(.title)과 같은 17px이다(사용자 지적 2026-11-25) */
+.repo-name {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin: 0;
+  /* 아주 긴 이름도 가로로 넘치지 않고 줄을 바꾼다 */
+  overflow-wrap: anywhere;
+  font-size: var(--fs-md);
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+.repo-link {
+  color: var(--link);
+  text-decoration: none;
+}
+
+.repo-link:hover {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.repo-n {
+  font-weight: 700;
+}
+
+/* 누를 곳: 글자와 줄 높이는 그대로 두고 위아래로 넓힌다(폰 44px. 아래 순위 줄은 누를 곳이 아니다) */
+.repo-name a {
+  padding-block: 13px;
+}
+
+
 /* 뉴스 줄 */
 .item {
   border-bottom: 1px solid var(--line);

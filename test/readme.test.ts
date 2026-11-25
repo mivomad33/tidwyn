@@ -42,12 +42,12 @@ describe("README", () => {
     assert.ok(ko.links.includes("README.en.md") && en.links.includes("README.md"));
   });
 
-  // R1 4.5-1: 빌더 탭이 없어져 기능 설명에서 빠지고, `data` 브랜치 지난 커밋의 가격·한도 행 고지만 남는다
-  test("두 파일의 라이선스 절과 LICENSE가 지난 가격·한도 행을 같은 뜻으로 다루고, 빌더 기능 설명은 없다", () => {
+  // R1 4.5-1: `data` 브랜치 지난 커밋의 가격·한도 행 고지가 남는다. B1(2026-11-25)이 빌더 탭을 GitHub 주간 트렌딩 저장소로 다시 만들어 기능 설명에 같은 뜻으로 있다
+  test("두 파일의 라이선스 절과 LICENSE가 지난 가격·한도 행을 같은 뜻으로 다루고, 빌더 기능 설명은 B1의 저장소 탭이다", () => {
     const koText = read("README.md");
     const enText = read("README.en.md");
-    assert.doesNotMatch(koText, /^- \*\*빌더:\*\*/m);
-    assert.doesNotMatch(enText, /^- \*\*Builder:\*\*/m);
+    assert.match(koText, /^- \*\*빌더:\*\* GitHub 주간 트렌딩에 처음 오른 저장소를/m);
+    assert.match(enText, /^- \*\*Builder:\*\* Up to five repositories a day that newly appear on GitHub's weekly trending list/m);
     assert.match(koText, /`data` 브랜치의 지난 커밋\(2026-11-24 전\)에 남은 가격·한도 숫자 행은 공급사 문서에서 옮긴 것이며 권리는 각 공급사에 있습니다\. Gemini 문서의 행은 CC BY 4\.0을 따릅니다\./);
     assert.match(enText, /The pricing and limit rows left in past commits \(before 2026-11-24\) of the `data` branch are copied from vendor documents, and their rights belong to each vendor\. Rows from the Gemini documentation follow CC BY 4\.0\./);
     const license = read("LICENSE").replace(/\s+/g, " ");

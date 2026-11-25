@@ -22,6 +22,8 @@ import {
   entityListPages,
   issueEntityChips,
   entityRecordUrl,
+  repoRecordContent,
+  repoRecordUrl,
   issueChunkOf,
   siteFiles,
   termGroupOf,
@@ -39,6 +41,7 @@ import {
   type TermRef,
   type Continues,
   type DayList,
+  type DayRepos,
   type IssueChunk,
   type IssueDetail,
   type IssueListItem,
@@ -56,6 +59,7 @@ import { buildScheduleData, type ScheduleSiteData } from "./scheduleSite.ts";
 import { buildIndicatorSiteData, type IndicatorSiteData } from "./indicatorSite.ts";
 import { INDICATORS, type IndicatorDef } from "./indicators.ts";
 import { loadBrief, storedDates } from "./store.ts";
+import { allRepoDays } from "./trendRepos.ts";
 
 // 사이트 데이터(3단계 4.1-1)와 검색 레코드(4.1-3)를 DB에서 만든다. 같은 DB면 같은 결과다(시각 같은 값을 넣지 않는다, 4.1-2).
 // 이전 전개, 전개 순서, 흡수 이슈 따라가기는 2단계 코드(briefIssues, developments, resolveIssue)를 그대로 쓴다.
@@ -126,7 +130,7 @@ function storyRefs(db: DatabaseSync, entities: Entity[], terms: Term[]): StoryRe
   return out;
 }
 
-function buildDay(db: DatabaseSync, day: DayData, prev: DayData | null, details: Record<string, StoryDetail>, refs: StoryRefs, schedules: ScheduleSiteData, indicators: IndicatorSiteData, corrections: Map<string, CorrectionRecord[]>): DayList {
+function buildDay(db: DatabaseSync, day: DayData, prev: DayData | null, details: Record<string, StoryDetail>, refs: StoryRefs, schedules: ScheduleSiteData, indicators: IndicatorSiteData, corrections: Map<string, CorrectionRecord[]>, repos: Map<string, DayRepos>): DayList {
   const prevIssues = prev === null ? new Set<number>() : primaryIssuesOf(db, prev);
   const listStory = (key: string, base: Omit<ListStory, "issue" | "newIssue" | "continues">): ListStory => {
     const info = day.issues.get(key);
@@ -177,7 +181,14 @@ function buildDay(db: DatabaseSync, day: DayData, prev: DayData | null, details:
   if (week) out.week = week;
   const chips = indicators.chips.get(day.date);
   if (chips) out.indicators = chips;
+  const r = repos.get(day.date);
+  if (r) out.repos = r;
   return out;
+}
+
+/** B1: 날짜 → 저장소 기록(상태와 항목, 받지 못한 이유 없음) */
+function repoDays(db: DatabaseSync): Map<string, DayRepos> {
+  return new Map(allRepoDays(db).map((d) => [d.date, { status: d.status, items: d.items }]));
 }
 
 function listItem(i: Issue): IssueListItem {
@@ -269,6 +280,7 @@ export function buildSiteData(db: DatabaseSync, indicatorDefs: readonly Indicato
   const schedules = buildScheduleData(db, days.map((d) => d.date));
   const indicators = buildIndicatorSiteData(db, days.map((d) => d.date), indicatorDefs);
   const corrections = correctionsByStory(db);
+  const repos = repoDays(db);
   const lists = new Map<string, MonthList>();
   const details = new Map<string, MonthDetail>();
   days.forEach((day, idx) => {
@@ -278,7 +290,7 @@ export function buildSiteData(db: DatabaseSync, indicatorDefs: readonly Indicato
     let detail = details.get(month);
     if (!detail) details.set(month, (detail = { month, days: {} }));
     const dayDetails: Record<string, StoryDetail> = {};
-    list.days.push(buildDay(db, day, idx > 0 ? days[idx - 1]! : null, dayDetails, refs, schedules, indicators, corrections));
+    list.days.push(buildDay(db, day, idx > 0 ? days[idx - 1]! : null, dayDetails, refs, schedules, indicators, corrections, repos));
     detail.days[day.date] = dayDetails;
   });
   const counts = new Map<string, number>();
@@ -424,6 +436,11 @@ export function buildSearchRecords(db: DatabaseSync): SearchRecord[] {
       for (const n of sec.shortNews) parts.push(n.summary);
     }
     records.push({ url: newsRecordUrl(date), content: parts.join("\n"), language: "ko", meta: { kind: "news", date } });
+  }
+  // B1 4.4-3: 저장소 기록이 '실음'인 날짜마다 레코드 하나(저장소 이름과 설명). 결과는 그 날짜의 빌더 탭으로 간다
+  for (const d of allRepoDays(db)) {
+    if (d.status !== "shown" || d.items.length === 0) continue;
+    records.push({ url: repoRecordUrl(d.date), content: repoRecordContent(d.items), language: "ko", meta: { kind: "repos", date: d.date } });
   }
   for (const [chunk, issues] of issueChunks(liveIssues(db))) {
     const parts = issues.flatMap((i) => [i.name, ...i.aliases, i.summary]);

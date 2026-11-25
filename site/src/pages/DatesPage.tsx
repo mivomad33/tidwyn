@@ -22,7 +22,7 @@ export function DatesPage() {
       {(res.status === "loading" || res.status === "idle") && <Loading />}
       {res.status === "ok" &&
         (res.data.dates.length === 0 ? (
-          <Empty>아직 저장된 브리프가 없다.</Empty>
+          <Empty>아직 저장된 브리프가 없습니다.</Empty>
         ) : (
           groupDatesByMonth(res.data.dates).map((g) => (
             <section key={g.month} aria-labelledby={`m-${g.month}`}>

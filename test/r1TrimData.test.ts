@@ -150,7 +150,7 @@ describe("R1 4.2-1 DB 업그레이드", () => {
     assert.ok(before.get("sqlite_sequence")!.some((r) => r.includes('"builder_items"')) && before.get("sqlite_sequence")!.some((r) => r.includes('"demand_flows"')), "지운 표의 sqlite_sequence 줄이 있는 DB다");
 
     const db = openDb(file);
-    assert.equal(schemaVersion(db), 15);
+    assert.equal(schemaVersion(db), 16);
     assertPurged(db, s, scheduleBefore);
     const after1 = dump(db);
     db.close();
@@ -166,12 +166,14 @@ describe("R1 4.2-1 DB 업그레이드", () => {
       }
       assert.deepEqual(after1.get(t), rows, `${t}의 행이 바뀌었다`);
     }
-    assert.deepEqual([...after1.keys()].sort(), [...before.keys()].filter((t) => !isRetired(t)).sort(), "새 표가 생기지 않았다");
+    // B1(버전 16)의 저장소 표만 새로 생긴다(빈 표)
+    assert.deepEqual([...after1.keys()].sort(), [...before.keys()].filter((t) => !isRetired(t)).concat(["trend_repo_days", "trend_repos"]).sort(), "R1 업그레이드가 만든 새 표는 없다");
+    assert.deepEqual([after1.get("trend_repo_days"), after1.get("trend_repos")], [[], []]);
     assert.equal(after1.get("schedules")!.length, before.get("schedules")!.length - 1);
 
     // 두 번 돌려도 같다
     const again = openDb(file);
-    assert.equal(schemaVersion(again), 15);
+    assert.equal(schemaVersion(again), 16);
     assert.deepEqual(dump(again), after1);
     again.close();
   });
@@ -196,8 +198,8 @@ describe("R1 4.2-1 DB 업그레이드", () => {
 function oldFormatFiles(db: DatabaseSync, builderSchedules: number[]): Map<string, string> {
   const files = new Map<string, string>();
   for (const [name, text] of buildBackup(db)) {
-    assert.match(text, /"formatVersion": 11/, name);
-    files.set(name, text.replaceAll('"formatVersion": 11', '"formatVersion": 10'));
+    assert.match(text, /"formatVersion": 12/, name);
+    files.set(name, text.replaceAll('"formatVersion": 12', '"formatVersion": 10'));
   }
   const json = (v: unknown) => `${JSON.stringify(v, null, 2)}\n`;
   files.set("builder.json", json({
@@ -248,7 +250,7 @@ describe("R1 4.2-2 백업은 builder.json·demand.json을 쓰지 않는다", () 
     assert.deepEqual(ls("refs/heads/data~1"), ["2026-10.json", "builder.json", "demand.json", "meta.json"], "지난 커밋에는 남는다");
     const tip = readBackupRef(backupRepo);
     assert.ok(!tip.has("builder.json") && !tip.has("demand.json"));
-    for (const [name, text] of tip) assert.match(text, /"formatVersion": 11/, `${name}는 새 형식이다`);
+    for (const [name, text] of tip) assert.match(text, /"formatVersion": 12/, `${name}는 새 형식이다`);
     assert.deepEqual([...fs.readdirSync(path.join(dataDir, "backup"))].sort(), ["2026-10.json", "meta.json"], "내보내기 폴더에도 없다");
   });
 

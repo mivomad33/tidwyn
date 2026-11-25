@@ -44,6 +44,8 @@ import { FixMark, FixNotes } from "./src/components/correctionView.ts";
 import { Empty } from "./src/components/emptyView.ts";
 import { BackMark, MoreMark } from "./src/components/moreMark.ts";
 import { StorySources } from "./src/components/sourceView.ts";
+import { RepoList } from "./src/components/repoView.ts";
+import { BUILDER_HASH, BUILDER_TAB } from "./src/lib/brief.ts";
 import { FredNotice, SourceNote } from "./src/components/indicatorView.ts";
 import { NOT_FOUND_LABEL, NotFoundView, RecoverLinks } from "./src/components/notFoundView.ts";
 import { FooterView, PrivacyView } from "./src/components/policyView.ts";
@@ -234,12 +236,14 @@ function DateNav({ date, prev, next }: { date: string; prev: string | null; next
 function BriefBody({ day, details, prev, next }: { day: DayList; details: Record<string, StoryDetail>; prev: string | null; next: string | null }) {
   const date = day.date;
   const sectionId = (i: number) => `section-${i + 1}`;
+  // B1: 저장소 기록이 있는 날만 빌더 구역과 이동 칩을 둔다(4.4-3). 구역 id는 앱에서 그날 빌더 탭을 여는 해시와 같다
+  const jumps: [string, string][] = [...day.sections.map((sec, i): [string, string] => [sec.name, sectionId(i)]), ...(day.repos ? [[BUILDER_TAB, BUILDER_HASH] as [string, string]] : [])];
   return h(
     "div",
     { className: "static-brief" },
     h("h1", { className: "page-title pad" }, `${monthDayWeekday(day.date)} 브리프`),
     h("div", { className: "headline" }, day.headline, day.keywords.length > 0 ? h("div", { className: "kw", "aria-label": "키워드" }, day.keywords.map((k) => h("span", { key: k }, k))) : null),
-    day.sections.length > 1 ? h("nav", { className: "rel static-jump", "aria-label": "구역으로 가기" }, day.sections.map((sec, i) => h("a", { key: sec.name, href: `#${sectionId(i)}` }, sec.name))) : null,
+    jumps.length > 1 ? h("nav", { className: "rel static-jump", "aria-label": "구역으로 가기" }, jumps.map(([name, id]) => h("a", { key: name, href: `#${id}` }, name))) : null,
     day.sections.map((sec, i) => {
       const tops = sec.stories.filter((s) => s.kind === "top");
       const shorts = sec.stories.filter((s) => s.kind === "short");
@@ -253,6 +257,7 @@ function BriefBody({ day, details, prev, next }: { day: DayList; details: Record
         sec.unverified ? h("p", { className: "flow note" }, `확인되지 않은 내용: ${sec.unverified}`) : null,
       );
     }),
+    day.repos ? h("section", { className: "brief-section" }, h("h2", { className: "h list-h", id: BUILDER_HASH }, BUILDER_TAB), h(RepoList, { repos: day.repos, headingLevel: "h3" })) : null,
     h("nav", { className: "static-more", "aria-label": "다른 날짜" }, prev ? h("a", { href: briefPath(prev), className: "text-link" }, `‹ ${monthDay(prev)}`) : h("span"), next ? h("a", { href: briefPath(next), className: "text-link" }, `${monthDay(next)} ›`) : null),
   );
 }
@@ -278,7 +283,7 @@ function IssueBody({ issue }: { issue: IssueDetail }) {
     h("p", { className: "meta" }, meta),
     issue.summary ? h("div", { className: "summary" }, issue.summary) : null,
     h("h2", { className: "h" }, "타임라인"),
-    issue.timeline.length > 0 ? h(NewsLinks, { news: issue.timeline, year: issue.latestDate ? yearOf(issue.latestDate) : undefined }) : h(Empty, { inline: true }, "아직 전개가 없다."),
+    issue.timeline.length > 0 ? h(NewsLinks, { news: issue.timeline, year: issue.latestDate ? yearOf(issue.latestDate) : undefined }) : h(Empty, { inline: true }, "아직 전개가 없습니다."),
     (issue.entities?.length ?? 0) > 0 ? [h("h2", { className: "h", key: "eh" }, "등장 인물·기관·국가"), h(IssueEntityChips, { key: "e", entities: issue.entities, Link: A })] : null,
     issue.related.length > 0 ? [h("h2", { className: "h", key: "rh" }, "관련 이슈"), h("div", { className: "rel", key: "r" }, issue.related.map((r) => h("a", { key: r.id, href: issuePath(r.id) }, r.name)))] : null,
   );
@@ -300,7 +305,7 @@ function EntityBody({ entity }: { entity: EntityDetail }) {
 }
 
 function MergedBody({ kindLabel, on, name, to }: { kindLabel: string; on: string | null; name: string; to: string }) {
-  return h("div", { className: "plain" }, h("h1", { className: "page-title" }, name), h("p", { className: "notice", role: "note" }, `이 ${kindLabel}은 ${on ? `${monthDay(on)}에 ` : ""}${name}에 합쳐졌다.`), h("p", { className: "p" }, h("a", { href: to, className: "text-link" }, `${name} 보기`)));
+  return h("div", { className: "plain" }, h("h1", { className: "page-title" }, name), h("p", { className: "notice", role: "note" }, `이 ${kindLabel}은 ${on ? `${monthDay(on)}에 ` : ""}${name}에 합쳐졌습니다.`), h("p", { className: "p" }, h("a", { href: to, className: "text-link" }, `${name} 보기`)));
 }
 
 // ---- 목록 ----
@@ -308,7 +313,7 @@ function MergedBody({ kindLabel, on, name, to }: { kindLabel: string; on: string
 function DatesBody({ dates }: { dates: string[] }) {
   return [
     h("h1", { className: "page-title pad", key: "t" }, "날짜 목록"),
-    dates.length === 0 ? h(Empty, { key: "e" }, "아직 저장된 브리프가 없다.") : null,
+    dates.length === 0 ? h(Empty, { key: "e" }, "아직 저장된 브리프가 없습니다.") : null,
     ...groupDatesByMonth(dates).map((g) => h("section", { key: g.month }, h("h2", { className: "h list-h" }, monthLabel(g.month)), h("ul", { className: "list" }, g.dates.map((d) => h("li", { key: d, className: "row" }, h("a", { href: briefPath(d), className: "row-link nrow" }, h("span", null, monthDayWeekday(d)))))))),
   ];
 }
@@ -317,7 +322,7 @@ function IssuesBody({ issues }: { issues: IssueDetail[] }) {
   const refYear = latestYear(issues.map((i) => i.latestDate));
   return [
     h("h1", { className: "page-title pad", key: "t" }, "이슈 목록"),
-    issues.length === 0 ? h(Empty, { key: "e" }, "아직 이슈가 없다.") : h("p", { className: "count", key: "c" }, `${issues.length.toLocaleString("ko-KR")}개`),
+    issues.length === 0 ? h(Empty, { key: "e" }, "아직 이슈가 없습니다.") : h("p", { className: "count", key: "c" }, `${issues.length.toLocaleString("ko-KR")}개`),
     h(
       "ul",
       { className: "list", key: "l" },
@@ -332,7 +337,7 @@ function EntitiesBody({ entities }: { entities: EntityDetail[] }) {
   const year = entities[0] ? yearOf(entities[0].latestDate) : undefined;
   return [
     h("h1", { className: "page-title pad", key: "t" }, "인물·기관·국가"),
-    entities.length === 0 ? h(Empty, { key: "e" }, "아직 인물·기관·국가가 없다.") : h("p", { className: "count", key: "c" }, `${entities.length.toLocaleString("ko-KR")}개 · 최근 등장 순`),
+    entities.length === 0 ? h(Empty, { key: "e" }, "아직 인물·기관·국가가 없습니다.") : h("p", { className: "count", key: "c" }, `${entities.length.toLocaleString("ko-KR")}개 · 최근 등장 순`),
     h(
       "ul",
       { className: "list", key: "l" },
@@ -355,7 +360,7 @@ function TermsBody({ input }: { input: SiteInput }) {
     h("h1", { className: "name" }, "용어 사전"),
     h("p", { className: "meta" }, `용어 ${input.terms.total.toLocaleString("ko-KR")}개 · 가나다순`),
     input.termGroups.length === 0
-      ? h(Empty, null, "아직 용어가 없다.")
+      ? h(Empty, null, "아직 용어가 없습니다.")
       : [
           h("nav", { "aria-label": "첫 자음으로 가기", className: "rel term-jump", key: "n" }, input.termGroups.map((g) => h("a", { key: g.group, href: `#${id(g.group)}` }, TERM_GROUPS[g.group]))),
           ...input.termGroups.map((g) =>
@@ -388,7 +393,7 @@ function SchedulesBody({ months }: { months: ScheduleMonth[] }) {
     { className: "iss" },
     h("h1", { className: "name" }, "일정"),
     h("p", { className: "meta" }, SCHEDULE_META),
-    months.length === 0 ? h(Empty, null, "아직 일정이 없다.") : null,
+    months.length === 0 ? h(Empty, null, "아직 일정이 없습니다.") : null,
     months.map((m) => h("section", { key: m.month }, h("h2", { className: "h" }, monthLabel(m.month)), h("ul", { className: "evlist" }, m.items.map((i) => h(ScheduleRow, { key: i.id, item: i }))))),
   );
 }
@@ -399,7 +404,7 @@ function showsValue(card: IndicatorCard): boolean {
 }
 
 function IndicatorValue({ card, refYear }: { card: IndicatorCard; refYear: string | undefined }) {
-  return showsValue(card) ? h("p", { className: "ind-meta" }, h("b", { className: "ind-v" }, readingValueText(card, card.last!, refYear)), ` · ${readingDateText(card.last!.date, refYear)} · ${card.credit}`) : h("p", { className: "ind-meta" }, card.last ? `값은 이 화면에 싣지 않는다. 자바스크립트를 켜면 볼 수 있다. · ${card.credit}` : card.credit);
+  return showsValue(card) ? h("p", { className: "ind-meta" }, h("b", { className: "ind-v" }, readingValueText(card, card.last!, refYear)), ` · ${readingDateText(card.last!.date, refYear)} · ${card.credit}`) : h("p", { className: "ind-meta" }, card.last ? `값은 이 화면에 싣지 않습니다. 자바스크립트를 켜면 볼 수 있습니다. · ${card.credit}` : card.credit);
 }
 
 function IndicatorsBody({ indicators }: { indicators: IndicatorList }) {
@@ -408,7 +413,7 @@ function IndicatorsBody({ indicators }: { indicators: IndicatorList }) {
     "div",
     { className: "ind" },
     h("h1", { className: "page-title" }, "지표"),
-    indicators.indicators.length === 0 ? h(Empty, null, "아직 지표 값이 없다.") : null,
+    indicators.indicators.length === 0 ? h(Empty, null, "아직 지표 값이 없습니다.") : null,
     groupCards(indicators.indicators).map((g) => h("section", { key: g.group }, h("h2", { className: "h" }, g.group), h("ul", { className: "evlist" }, g.cards.map((c) => h("li", { key: c.id, className: "ev" }, h("a", { href: indicatorPath(c.id), className: "t" }, c.name), h(IndicatorValue, { card: c, refYear })))))),
     h("div", { className: "ind-foot" }, h(SourceNote, { metas: indicators.indicators }), h(FredNotice)),
   );
@@ -473,7 +478,7 @@ function buildPages(input: SiteInput): StaticPage[] {
   };
   const home = input.dates.latestDate;
   if (home) brief("/", home, latestTitle(), true);
-  else add({ path: "/", title: latestTitle(), description: "", lastmod: null, ld: (d) => pageLd("WebSite", { path: "/", name: "Tidwyn", description: d }), body: h(Shell, null, h(Empty, null, "아직 저장된 브리프가 없다.")) });
+  else add({ path: "/", title: latestTitle(), description: "", lastmod: null, ld: (d) => pageLd("WebSite", { path: "/", name: "Tidwyn", description: d }), body: h(Shell, null, h(Empty, null, "아직 저장된 브리프가 없습니다.")) });
   for (const date of dates) brief(briefPath(date), date, briefTitle(date, dates), false);
 
   const back = (to: string, label: string) => h(BackLink, { to, label });
@@ -483,7 +488,7 @@ function buildPages(input: SiteInput): StaticPage[] {
   list({ path: "/dates", label: "날짜 목록", description: "지금까지 저장된 날짜별 뉴스 브리프 목록", lastmod: home, body: h(DatesBody, { dates }) });
 
   const issueMods = new Map(input.issues.map((i) => [i.id, latest([i.latestDate, ...fixesOf(i.timeline)])]));
-  list({ path: "/issues", label: "이슈 목록", description: "이어지는 뉴스를 묶은 이슈 목록. 이슈마다 흐름과 최근 전개를 볼 수 있다", lastmod: latest([...issueMods.values()]), body: h(IssuesBody, { issues: input.issues }) });
+  list({ path: "/issues", label: "이슈 목록", description: "이어지는 뉴스를 묶은 이슈 목록. 이슈마다 흐름과 최근 전개를 볼 수 있습니다", lastmod: latest([...issueMods.values()]), body: h(IssuesBody, { issues: input.issues }) });
   const issueById = new Map(input.issues.map((i) => [i.id, i]));
   for (const issue of input.issues) {
     const pathname = issuePath(issue.id);
@@ -499,7 +504,7 @@ function buildPages(input: SiteInput): StaticPage[] {
   }
 
   const entityMods = new Map(input.entities.map((e) => [e.id, latest([e.latestDate, ...fixesOf(e.news)])]));
-  list({ path: "/entities", label: "인물·기관·국가", description: "뉴스에 나온 인물·기관·국가 목록. 항목마다 관련 이슈와 뉴스를 볼 수 있다", lastmod: latest([...entityMods.values()]), body: h(EntitiesBody, { entities: input.entities }) });
+  list({ path: "/entities", label: "인물·기관·국가", description: "뉴스에 나온 인물·기관·국가 목록. 항목마다 관련 이슈와 뉴스를 볼 수 있습니다", lastmod: latest([...entityMods.values()]), body: h(EntitiesBody, { entities: input.entities }) });
   const entityById = new Map(input.entities.map((e) => [e.id, e]));
   for (const entity of input.entities) {
     const pathname = entityPath(entity.id);
@@ -532,7 +537,7 @@ function buildPages(input: SiteInput): StaticPage[] {
     });
   }
 
-  const aboutDescription = "Tidwyn은 AI가 매일 한국·세계·IT·AI 뉴스를 모아 쉬운 말로 바꿔 쓴 요약이다. 오류 정정과 연락 방법을 적었다";
+  const aboutDescription = "Tidwyn은 AI가 매일 한국·세계·IT·AI 뉴스를 모아 쉬운 말로 바꿔 쓴 요약입니다. 오류 정정과 연락 방법을 적었습니다";
   add({ path: "/about", title: pageTitle("사이트 소개"), description: aboutDescription, lastmod: PRIVACY_UPDATED, ld: (d) => pageLd("AboutPage", { path: "/about", name: "사이트 소개", description: d }), body: h(Shell, { left: back("/", "브리프") }, h(AboutView, { readMarks: h(ReadMarksText) })) });
   add({ path: privacyPath(), title: pageTitle(PRIVACY_TITLE), description: "Tidwyn이 다루는 정보와 브라우저에 두는 기록, 메일 처리 방침", lastmod: PRIVACY_UPDATED, ld: (d) => pageLd("WebPage", { path: privacyPath(), name: PRIVACY_TITLE, description: d }), body: h(Shell, { left: back("/", "브리프") }, h(PlainBody, null, h(PrivacyView, { Link: A }))) });
 
@@ -542,7 +547,7 @@ function buildPages(input: SiteInput): StaticPage[] {
       const survivor = byId.get(m.into);
       if (!survivor) continue;
       const to = base(survivor.id);
-      pages.push({ path: base(Number(id)), head: { title: pageTitle(label(survivor)), description: metaDescription(`${survivor.name}에 합쳐진 주소다`), canonical: to }, body: h(Shell, { left: back(...backTo) }, h(MergedBody, { kindLabel, on: m.on, name: survivor.name, to })), indexed: false, lastmod: null });
+      pages.push({ path: base(Number(id)), head: { title: pageTitle(label(survivor)), description: metaDescription(`${survivor.name}에 합쳐진 주소입니다`), canonical: to }, body: h(Shell, { left: back(...backTo) }, h(MergedBody, { kindLabel, on: m.on, name: survivor.name, to })), indexed: false, lastmod: null });
     }
   };
   merged(input.issueMerged, issueById, issuePath, "이슈", issueLabel, ["/issues", "이슈"]);
@@ -552,7 +557,7 @@ function buildPages(input: SiteInput): StaticPage[] {
 
 /** 앱 전용 주소(검색, 용어·일정 상세)의 틀. 앱이 그리면 사라지고, 앱이 없으면 빈 화면 대신 이 안내가 남는다 */
 function AppOnlyBody() {
-  return h("div", { className: "plain nf" }, h("h1", { className: "page-title" }, "이 화면을 열지 못했다"), h("p", { className: "p" }, "이 화면은 자바스크립트로 그린다. 자바스크립트가 꺼져 있거나 화면 파일을 받지 못했다. 다시 불러오거나 아래에서 이어서 볼 수 있다."), h(RecoverLinks, { Link: A, noSearch: true }));
+  return h("div", { className: "plain nf" }, h("h1", { className: "page-title" }, "이 화면을 열지 못했습니다"), h("p", { className: "p" }, "이 화면은 자바스크립트로 그립니다. 자바스크립트가 꺼져 있거나 화면 파일을 받지 못했습니다. 다시 불러오거나 아래에서 이어서 볼 수 있습니다."), h(RecoverLinks, { Link: A, noSearch: true }));
 }
 
 /** 빌드 뒤 공개할 파일: 페이지마다의 HTML과 수집기용 파일. Vite가 만든 index.html을 틀로 쓴다 */

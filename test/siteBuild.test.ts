@@ -2,14 +2,13 @@ import assert from "node:assert/strict";
 import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
-import { fileURLToPath, pathToFileURL } from "node:url";
 import { after, describe, test } from "node:test";
 import type { DayList, IssueChunk, MonthDetail, MonthList, SearchRecord, SiteDates, SiteIssueList } from "../src/siteTypes.ts";
 import { buildSite, listFilesRecursive } from "../site/build.ts";
 import { generateFixtures, writeFixtures } from "../site/dev/fixtures.ts";
 import { FIRST_SCREEN_BUDGET, measureOutput } from "../site/size.ts";
 import { matchDayStories, matchIssues, parseHit, queryTerms } from "../site/src/lib/search.ts";
-import { cleanupTemp, tempDir } from "./helpers.ts";
+import { cleanupTemp, searchOutput, tempDir } from "./helpers.ts";
 import type { EntityChunk, EntityListPage, EntityNewsChunk, IssueDetail, TermGroupFile, TermIndex } from "../src/siteTypes.ts";
 import { measureScheduleScreen, measureScreens } from "../site/size.ts";
 import { matchEntities, matchTerms } from "../site/src/lib/search.ts";
@@ -25,40 +24,6 @@ after(cleanupTemp);
 
 function hashTree(dir: string): Record<string, string> {
   return Object.fromEntries(listFilesRecursive(dir).map((f) => [f, crypto.createHash("sha256").update(fs.readFileSync(path.join(dir, f))).digest("hex")]));
-}
-
-interface PagefindHit {
-  url: string;
-  meta: Record<string, string>;
-}
-
-/** 결과물의 Pagefind 브라우저 API를 Node에서 불러 검색한다(file: 주소는 디스크에서 읽는다) */
-async function searchOutput(outDir: string, queries: string[]): Promise<Map<string, PagefindHit[]>> {
-  const realFetch = globalThis.fetch;
-  globalThis.fetch = (async (input: string | URL | Request) => {
-    const url = typeof input === "string" ? input : input instanceof URL ? input.href : input.url;
-    if (!url.startsWith("file:")) throw new Error(`네트워크 요청 금지: ${url}`);
-    return new Response(fs.readFileSync(fileURLToPath(url.split("?")[0]!)));
-  }) as typeof fetch;
-  try {
-    const pf = (await import(pathToFileURL(path.join(outDir, "pagefind", "pagefind.js")).href)) as {
-      options: (o: object) => Promise<void>;
-      init: () => Promise<void>;
-      search: (q: string) => Promise<{ results: { data: () => Promise<PagefindHit> }[] }>;
-      destroy?: () => Promise<void>;
-    };
-    await pf.options({});
-    await pf.init();
-    const out = new Map<string, PagefindHit[]>();
-    for (const q of queries) {
-      const res = await pf.search(q);
-      out.set(q, await Promise.all(res.results.map((r) => r.data())));
-    }
-    await pf.destroy?.();
-    return out;
-  } finally {
-    globalThis.fetch = realFetch;
-  }
 }
 
 function readJson<T>(file: string): T {

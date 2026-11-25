@@ -25,6 +25,7 @@ import { listMerges, type MergeRecord } from "./merge.ts";
 import { buildIndicatorsBackup, hasIndicatorData, restoreIndicatorsBackup, type IndicatorsBackup } from "./indicatorStore.ts";
 import { listRefMerges, type RefMergeRecord } from "./refMerge.ts";
 import { allEntities, allTerms, extractedDates, hasRefData, markExtracted, storiesOfRef, type EntityKind, type RefItem } from "./refs.ts";
+import { buildReposBackup, hasRepoData, restoreReposBackup, type ReposBackup } from "./trendRepos.ts";
 import { getFirstCollectionDate, loadBrief, recordFirstCollectionDate, saveBrief, storedDates } from "./store.ts";
 
 // 월별 JSON 백업(4.5-1), data 브랜치 커밋(4.5-2), 복원(4.5-3).
@@ -45,15 +46,17 @@ import { getFirstCollectionDate, loadBrief, recordFirstCollectionDate, saveBrief
 // 전용 DB의 커뮤니티 건수 표는 넣지 않는다.
 // 형식 11(R1 4.2-2): 지운 기능(빌더, 수요 흐름)의 builder.json·demand.json을 쓰지 않는다. 형식 7~10 백업을 복원할 때
 // demand.json은 읽지 않고, builder.json에서는 항목의 일정 연결만 읽어 빌더 항목만 근거인 일정을 지운다(T11).
+// 형식 12(B1 4.3-1): 날짜별 저장소 기록(상태와 실린 항목: 순위, 이름, 주소, 설명)을 repos.json에 둔다. 기록이 없으면 이 파일을 쓰지 않는다.
+// 받지 못한 이유, 후보 파일(피드의 한 줄 설명·README)은 넣지 않는다.
 
-export const BACKUP_FORMAT_VERSION = 11;
+export const BACKUP_FORMAT_VERSION = 12;
 /**
  * 복원할 수 있는 형식 버전. 형식 1 백업은 이슈 없이, 형식 1·2 백업은 대상·용어 없이 모든 날짜가 뽑기 안 함으로,
  * 형식 1·2·3 백업은 일정 없이 모든 날짜가 일정 뽑기 안 함으로, 형식 1~4 백업은 지표 값 없이 모든 이슈가 지표 판단 안 함으로,
  * 형식 1~5 백업은 정정 기록 없이, 형식 1~6 백업은 빌더 기록 없이, 형식 7 백업은 새 제품·뜨는 저장소 기록 없이, 형식 1~8 백업은 수요 흐름 기록 없이, 형식 9 백업은 커뮤니티 근거 줄과 꺾임 표시 없이 복원된다.
- * 형식 7~10 백업의 빌더·수요 흐름 기록은 복원하지 않는다(R1)
+ * 형식 7~10 백업의 빌더·수요 흐름 기록은 복원하지 않는다(R1). 형식 1~11 백업은 저장소 기록 없이 복원된다(B1)
  */
-const READABLE_VERSIONS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+const READABLE_VERSIONS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 export const BACKUP_DIR = "backup";
 export const DATA_REF = "refs/heads/data";
 const META_FILE = "meta.json";
@@ -62,6 +65,8 @@ const REFS_FILE = "refs.json";
 const SCHEDULES_FILE = "schedules.json";
 const INDICATORS_FILE = "indicators.json";
 const CORRECTIONS_FILE = "corrections.json";
+/** B1: 저장소 기록. 옛 빌더 파일 이름(builder.json)은 옛 형식으로 읽히므로 쓰지 않는다 */
+const REPOS_FILE = "repos.json";
 /** 지운 기능(R1)의 옛 백업 파일. 쓰지 않고, 복원할 때 builder.json의 일정 연결만 읽는다 */
 const BUILDER_FILE = "builder.json";
 const DEMAND_FILE = "demand.json";
@@ -109,7 +114,7 @@ interface RefsFile {
 }
 
 function isBackupFile(name: string): boolean {
-  return name === META_FILE || name === ISSUES_FILE || name === REFS_FILE || name === SCHEDULES_FILE || name === INDICATORS_FILE || name === CORRECTIONS_FILE || name === BUILDER_FILE || name === DEMAND_FILE || MONTH_RE.test(name);
+  return name === META_FILE || name === ISSUES_FILE || name === REFS_FILE || name === SCHEDULES_FILE || name === INDICATORS_FILE || name === CORRECTIONS_FILE || name === REPOS_FILE || name === BUILDER_FILE || name === DEMAND_FILE || MONTH_RE.test(name);
 }
 
 function buildRefsFile(db: DatabaseSync): RefsFile {
@@ -283,6 +288,7 @@ export function buildBackup(db: DatabaseSync): Map<string, string> {
   if (hasScheduleData(db)) files.set(SCHEDULES_FILE, toJson(buildSchedulesFile(db)));
   if (hasIndicatorData(db)) files.set(INDICATORS_FILE, toJson(buildIndicatorsBackup(db, BACKUP_FORMAT_VERSION)));
   if (hasCorrections(db)) files.set(CORRECTIONS_FILE, toJson({ formatVersion: BACKUP_FORMAT_VERSION, corrections: allCorrections(db) } satisfies CorrectionsFile));
+  if (hasRepoData(db)) files.set(REPOS_FILE, toJson(buildReposBackup(db, BACKUP_FORMAT_VERSION)));
   const extracted = extractedDates(db);
   const scheduled = scheduledDates(db);
   const byMonth = new Map<string, StoredBrief[]>();
@@ -414,6 +420,9 @@ export function restoreBackup(files: Map<string, string>, outPath: string, force
   const correctionsText = files.get(CORRECTIONS_FILE);
   const corrections = correctionsText === undefined ? null : (JSON.parse(correctionsText) as CorrectionsFile);
   if (corrections !== null) checkVersion(CORRECTIONS_FILE, corrections);
+  const reposText = files.get(REPOS_FILE);
+  const repos = reposText === undefined ? null : (JSON.parse(reposText) as ReposBackup);
+  if (repos !== null) checkVersion(REPOS_FILE, repos);
   const builderText = files.get(BUILDER_FILE);
   const builder = builderText === undefined ? null : (JSON.parse(builderText) as OldBuilderBackup);
   if (builder !== null) checkVersion(BUILDER_FILE, builder);
@@ -431,7 +440,7 @@ export function restoreBackup(files: Map<string, string>, outPath: string, force
     }
     if (meta.firstLinkedOn !== undefined) setMeta(db, FIRST_LINKED_KEY, meta.firstLinkedOn);
     if (meta.mergeCheckedOn !== undefined) setMeta(db, MERGE_CHECKED_KEY, meta.mergeCheckedOn);
-    if (issues !== null || refs !== null || schedules !== null || indicators !== null || corrections !== null || builder !== null || months.some((m) => m.extracted !== undefined || m.scheduled !== undefined)) {
+    if (issues !== null || refs !== null || schedules !== null || indicators !== null || corrections !== null || repos !== null || builder !== null || months.some((m) => m.extracted !== undefined || m.scheduled !== undefined)) {
       db.exec("BEGIN");
       try {
         if (issues !== null) restoreIssues(db, issues);
@@ -439,6 +448,7 @@ export function restoreBackup(files: Map<string, string>, outPath: string, force
         if (schedules !== null) restoreSchedules(db, schedules);
         if (indicators !== null) restoreIndicatorsBackup(db, indicators);
         if (corrections !== null) restoreCorrections(db, corrections);
+        if (repos !== null) restoreReposBackup(db, repos);
         // demand.json(옛 형식)은 읽지 않는다. builder.json은 일정 연결만 읽어 빌더 항목만 근거인 일정을 지운다(R1 T11)
         if (builder !== null) purgeBuilderOnlySchedules(db, (builder.items ?? []).flatMap((x) => x.schedules ?? []));
         for (const m of months) for (const d of m.extracted ?? []) markExtracted(db, d);

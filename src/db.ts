@@ -634,6 +634,28 @@ export const MIGRATIONS: Migration[] = [
       purgeBuilderOnlySchedules(db, ids);
     },
   },
+  {
+    // B1 4.1·4.2: 브리프 날짜마다의 저장소 기록(실음/새로 오른 것 없음/받지 못함)과 실린 저장소 항목.
+    // 저장소 키(소문자 owner/name)는 모든 날짜에서 하나뿐이다(한 번 실린 저장소는 다시 싣지 않는다, G3). 받지 못한 이유는 실행 기록에만 둔다
+    version: 16,
+    up: (db) => {
+      db.exec(`
+        CREATE TABLE trend_repo_days (
+          date TEXT PRIMARY KEY REFERENCES briefs(target_date),
+          status TEXT NOT NULL CHECK (status IN ('shown', 'none', 'failed'))
+        );
+        CREATE TABLE trend_repos (
+          date TEXT NOT NULL REFERENCES trend_repo_days(date),
+          rank INTEGER NOT NULL CHECK (rank >= 1),
+          key TEXT NOT NULL UNIQUE,
+          name TEXT NOT NULL,
+          url TEXT NOT NULL,
+          description TEXT NOT NULL,
+          PRIMARY KEY (date, rank)
+        );
+      `);
+    },
+  },
 ];
 
 export function schemaVersion(db: DatabaseSync): number {

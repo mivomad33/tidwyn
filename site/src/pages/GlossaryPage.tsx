@@ -65,7 +65,7 @@ export function GlossaryPage({ id }: { id: number | null }) {
         <p className="meta">용어 {index.total.toLocaleString("ko-KR")}개 · 가나다순</p>
         {merged && target && <MergedNotice on={merged.on} survivorId={target.id} group={target.group} />}
         {groups.length === 0 ? (
-          <Empty>아직 용어가 없다.</Empty>
+          <Empty>아직 용어가 없습니다.</Empty>
         ) : (
           <>
             <nav aria-label="첫 자음으로 가기" className="rel">
@@ -100,7 +100,7 @@ function MergedNotice({ on, survivorId, group }: { on: string | null; survivorId
   return (
     <p className="notice" role="note">
       이 항목은 {on ? `${monthDay(on)}에 ` : ""}
-      {name}에 합쳐졌다.
+      {name}에 합쳐졌습니다.
     </p>
   );
 }

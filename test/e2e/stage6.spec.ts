@@ -98,7 +98,7 @@ test.describe("브리프 위 '이번 주 일정 | 지표' 상자", () => {
     await page.reload();
     await expect(toggle(page)).toHaveAttribute("aria-expanded", "false");
     await page.goto("/about");
-    await expect(page.getByText("상자에서 고른 탭(일정·지표)도 이 브라우저에만 기억한다")).toBeVisible();
+    await expect(page.getByText("상자에서 고른 탭(일정·지표)도 이 브라우저에만 기억합니다")).toBeVisible();
     page.once("dialog", (d) => void d.accept());
     await page.getByRole("button", { name: "읽은 기록 지우기" }).click();
     await page.goto(`/${otherDate}`);
@@ -161,7 +161,7 @@ test.describe("지표 페이지", () => {
   test("공개 지표에 값이 하나도 없으면 빈 상태, 불러오지 못하면 오류와 다시 시도", async ({ page }) => {
     await fulfillData(page, "indicator-list.json", { asOf: null, indicators: list.indicators.map((c) => ({ ...c, last: null, spark: [] })) });
     await page.goto("/indicators");
-    await expect(page.getByText("아직 지표 값이 없다.")).toBeVisible();
+    await expect(page.getByText("아직 지표 값이 없습니다.")).toBeVisible();
     await page.unroute("**/site-data/indicator-list.json");
     await serverError(page, "indicator-list.json");
     await page.reload();
@@ -185,7 +185,7 @@ test.describe("지표 하나의 페이지", () => {
     await expect.poll(async () => Number(await slider.getAttribute("aria-valuemax"))).toBeGreaterThan(yearMax * 4);
     await seg.getByRole("button", { name: "1개월" }).click();
     await expect.poll(async () => Number(await slider.getAttribute("aria-valuemax"))).toBeLessThan(30);
-    await expect(page.locator(".chart-read")).toHaveText("그래프를 누르거나 끌면 그날 값이 보인다.");
+    await expect(page.locator(".chart-read")).toHaveText("그래프를 누르거나 끌면 그날 값이 보입니다.");
     const boxRect = (await slider.boundingBox())!;
     await page.mouse.click(boxRect.x + boxRect.width / 2, boxRect.y + boxRect.height / 2);
     // 1개월 안의 값은 기준 해(목록의 기준일 2026-10-27의 해)와 같아 해를 쓰지 않는다(U1 4.3-1)
@@ -210,16 +210,16 @@ test.describe("지표 하나의 페이지", () => {
     await expect(page).toHaveURL(`/issues/${most.issues[0]!.id}`);
   });
 
-  test("관련 이슈가 없으면 그 절이 없고, 값 없는 지표는 '아직 값이 없다', 공개 끈 지표·없는 식별자는 없는 페이지", async ({ page }) => {
+  test("관련 이슈가 없으면 그 절이 없고, 값 없는 지표는 '아직 값이 없습니다', 공개 끈 지표·없는 식별자는 없는 페이지", async ({ page }) => {
     await page.goto(`/indicators/${iinfo.noRelated}`);
     await expect(page.getByRole("slider")).toBeVisible();
     await expect(page.getByRole("heading", { name: "관련 이슈" })).toHaveCount(0);
     await page.goto(`/indicators/${iinfo.empty}`);
-    await expect(page.getByText("아직 값이 없다.")).toBeVisible();
+    await expect(page.getByText("아직 값이 없습니다.")).toBeVisible();
     await expect(page.getByRole("slider")).toHaveCount(0);
     for (const p of [`/indicators/${iinfo.off}`, "/indicators/nothing", "/indicators/BAD"]) {
       await page.goto(p);
-      await expect(page.getByRole("heading", { level: 1, name: "이 주소에는 페이지가 없다" })).toBeVisible();
+      await expect(page.getByRole("heading", { level: 1, name: "이 주소에는 페이지가 없습니다" })).toBeVisible();
     }
   });
 
@@ -270,7 +270,7 @@ test.describe("값이 하나뿐이거나 모두 같은 그래프", () => {
     const monthly = cards.find((c) => c.freq === "month")!;
     await page.goto(`/indicators/${monthly.id}`);
     await page.getByRole("group", { name: "기간" }).getByRole("button", { name: "1개월" }).click();
-    await expect(page.getByText("이 기간에는 값이 하나뿐이다.")).toBeVisible();
+    await expect(page.getByText("이 기간에는 값이 하나뿐입니다.")).toBeVisible();
     await labelsAtValue(page);
     const flat = cards.find((c) => c.freq === "day" && c.last && c.last.change === 0 && c.spark.every((p) => p[1] === c.spark[0]![1]));
     if (flat === undefined) throw new Error("테스트 데이터에 내내 같은 값의 일별 지표가 없다");

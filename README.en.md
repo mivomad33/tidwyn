@@ -16,6 +16,7 @@ A personal news archive. Every day, AI gathers Korean, world, and IT/AI news, re
 - **Glossary:** Difficult terms are collected with plain explanations. Tapping an underlined word in an expanded card opens its explanation right there.
 - **Schedule calendar:** Upcoming official events mentioned in the news are collected in a list and a calendar, and linked to the news of their outcome once the date passes. The box above the brief shows "This week's schedule."
 - **Key indicators:** Twelve indicators (the won-dollar rate, KOSPI and KOSDAQ, Korean and US policy rates and bond yields, oil prices, consumer prices, and the dollar index) come from official sources (Bank of Korea ECOS and FRED) and are shown on an indicators page with charts. The indicators tab of the box above the brief shows the values for that date, and issue pages show charts of related indicators.
+- **Builder:** Up to five repositories a day that newly appear on GitHub's weekly trending list go into the brief's Builder tab, each with a Korean description based on its README that explains what it is and who it is useful for. A repository is never listed twice.
 - **Read marks:** Stories you have read show in regular weight with a check in every list, and the brief can show unread stories only. The record stays in your own browser.
 - **Browsing:** Category filters, a date list, an issue list, and on-site search, all usable on a phone.
 - **Corrections and feeds:** Report mistakes with the "report an error" link on the site or by email (mivomad33@gmail.com). Corrected stories keep a "corrected" mark and a note on what changed. Briefs are available by RSS (<https://tidwyn.vercel.app/rss.xml>).
@@ -23,7 +24,7 @@ A personal news archive. Every day, AI gathers Korean, world, and IT/AI news, re
 ## How it works
 
 1. Running the `/brief` skill in a local Claude Code session researches the previous day's news and writes it in a fixed format.
-2. A script validates it, saves it to a local SQLite database, and links stories to issues. The database is the source of truth.
+2. A script validates it, saves it to a local SQLite database, and links stories to issues. It then writes descriptions for repositories newly on GitHub's weekly trending RSS and saves them. The database is the source of truth.
 3. The whole database is exported as monthly JSON, committed to the `data` branch as a backup, and pushed.
 4. A static site is built from the database and deployed to Vercel.
 

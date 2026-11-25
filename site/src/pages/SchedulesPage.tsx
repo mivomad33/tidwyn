@@ -126,7 +126,7 @@ export function SchedulesPage({ id, list }: { id: number | null; list: boolean }
     <Layout left={back}>
       {head}
       {index.total === 0 ? (
-        <Empty>아직 모은 일정이 없다.</Empty>
+        <Empty>아직 모은 일정이 없습니다.</Empty>
       ) : view === "list" ? (
         <ListView index={index} today={today} major={major} onMajor={setMajor} target={target.status === "ok" && target.id === id ? target : null} />
       ) : (
@@ -225,7 +225,7 @@ function ListView({ index, today, major: picked, onMajor, target }: { index: Sch
   }, [hl]);
 
   if (target && targetMonth.status === "error") return <ErrorState onRetry={() => retry([dataUrl.scheduleMonth(target.month)])} />;
-  if (target && targetMonth.status === "ok" && !targetItem) return <Empty>이 일정을 찾지 못했다.</Empty>;
+  if (target && targetMonth.status === "ok" && !targetItem) return <Empty>이 일정을 찾지 못했습니다.</Empty>;
   if (target && !targetItem) return <Loading />;
 
   const label = SCHEDULE_TAB_LABEL[tab];
@@ -258,7 +258,7 @@ function ListView({ index, today, major: picked, onMajor, target }: { index: Sch
         )}
         {loaded.state === "error" && <ErrorState onRetry={() => retry(loaded.urls)} />}
         {loaded.state === "loading" && <Loading />}
-        {loaded.state === "ok" && items.length === 0 && !shown.more && <Empty>{major ? `이 분류의 ${label}이 없다.` : `${label}이 없다.`}</Empty>}
+        {loaded.state === "ok" && items.length === 0 && !shown.more && <Empty>{major ? `이 분류의 ${label}이 없습니다.` : `${label}이 없습니다.`}</Empty>}
         {loaded.state === "ok" && shown.more && (
           <div className="more">
             <button type="button" className="retry" onClick={showMore}>
@@ -373,7 +373,7 @@ function CalendarView({ index, today, major: pickedMajor, onMajor }: { index: Sc
             <p className="sr-only" role="status" aria-live="polite">
               {announce}
             </p>
-            {!hasAny && <Empty>{major ? "이 달에는 이 분류의 일정이 없다." : "이 달에는 일정이 없다."}</Empty>}
+            {!hasAny && <Empty>{major ? "이 달에는 이 분류의 일정이 없습니다." : "이 달에는 일정이 없습니다."}</Empty>}
             {hasAny && day && (
               <section aria-label={dayHeading(day, today)}>
                 <h3 className="h dh">{dayHeading(day, today)}</h3>
@@ -384,7 +384,7 @@ function CalendarView({ index, today, major: pickedMajor, onMajor }: { index: Sc
                     ))}
                   </ul>
                 ) : (
-                  <Empty inline>이 날에는 일정이 없다.</Empty>
+                  <Empty inline>이 날에는 일정이 없습니다.</Empty>
                 )}
               </section>
             )}

@@ -466,7 +466,7 @@ test.describe("4.3-3 고른 값이 사라지면 첫 칩(S12)", () => {
     await expect(filterChips(group).first()).toHaveText(/^모든 분야/);
     await expect(filterChips(group).first()).toHaveAttribute("aria-pressed", "true");
     expect(await page.locator("main ul.list > li").count()).toBeGreaterThan(0);
-    await expect(page.getByText("이 분류의 뉴스가 없다.")).toHaveCount(0);
+    await expect(page.getByText("이 분류의 뉴스가 없습니다.")).toHaveCount(0);
   });
 
   test("인물 목록에 0건인 종류(?kind=)로 들어오면 첫 칩으로 돌아가고 주소도 바뀐다", async ({ page }) => {

@@ -23,7 +23,7 @@ export function AboutPage() {
   );
 }
 
-export const CLEAR_CONFIRM = "읽은 기록을 모두 지운다. 지운 기록은 되돌릴 수 없다.";
+export const CLEAR_CONFIRM = "읽은 기록을 모두 지웁니다. 지운 기록은 되돌릴 수 없습니다.";
 
 function ReadMarksSection() {
   const [cleared, setCleared] = useState(false);
@@ -41,7 +41,7 @@ function ReadMarksSection() {
         </button>
       </div>
       <p className="done" role="status">
-        {cleared ? "읽은 기록을 지웠다." : ""}
+        {cleared ? "읽은 기록을 지웠습니다." : ""}
       </p>
     </>
   );

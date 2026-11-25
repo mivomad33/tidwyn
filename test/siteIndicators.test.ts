@@ -274,7 +274,7 @@ describe("4.7-3 지표 하나의 페이지: 기간, 그래프, 요약, 관련 �
     assert.equal(chartSummary(meta, pts, "2027"), "가짜 지수: 2026년 10월 20일부터 2026년 10월 23일까지. 처음 10.00, 마지막 11.00, 최고 14.50(2026년 10월 21일), 최저 9.25(2026년 10월 22일).");
     assert.equal(chartSummary({ ...meta, unit: "%" }, [["2026-09", 2.1]], "2026"), "가짜 지수: 9월 값 하나, 2.10%.");
     assert.equal(chartSummary({ ...meta, unit: "%" }, [["2025-09", 2.1]], "2026"), "가짜 지수: 2025년 9월 값 하나, 2.10%.");
-    assert.equal(chartSummary(meta, []), "가짜 지수: 이 기간에 값이 없다.");
+    assert.equal(chartSummary(meta, []), "가짜 지수: 이 기간에 값이 없습니다.");
   });
 
   test("그래프: 축의 처음·끝 날짜, 가로 눈금선, 보조 기술용 슬라이더와 요약", () => {
@@ -352,7 +352,7 @@ describe("4.7-6 출처 표시와 FRED 고지", () => {
   test("FRED 약관 고지·약관 주소·동의 한 줄", () => {
     assert.equal(FRED_NOTICE, "This product uses the FRED® API but is not endorsed or certified by the Federal Reserve Bank of St. Louis.");
     assert.equal(FRED_TERMS_URL, "https://fred.stlouisfed.org/docs/api/terms_of_use.html");
-    assert.equal(FRED_AGREEMENT, "이 사이트를 이용하면 FRED® API 이용 약관을 따르는 것으로 본다.");
+    assert.equal(FRED_AGREEMENT, "이 사이트를 이용하면 FRED® API 이용 약관을 따르는 것으로 봅니다.");
     const html = renderToStaticMarkup(h(FredNotice));
     assert.ok(html.includes(FRED_NOTICE));
     assert.match(html, /<a href="https:\/\/fred\.stlouisfed\.org\/docs\/api\/terms_of_use\.html" class="text-link" target="_blank" rel="noopener noreferrer"/);
@@ -477,23 +477,26 @@ describe("4.7-9 지어낸 데이터의 지표", () => {
 });
 
 describe("4.6-2 지표를 더한 5년치", () => {
-  test("브리프 첫 화면(새 상자 포함)·지표 페이지·지표 하나의 페이지가 처음 받는 데이터가 각각 gzip 300KB 이하다", async () => {
-    // 5단계 측정 조건(1,826일, 하루 42건, 이슈·대상 15,000개, 용어 5,000개, 일정 15,000개)에 지표 12개 × 5년, 이슈의 2할이 지표 1~3개
+  test("브리프 첫 화면(새 상자·빌더 저장소 포함)·지표 페이지·지표 하나의 페이지가 처음 받는 데이터가 각각 gzip 300KB 이하다", async () => {
+    // 5단계 측정 조건(1,826일, 하루 42건, 이슈·대상 15,000개, 용어 5,000개, 일정 15,000개)에 지표 12개 × 5년, 이슈의 2할이 지표 1~3개.
+    // B1 4.4-6: 저장소 설명은 첫 화면 데이터(list-*.json)에 들어가므로 모든 날짜에 저장소 5개·설명 400자(최악 조건)를 둔다
     const work = tempDir("tidwyn-site6y-");
     const dataDir = path.join(work, "data");
     const out = path.join(work, "out");
-    writeFixtures(dataDir, { end: "2026-10-31", days: 1826, top: 6, short: 8, issues: 15000, contiguous: true, entities: 15000, terms: 5000, schedules: 15000, indicators: 5, indicatorsAll: true });
+    writeFixtures(dataDir, { end: "2026-10-31", days: 1826, top: 6, short: 8, issues: 15000, contiguous: true, entities: 15000, terms: 5000, schedules: 15000, indicators: 5, indicatorsAll: true, repos: "worst" });
     const res = await buildSite({ dataDir, outDir: out });
     console.log(`5년치 결과물 ${res.files.length}개, ${(res.bytes / 1024 / 1024).toFixed(1)}MB`);
     const list = JSON.parse(fs.readFileSync(path.join(out, "site-data", siteFiles.indicatorList), "utf8")) as IndicatorList;
     assert.equal(visibleCards(list).length, 12);
-    assert.match(fs.readFileSync(path.join(out, pageFile("/indicators")), "utf8"), /값은 이 화면에 싣지 않는다/, "값을 싣지 않는 줄에 까닭을 적는다");
+    assert.match(fs.readFileSync(path.join(out, pageFile("/indicators")), "utf8"), /값은 이 화면에 싣지 않습니다/, "값을 싣지 않는 줄에 까닭을 적는다");
     const issueChunk = JSON.parse(fs.readFileSync(path.join(out, "site-data", "issue-0.json"), "utf8")) as IssueChunk;
     const withInd = Object.values(issueChunk.issues).filter((i) => i.indicators?.length).length;
     assert.ok(withInd >= 15 && withInd <= 25, `이슈 100개 중 지표가 있는 것 ${withInd}개(약 2할)`);
     const latest = (JSON.parse(fs.readFileSync(path.join(out, "site-data", "list-2026-10.json"), "utf8")) as MonthList).days.at(-1)! as DayList;
     assert.ok(latest.indicators && latest.indicators.length >= 10 && latest.week, "가장 최근 날짜에 일정과 지표 칩이 있다");
+    assert.ok(latest.repos?.items.length === 5 && latest.repos.items.every((i) => Array.from(i.description).length === 400), "가장 최근 날짜에 저장소 5개·설명 400자가 있다");
     const size = measureOutput(out);
+    console.log(`B1 4.4-6 브리프 첫 화면 gzip ${(size.firstScreen.gzip / 1024).toFixed(1)}KB: ${size.firstScreen.files.map((f) => `${f.path} ${(f.gzip / 1024).toFixed(1)}KB`).join(", ")}`);
     assert.ok(size.firstScreen.gzip <= FIRST_SCREEN_BUDGET, `브리프 첫 화면 gzip ${size.firstScreen.gzip}B`);
     const screens = measureIndicatorScreens(out);
     assert.equal(screens.length, 2);

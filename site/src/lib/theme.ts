@@ -24,6 +24,8 @@ export interface Palette {
   plot: string;
   /** 9.5단계: 강조색 면 위의 글자(없는 페이지의 주 버튼) */
   onAccent: string;
+  /** B1: 빌더 탭 저장소 이름 링크의 파랑(GitHub 트렌딩처럼, 사용자 결정 2026-11-25) */
+  link: string;
   categories: Record<Major, string>;
 }
 
@@ -42,6 +44,7 @@ export const LIGHT: Palette = {
   down: "#1d4ed8",
   plot: "#1d1d1f",
   onAccent: "#ffffff",
+  link: "#0969da",
   categories: {
     "정치": "#7c3aed",
     "경제": "#c2410c",
@@ -68,6 +71,7 @@ export const DARK: Palette = {
   down: "#7aa7ff",
   plot: "#ececee",
   onAccent: "#161618",
+  link: "#4493f8",
   categories: {
     "정치": "#a78bfa",
     "경제": "#fb923c",
@@ -84,7 +88,7 @@ export function categoryVar(major: Major): string {
 }
 
 function vars(p: Palette): string {
-  const base = `--bg:${p.bg};--fg:${p.fg};--muted:${p.muted};--line:${p.line};--chip:${p.chip};--accent:${p.accent};--accentbg:${p.accentbg};--check:${p.check};--check-ink:${p.checkInk};--ring:${p.ring};--up:${p.up};--down:${p.down};--plot:${p.plot};--on-accent:${p.onAccent};`;
+  const base = `--bg:${p.bg};--fg:${p.fg};--muted:${p.muted};--line:${p.line};--chip:${p.chip};--accent:${p.accent};--accentbg:${p.accentbg};--check:${p.check};--check-ink:${p.checkInk};--ring:${p.ring};--up:${p.up};--down:${p.down};--plot:${p.plot};--on-accent:${p.onAccent};--link:${p.link};`;
   return base + MAJORS.map((m, i) => `--cat-${i}:${p.categories[m]};`).join("");
 }
 
@@ -121,6 +125,8 @@ export function textPairs(p: Palette): { name: string; fg: string; bg: string }[
     { name: "고른 칩", fg: p.bg, bg: p.fg },
     // 4단계: 펼친 카드에서 누른 용어 낱말(강조 바탕 위 본문 글자)
     { name: "강조된 낱말", fg: p.fg, bg: p.accentbg },
+    // B1: 빌더 탭 저장소 이름 링크
+    { name: "저장소 이름 링크", fg: p.link, bg: p.bg },
   ];
   for (const m of MAJORS) pairs.push({ name: `분류 ${m}`, fg: p.categories[m], bg: p.bg });
   // 5단계: 일정 주소로 강조된 일정 줄(강조 바탕), 달 단위 "날짜 미정" 상자(상자 바탕), 달력의 고른 날

@@ -7,20 +7,21 @@ import { FixMark, FixNotes } from "../components/correctionView.ts";
 import { ScheduleChips } from "../components/scheduleView.ts";
 import { EntityChips, TermBox, TermChips, TermText } from "../components/termView.ts";
 import { retry, useResource, type Resource } from "../data.ts";
-import { ALL_TAB, BRIEF_TAB_KEY, briefTabs, findDay, findStoryTarget, parseBriefTab, sectionView, stateForHash, storyImage, type BriefTab, type BriefViewState } from "../lib/brief.ts";
+import { ALL_TAB, BRIEF_TAB_KEY, BUILDER_TAB, briefTabs, findDay, findStoryTarget, isBuilderTarget, parseBriefTab, sectionView, stateForHash, storyImage, type BriefTab, type BriefViewState } from "../lib/brief.ts";
 import { briefTitle, latestTitle, monthDay, monthDayWeekday, pageTitle, shortDate, yearOf } from "../lib/format.ts";
 import { dataUrl } from "../lib/paths.ts";
 import { SITE_URL, shortReportHref, storyReportHref } from "../lib/policy.ts";
 import { placeTerms, storyBodyParts, termBoxPlace, toggleTerm } from "../lib/terms.ts";
 import { categoryVar } from "../lib/theme.ts";
 import { adjacentDates, briefPath, hashKey, issuePath, resolveBriefDate, type Route } from "../lib/routes.ts";
-import type { DayList, ListStory, MonthDetail, MonthList, SiteDates, StoryDetail } from "../lib/types.ts";
+import type { DayList, DayRepos, ListStory, MonthDetail, MonthList, SiteDates, StoryDetail } from "../lib/types.ts";
 import { readStored, writeStored } from "../lib/storage.ts";
 import { ALL_CHIP_TEXT, countChips, keptChip } from "../lib/chips.ts";
 import { markRead, readStore, useReadVersion } from "../readMarks.ts";
 import { MoreMark } from "../components/moreMark.ts";
 import { ReportLink } from "../components/reportLink.ts";
 import { StorySources } from "../components/sourceView.ts";
+import { RepoList } from "../components/repoView.ts";
 import { cameBackToEntry, Link, lastNavigation, navigate, updateEntry, useLocation } from "../router.tsx";
 import { briefMarkOf, navOf, withBriefMark, type BriefMark } from "../lib/navState.ts";
 import { boxTab, browserStorage, useRemembered } from "../storage.ts";
@@ -167,9 +168,9 @@ export function BriefPage({ route }: { route: Route }) {
   // 주소의 `#`가 정할 탭까지 보고 보일 탭을 정한다(기억한 탭이 그 날짜에 없으면 첫 섹션 탭)
   const hashView = day ? stateForHash(day, key, view) : null;
   const shownTab = hashView?.section ?? null;
-  // 주소의 `#`가 뉴스 키로 탭을 정하면 그렇게 연 탭도 고른 탭으로 기억한다(U1 4.4-4)
+  // 주소의 `#`가 뉴스 키(또는 그날 빌더 탭의 `#builder`)로 탭을 정하면 그렇게 연 탭도 고른 탭으로 기억한다(U1 4.4-4)
   useEffect(() => {
-    if (day && shownTab && findStoryTarget(day, key)) rememberTab(shownTab);
+    if (day && shownTab && (findStoryTarget(day, key) || isBuilderTarget(day, key))) rememberTab(shownTab);
     // 주소의 `#`가 바뀔 때만 본다(탭 단추는 chooseSection이 기억한다)
   }, [day, key, shownTab]);
   // U1 S8·S12: 이 브리프 기록에 날짜·보이는 탭·그때의 최근 날짜·고른 대분류 칩을 남긴다. 다른 화면으로 갈 때 들어온 브리프가 되고, 돌아올 때 되살린다
@@ -250,7 +251,7 @@ export function BriefPage({ route }: { route: Route }) {
 
   if (datesRes.status === "error") return frame(<ErrorState onRetry={() => retry([datesUrl])} />);
   if (datesRes.status !== "ok") return frame(<Loading />);
-  if (route.name === "latest" && !datesRes.data.latestDate) return frame(<Empty>아직 저장된 브리프가 없다.</Empty>);
+  if (route.name === "latest" && !datesRes.data.latestDate) return frame(<Empty>아직 저장된 브리프가 없습니다.</Empty>);
   if (!date) return <NotFoundPage />;
   const { prev, next } = adjacentDates(datesRes.data.dates, date);
   const center = <DateNav date={date} prev={prev} next={next} weekOpen={weekOpen} />;
@@ -261,6 +262,8 @@ export function BriefPage({ route }: { route: Route }) {
   const tabs = briefTabs(day);
   const current = shownTab!;
   const all = current === ALL_TAB;
+  // B1: 빌더 탭은 저장소 목록만 보인다(요약·키워드·대분류 칩·'안 읽은 것만' 없음, 4.4-1). 이번 주 일정|지표 상자는 탭과 관계없이 같다
+  const repos = current === BUILDER_TAB ? (day.repos ?? null) : null;
   // U2 4.3-1: 대분류 칩은 지금 탭의 뉴스(주요 뉴스와 짧은 소식)로 센다. '안 읽은 것만'은 건수를 바꾸지 않는다
   const svAll = sectionView(day, current, null);
   const majorChips = countChips([...svAll.top, ...svAll.short], (s) => s.category.major, ALL_MAJORS);
@@ -322,70 +325,86 @@ export function BriefPage({ route }: { route: Route }) {
       </nav>
       <Main className="page has-tabs">
         <h1 className="sr-only">{monthDayWeekday(date)} 브리프</h1>
-        <div className="headline">
-          {day.headline}
-          {day.keywords.length > 0 && (
-            <div className="kw" aria-label="키워드">
-              {day.keywords.map((k) => (
-                <span key={k}>{k}</span>
-              ))}
+        {repos ? (
+          <BuilderBody day={day} repos={repos} weekOpen={weekOpen} onWeekToggle={() => setWeekOpen((o) => !o)} />
+        ) : (
+          <>
+            <div className="headline">
+              {day.headline}
+              {day.keywords.length > 0 && (
+                <div className="kw" aria-label="키워드">
+                  {day.keywords.map((k) => (
+                    <span key={k}>{k}</span>
+                  ))}
+                </div>
+              )}
             </div>
-          )}
-        </div>
-        <TopBox day={day} open={weekOpen} onToggle={() => setWeekOpen((o) => !o)} />
-        <ChipFilter
-          label="카테고리"
-          allText={ALL_CHIP_TEXT.major}
-          total={svAll.top.length + svAll.short.length}
-          options={majorChips}
-          value={major}
-          onChange={chooseMajor}
-          after={
-            <ToggleChip on={unread.on} onChange={chooseUnread}>
-              안 읽은 것만
-            </ToggleChip>
-          }
-        />
-        <h2 className="sr-only">{current} 뉴스</h2>
-        {sv.section?.flow && major === null && <p className="flow">{sv.section.flow}</p>}
-        {!hasStories && <Empty>{major ? "이 분류의 뉴스가 없다." : "이 섹션의 뉴스가 없다."}</Empty>}
-        {hasStories && tops.length + shorts.length === 0 && <Empty>안 읽은 뉴스가 없다.</Empty>}
-        {tops.length > 0 && (
-          <ul className="list">
-            {tops.map((s) => (
-              <TopItem
-                showSection={all}
-                key={s.key}
-                story={s}
-                date={date}
-                open={expanded === s.key}
-                onToggle={() => toggle(s.key)}
-                detail={detailRes}
-                onRetry={() => retry([detailUrl])}
-                leaving={leaving(s)}
-                onGone={() => onGone(s.key)}
-              />
-            ))}
-          </ul>
+            <TopBox day={day} open={weekOpen} onToggle={() => setWeekOpen((o) => !o)} />
+            <ChipFilter
+              label="카테고리"
+              allText={ALL_CHIP_TEXT.major}
+              total={svAll.top.length + svAll.short.length}
+              options={majorChips}
+              value={major}
+              onChange={chooseMajor}
+              after={
+                <ToggleChip on={unread.on} onChange={chooseUnread}>
+                  안 읽은 것만
+                </ToggleChip>
+              }
+            />
+            <h2 className="sr-only">{current} 뉴스</h2>
+            {sv.section?.flow && major === null && <p className="flow">{sv.section.flow}</p>}
+            {!hasStories && <Empty>{major ? "이 분류의 뉴스가 없습니다." : "이 섹션의 뉴스가 없습니다."}</Empty>}
+            {hasStories && tops.length + shorts.length === 0 && <Empty>안 읽은 뉴스가 없습니다.</Empty>}
+            {tops.length > 0 && (
+              <ul className="list">
+                {tops.map((s) => (
+                  <TopItem
+                    showSection={all}
+                    key={s.key}
+                    story={s}
+                    date={date}
+                    open={expanded === s.key}
+                    onToggle={() => toggle(s.key)}
+                    detail={detailRes}
+                    onRetry={() => retry([detailUrl])}
+                    leaving={leaving(s)}
+                    onGone={() => onGone(s.key)}
+                  />
+                ))}
+              </ul>
+            )}
+            {shorts.length > 0 && (
+              <section aria-labelledby="short-h">
+                <h3 id="short-h" className="h list-h">
+                  짧은 소식
+                </h3>
+                <ul className="list">
+                  {shorts.map((s) => (
+                    <ShortItem key={s.key} story={s} date={date} targeted={key === s.key} showSection={all} leaving={leaving(s)} onGone={() => onGone(s.key)} />
+                  ))}
+                </ul>
+                <p className="short-report">
+                  <ReportLink href={shortReportHref(monthDay(date), `${SITE_URL}${briefPath(date)}`)} label="짧은 소식 틀린 내용 알리기" />
+                </p>
+              </section>
+            )}
+            {sv.section?.unverified && major === null && <p className="flow note">확인되지 않은 내용: {sv.section.unverified}</p>}
+          </>
         )}
-        {shorts.length > 0 && (
-          <section aria-labelledby="short-h">
-            <h3 id="short-h" className="h list-h">
-              짧은 소식
-            </h3>
-            <ul className="list">
-              {shorts.map((s) => (
-                <ShortItem key={s.key} story={s} date={date} targeted={key === s.key} showSection={all} leaving={leaving(s)} onGone={() => onGone(s.key)} />
-              ))}
-            </ul>
-            <p className="short-report">
-              <ReportLink href={shortReportHref(monthDay(date), `${SITE_URL}${briefPath(date)}`)} label="짧은 소식 틀린 내용 알리기" />
-            </p>
-          </section>
-        )}
-        {sv.section?.unverified && major === null && <p className="flow note">확인되지 않은 내용: {sv.section.unverified}</p>}
       </Main>
       <Footer />
+    </>
+  );
+}
+
+/** B1 빌더 탭 본문: 이번 주 일정|지표 상자(뉴스 탭과 같은 자리·규칙) 아래 저장소 목록 */
+function BuilderBody({ day, repos, weekOpen, onWeekToggle }: { day: DayList; repos: DayRepos; weekOpen: boolean; onWeekToggle: () => void }) {
+  return (
+    <>
+      <TopBox day={day} open={weekOpen} onToggle={onWeekToggle} />
+      <RepoList repos={repos} headingLevel="h2" />
     </>
   );
 }
@@ -492,7 +511,7 @@ function TopItem({ story, date, open, onToggle, detail, onRetry, showSection, le
             (body ? (
               <StoryBody story={story} detail={body} date={date} />
             ) : (
-              <Empty>이 뉴스의 본문을 찾지 못했다.</Empty>
+              <Empty>이 뉴스의 본문을 찾지 못했습니다.</Empty>
             ))}
         </div>
       )}

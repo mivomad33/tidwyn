@@ -165,13 +165,13 @@ test.describe("인물·기관·국가 목록", () => {
     await expect(kinds.getByRole("button", { name: /^모든 종류 \d+$/ })).toHaveAttribute("aria-pressed", "true");
     await expect(kinds.getByRole("button", { name: /^인물/ })).toHaveCount(0);
     await expect(page.locator("ul.list > li.item").first()).toBeVisible();
-    await expect(page.getByText("이 종류에 해당하는 항목이 없다.")).toHaveCount(0);
+    await expect(page.getByText("이 종류에 해당하는 항목이 없습니다.")).toHaveCount(0);
   });
 
   test("대상이 하나도 없으면 전체 목록이 빈 상태 글을 보인다", async ({ page }) => {
     await fulfillData(page, "entity-list-all-0.json", { filter: "all", page: 0, pages: 1, total: 0, items: [] });
     await page.goto("/entities");
-    await expect(page.getByText("아직 인물·기관·국가가 없다.")).toBeVisible();
+    await expect(page.getByText("아직 인물·기관·국가가 없습니다.")).toBeVisible();
   });
 
   test("목록 파일을 못 받으면 오류를 보이고, 다시 시도로 회복한다", async ({ page }) => {
@@ -226,7 +226,7 @@ test.describe("인물·기관·국가 페이지", () => {
     await page.goto(`/entities/${id}`);
     await expect(page).toHaveURL(`/entities/${into}`);
     await expect(page.getByRole("heading", { level: 1, name: intoName })).toBeVisible();
-    await expect(page.getByRole("note")).toHaveText(`이 항목은 ${monthDay(latest)}에 ${intoName}에 합쳐졌다.`);
+    await expect(page.getByRole("note")).toHaveText(`이 항목은 ${monthDay(latest)}에 ${intoName}에 합쳐졌습니다.`);
   });
 
   for (const [label, id] of [
@@ -236,7 +236,7 @@ test.describe("인물·기관·국가 페이지", () => {
   ] as const) {
     test(`${label}(/entities/${id})는 없는 페이지다`, async ({ page }) => {
       await page.goto(`/entities/${id}`);
-      await expect(page.getByRole("heading", { level: 1, name: "이 주소에는 페이지가 없다" })).toBeVisible();
+      await expect(page.getByRole("heading", { level: 1, name: "이 주소에는 페이지가 없습니다" })).toBeVisible();
     });
   }
 
@@ -283,7 +283,7 @@ test.describe("용어 사전", () => {
     const { id, into } = info.terms.merged;
     await page.goto(`/terms/${id}`);
     await expect(page).toHaveURL(`/terms/${into}`);
-    await expect(page.getByRole("note")).toHaveText(`이 항목은 ${monthDay(info.terms.merged.on)}에 ${under.name}에 합쳐졌다.`);
+    await expect(page.getByRole("note")).toHaveText(`이 항목은 ${monthDay(info.terms.merged.on)}에 ${under.name}에 합쳐졌습니다.`);
     await expect(page.locator(`[id="term-${into}"]`)).toHaveClass(/target/);
   });
 
@@ -293,7 +293,7 @@ test.describe("용어 사전", () => {
   ] as const) {
     test(`${label}(/terms/${id})는 없는 페이지다`, async ({ page }) => {
       await page.goto(`/terms/${id}`);
-      await expect(page.getByRole("heading", { level: 1, name: "이 주소에는 페이지가 없다" })).toBeVisible();
+      await expect(page.getByRole("heading", { level: 1, name: "이 주소에는 페이지가 없습니다" })).toBeVisible();
     });
   }
 
@@ -309,7 +309,7 @@ test.describe("용어 사전", () => {
   test("용어가 없으면 빈 상태 글을 보인다", async ({ page }) => {
     await fulfillData(page, "term-index.json", { total: 0, groups: [], ids: {}, merged: {} });
     await page.goto("/terms");
-    await expect(page.getByText("아직 용어가 없다.")).toBeVisible();
+    await expect(page.getByText("아직 용어가 없습니다.")).toBeVisible();
   });
 });
 

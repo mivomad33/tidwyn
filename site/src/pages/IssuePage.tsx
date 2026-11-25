@@ -75,7 +75,7 @@ export function IssuePage({ id }: { id: number }) {
         {merged && (
           <p className="notice" role="note">
             이 이슈는 {merged.on ? `${monthDay(merged.on)}에 ` : ""}
-            {issue.name}에 합쳐졌다.
+            {issue.name}에 합쳐졌습니다.
           </p>
         )}
         <CategoryLine major={issue.category.major} minor={issue.category.minor} isNewMinor={issue.category.isNewMinor} extra={issue.status} />
@@ -103,7 +103,7 @@ export function IssuePage({ id }: { id: number }) {
             ))}
           </ol>
         ) : (
-          <Empty inline>아직 전개가 없다.</Empty>
+          <Empty inline>아직 전개가 없습니다.</Empty>
         )}
         <IssueIndicators indicators={issue.indicators} newsDates={issue.timeline.map((t) => t.date)} />
         <IssueSchedules lines={issue.schedules} today={today} Link={Link} />

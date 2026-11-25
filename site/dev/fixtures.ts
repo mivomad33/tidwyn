@@ -3,11 +3,12 @@
 //   [--entities 30] [--terms 24] [--hub]   (4단계: 인물·기관·국가와 용어. --hub는 대상 1을 모든 뉴스에 붙인다(5년치 측정용))
 //   [--schedules 0]   (5단계: 일정 수. 0이면 빈 일정 색인만 만든다)
 //   [--indicators 0] [--indicators-all]   (6단계: 지표 값의 햇수. 0이면 지표 파일을 만들지 않는다. --indicators-all은 12개 모두 공개·값 있음(크기 측정용))
+//   [--repos] [--repos-worst]   (B1: 빌더 탭 저장소 기록. --repos는 최근 세 날짜에 실음·새로 오른 것 없음·받지 못함, --repos-worst는 모든 날짜에 5개·설명 400자(크기 측정용))
 // <폴더>/site-data/*.json과 <폴더>/search-records.json을 만든다. 같은 인자면 같은 결과다.
 import fs from "node:fs";
 import path from "node:path";
 import { CONFIDENCE_LEVELS, MINORS_BY_MAJOR, SECTIONS, type Major, type SectionName } from "../../src/categories.ts";
-import { ENTITY_FILTERS, ENTITY_FIRST_NEWS, byCount, dayStoryCount, entityChunkOf, issueEntityChips, entityRecordUrl, termRecordUrl, type EntityKind } from "../../src/siteTypes.ts";
+import { ENTITY_FILTERS, ENTITY_FIRST_NEWS, byCount, dayStoryCount, entityChunkOf, issueEntityChips, entityRecordUrl, repoRecordContent, repoRecordUrl, termRecordUrl, type EntityKind } from "../../src/siteTypes.ts";
 import { addDays, rng } from "./random.ts";
 import { fixtureIndicators, type IndicatorFixtureInfo } from "./indicatorFixtures.ts";
 import { fixtureSchedules, type FixtureStory, type ScheduleFixtureInfo } from "./scheduleFixtures.ts";
@@ -15,6 +16,8 @@ import { entityListPages } from "../src/lib/entities.ts";
 import { buildTermFiles } from "../src/lib/terms.ts";
 import type {
   DayList,
+  DayRepoItem,
+  DayRepos,
   EntityChunk,
   EntityDetail,
   EntityListItem,
@@ -63,6 +66,11 @@ export interface FixtureOptions {
   indicators?: number;
   /** 6단계: 지표 12개 모두 공개하고 값을 둔다. 아니면 브렌트유는 공개를 끈 지표, 코스닥은 값이 하나도 없는 공개 지표다 */
   indicatorsAll?: boolean;
+  /**
+   * B1: 빌더 탭 저장소 기록. true면 가장 최근 날짜에 실음(긴 이름 포함 여러 개), 그 앞 날짜에 새로 오른 것 없음, 그 앞 날짜에 받지 못함을 두고
+   * 나머지 날짜는 기록이 없다. "worst"는 모든 날짜에 실음 5개·설명 400자(크기 측정용). 없으면 다른 파일은 그대로다(난수를 따로 쓴다)
+   */
+  repos?: boolean | "worst";
   /** 9.5단계: 끝 날짜의 첫 섹션에 정정 표시를 둔다(첫 주요 뉴스 2번, 둘째 주요 뉴스와 첫 짧은 소식 1번). 없으면 다른 파일은 그대로다 */
   corrections?: boolean;
 }
@@ -101,7 +109,55 @@ export interface Fixture {
     schedules: ScheduleFixtureInfo | null;
     /** 6단계: 지표를 만들었을 때만 */
     indicators: IndicatorFixtureInfo | null;
+    /** B1: 저장소 기록을 만들었을 때만. 상태별 날짜(worst는 shown만) */
+    repos: RepoFixtureInfo | null;
   };
+}
+
+export interface RepoFixtureInfo {
+  shown: string | null;
+  none: string | null;
+  failed: string | null;
+  /** 기록이 없는 날짜(없으면 null) */
+  absent: string | null;
+}
+
+/** 지어낸 저장소 이름·설명(실제 저장소가 아니다). 둘째는 39자 소유자/39자 이름(긴 이름 줄바꿈 확인용) */
+const FIXTURE_REPOS: [string, string][] = [
+  ["fakeorg/quillnote-desk", "quillnote-desk는 지어낸 메모 정리 도구다. 흩어진 회의 메모를 날짜와 주제로 묶어 한 쪽짜리 요약으로 만들어 준다. 명령 한 줄로 설치하고 폴더 하나를 가리키면 바로 쓸 수 있다. 메모가 많이 쌓이는 작은 팀에게 쓸모 있다."],
+  ["madeuporganizationwithaverylongname1234/an-imaginary-repository-name-for-tests1", "가짜깃발도구는 시험용으로 지어낸 저장소다. 이름이 아주 긴 저장소가 좁은 화면에서 줄을 바꾸는지 보려고 넣었다. 설정 파일 하나로 작업 순서를 적어 두면 같은 일을 매번 같은 순서로 되풀이해 준다. 반복 작업을 자동으로 돌리고 싶은 사람에게 맞다."],
+  ["sample-lab/tidepool-sim", "tidepool-sim은 지어낸 바닷가 생태 흉내 내기 도구다. 물웅덩이에 사는 생물의 수를 날마다 바꿔 보며 먹이 관계가 어떻게 흔들리는지 그래프로 보여 준다. 수업 자료를 만드는 교사나 처음 공부하는 학생이 쓰기 좋다."],
+  ["demo-co/lanternkit", "lanternkit은 지어낸 화면 부품 모음이다. 버튼, 입력 칸, 알림 같은 부품을 밝은 화면과 어두운 화면에서 같은 모양으로 쓰게 해 준다. 부품마다 키보드로 움직이는 방법이 정해져 있어 접근성을 처음 챙기는 개발자에게 도움이 된다."],
+];
+
+/** 정확히 n자인 지어낸 설명(크기 측정용) */
+function repoText400(seed: string, n: number): string {
+  let t = "";
+  while (Array.from(t).length < n) t += `${seed}는 지어낸 저장소다. 시험용 메모를 모아 정리하고, 설정 파일 하나로 같은 일을 되풀이해 준다. 작은 팀에게 쓸모 있다. `;
+  return Array.from(t).slice(0, n).join("").trimEnd().padEnd(n, "다");
+}
+
+/** 날짜별 저장소 기록(B1). 난수를 쓰지 않아 다른 지어낸 값이 그대로다 */
+function fixtureRepos(datesDesc: string[], mode: true | "worst"): { byDate: Map<string, DayRepos>; info: RepoFixtureInfo } {
+  const byDate = new Map<string, DayRepos>();
+  const item = (name: string, rank: number, description: string): DayRepoItem => ({ rank, name, url: `https://github.com/${name}`, description });
+  if (mode === "worst") {
+    for (const [di, date] of datesDesc.entries()) {
+      const items = Array.from({ length: 5 }, (_, i) => {
+        const name = `fakeorg${di}/made-up-tool-${i + 1}`;
+        return item(name, i * 2 + 1, repoText400(name, 400));
+      });
+      byDate.set(date, { status: "shown", items });
+    }
+    return { byDate, info: { shown: datesDesc[0] ?? null, none: null, failed: null, absent: null } };
+  }
+  const [shown, none, failed, absent] = datesDesc;
+  // 순위는 띄엄띄엄이고(이미 실린 것은 빠진다) 파일 순서는 순위 순이 아니다(화면이 순위 순으로 다시 놓는지 본다)
+  const ranks = [7, 1, 4, 10];
+  if (shown) byDate.set(shown, { status: "shown", items: FIXTURE_REPOS.map(([name, d], i) => item(name, ranks[i]!, d)) });
+  if (none) byDate.set(none, { status: "none", items: [] });
+  if (failed) byDate.set(failed, { status: "failed", items: [] });
+  return { byDate, info: { shown: shown ?? null, none: none ?? null, failed: failed ?? null, absent: absent ?? null } };
 }
 
 const SUBJECTS = ["가짜시", "가짜당", "가짜국", "가짜은행", "가짜전자", "가짜구", "가짜연구소", "가짜항공", "가짜대학", "가짜그룹"];
@@ -598,6 +654,16 @@ export function generateFixtures(opts: FixtureOptions = {}): Fixture {
     .map(([g, ts]) => ({ url: termRecordUrl(g), content: ts.flatMap((t) => [t.name, ...t.aliases, t.description]).join("\n"), language: "ko", meta: { kind: "terms", group: String(g) } }));
 
   const datesDesc = [...datesAsc].reverse();
+  const repoFx = opts.repos ? fixtureRepos(datesDesc, opts.repos) : null;
+  const repoRecords: SearchRecord[] = [];
+  for (const l of lists.values()) {
+    for (const day of l.days) {
+      const r = repoFx?.byDate.get(day.date);
+      if (!r) continue;
+      day.repos = r;
+      if (r.status === "shown") repoRecords.push({ url: repoRecordUrl(day.date), content: repoRecordContent(r.items), language: "ko", meta: { kind: "repos", date: day.date } });
+    }
+  }
   const dayCounts = new Map([...lists.values()].flatMap((l) => l.days.map((d) => [d.date, dayStoryCount(d)] as const)));
   const dates: SiteDates = { version: 1, latestDate: datesDesc[0] ?? null, dates: datesDesc, months: [...new Set(datesDesc.map((x) => x.slice(0, 7)))], storyCounts: datesDesc.map((d) => dayCounts.get(d) ?? 0) };
 
@@ -615,7 +681,7 @@ export function generateFixtures(opts: FixtureOptions = {}): Fixture {
   for (const [g, terms] of [...termFiles.groups].sort((a, b) => a[0] - b[0])) files.set(`site-data/term-group-${g}.json`, json({ group: g, terms }));
   for (const [name, content] of sched.files) files.set(`site-data/${name}`, content);
   for (const [name, content] of ind?.files ?? []) files.set(`site-data/${name}`, content);
-  files.set("search-records.json", json([...newsRecords, ...issueRecords, ...entityRecords, ...termRecords]));
+  files.set("search-records.json", json([...newsRecords, ...repoRecords, ...issueRecords, ...entityRecords, ...termRecords]));
   const most = entityDetails.reduce<EntityDetail | null>((m, e) => (!m || e.count > m.count ? e : m), null);
   return {
     files,
@@ -627,6 +693,7 @@ export function generateFixtures(opts: FixtureOptions = {}): Fixture {
       terms: { merged: termMerged, deleted: termDeletedId, twice, noSurface: noSurfaceTerm?.id ?? null },
       schedules: sched.info,
       indicators: ind?.info ?? null,
+      repos: repoFx?.info ?? null,
     },
   };
 }
@@ -650,7 +717,7 @@ if (import.meta.main) {
   };
   const out = get("--out");
   if (!out) {
-    console.error("사용법: node site/dev/fixtures.ts --out <폴더> [--end YYYY-MM-DD] [--days N] [--top N] [--short N] [--issues N] [--contiguous] [--entities N] [--terms N] [--hub] [--schedules N] [--indicators N] [--indicators-all] [--corrections]");
+    console.error("사용법: node site/dev/fixtures.ts --out <폴더> [--end YYYY-MM-DD] [--days N] [--top N] [--short N] [--issues N] [--contiguous] [--entities N] [--terms N] [--hub] [--schedules N] [--indicators N] [--indicators-all] [--corrections] [--repos] [--repos-worst]");
     process.exit(1);
   }
   const num = (name: string) => (get(name) ? Number(get(name)) : undefined);
@@ -668,6 +735,7 @@ if (import.meta.main) {
     indicators: num("--indicators"),
     indicatorsAll: args.includes("--indicators-all"),
     corrections: args.includes("--corrections"),
+    repos: args.includes("--repos-worst") ? "worst" : args.includes("--repos"),
   });
   console.log(`가짜 사이트 데이터: ${out} (날짜 ${fx.dates.length}개, 파일 ${fx.files.size}개)`);
 }

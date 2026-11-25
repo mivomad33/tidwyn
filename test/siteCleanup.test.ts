@@ -64,8 +64,8 @@ describe("U1 4.2-7 빈 상태와 '이 날'", () => {
   });
 
   test("빈 상태 부품: 기본과 묶음 안 변형 하나", () => {
-    assert.equal(renderToStaticMarkup(h(Empty, null, "아직 이슈가 없다.")), `<p class="${EMPTY_CLASS}">아직 이슈가 없다.</p>`);
-    assert.equal(renderToStaticMarkup(h(Empty, { inline: true }, "이 날에는 일정이 없다.")), `<p class="${EMPTY_CLASS} inline">이 날에는 일정이 없다.</p>`);
+    assert.equal(renderToStaticMarkup(h(Empty, null, "아직 이슈가 없습니다.")), `<p class="${EMPTY_CLASS}">아직 이슈가 없습니다.</p>`);
+    assert.equal(renderToStaticMarkup(h(Empty, { inline: true }, "이 날에는 일정이 없습니다.")), `<p class="${EMPTY_CLASS} inline">이 날에는 일정이 없습니다.</p>`);
   });
 });
 

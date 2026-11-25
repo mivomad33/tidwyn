@@ -136,7 +136,7 @@ export function LineChart({ meta, points, height, grid = false, dots = [], refYe
   const summary = chartSummary(meta, points, refYear);
   const cur = sel !== null && sel < n ? sel : null;
   const pointText = (i: number) => `${readingDateText(points[i]![0], refYear)} ${formatValue(meta, points[i]![1])}`;
-  const readout = cur !== null ? pointText(cur) : "그래프를 누르거나 끌면 그날 값이 보인다.";
+  const readout = cur !== null ? pointText(cur) : "그래프를 누르거나 끌면 그날 값이 보입니다.";
 
   function pick(e: PointerEvent) {
     const rect = rectOf(e.currentTarget);

@@ -71,6 +71,21 @@ export function termRecordUrl(group: number): string {
   return `/terms/group/${group}`;
 }
 
+/** B1: 저장소 기록이 '실음'인 날짜 하나에 검색 레코드 하나(meta kind "repos", date). 저장소 이름과 설명을 담고, 결과는 그 날짜의 빌더 탭으로 간다 */
+export function repoRecordUrl(date: string): string {
+  return `/${date}/builder`;
+}
+
+/** B1: 저장소 하나의 검색 대상 글. 이름은 그대로와 낱말로 나눈 것(`owner/name`의 `/`·`-`·`_`·`.`를 띄어 쓴 것)을 함께 둔다. 색인(레코드 글)과 화면의 맞춤이 같은 글을 쓴다 */
+export function repoSearchText(item: { name: string; description: string }): string {
+  return [item.name, item.name.replace(/[/._-]+/g, " "), item.description].join("\n");
+}
+
+/** B1: 저장소 검색 레코드의 글 */
+export function repoRecordContent(items: readonly { name: string; description: string }[]): string {
+  return items.map(repoSearchText).join("\n");
+}
+
 
 /** 용어 사전의 첫 자음 묶음. 된소리는 예사소리 묶음에 넣고, 한글이 아닌 첫 글자(영문·숫자 등)는 마지막 묶음이다 */
 export const TERM_GROUPS = ["ㄱ", "ㄴ", "ㄷ", "ㄹ", "ㅁ", "ㅂ", "ㅅ", "ㅇ", "ㅈ", "ㅊ", "ㅋ", "ㅌ", "ㅍ", "ㅎ", "영문·숫자"] as const;
@@ -364,6 +379,24 @@ export interface DayList {
   week?: WeekSchedules;
   /** 6단계: 브리프 위 상자의 지표 칩(그 브리프 날짜 이하의 가장 최근 값). 없으면 항목을 뺀다 */
   indicators?: IndicatorChip[];
+  /** B1: 그날의 저장소 기록(GitHub 주간 트렌딩에 처음 오른 저장소). 기록이 없는 날은 항목을 뺀다 */
+  repos?: DayRepos;
+}
+
+/** B1: 저장소 항목 하나. rank는 처음 실린 날의 주간 순위 */
+export interface DayRepoItem {
+  rank: number;
+  /** `owner/name` */
+  name: string;
+  /** `https://github.com/owner/name` */
+  url: string;
+  description: string;
+}
+
+/** B1: 날짜의 저장소 기록. 상태만 싣고 받지 못한 이유는 싣지 않는다. 'shown'이면 항목이 1~5개(순위 순), 아니면 빈 목록 */
+export interface DayRepos {
+  status: "shown" | "none" | "failed";
+  items: DayRepoItem[];
 }
 
 /** `list-YYYY-MM.json` */

@@ -58,7 +58,7 @@ export function IssuesPage() {
       )}
       {res.status === "error" && <ErrorState onRetry={() => retry([url])} />}
       {(res.status === "loading" || res.status === "idle") && <Loading />}
-      {res.status === "ok" && items.length === 0 && <Empty>{res.data.issues.length ? "이 조건의 이슈가 없다." : "아직 이슈가 없다."}</Empty>}
+      {res.status === "ok" && items.length === 0 && <Empty>{res.data.issues.length ? "이 조건의 이슈가 없습니다." : "아직 이슈가 없습니다."}</Empty>}
       {items.length > 0 && (
         <>
           <p className="count">{items.length.toLocaleString("ko-KR")}개</p>

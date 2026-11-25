@@ -2,6 +2,7 @@ import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import type { Brief, Section, ShortNews, TopStory } from "../src/brief.ts";
 import type { Context, Installer } from "../src/cli.ts";
 import type { SectionName } from "../src/categories.ts";
@@ -150,4 +151,38 @@ export function sampleBrief(date = "2026-10-27"): Brief {
 
 export function clone<T>(v: T): T {
   return structuredClone(v);
+}
+
+export interface PagefindHit {
+  url: string;
+  meta: Record<string, string>;
+}
+
+/** 결과물의 Pagefind 브라우저 API를 Node에서 불러 검색한다(file: 주소는 디스크에서 읽는다) */
+export async function searchOutput(outDir: string, queries: string[]): Promise<Map<string, PagefindHit[]>> {
+  const realFetch = globalThis.fetch;
+  globalThis.fetch = (async (input: string | URL | Request) => {
+    const url = typeof input === "string" ? input : input instanceof URL ? input.href : input.url;
+    if (!url.startsWith("file:")) throw new Error(`네트워크 요청 금지: ${url}`);
+    return new Response(fs.readFileSync(fileURLToPath(url.split("?")[0]!)));
+  }) as typeof fetch;
+  try {
+    const pf = (await import(pathToFileURL(path.join(outDir, "pagefind", "pagefind.js")).href)) as {
+      options: (o: object) => Promise<void>;
+      init: () => Promise<void>;
+      search: (q: string) => Promise<{ results: { data: () => Promise<PagefindHit> }[] }>;
+      destroy?: () => Promise<void>;
+    };
+    await pf.options({});
+    await pf.init();
+    const out = new Map<string, PagefindHit[]>();
+    for (const q of queries) {
+      const res = await pf.search(q);
+      out.set(q, await Promise.all(res.results.map((r) => r.data())));
+    }
+    await pf.destroy?.();
+    return out;
+  } finally {
+    globalThis.fetch = realFetch;
+  }
 }

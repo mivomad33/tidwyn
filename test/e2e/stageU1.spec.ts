@@ -339,13 +339,13 @@ test.describe("4.2-7 빈 상태", () => {
   test("브리프·일정·이슈 목록·검색의 빈 상태는 공통 Empty이고 '이날'이 없다", async ({ page }) => {
     await fulfillData(page, "dates.json", { version: 1, latestDate: null, dates: [], months: [] });
     await page.goto("/");
-    await expect(page.getByText("아직 저장된 브리프가 없다.")).toBeVisible();
+    await expect(page.getByText("아직 저장된 브리프가 없습니다.")).toBeVisible();
     await expectEmpty(page);
     await page.unroute("**/site-data/dates.json");
 
     await fulfillData(page, "schedule-index.json", { total: 0, months: [], majors: [] });
     await page.goto("/schedules");
-    await expect(page.getByText("아직 모은 일정이 없다.")).toBeVisible();
+    await expect(page.getByText("아직 모은 일정이 없습니다.")).toBeVisible();
     await expectEmpty(page);
 
     await fulfillData(page, "issue-list.json", { issues: [], merged: {} });
@@ -354,7 +354,7 @@ test.describe("4.2-7 빈 상태", () => {
     await expectEmpty(page);
 
     await page.goto("/search?q=없는말없는말");
-    await expect(page.getByText(/에 맞는 결과가 없다/)).toBeVisible();
+    await expect(page.getByText(/에 맞는 결과가 없습니다/)).toBeVisible();
     await expectEmpty(page);
   });
 });

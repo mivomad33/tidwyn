@@ -180,4 +180,4 @@ export function correctionsByStory(db: DatabaseSync): Map<string, CorrectionReco
   return out;
 }
 
-export const CORRECTION_GUIDE = "사유는 '무엇을 무엇으로 바로잡았다'로 무엇을 어떻게 고쳤는지만 쓴다. 제보자와 제보 내용은 쓰지 않는다(사유는 공개되고 공개 이력에서 지울 수 없다).";
+export const CORRECTION_GUIDE = "사유는 '무엇을 무엇으로 바로잡았습니다'로 무엇을 어떻게 고쳤는지만 쓴다. 제보자와 제보 내용은 쓰지 않는다(사유는 공개되고 공개 이력에서 지울 수 없다).";

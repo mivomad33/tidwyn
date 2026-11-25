@@ -1,12 +1,14 @@
 // 검색 결과 되찾기(4.3-3, P6, 4.1-3).
 // 검색 레코드는 묶음이다: 뉴스는 날짜 하나가 레코드 하나(`/<날짜>`), 이슈는 식별자 100개 묶음이 레코드 하나(`/issues/chunk/<n>`),
 // 대상(인물·기관·국가)은 상세 묶음 하나가 레코드 하나(`/entities/chunk/<n>`), 용어는 첫 자음 묶음 하나가 레코드 하나(`/terms/group/<g>`).
+// B1: 저장소는 저장소 기록이 '실음'인 날짜 하나가 레코드 하나(`/<날짜>/builder`)이고, 결과는 그 날짜의 빌더 탭으로 간다.
 // Pagefind가 고른 레코드마다 그 날짜·묶음의 사이트 데이터를 받아, 검색어에 맞는 뉴스·이슈를 하나씩 골라낸다.
 // 맞춤 규칙은 Pagefind와 같게 낱말 앞부분 맞춤이다("반도체"가 "반도체가"에 맞는다).
-import type { DayList, EntityChunk, EntityDetail, IssueChunk, IssueDetail, ListStory, StoryDetail, TermGroupFile, TermItem } from "./types.ts";
+import type { DayList, DayRepoItem, EntityChunk, EntityDetail, IssueChunk, IssueDetail, ListStory, StoryDetail, TermGroupFile, TermItem } from "./types.ts";
 import { SECTION_ORDER } from "./brief.ts";
 import { compareEntityItems } from "./entities.ts";
 import { sortTerms } from "./terms.ts";
+import { repoSearchText } from "../../../src/siteTypes.ts";
 
 export function normalize(text: string): string {
   return text.normalize("NFC").toLowerCase();
@@ -61,6 +63,13 @@ export function matchDayStories(day: DayList, details: Record<string, StoryDetai
   return pickBest(stories, (s) => countMatches(storyText(s, details?.[s.key]), terms), terms.length);
 }
 
+/** B1: 걸린 날짜의 저장소 레코드에서 검색어에 맞는 저장소(순위 순). '실음'이 아닌 날은 없다 */
+export function matchRepos(day: DayList, terms: string[]): DayRepoItem[] {
+  if (day.repos?.status !== "shown") return [];
+  const items = [...day.repos.items].sort((a, b) => a.rank - b.rank);
+  return pickBest(items, (i) => countMatches(repoSearchText(i), terms), terms.length);
+}
+
 export function issueText(issue: IssueDetail): string {
   return [issue.name, ...issue.aliases, issue.summary].join("\n");
 }
@@ -92,16 +101,19 @@ export function matchTerms(group: TermGroupFile, terms: string[]): TermItem[] {
   return pickBest(sortTerms(group.terms), (t) => countMatches(termText(t), terms), terms.length);
 }
 
-export type SearchHit = { kind: "news"; date: string } | { kind: "issues"; chunk: number } | { kind: "entities"; chunk: number } | { kind: "terms"; group: number };
+export type SearchHit = { kind: "news"; date: string } | { kind: "repos"; date: string } | { kind: "issues"; chunk: number } | { kind: "entities"; chunk: number } | { kind: "terms"; group: number };
 
 /** Pagefind 결과의 레코드 정보(meta, 없으면 주소)를 읽는다. 모르는 모양이면 null */
 export function parseHit(url: string, meta: Record<string, string> | undefined): SearchHit | null {
   if (meta?.kind === "news" && meta.date && /^\d{4}-\d{2}-\d{2}$/.test(meta.date)) return { kind: "news", date: meta.date };
+  if (meta?.kind === "repos" && meta.date && /^\d{4}-\d{2}-\d{2}$/.test(meta.date)) return { kind: "repos", date: meta.date };
   if (meta?.kind === "issues" && meta.chunk && /^\d+$/.test(meta.chunk)) return { kind: "issues", chunk: Number(meta.chunk) };
   if (meta?.kind === "entities" && meta.chunk && /^\d+$/.test(meta.chunk)) return { kind: "entities", chunk: Number(meta.chunk) };
   if (meta?.kind === "terms" && meta.group && /^\d+$/.test(meta.group)) return { kind: "terms", group: Number(meta.group) };
   const news = /^\/(\d{4}-\d{2}-\d{2})\/?$/.exec(url);
   if (news) return { kind: "news", date: news[1]! };
+  const repos = /^\/(\d{4}-\d{2}-\d{2})\/builder\/?$/.exec(url);
+  if (repos) return { kind: "repos", date: repos[1]! };
   const issues = /^\/issues\/chunk\/(\d+)\/?$/.exec(url);
   if (issues) return { kind: "issues", chunk: Number(issues[1]) };
   const entities = /^\/entities\/chunk\/(\d+)\/?$/.exec(url);

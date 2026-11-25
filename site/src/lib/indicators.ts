@@ -129,7 +129,7 @@ export const FRED_NOTICE = "This product uses the FRED® API but is not endorsed
 export const FRED_TERMS_URL = "https://fred.stlouisfed.org/docs/api/terms_of_use.html";
 export const FRED_TERMS_LABEL = "FRED® API 이용 약관";
 /** 약관의 "users agreeing" 조항(사이트 소개에 싣는다) */
-export const FRED_AGREEMENT = "이 사이트를 이용하면 FRED® API 이용 약관을 따르는 것으로 본다.";
+export const FRED_AGREEMENT = "이 사이트를 이용하면 FRED® API 이용 약관을 따르는 것으로 봅니다.";
 
 // ---- 지표 하나의 페이지: 기간과 관련 이슈 ----
 
@@ -174,7 +174,7 @@ export function relatedShown(issues: IssueRef[], expanded: boolean): { shown: Is
 
 /** 보조 기술용 그래프 요약(기간, 처음·마지막 값, 최고·최저) */
 export function chartSummary(meta: { name: string; unit: string; decimals: number }, points: IndicatorPoint[], refYear?: string): string {
-  if (points.length === 0) return `${meta.name}: 이 기간에 값이 없다.`;
+  if (points.length === 0) return `${meta.name}: 이 기간에 값이 없습니다.`;
   const v = (p: IndicatorPoint) => formatValue(meta, p[1]);
   const day = (date: string) => readingDateText(date, refYear);
   const first = points[0]!;

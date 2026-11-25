@@ -499,7 +499,7 @@ test.describe("4.4 '안 읽은 것만'", () => {
     await unreadChip(page).click();
     await expect(page.locator("main li[id^=story-]")).toHaveCount(1);
     await toggleOf(page, last.key).click();
-    await expect(page.getByText("안 읽은 뉴스가 없다.")).toBeVisible();
+    await expect(page.getByText("안 읽은 뉴스가 없습니다.")).toBeVisible();
     await expect(page.locator("main li[id^=story-]")).toHaveCount(0);
   });
 
@@ -508,7 +508,7 @@ test.describe("4.4 '안 읽은 것만'", () => {
     await page.goto("/");
     await unreadChip(page).click();
     await expect(page.locator("main li[id^=story-]")).toHaveCount(0);
-    await expect(page.getByText("안 읽은 뉴스가 없다.")).toBeVisible();
+    await expect(page.getByText("안 읽은 뉴스가 없습니다.")).toBeVisible();
   });
 
   test("4.4-4 키보드로 칩을 켜고 끌 수 있고 상태 속성이 바뀐다", async ({ page }) => {
@@ -632,7 +632,7 @@ test.describe("4.6 사이트 소개", () => {
   test("4.6-1 읽은 기록 절과 문장이 보인다", async ({ page }) => {
     await page.goto("/about");
     await expect(page.getByRole("heading", { name: "읽은 기록" })).toBeVisible();
-    for (const text of ["이 브라우저에만 저장된다", "어디로도 보내지 않고", "다른 기기나 브라우저와 맞춰지지 않는다", "1년이 지난 기록은 저절로 지워진다", "되돌릴 수 없다"]) {
+    for (const text of ["이 브라우저에만 저장됩니다", "어디로도 보내지 않고", "다른 기기나 브라우저와 맞춰지지 않습니다", "1년이 지난 기록은 저절로 지워집니다", "되돌릴 수 없습니다"]) {
       await expect(page.locator("article.plain")).toContainText(text);
     }
   });
@@ -645,7 +645,7 @@ test.describe("4.6 사이트 소개", () => {
     // 취소
     page.once("dialog", (d) => void d.dismiss());
     await btn.click();
-    await expect(page.getByText("읽은 기록을 지웠다.")).toHaveCount(0);
+    await expect(page.getByText("읽은 기록을 지웠습니다.")).toHaveCount(0);
     expect(await storedMarks(page)).toBe(serializeReadMarks(marks(ids)));
     // 수락
     let message = "";
@@ -654,13 +654,13 @@ test.describe("4.6 사이트 소개", () => {
       void d.accept();
     });
     await btn.click();
-    await expect(page.getByText("읽은 기록을 지웠다.")).toBeVisible();
-    expect(message).toContain("되돌릴 수 없다");
+    await expect(page.getByText("읽은 기록을 지웠습니다.")).toBeVisible();
+    expect(message).toContain("되돌릴 수 없습니다");
     expect(await page.evaluate(() => localStorage.getItem("tidwyn.other"))).toBe("그대로");
     // 기록이 없을 때도 오류 없이 동작한다
     page.once("dialog", (d) => void d.accept());
     await btn.click();
-    await expect(page.getByText("읽은 기록을 지웠다.")).toBeVisible();
+    await expect(page.getByText("읽은 기록을 지웠습니다.")).toBeVisible();
     expect(JSON.parse((await storedMarks(page))!)).toEqual({ v: 1, d: {} });
     await page.goto("/");
     for (const sec of latestDay.sections) {

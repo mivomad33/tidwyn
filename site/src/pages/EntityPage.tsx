@@ -79,7 +79,7 @@ function EntityView({ entity, merged }: { entity: EntityDetail; merged: MergedSt
       {merged && (
         <p className="notice" role="note">
           이 항목은 {merged.on ? `${monthDay(merged.on)}에 ` : ""}
-          {entity.name}에 합쳐졌다.
+          {entity.name}에 합쳐졌습니다.
         </p>
       )}
       <div className="cat muted-cat">{entity.kind}</div>
@@ -161,7 +161,7 @@ function MoreNews({ id, res, extra, total, year, onMore, onRetry }: { id: number
 }
 
 function NewsRows({ news, year }: { news: EntityNews[]; year: string }) {
-  if (!news.length) return <Empty inline>아직 등장한 뉴스가 없다.</Empty>;
+  if (!news.length) return <Empty inline>아직 등장한 뉴스가 없습니다.</Empty>;
   return (
     <ul className="rows">
       {news.map((n) => (

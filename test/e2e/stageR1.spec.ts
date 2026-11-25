@@ -1,5 +1,7 @@
 // R1단계 화면(E2E): 영상·빌더·수요를 지운 뒤의 브리프 탭(4.3-1), 지운 화면의 옛 주소와 옛 탭 저장값(4.3-2, T7),
 // 브라우저에 남은 지운 기능의 읽음 기록(4.3-5). 데이터는 모두 지어낸 것이다(test/e2e/prepare.ts). 브라우저 시계는 base.ts가 끝 날짜에 고정한다.
+// B1(3.4): 빌더 탭은 저장소 기록이 있는 날에만 다시 생긴다. 이 파일의 데이터(기본 E2E 사이트)에는 저장소 기록이 없어, 빌더 구역·`#builder`·탭 값 '빌더'는
+// 여기서 '빌더 기록이 없는 날'의 동작(구역 없음, 기본 탭)을 본다. 기록이 있는 날의 빌더 탭은 stageB1.spec.ts가 본다. 옛 빌더 항목 해시(`#builder-N` 등)는 그대로 지운 것이다.
 import fs from "node:fs";
 import path from "node:path";
 import type { Page } from "@playwright/test";
@@ -86,7 +88,7 @@ test.describe("4.3-2 지운 화면의 옛 주소와 옛 탭 저장값(T7)", () =
         await expect(pressedTab(page)).toHaveText(DEFAULT_SHOWN);
         await expect(page.locator("main ul.list > li").first()).toBeVisible();
         await expect(page.locator("main .item-btn[aria-expanded=true]")).toHaveCount(0);
-        await expect(page.getByRole("heading", { level: 1, name: "이 주소에는 페이지가 없다" })).toHaveCount(0);
+        await expect(page.getByRole("heading", { level: 1, name: "이 주소에는 페이지가 없습니다" })).toHaveCount(0);
         expect(errors, "콘솔 오류").toEqual([]);
       });
     }
@@ -125,10 +127,10 @@ test.describe("4.3-2 지운 화면의 옛 주소와 옛 탭 저장값(T7)", () =
     const url = `/videos/${LATEST}/abc`;
     const res = await request.get(url);
     expect(res.status()).toBe(404);
-    expect(await res.text()).toContain("이 주소에는 페이지가 없다");
+    expect(await res.text()).toContain("이 주소에는 페이지가 없습니다");
     const nav = await page.goto(url);
     expect(nav!.status()).toBe(404);
-    await expect(page.getByRole("heading", { level: 1, name: "이 주소에는 페이지가 없다" })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: "이 주소에는 페이지가 없습니다" })).toBeVisible();
   });
 });
 

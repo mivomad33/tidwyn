@@ -77,6 +77,7 @@ import {
   type MergeStepResult,
   type PushResult,
   type RefMergeDone,
+  type RepoStepResult,
   type RunState,
   type ScheduleMergeDone,
   type ScheduleResult,
@@ -86,6 +87,18 @@ import { DB_FILE, ENV_DATA_DIR, checkRunCondition, describeSettings, parseArgs, 
 import { pruneSnapshots, takeSnapshot } from "./snapshot.ts";
 import { AlreadyStoredError, hasBrief, loadBrief, recordFirstCollectionDate, saveBrief } from "./store.ts";
 import { isLate, planTargets } from "./targets.ts";
+import {
+  REPO_STATUS_LABEL,
+  checkRepoItems,
+  fetchRepoCandidates,
+  readCandidatesFile,
+  repoDayStatus,
+  repoTargetDate,
+  repoWorkFile,
+  saveRepoDay,
+  shownRepoKeys,
+  type RepoCandidatesFile,
+} from "./trendRepos.ts";
 import { formatViolations, validateBrief, type Violation } from "./validate.ts";
 
 // /brief 스킬이 부르는 명령들. 런타임 의존성 없이 Node 내장 기능과 git만 쓴다.
@@ -185,7 +198,11 @@ const USAGE = `명령:
   indicator-list --run <파일>             지표 판단 안 한 이슈를 파일로 나눠 후보 목록(work/indicators.candidates-<번호>.md)
   indicator-check --run <파일> --file <번호>   판단 파일(work/indicators.judge-<번호>.json) 검사
   indicator-apply --run <파일> --file <번호>   검사 → 파일 단위로 적용(실패하면 실행 기록에 남긴다)
-  indicator-fetch --run <파일>            12개 지표를 ECOS·FRED에서 받아 저장(지표 하나가 실패해도 계속한다)`;
+  indicator-fetch --run <파일>            12개 지표를 ECOS·FRED에서 받아 저장(지표 하나가 실패해도 계속한다)
+저장소(B1):
+  repo-fetch --run <파일>                 가장 늦은 저장된 브리프 날짜의 GitHub 주간 트렌딩 후보(work/repo-candidates.json). 실패하면 받지 못함으로 남긴다
+  repo-check --run <파일>                 항목 파일(work/repo-items.json) 검사(위치와 이유만 출력한다)
+  repo-apply --run <파일>                 검사 → 저장(위반이 남으면 받지 못함으로 남긴다)`;
 
 function opts(argv: string[], options: Record<string, { type: "string" | "boolean" }>) {
   return parseNodeArgs({ args: argv, options, allowPositionals: false, strict: true }).values as Record<string, string | boolean | undefined>;
@@ -523,6 +540,7 @@ function cmdSummary(argv: string[], ctx: Context): number {
   lines.push(...extractSummaryLines(s));
   lines.push(...scheduleSummaryLines(s));
   lines.push(...indicatorSummaryLines(s));
+  lines.push(...repoSummaryLines(s.repos));
   lines.push(...imageSummaryLines(s, saved));
   lines.push(`- 백업: ${describeBackup(s.backup)}`);
   lines.push(...siteSummaryLines(s));
@@ -550,6 +568,7 @@ function deployOnlySummary(s: RunState): string[] {
     `- 지표: ${skipped}`,
     `- 합치기: ${skipped}`,
     `- 이미지: ${skipped}`,
+    `- 저장소: ${skipped}`,
     `- 백업: ${describeBackup(s.backup)}`,
     ...siteSummaryLines(s),
   ];
@@ -1697,6 +1716,170 @@ function indicatorSummaryLines(s: RunState): string[] {
   return lines;
 }
 
+// ---- 저장소(B1) ----
+
+/** 받기(4.1-1, 4.1-2). 어떤 실패도 받지 못함으로 남기고 종료 코드 0으로 끝난다(4.2-4) */
+async function cmdRepoFetch(argv: string[], ctx: Context): Promise<number> {
+  const v = opts(argv, { run: { type: "string" } });
+  const runFile = need(v, "run");
+  const state = readRun(runFile);
+  const record = (r: RepoStepResult) => updateRun(runFile, (s) => (s.repos = r));
+  const noTarget = () => {
+    record({ status: "noTarget" });
+    ctx.out("저장소: 대상 없음(저장된 브리프가 없다)");
+    return EXIT.ok;
+  };
+  if (!fs.existsSync(state.dbPath)) return noTarget();
+  const db = openExistingDb(state.dbPath);
+  try {
+    const date = repoTargetDate(db);
+    if (date === null) return noTarget();
+    const now = repoDayStatus(db, date);
+    if (now === "shown" || now === "none") {
+      record({ status: "done", date, recorded: now });
+      ctx.out(`저장소(${date}): 이미 끝남(${REPO_STATUS_LABEL[now]}). 피드를 받지 않았다`);
+      return EXIT.ok;
+    }
+    const candFile = repoWorkFile(state.dataDir, "candidates");
+    const itemsFile = repoWorkFile(state.dataDir, "items");
+    fs.rmSync(candFile, { force: true });
+    fs.rmSync(itemsFile, { force: true });
+    const r = await fetchRepoCandidates(date, shownRepoKeys(db), ctx.fetchText ?? realFetch, ctx.now());
+    if (!r.ok) {
+      saveRepoDay(db, date, "failed", []);
+      record({ status: "failed", date, reason: r.reason });
+      ctx.out(`저장소(${date}): 받지 못함(${r.reason}). 같은 날짜로 다시 돌리면 다시 받는다`);
+      return EXIT.ok;
+    }
+    const c = r.file.counts;
+    const counts = `피드 항목 ${c.feedItems}개, 이미 실린 것 ${c.alreadyShown}개, 주소 모양이 틀린 것 ${c.badUrl}개, 중복 ${c.duplicate}개`;
+    if (r.file.candidates.length === 0) {
+      saveRepoDay(db, date, "none", []);
+      record({ status: "none", date, excluded: [] });
+      ctx.out(`저장소(${date}): 새로 오른 것 없음(${counts})`);
+      return EXIT.ok;
+    }
+    fs.mkdirSync(path.dirname(candFile), { recursive: true });
+    fs.writeFileSync(candFile, JSON.stringify(r.file, null, 2) + "\n");
+    record({ status: "fetched", date, candidates: r.file.candidates.length });
+    ctx.out(`저장소(${date}): 후보 ${r.file.candidates.length}개(${counts}).\n- 후보 파일: ${candFile}\n- 항목 파일: ${itemsFile}`);
+    return EXIT.ok;
+  } finally {
+    db.close();
+  }
+}
+
+/** 검사와 저장이 함께 읽는 것: 받은 날짜, 후보 파일, 항목 파일. 읽지 못하면 이유(파일의 글은 싣지 않는다) */
+function repoInputs(state: RunState): { date: string; cands: RepoCandidatesFile; raw: unknown } | { date: string; reason: string } {
+  const st = state.repos;
+  if (st === undefined || st.status === "noTarget") throw new UsageError("이번 실행에 받은 저장소 후보가 없다(먼저 repo-fetch. 후보가 있을 때만 검사·저장한다)");
+  let cands: RepoCandidatesFile;
+  try {
+    cands = readCandidatesFile(repoWorkFile(state.dataDir, "candidates"));
+  } catch {
+    return { date: st.date, reason: "후보 파일을 읽지 못했다" };
+  }
+  if (cands.date !== st.date) return { date: st.date, reason: "후보 파일의 날짜가 받은 날짜와 다르다" };
+  const file = repoWorkFile(state.dataDir, "items");
+  if (!fs.existsSync(file)) return { date: st.date, reason: `항목 파일이 없다: ${file}` };
+  try {
+    return { date: st.date, cands, raw: JSON.parse(fs.readFileSync(file, "utf8")) };
+  } catch {
+    // 파싱 오류 메시지는 파일의 글을 실을 수 있어 쓰지 않는다
+    return { date: st.date, reason: "항목 파일이 올바른 JSON이 아니다" };
+  }
+}
+
+/** 항목 파일 검사(4.2-2). 위반은 위치와 이유만 출력한다 */
+function cmdRepoCheck(argv: string[], ctx: Context): number {
+  const v = opts(argv, { run: { type: "string" } });
+  const state = readRun(need(v, "run"));
+  const input = repoInputs(state);
+  if ("reason" in input) {
+    ctx.out(`저장소 검사 실패(${input.date}):\n- ${input.reason}`);
+    return EXIT.failed;
+  }
+  const db = openExistingDb(state.dbPath);
+  let r: ReturnType<typeof checkRepoItems>;
+  try {
+    r = checkRepoItems(input.raw, input.cands, shownRepoKeys(db), homeOf(ctx), secretsOf(ctx));
+  } finally {
+    db.close();
+  }
+  if (r.violations.length > 0) {
+    ctx.out(`저장소 검사 실패(${input.date}), 위반 ${r.violations.length}개:\n${formatViolations(r.violations)}`);
+    return EXIT.failed;
+  }
+  ctx.out(`저장소 검사 통과(${input.date}): 실을 것 ${r.items.length}개, 뺀 후보 ${r.excluded.length}개.`);
+  return EXIT.ok;
+}
+
+/** 검사 → 저장(4.2-3). 위반이 남으면 그 날짜를 받지 못함(이유: 검사 위반)으로 남겨 같은 날짜로 다시 돌릴 때 다시 받는다 */
+function cmdRepoApply(argv: string[], ctx: Context): number {
+  const v = opts(argv, { run: { type: "string" } });
+  const runFile = need(v, "run");
+  const state = readRun(runFile);
+  const input = repoInputs(state);
+  const record = (r: RepoStepResult) => updateRun(runFile, (s) => (s.repos = r));
+  const db = openExistingDb(state.dbPath);
+  try {
+    const date = input.date;
+    const now = repoDayStatus(db, date);
+    if (now === "shown" || now === "none") {
+      record({ status: "done", date, recorded: now });
+      ctx.out(`저장소(${date}): 이미 끝남(${REPO_STATUS_LABEL[now]}). 덮지 않았다`);
+      return EXIT.ok;
+    }
+    if ("reason" in input) {
+      saveRepoDay(db, date, "failed", []);
+      record({ status: "failed", date, reason: input.reason });
+      ctx.out(`저장소(${date}): 저장하지 않고 받지 못함으로 남김: ${input.reason}`);
+      return EXIT.failed;
+    }
+    const r = checkRepoItems(input.raw, input.cands, shownRepoKeys(db), homeOf(ctx), secretsOf(ctx));
+    if (r.violations.length > 0) {
+      saveRepoDay(db, date, "failed", []);
+      record({ status: "failed", date, reason: "검사 위반", violations: r.violations, excluded: r.excluded });
+      ctx.out(`저장소(${date}): 저장하지 않고 받지 못함(검사 위반)으로 남김. 위반 ${r.violations.length}개:\n${formatViolations(r.violations)}`);
+      return EXIT.failed;
+    }
+    const { items } = r;
+    saveRepoDay(db, date, items.length > 0 ? "shown" : "none", items);
+    record(items.length > 0 ? { status: "shown", date, count: items.length, excluded: r.excluded } : { status: "none", date, excluded: r.excluded });
+    ctx.out(items.length > 0 ? `저장소(${date}): 실음 ${items.length}개.` : `저장소(${date}): 새로 오른 것 없음(후보를 모두 걸렀다).`);
+    return EXIT.ok;
+  } finally {
+    db.close();
+  }
+}
+
+/** 요약의 저장소 줄(4.2-4). 뺀 저장소 이름(G17)은 실행 기록에서 읽어 여기서만 보인다 */
+function repoSummaryLines(r: RepoStepResult | undefined): string[] {
+  if (r === undefined) return ["- 저장소: 이번 실행에서 하지 않음"];
+  const lines: string[] = [];
+  switch (r.status) {
+    case "noTarget":
+      return ["- 저장소: 대상 없음(저장된 브리프가 없다)"];
+    case "done":
+      return [`- 저장소(${r.date}): 이미 끝남(${REPO_STATUS_LABEL[r.recorded]})`];
+    case "fetched":
+      return [`- 저장소(${r.date}): 후보 ${r.candidates}개를 받았지만 저장하지 않았다(기록이 없어 같은 날짜로 다시 돌리면 다시 받는다)`];
+    case "shown":
+      lines.push(`- 저장소(${r.date}): 실음 ${r.count}개`);
+      break;
+    case "none":
+      lines.push(`- 저장소(${r.date}): 새로 오른 것 없음`);
+      break;
+    case "failed":
+      lines.push(`- 저장소(${r.date}): 받지 못함(${r.reason}). 같은 날짜로 다시 돌리면 다시 받는다`);
+      for (const vi of r.violations ?? []) lines.push(`    - ${vi.where}: ${vi.why}`);
+      break;
+  }
+  const excluded = r.excluded ?? [];
+  if (excluded.length > 0) lines.push(`  - 재료에 AI를 향한 요구가 보여 뺀 저장소: ${excluded.join(", ")}`);
+  return lines;
+}
+
 function homeOf(ctx: Context): string | null {
   return homeValue(ctx.env.HOME ?? os.homedir());
 }
@@ -1897,6 +2080,8 @@ const COMMANDS: Record<string, (argv: string[], ctx: Context) => number> = {
   "indicator-list": cmdIndicatorList,
   "indicator-check": cmdIndicatorCheck,
   "indicator-apply": cmdIndicatorApply,
+  "repo-check": cmdRepoCheck,
+  "repo-apply": cmdRepoApply,
   site: cmdSite,
   push: cmdPush,
   precheck: cmdPrecheck,
@@ -1944,6 +2129,7 @@ const ASYNC_COMMANDS: Record<string, (argv: string[], ctx: Context) => Promise<n
   images: cmdImages,
   deploy: cmdDeploy,
   "indicator-fetch": cmdIndicatorFetch,
+  "repo-fetch": cmdRepoFetch,
 };
 
 /** 모든 명령 이름(스킬 문서의 명령 이름 검사, 3단계 4.5-1) */

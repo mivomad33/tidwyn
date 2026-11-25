@@ -245,7 +245,7 @@ export function Loading({ label = "불러오는 중…" }: { label?: string }) {
   );
 }
 
-export function ErrorState({ onRetry, message = "데이터를 불러오지 못했다. 네트워크를 확인하고 다시 시도해 주세요." }: { onRetry: () => void; message?: string }) {
+export function ErrorState({ onRetry, message = "데이터를 불러오지 못했습니다. 네트워크를 확인하고 다시 시도해 주세요." }: { onRetry: () => void; message?: string }) {
   return (
     <div className="state error" role="alert">
       <p>{message}</p>

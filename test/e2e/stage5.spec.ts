@@ -107,12 +107,12 @@ test.describe("일정 화면: 목록", () => {
     await page.route("**/site-data/schedule-month-*.json", (route) => route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ month: "x", items: [] }) }));
     await page.goto("/schedules");
     await loadAll(page);
-    await expect(page.getByText("다가오는 일정이 없다.")).toBeVisible();
+    await expect(page.getByText("다가오는 일정이 없습니다.")).toBeVisible();
     // 이번 달은 그 달 파일로 세므로(0건이면 칩이 없다, U2 S12), 다음 달 이후에 있다고 색인이 세는 분야로 본다
     const later = index.majors.find((m) => index.months.some((x) => x.month > TODAY.slice(0, 7) && (x.majors[m] ?? 0) > 0))!;
     await page.getByRole("group", { name: "대분류" }).getByRole("button", { name: new RegExp(`^${later} \\d+$`) }).click();
     await loadAll(page);
-    await expect(page.getByText("이 분류의 다가오는 일정이 없다.")).toBeVisible();
+    await expect(page.getByText("이 분류의 다가오는 일정이 없습니다.")).toBeVisible();
   });
 
   test("키보드로 '더 보기'를 누르면 새로 보인 첫 일정으로 포커스가 가고, Tab이 그 줄의 링크로 이어진다", async ({ page }) => {
@@ -162,11 +162,11 @@ test.describe("일정 화면: 목록", () => {
   test("일정이 하나도 없으면 빈 상태, 색인을 받지 못하면 오류와 다시 시도", async ({ page }) => {
     await page.route("**/site-data/schedule-index.json", (route) => route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ total: 0, months: [], majors: [] }) }));
     await page.goto("/schedules");
-    await expect(page.getByText("아직 모은 일정이 없다.")).toBeVisible();
+    await expect(page.getByText("아직 모은 일정이 없습니다.")).toBeVisible();
     await page.unroute("**/site-data/schedule-index.json");
     await serverError(page, "schedule-index.json");
     await page.goto("/schedules");
-    await expect(page.getByRole("alert")).toContainText("불러오지 못했다");
+    await expect(page.getByRole("alert")).toContainText("불러오지 못했습니다");
     await page.unroute("**/site-data/schedule-index.json");
     await page.getByRole("button", { name: "다시 시도" }).click();
     await expect(page.locator(".ev").first()).toBeVisible();
@@ -246,7 +246,7 @@ test.describe("보기 기억", () => {
     await expect(page.getByText("일정도 AI가 뉴스에서 뽑은 것이라")).toBeVisible();
     page.once("dialog", (d) => void d.accept());
     await page.getByRole("button", { name: "읽은 기록 지우기" }).click();
-    await expect(page.getByText("읽은 기록을 지웠다.")).toBeVisible();
+    await expect(page.getByText("읽은 기록을 지웠습니다.")).toBeVisible();
     await page.goto("/schedules");
     await expect(viewBtn(page, "달력")).toHaveAttribute("aria-pressed", "true");
     await viewBtn(page, "목록").click();
@@ -295,7 +295,7 @@ test.describe("일정 주소", () => {
     await expect(row(page, sinfo.merged.into)).toHaveClass(/\bhl\b/);
     for (const id of [sinfo.deleted, 99999]) {
       await page.goto(`/schedules/${id}`);
-      await expect(page.getByRole("heading", { level: 1, name: "이 주소에는 페이지가 없다" })).toBeVisible();
+      await expect(page.getByRole("heading", { level: 1, name: "이 주소에는 페이지가 없습니다" })).toBeVisible();
     }
   });
 

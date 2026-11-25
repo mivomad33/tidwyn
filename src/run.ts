@@ -87,6 +87,19 @@ export interface IndicatorJudgeState {
   results: Record<string, JudgeResult>;
 }
 
+/**
+ * 저장소 단계 결과(B1 4.1·4.2). repo-fetch가 남기고 repo-apply가 바꾼다. 받지 못한 이유와 뺀 저장소 이름(G17)은 이 실행 기록에만 둔다
+ * - noTarget: 저장된 브리프가 없다. done: 그 날짜는 이미 끝났다(실음·새로 오른 것 없음)
+ * - fetched: 후보를 받았고 아직 저장하지 않았다
+ */
+export type RepoStepResult =
+  | { status: "noTarget" }
+  | { status: "done"; date: string; recorded: "shown" | "none" }
+  | { status: "fetched"; date: string; candidates: number }
+  | { status: "shown"; date: string; count: number; excluded: string[] }
+  | { status: "none"; date: string; excluded: string[] }
+  | { status: "failed"; date: string; reason: string; violations?: Violation[]; excluded?: string[] };
+
 /** 사이트 빌드 결과(3단계 4.1, 4.5) */
 export type SiteResult =
   | { status: "built"; outDir: string; dates: number; issues: number; entities?: number; terms?: number; schedules?: number; upcoming?: number; indicators?: number; files: number; bytes: number }
@@ -141,6 +154,8 @@ export interface RunState {
   site?: SiteResult | null;
   deploy?: DeployResult | null;
   push?: PushResult | null;
+  /** 저장소 단계(B1). 돌지 않은 실행에는 없다 */
+  repos?: RepoStepResult;
   /** 배포만 실행(R1 T9). start --deploy-only가 남기고, 표시가 없으면 평소 실행이다 */
   deployOnly?: true;
 }

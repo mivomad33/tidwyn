@@ -143,7 +143,7 @@ test.describe("날짜 목록·이슈 목록·이슈 페이지", () => {
     await page.goto(`/issues/${id}`);
     await expect(page).toHaveURL(`/issues/${into}`);
     await expect(page.getByRole("heading", { level: 1, name: intoName })).toBeVisible();
-    await expect(page.getByRole("note")).toHaveText(`이 이슈는 ${monthDay(latest)}에 ${intoName}에 합쳐졌다.`);
+    await expect(page.getByRole("note")).toHaveText(`이 이슈는 ${monthDay(latest)}에 ${intoName}에 합쳐졌습니다.`);
   });
 });
 
@@ -164,7 +164,7 @@ test.describe("검색·메뉴·사이트 소개", () => {
 
   test("맞는 것이 없는 검색어는 빈 결과 글을 보인다", async ({ page }) => {
     await page.goto(`/search?q=${encodeURIComponent("없는낱말쿼크")}`);
-    await expect(page.getByText(`"없는낱말쿼크"에 맞는 결과가 없다.`)).toBeVisible();
+    await expect(page.getByText(`"없는낱말쿼크"에 맞는 결과가 없습니다.`)).toBeVisible();
   });
 
   test("머리 줄 메뉴를 열고 닫고, 메뉴로 화면을 옮긴다", async ({ page }) => {
@@ -205,7 +205,8 @@ test.describe("검색·메뉴·사이트 소개", () => {
     const external = page.locator("article a[href^='https://']");
     // 6단계: FRED API 이용 약관 링크가 더해졌다(4.7-6). 9.5단계: GitHub 이슈 링크가 메일로 바뀌었다.
     // R1단계: '추천 영상'·'빌더 탭' 절과 그 출처 링크(YouTube 이용약관, 빌더 출처 9개)를 지웠다(4.3-4). 남는 것은 FRED 이용 약관과 원본 저장소다
-    await expect(external).toHaveCount(2);
+    // B1단계: '빌더 탭' 절에 피드 출처(mshibanami/GitHubTrendingRSS) 링크가 더해졌다(4.4-4)
+    await expect(external).toHaveCount(3);
     for (const a of await external.all()) {
       await expect(a).toHaveAttribute("target", "_blank");
       await expect(a).toHaveAttribute("rel", /noopener/);
@@ -217,7 +218,7 @@ test.describe("없는 페이지", () => {
   for (const url of ["/no-such-page", "/2026-10-25", "/2026-02-30", "/issues/999", "/issues/abc"]) {
     test(`${url}은 없는 페이지를 보인다`, async ({ page }) => {
       await page.goto(url);
-      await expect(page.getByRole("heading", { level: 1, name: "이 주소에는 페이지가 없다" })).toBeVisible();
+      await expect(page.getByRole("heading", { level: 1, name: "이 주소에는 페이지가 없습니다" })).toBeVisible();
       await expect(page).toHaveTitle("없는 페이지 · Tidwyn");
     });
   }
@@ -241,7 +242,7 @@ test.describe("불러오기 오류와 다시 시도", () => {
     await failData(page, "dates.json");
     await page.goto("/");
     const alert = page.getByRole("alert");
-    await expect(alert).toContainText("데이터를 불러오지 못했다");
+    await expect(alert).toContainText("데이터를 불러오지 못했습니다");
     await page.unroute(dataFile("dates.json"));
     await alert.getByRole("button", { name: "다시 시도" }).click();
     await expect(page.getByRole("link", { name: dateLinkName(latest) })).toBeVisible();
@@ -292,7 +293,7 @@ test.describe("불러오기 오류와 다시 시도", () => {
     await page.route("**/pagefind/pagefind.js", (route) => route.abort("failed"));
     await page.goto(`/search?q=${encodeURIComponent(info.issues.first.name)}`);
     const alert = page.getByRole("alert");
-    await expect(alert).toContainText("검색 색인을 불러오지 못했다");
+    await expect(alert).toContainText("검색 색인을 불러오지 못했습니다");
     await page.unroute("**/pagefind/pagefind.js");
     await alert.getByRole("button", { name: "다시 시도" }).click();
     await expect(page.getByRole("region", { name: "이슈" }).getByRole("link", { name: new RegExp(info.issues.first.name) })).toBeVisible();
@@ -305,15 +306,15 @@ test.describe("빈 상태", () => {
   test("저장된 브리프가 없으면 첫 화면과 날짜 목록이 빈 상태 글을 보인다", async ({ page }) => {
     await fulfillData(page, "dates.json", emptyDates);
     await page.goto("/");
-    await expect(page.getByText("아직 저장된 브리프가 없다.")).toBeVisible();
+    await expect(page.getByText("아직 저장된 브리프가 없습니다.")).toBeVisible();
     await page.goto("/dates");
-    await expect(page.getByText("아직 저장된 브리프가 없다.")).toBeVisible();
+    await expect(page.getByText("아직 저장된 브리프가 없습니다.")).toBeVisible();
   });
 
   test("이슈가 없으면 이슈 목록이 빈 상태 글을 보인다", async ({ page }) => {
     await fulfillData(page, "issue-list.json", { issues: [], merged: {} });
     await page.goto("/issues");
-    await expect(page.getByText("아직 이슈가 없다.")).toBeVisible();
+    await expect(page.getByText("아직 이슈가 없습니다.")).toBeVisible();
   });
 });
 
@@ -365,7 +366,7 @@ test.describe("375px 폭", () => {
       [`/issues/${info.issues.first.id}`, () => expect(page.getByRole("heading", { level: 1, name: info.issues.first.name })).toBeVisible()],
       ["/search?q=" + encodeURIComponent(info.issues.first.name), () => expect(page.getByRole("region", { name: "이슈" })).toBeVisible()],
       ["/about", () => expect(page.getByRole("heading", { level: 1, name: "사이트 소개" })).toBeVisible()],
-      ["/no-such-page", () => expect(page.getByRole("heading", { level: 1, name: "이 주소에는 페이지가 없다" })).toBeVisible()],
+      ["/no-such-page", () => expect(page.getByRole("heading", { level: 1, name: "이 주소에는 페이지가 없습니다" })).toBeVisible()],
     ];
     for (const [url, ready] of screens) {
       await page.goto(url);

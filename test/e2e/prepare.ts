@@ -6,7 +6,7 @@ import path from "node:path";
 import { buildSite } from "../../site/build.ts";
 import { writeFixtures } from "../../site/dev/fixtures.ts";
 import type { E2eInfo } from "./info.ts";
-import { E2E_DATA_DIR, E2E_U1_DATA_DIR, E2E_U1_OUT_DIR, E2E_INDICATOR_DATA_DIR, E2E_INDICATOR_INFO_FILE, E2E_INFO_FILE, E2E_OUT_DIR, E2E_ROOT, E2E_SCHEDULE_DATA_DIR, E2E_SCHEDULE_INFO_FILE } from "./paths.ts";
+import { E2E_B1_DATA_DIR, E2E_B1_INFO_FILE, E2E_B1_OUT_DIR, E2E_DATA_DIR, E2E_U1_DATA_DIR, E2E_U1_OUT_DIR, E2E_INDICATOR_DATA_DIR, E2E_INDICATOR_INFO_FILE, E2E_INFO_FILE, E2E_OUT_DIR, E2E_ROOT, E2E_SCHEDULE_DATA_DIR, E2E_SCHEDULE_INFO_FILE } from "./paths.ts";
 import type { DayList, EntityChunk, EntityListPage, EntityNewsChunk, IssueChunk, MonthDetail, MonthList, SiteIssueList, StoryDetail, TermGroupFile, TermIndex } from "../../src/siteTypes.ts";
 
 /** 고정 날짜(같은 데이터로 매번 같은 결과가 나오게) */
@@ -105,6 +105,13 @@ async function main(): Promise<void> {
   // U1단계: 측정 데이터(명세서 용어, 감사 report.md '실행 조건'의 정상 데이터)로 빌드한다. 끝 날짜가 고정이라 테스트의 기대값(11월 3일 '세계' 등)이 그대로다
   writeFixtures(E2E_U1_DATA_DIR, { end: "2026-11-06", days: 18, contiguous: true, corrections: true, schedules: 12, indicators: 8, entities: 30, terms: 30, hub: true });
   await buildSite({ dataDir: E2E_U1_DATA_DIR, outDir: E2E_U1_OUT_DIR });
+
+  // B1단계: 빌더 탭 저장소 기록(최근 세 날짜에 실음·새로 오른 것 없음·받지 못함, 그 앞은 기록 없음)과 일정·지표가 있는 데이터로 빌드한다(검색 색인에 저장소가 들어가야 한다)
+  const bfx = writeFixtures(E2E_B1_DATA_DIR, { end: END, days: 7, entities: 30, terms: 24, schedules: 12, indicators: 1, repos: true });
+  const ri = bfx.info.repos;
+  if (!ri?.shown || !ri.none || !ri.failed || !ri.absent) throw new Error("저장소 기록 세 상태와 기록 없는 날이 지어낸 데이터에 없다");
+  fs.writeFileSync(E2E_B1_INFO_FILE, JSON.stringify({ dates: bfx.dates, ...ri }, null, 2) + "\n");
+  await buildSite({ dataDir: E2E_B1_DATA_DIR, outDir: E2E_B1_OUT_DIR });
   console.log(`E2E 준비 완료: ${E2E_OUT_DIR}`);
 }
 

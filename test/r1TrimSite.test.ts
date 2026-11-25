@@ -24,10 +24,9 @@ function decode(text: string): string {
     .replace(/&#(\d+);/g, (_, d: string) => String.fromCodePoint(Number(d)));
 }
 
-/** 화면 글로 남으면 안 되는 지운 기능 낱말(4.3-3). '수요일'은 걸리지 않는다 */
+/** 화면 글로 남으면 안 되는 지운 기능 낱말(4.3-3). '수요일'은 걸리지 않는다. '빌더'는 B1(3.4)이 탭 이름으로 다시 써서 뺐다 */
 const SCREEN_WORDS: readonly [string, RegExp][] = [
   ["영상", /영상/],
-  ["빌더", /빌더/],
   ["수요", /수요(?!일)/],
   ["새 제품", /새 제품/],
   ["뜨는 저장소", /뜨는 저장소/],
@@ -88,12 +87,12 @@ describe("R1 4.3-3 빌드 결과물에 지운 기능이 없다", () => {
     assert.deepEqual(scanOutput(planted), [], "수요일은 걸리지 않는다");
     fs.appendFileSync(index, "<p>오늘의 영상</p>");
     const js = listFilesRecursive(planted).find((f) => /^assets[\\/].*\.js$/.test(f))!;
-    fs.appendFileSync(path.join(planted, js), `\nconst t="\\ube4c\\ub354";`); // 이스케이프한 '빌더'
+    fs.appendFileSync(path.join(planted, js), `\nconst t="\\uc601\\uc0c1";`); // 이스케이프한 '영상'
     fs.writeFileSync(path.join(planted, "site-data", "demand-items-2026-10.json"), "{}");
     fs.appendFileSync(path.join(planted, "sitemap.xml"), "<!-- 뜨는 저장소 -->");
     const hits = scanOutput(planted);
     assert.ok(hits.some((h) => h.startsWith("index.html: 영상")), hits.join("\n"));
-    assert.ok(hits.some((h) => h.includes(".js: 빌더")), hits.join("\n"));
+    assert.ok(hits.some((h) => h.includes(".js: 영상")), hits.join("\n"));
     assert.ok(hits.some((h) => h === "site-data/demand-items-2026-10.json: 파일 이름 demand-items-"), hits.join("\n"));
     assert.ok(hits.some((h) => h.startsWith("sitemap.xml: 뜨는 저장소")), hits.join("\n"));
   });
@@ -116,7 +115,7 @@ function hrefsOf(html: string): string[] {
   return [...html.matchAll(/href="([^"]*)"/g)].map((m) => decode(m[1]!.replaceAll("&amp;", "&")));
 }
 
-/** 소개·처리방침에 남으면 안 되는 지운 서비스·소스 문구 */
+/** 소개·처리방침에 남으면 안 되는 지운 서비스·소스 문구. '빌더'는 B1(3.4, 4.4-4)이 빌더 탭 안내와 탭 저장값 문구로 다시 써서 뺐다 */
 const POLICY_FORBIDDEN: readonly [string, RegExp][] = [
   ["YouTube", /youtube/i],
   ["Gemini", /gemini/i],
@@ -125,7 +124,6 @@ const POLICY_FORBIDDEN: readonly [string, RegExp][] = [
   ["뜨는 저장소·새 제품", /뜨는 저장소|새 제품/],
   ["수요 소스", /청원|권익위|민원|1372|DART|SEC Form|Wikimedia|Google Trends|Mastodon|Bluesky|커뮤니티/i],
   ["영상", /영상/],
-  ["빌더", /빌더/],
   ["수요", /수요(?!일)/],
 ];
 
@@ -149,8 +147,8 @@ describe("R1 4.3-4 소개·처리방침", () => {
     const text = textOf(html);
     assert.ok(text.includes(textOf(FRED_NOTICE)), "FRED 고지");
     assert.ok(text.includes(FRED_AGREEMENT), "FRED 이용 약관 문구");
-    assert.match(text, /방문 통계 Vercel Web Analytics로 페이지 보기 수만 센다/);
-    assert.match(text, /읽은 기록 읽은 뉴스 표시는 이 브라우저에만 저장된다/);
+    assert.match(text, /방문 통계 Vercel Web Analytics로 페이지 보기 수만 셉니다/);
+    assert.match(text, /읽은 기록 읽은 뉴스 표시는 이 브라우저에만 저장됩니다/);
     assert.ok(text.includes(CONTACT_MAIL) && hrefsOf(html).some((h) => h.startsWith(`mailto:${CONTACT_MAIL}`)), "연락 메일");
     assert.ok(hrefsOf(html).includes("https://github.com/mivomad33/tidwyn"), "원본 저장소 링크는 남는다");
   });
@@ -158,10 +156,10 @@ describe("R1 4.3-4 소개·처리방침", () => {
   test("처리방침에 방문 통계, 브라우저에 두는 읽은 기록, 문의 메일이 그대로 있다", () => {
     const html = page("privacy.html");
     const text = textOf(html);
-    assert.match(text, /방문 통계 운영 주소\([^)]+\)에서만 Vercel Web Analytics로 페이지 보기 수를 센다/);
+    assert.match(text, /방문 통계 운영 주소\([^)]+\)에서만 Vercel Web Analytics로 페이지 보기 수를 셉니다/);
     assert.match(text, /브라우저에만 두는 기록/);
     assert.ok(text.includes(READ_MARKS_KEY), "읽은 기록 키가 목록에 있다");
-    assert.match(text, /브리프에서 마지막으로 고른 탭\(전체·한국·세계·IT·AI\)/, "탭 저장값 설명에 지운 탭이 없다");
+    assert.match(text, /브리프에서 마지막으로 고른 탭\(전체·한국·세계·IT·AI·빌더\)/, "탭 저장값 설명에 지운 탭이 없고 B1 빌더 탭이 있다");
     assert.ok(text.includes(CONTACT_MAIL) && hrefsOf(html).some((h) => h.startsWith(`mailto:${CONTACT_MAIL}`)), "문의 메일");
   });
 
