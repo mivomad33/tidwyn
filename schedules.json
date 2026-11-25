@@ -919,7 +919,7 @@
       "name": "서울교통공사 노사 최종 교섭",
       "due": "2026-11-24",
       "major": "경제",
-      "outcome": null,
+      "outcome": "result",
       "postponedTo": null,
       "mergedInto": null,
       "deleted": false,
@@ -963,6 +963,28 @@
       "name": "젠슨 황 상원 은행위원회 청문회",
       "due": "2026-12-03",
       "major": "IT·AI",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 99,
+      "name": "민주당 디지털자산법 업계 의견 수렴",
+      "due": "2026-12-04",
+      "major": "경제",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 100,
+      "name": "셰이크 하시나 전 총리 귀국 예정일",
+      "due": "2026-12-16",
+      "major": "국제",
       "outcome": null,
       "postponedTo": null,
       "mergedInto": null,
@@ -1835,6 +1857,21 @@
       "story": "2026-11-23/IT·AI-1",
       "schedule": 98,
       "role": "basis"
+    },
+    {
+      "story": "2026-11-24/세계-s4",
+      "schedule": 100,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-24/한국-4",
+      "schedule": 99,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-24/한국-s1",
+      "schedule": 94,
+      "role": "result"
     }
   ],
   "merges": [],

@@ -20254,6 +20254,938 @@
       },
       "collectedAt": "2026-11-24T21:24:36+09:00",
       "late": false
+    },
+    {
+      "brief": {
+        "targetDate": "2026-11-24",
+        "headline": "젠슨 황의 엔비디아 복귀로 코스피가 6% 넘게 뛰어 5000선을 되찾았지만, 미국에서는 트럼프 개입 논란과 AI주 반락이 이어졌다. 국내에서는 러시아 폭격기의 울릉도 초근접 비행과 법무장관 후보자 청문회가 하루를 달궜다.",
+        "keywords": [
+          "젠슨 황 복귀",
+          "코스피 5000",
+          "러시아 군용기",
+          "이용철 청문회",
+          "과잉생산 관세"
+        ],
+        "sections": [
+          {
+            "name": "한국",
+            "flow": "엔비디아 충격이 풀리며 증시가 급반등했고, 러시아 군용기 접근과 법무장관 청문회, 디지털자산법 정부안 공개가 겹쳤다.",
+            "topStories": [
+              {
+                "rank": 1,
+                "title": "러시아 폭격기 울릉도 영공 '초근접'…경계경보와 재난문자 오류로 주민 혼란",
+                "summary": "러시아 군용기 여러 대가 동해 방공식별구역에 들어와 울릉도 영공 바로 앞까지 다가왔고, 정부는 러시아 국방무관을 불러 항의했다.",
+                "whyItMatters": "영공을 몇 초 만에 넘을 수 있는 거리까지 접근한 이례적 비행이었고, 대피 경보와 잘못된 재난문자가 겹쳐 위기 알림 체계의 허점도 드러났다.",
+                "background": "방공식별구역(KADIZ)은 영공보다 넓게 잡아 둔 감시 구역으로, 들어올 때 미리 알리는 것이 관례다. 러시아는 그동안 통보 없이 이 구역에 자주 들어왔지만, 이번처럼 섬 영공에 바짝 붙은 경우는 드물다.",
+                "keyFacts": [
+                  "24일 오전 7시 52분께 행정안전부가 울릉군에 경계경보를 내리고 대피 문자를 보냈으며, 경보는 몇 분 만에 해제됐다.",
+                  "경북도는 해제 문자에 훈련용 문구인 '북한 항공기 추정'을 잘못 넣었다가 40여 분 뒤 정정 문자를 보냈다.",
+                  "합참은 러시아 군용기가 영공을 침범하지는 않았고 공군 전투기 대응 속에 동해 쪽으로 빠져나갔다고 밝혔다.",
+                  "국방부는 러시아 국방무관을 불러 항의했고, 러시아 국방부는 Tu-160 전략폭격기의 계획된 비행이라고 주장했다."
+                ],
+                "outlook": "정부가 러시아에 재발 방지를 요구할지, 행안부와 경북도의 재난문자 발송 절차를 어떻게 고칠지 지켜볼 일이다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "국제",
+                  "minor": "유럽·러시아"
+                },
+                "sources": [
+                  {
+                    "name": "한국일보",
+                    "url": "https://www.hankookilbo.com/news/article/A2026112414070004653",
+                    "publishedAt": "2026-11-24",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261124094752504",
+                    "publishedAt": "2026-11-24",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/11/24/PYH2026112414650001300_P2.jpg"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261124134151504",
+                    "publishedAt": "2026-11-24",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/11/24/PYH2026112413920001301_P2.jpg"
+                  },
+                  {
+                    "name": "SBS",
+                    "url": "https://news.sbs.co.kr/news/endPage.do?news_id=N1008860254",
+                    "publishedAt": "2026-11-24"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261125000900109",
+                    "publishedAt": "2026-11-25",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/11/24/PYH2026112414630001300_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 2,
+                "title": "젠슨 황 복귀에 코스피 6.32% 급등…사흘 만에 5000선 회복",
+                "summary": "엔비디아 최고경영자 복귀 소식에 반도체주가 뛰면서 코스피가 5006.03, 코스닥이 665.88로 마감했다.",
+                "whyItMatters": "황 사임 뒤 일주일 새 국내 증시 시가총액이 크게 줄었던 만큼, AI·반도체 한 회사의 경영 불안이 한국 시장 전체를 흔들 수 있다는 점을 다시 보여 줬다.",
+                "background": "엔비디아는 국내 반도체 기업의 큰 고객이라, 이 회사 소식이 삼성전자·SK하이닉스 주가와 코스피를 크게 움직인다. 황 CEO는 사생활과 외국 정보기관 연루 의혹 속에 이달 초 물러났다가 이사회 결정으로 돌아왔다.",
+                "keyFacts": [
+                  "코스피는 전 거래일보다 297.49포인트(6.32%) 오른 5006.03으로 마감해 사흘 만에 5000선을 되찾았다.",
+                  "코스닥은 30.43포인트(4.79%) 오른 665.88로 마쳤다.",
+                  "외국인과 기관이 각각 7천억 원대, 8천억 원대를 순매수했고 개인은 2조 원 넘게 순매도했다.",
+                  "장 초반 유가증권시장에 매수 사이드카(프로그램 매매 일시 정지)가 발동됐다."
+                ],
+                "outlook": "미국에서 하루 만에 반도체주가 다시 떨어진 만큼, 25일 국내 증시가 5000선을 지킬지와 26일 금융통화위원회 결정이 변수다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "경제",
+                  "minor": "금융·증시"
+                },
+                "sources": [
+                  {
+                    "name": "서울신문",
+                    "url": "https://www.seoul.co.kr/news/economy/finance/2026/11/24/20261124500254",
+                    "publishedAt": "2026-11-24",
+                    "primary": true
+                  },
+                  {
+                    "name": "이투데이",
+                    "url": "https://www.etoday.co.kr/news/view/2652400",
+                    "publishedAt": "2026-11-24"
+                  },
+                  {
+                    "name": "헤럴드경제",
+                    "url": "https://biz.heraldcorp.com/article/10947788",
+                    "publishedAt": "2026-11-24"
+                  }
+                ],
+                "analogy": "큰 고객사 사장이 돌아오자 납품 업체 주가가 한꺼번에 오른 것과 비슷하다."
+              },
+              {
+                "rank": 3,
+                "title": "이용철 법무장관 후보자 청문회…'공소취소 지휘 않겠다'는 약속은 끝내 안 해",
+                "summary": "이용철 후보자는 이재명 대통령 사건 공소취소 지휘를 하지 않겠다고 말할 수 없느냐는 질문에 그렇다고 답해 여야가 크게 부딪쳤다.",
+                "whyItMatters": "법무장관은 검찰에 지휘권을 쓸 수 있어, 대통령 형사재판의 공소취소 여부가 이 자리에 달려 있다는 해석이 나온다.",
+                "background": "여당이 추진하는 '조작기소 특검' 결과에 따라 대통령 관련 사건의 공소취소 논의가 나올 수 있다. 야당은 이 후보자 지명을 공소취소를 위한 인사로 보고, 여당은 근거 없는 주장이라고 맞서 왔다.",
+                "keyFacts": [
+                  "이 후보자는 국민이 납득하기 어려운 무리한 지휘권은 쓰지 않겠다고 했지만, 지휘하지 않겠다는 약속은 하지 않았다.",
+                  "대통령과 오랜 친분은 인정하면서도 측근은 아니라고 말했다.",
+                  "농지 투기 의혹에는 주말 체험 영농 목적이었다고 해명했고, 도박 의혹은 부인했다.",
+                  "국민의힘은 '보은 인사'라고 비판했고, 민주당은 '억지 주장'이라고 맞섰다."
+                ],
+                "outlook": "국회가 인사청문 보고서를 채택할지, 야당 반대 속에 임명이 강행될지 지켜볼 일이다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "정치",
+                  "minor": "사법·검찰"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261124131151004",
+                    "publishedAt": "2026-11-24",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/11/24/PYH2026112406770001300_P2.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261124095951001",
+                    "publishedAt": "2026-11-24",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/11/24/PYH2026112406980001300_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 4,
+                "title": "디지털자산법 정부안 공개…거래소 대주주 지분 20% 제한, 원화 스테이블코인은 은행 주도",
+                "summary": "금융위원회가 가상자산 거래소 지배구조와 원화 스테이블코인 발행, 국내 코인 발행(ICO) 허용을 담은 제정안을 내놨다.",
+                "whyItMatters": "업비트·빗썸 같은 대형 거래소의 지배구조가 바뀔 수 있고, 2017년 이후 막혀 있던 국내 코인 발행 길이 열린다.",
+                "background": "스테이블코인은 원화나 달러 같은 법정화폐에 값을 묶어 둔 가상자산이다. 그동안 누가 발행할지를 두고 은행권과 핀테크 업계가 맞서 왔고, 거래소 대주주 지분 한도도 쟁점이었다.",
+                "keyFacts": [
+                  "거래소 대주주 지분은 원칙적으로 20%까지이며, 금융위 승인이 있으면 금융회사 등은 34%까지 가질 수 있다.",
+                  "기존 거래소에는 3년, 중소형 거래소에는 최대 6년의 유예기간을 준다.",
+                  "원화 스테이블코인은 은행이 합산 과반 지분을 가진 컨소시엄부터 발행할 수 있고, 자기자본 50억 원 이상과 준비자산 100% 이상이 필요하다.",
+                  "해킹 사고가 나면 사업자에게 과실이 없어도 배상 책임을 지운다."
+                ],
+                "outlook": "민주당은 다음 달 4일 업계 의견을 듣고 이번 회기 안에 입법 틀을 마련하겠다고 밝혀, 국회 논의 속도가 관건이다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "경제",
+                  "minor": "금융·증시"
+                },
+                "sources": [
+                  {
+                    "name": "지디넷코리아",
+                    "url": "https://zdnet.co.kr/view/?no=20261124131610",
+                    "publishedAt": "2026-11-24",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261124167000002",
+                    "publishedAt": "2026-11-24",
+                    "imageUrl": "https://img.yna.co.kr/etc/inner/KR/2026/11/24/AKR20261124167000002_01_i_P2.jpg"
+                  },
+                  {
+                    "name": "아이뉴스24",
+                    "url": "https://m.inews24.com/v/2029580",
+                    "publishedAt": "2026-11-24"
+                  }
+                ]
+              },
+              {
+                "rank": 5,
+                "title": "중고교 내신시험도 수능 수준 감독…스마트기기 적발 땐 당일 전 과목 0점",
+                "summary": "교육부가 국무회의에 내신 시험 스마트기기 부정행위 대책을 보고했고, 이 대통령은 시험 부정을 중대 범죄로 다루라고 주문했다.",
+                "whyItMatters": "올해 수능에서 전자기기 부정행위가 잇따라 적발된 뒤 나온 대책으로, 전국 중고생의 시험 방식과 처벌이 함께 바뀐다.",
+                "background": "초소형 카메라와 AI를 이용한 부정행위가 수능에서 드러나며 시험 관리 논란이 커졌다. 지금까지 내신 시험은 적발된 과목만 0점 처리했다.",
+                "keyFacts": [
+                  "스마트기기 부정행위가 적발되면 그날 치른 모든 과목을 0점 처리한다.",
+                  "고등학생은 퇴학까지 징계할 수 있고, 중학생은 출석정지가 최대다.",
+                  "휴대전화·초소형 카메라 반입 차단과 학교 와이파이 차단 등을 고교 2학기 기말고사부터 적용한다.",
+                  "한성숙 국무총리는 과거 국가시험의 의심 사례도 철저히 조사하겠다고 밝혔다."
+                ],
+                "outlook": "부정행위자 응시 제한을 늘리는 고등교육법 개정과 국가시험 조사 결과가 다음 과제다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "사회",
+                  "minor": "교육"
+                },
+                "sources": [
+                  {
+                    "name": "파이낸셜뉴스",
+                    "url": "https://www.fnnews.com/news/202611241815307002",
+                    "publishedAt": "2026-11-24",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261124121300001",
+                    "publishedAt": "2026-11-24",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/11/24/PYH2026112411730001300_P2.jpg"
+                  },
+                  {
+                    "name": "시사저널",
+                    "url": "https://www.sisajournal.com/news/articleView.html?idxno=395059",
+                    "publishedAt": "2026-11-24"
+                  }
+                ]
+              },
+              {
+                "rank": 6,
+                "title": "김여정, 스위스 제재에 '평양 외교사무소 철수 검토'…스위스는 제재 유지",
+                "summary": "북한은 스위스가 송도원 국제소년단야영소를 대러 제재 대상에 올린 것에 반발했고, 스위스는 제재를 그대로 두겠다고 밝혔다.",
+                "whyItMatters": "평양에 외교 창구를 둔 몇 안 되는 서방 국가와 북한의 관계가 흔들리면, 북한과 서방을 잇는 통로가 더 좁아진다.",
+                "background": "스위스는 우크라이나 전쟁과 관련해 러시아 제재를 따르고 있다. 송도원 야영소는 우크라이나 아동 문제와 연결돼 제재 대상에 올랐다.",
+                "keyFacts": [
+                  "김여정 노동당 부부장은 스위스 제재를 주권 침해라고 비난하며 평양 주재 스위스 외교사무소 철수를 검토하겠다고 했다.",
+                  "스위스 정부는 북한의 위협에도 제재를 유지한다고 밝혔다.",
+                  "북한은 최근 적극적인 외교 행보 속에서도 제재를 부과한 나라에는 강하게 맞서고 있다."
+                ],
+                "outlook": "북한이 실제로 스위스 외교관 추방 같은 조치에 나설지 지켜볼 일이다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "정치",
+                  "minor": "북한"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261124011951504",
+                    "publishedAt": "2026-11-24",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/07/20/PYH2026072001900004200_P2.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261125001000082",
+                    "publishedAt": "2026-11-25",
+                    "imageUrl": "https://img.yna.co.kr/etc/inner/KR/2026/11/25/AKR20261125001000082_01_i_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 7,
+                "title": "민주당 신천지 당원 가입 논란…정청래, 김민석 대표에 '결자해지' 압박",
+                "summary": "신천지 교인 집단 당원 가입 의혹을 두고 민주당 친명계 당권파와 친정청래계의 갈등이 이어졌다.",
+                "whyItMatters": "여당 내부 갈등이 길어지면 예산안과 개혁 입법 처리, 지지율에 부담이 된다.",
+                "background": "민주당에 신천지 교인이 무더기로 당원 가입했다는 의혹이 제기된 뒤, 책임 소재를 두고 당 지도부와 정청래 의원 쪽이 맞서 왔다. 김민석 대표는 이날 취임 100일을 맞았다.",
+                "keyFacts": [
+                  "정청래 의원은 김민석 대표를 겨냥해 문제를 만든 쪽이 풀어야 한다는 취지로 압박했다.",
+                  "민주당은 당원 가입 때 본인 확인 절차를 강화하기로 했다.",
+                  "김 대표는 취임 100일을 큰 행사 없이 보냈다."
+                ],
+                "outlook": "본인 확인 강화 뒤에도 갈등이 가라앉을지, 지도부 책임론으로 번질지 볼 일이다.",
+                "confidence": "보도에 따르면",
+                "category": {
+                  "major": "정치",
+                  "minor": "국회·정당"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261124090551001",
+                    "publishedAt": "2026-11-24",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/11/23/PYH2026112302880001301_P2.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261124117800001",
+                    "publishedAt": "2026-11-24",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/11/17/PYH2026111712800001300_P2.jpg"
+                  }
+                ]
+              }
+            ],
+            "shortNews": [
+              {
+                "summary": "서울지하철 노사가 24일 최종 교섭을 이어 간 끝에 25일 새벽 임단협을 타결해, 예고했던 총파업을 철회했다.",
+                "category": {
+                  "major": "사회",
+                  "minor": "복지·인구"
+                },
+                "sources": [
+                  {
+                    "name": "MTN",
+                    "url": "https://news.mtn.co.kr/article/2026112508142612642",
+                    "publishedAt": "2026-11-25"
+                  }
+                ]
+              },
+              {
+                "summary": "미국 법무부가 북한이 바이낸스 해킹으로 빼돌린 1조5천억 원 규모 가상화폐를 몰수하는 소송을 냈다.",
+                "category": {
+                  "major": "정치",
+                  "minor": "북한"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261124020900504",
+                    "publishedAt": "2026-11-24",
+                    "imageUrl": "https://img.yna.co.kr/photo/reuters/2026/11/19/PRU20261119053101009_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "미국 국무부는 김주애가 착용한 고가 스키 장비가 북한 반입이 금지된 사치품이라고 밝혔다.",
+                "category": {
+                  "major": "정치",
+                  "minor": "북한"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261125014600071",
+                    "publishedAt": "2026-11-25",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/11/17/PYH2026111700450004200_P2.jpg"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "세계",
+            "flow": "미국은 새 관세 발표를 앞뒀고 민주당의 하원 압승이 확정됐으며, 우크라이나전과 중동 분쟁은 바다와 사우디 수도로 번졌다.",
+            "topStories": [
+              {
+                "rank": 1,
+                "title": "미국, 16개 경제권 '과잉생산 관세' 발표 임박…한국은 15% 상한 유지 전망",
+                "summary": "미국 무역대표부가 정부 보조로 생산이 지나치게 많다고 본 나라들에 새 관세를 매기는 조사 결과를 곧 발표할 것으로 알려졌다.",
+                "whyItMatters": "한국 수출품에 붙는 관세 수준이 다시 정해지는 일이라, 이미 맺은 한미 관세 합의가 지켜지는지가 수출 기업에 직접 영향을 준다.",
+                "background": "미국은 무역법 301조를 근거로 중국, EU, 한국 등 16개 경제권의 산업 과잉생산을 조사해 왔다. 한국·일본·EU는 앞선 무역 합의로 관세 상한 15%를 받아 둔 상태다.",
+                "keyFacts": [
+                  "월스트리트저널 보도를 시작으로, 발표가 이르면 24일(현지시간) 저녁이나 이번 주 안에 나올 것으로 전해졌다.",
+                  "한국·일본·EU는 기존 합의대로 15% 상한 안에서 관세가 정해질 것으로 외신들은 내다봤다.",
+                  "중국은 다른 나라보다 높은 관세를 받을 것으로 보이며, 베트남·인도도 한국보다 높을 수 있다는 전망이 나왔다."
+                ],
+                "outlook": "실제 발표에서 한국의 세율과 적용 품목, 디지털 규제를 다룬 별도 301조 조사가 15% 상한에 영향을 줄지 봐야 한다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "경제",
+                  "minor": "무역·통상"
+                },
+                "sources": [
+                  {
+                    "name": "SBS",
+                    "url": "https://news.sbs.co.kr/amp/news.amp?news_id=N1008862046",
+                    "publishedAt": "2026-11-25",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261124182853071",
+                    "publishedAt": "2026-11-25",
+                    "imageUrl": "https://img.yna.co.kr/photo/ap/2026/08/24/PAP20260824246301009_P2.jpg"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261124182852071",
+                    "publishedAt": "2026-11-25",
+                    "imageUrl": "https://img.yna.co.kr/photo/ap/2026/08/24/PAP20260824246301009_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 2,
+                "title": "미 민주당, 하원 259석 이상 확보…1990년 이후 최대 다수당",
+                "summary": "테네시주 개표 결과로 민주당이 이번 중간선거에서 하원 259석 이상을 얻은 것이 확정됐다.",
+                "whyItMatters": "내년 1월부터 민주당이 상·하원을 모두 크게 장악해, 트럼프 정부의 입법과 예산, 조사 대응이 크게 제약된다.",
+                "background": "11월 초 치른 중간선거 개표가 일부 지역에서 이어져 왔다. 민주당은 트럼프 1기 때인 2018년 중간선거보다 더 많은 의석을 새로 얻었다.",
+                "keyFacts": [
+                  "테네시주에서 민주당 빅토리아 브로더릭 후보가 공화당 현역 스콧 데자를레 의원을 꺾으며 259석에 이르렀다.",
+                  "민주당은 선거 전보다 하원 의석을 45석 늘렸다.",
+                  "상원에서도 민주당이 56석을 얻은 것으로 보도됐다."
+                ],
+                "outlook": "새 의회가 엔비디아 사태와 트럼프 측 의혹 조사에 어떻게 나설지가 다음 관심사다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "국제",
+                  "minor": "미국"
+                },
+                "sources": [
+                  {
+                    "name": "Washington Post",
+                    "url": "https://www.washingtonpost.com/politics/2026/11/24/democrats-house-majority-election-2026-congress/87d84dac-e838-11f1-8db0-6f1e3c389e7c_story.html",
+                    "publishedAt": "2026-11-24",
+                    "primary": true
+                  },
+                  {
+                    "name": "ABC News",
+                    "url": "https://abcnews.com/Politics/wireStory/democrats-clinch-historic-house-majority-259-seats-largest-138418247",
+                    "publishedAt": "2026-11-24"
+                  }
+                ]
+              },
+              {
+                "rank": 3,
+                "title": "젤렌스키, 핀란드만·리비아 러시아 선박 공격 확인…푸틴은 보복 예고",
+                "summary": "우크라이나가 발트해 핀란드만과 리비아에서 러시아 선박을 공격했다고 인정했고, 푸틴 대통령은 석유 시설 공격에 보복하겠다고 밝혔다.",
+                "whyItMatters": "전쟁터가 우크라이나 땅을 넘어 발트해와 지중해 건너 리비아까지 넓어지면서, 유럽 해상 안전과 러시아 석유 수출이 함께 흔들린다.",
+                "background": "우크라이나는 러시아의 전쟁 자금줄인 석유 시설과 무기 운송선을 겨냥해 왔다. 발트해는 유럽 여러 나라가 둘러싼 바다라 동맹국들도 긴장하고 있다.",
+                "keyFacts": [
+                  "젤렌스키 대통령은 21일 핀란드만에서 화물선 스파르타 2호를 드론으로 공격했다고 확인하며, 무기를 실어 정당한 표적이었다고 말했다.",
+                  "우크라이나는 리비아에 정박한 러시아 군함과 화물선 공격도 자위권 행사라고 설명했다.",
+                  "노르웨이는 주변 지역의 안정을 요구하며 신중함을 당부했다.",
+                  "푸틴 대통령은 러시아 석유 시장이 어렵다고 인정하고 보복을 예고했다."
+                ],
+                "outlook": "러시아가 어떤 방식으로 보복할지, 발트해 연안국들이 해상 경비를 어떻게 강화할지 지켜볼 일이다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "국제",
+                  "minor": "유럽·러시아"
+                },
+                "sources": [
+                  {
+                    "name": "Bloomberg",
+                    "url": "https://www.bloomberg.com/news/articles/2026-11-24/zelenskyy-confirms-ukraine-hit-russian-ship-in-gulf-of-finland",
+                    "publishedAt": "2026-11-24",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261124180100109",
+                    "publishedAt": "2026-11-24",
+                    "imageUrl": "https://img.yna.co.kr/photo/ap/2026/11/22/PAP20261122016101009_P2.jpg"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261125002300109",
+                    "publishedAt": "2026-11-25",
+                    "imageUrl": "https://img.yna.co.kr/photo/etc/epa/2026/11/23/PEP20261123162101009_P2.jpg"
+                  },
+                  {
+                    "name": "Kyiv Independent",
+                    "url": "https://kyivindependent.com/zelensky-confirms-ukrainian-attack-on-russian-ship-in-gulf-of-finland/",
+                    "publishedAt": "2026-11-24"
+                  }
+                ]
+              },
+              {
+                "rank": 4,
+                "title": "중국, 상하이 당서기 천지닝 조사…2025년 이후 네 번째 정치국원 낙마",
+                "summary": "중국 공산당 사정 당국이 차기 최고지도부 후보로 꼽히던 천지닝 상하이 당서기를 중대한 규율 위반 혐의로 조사한다고 밝혔다.",
+                "whyItMatters": "상하이 당서기는 시진핑 주석과 리창 총리가 거친 자리라, 내년 지도부 개편을 앞두고 권력 구도가 크게 흔들리고 있음을 보여 준다.",
+                "background": "시진핑 주석은 집권 뒤 반부패 운동을 이어 왔다. 2022년 구성된 24명 정치국에서 허웨이둥, 장유샤, 마싱루이가 이미 물러났다.",
+                "keyFacts": [
+                  "관영 신화통신은 천지닝이 '중대한 규율·법률 위반' 혐의로 조사받는다고 전했으며, 이는 흔히 부패를 뜻한다.",
+                  "천지닝은 2022년부터 상하이를 이끌었고, 베이징 시장과 환경보호부장을 지냈다.",
+                  "구체적인 혐의 내용은 공개되지 않았다.",
+                  "상하이 지도부는 다음 날 베이징에 충성을 다짐했다."
+                ],
+                "outlook": "후임 상하이 당서기 인선과 내년 지도부 개편 구도가 관심이다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "국제",
+                  "minor": "동아시아"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261124180951089",
+                    "publishedAt": "2026-11-24",
+                    "imageUrl": "https://img.yna.co.kr/photo/reuters/2026/11/24/PRU20261124211901009_P2.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "Washington Post",
+                    "url": "https://www.washingtonpost.com/world/2026/11/24/china-probe-shanghai-party-secretary/c9ae98f8-e801-11f1-8db0-6f1e3c389e7c_story.html",
+                    "publishedAt": "2026-11-24"
+                  },
+                  {
+                    "name": "Bloomberg",
+                    "url": "https://www.bloomberg.com/news/articles/2026-11-24/china-probes-politburo-member-and-shanghai-chief-chen-jining",
+                    "publishedAt": "2026-11-24"
+                  }
+                ]
+              },
+              {
+                "rank": 5,
+                "title": "후티, 리야드 최고층 빌딩 또 타격해 11명 부상…예멘 아덴 60km 앞까지 진격",
+                "summary": "예멘 후티 반군의 공격으로 사우디 수도 리야드의 최고층 빌딩이 일주일 새 두 번째로 맞았고, 후티는 예멘 정부 임시수도 아덴 쪽으로 진격했다.",
+                "whyItMatters": "사우디 수도 한복판이 거듭 공격받고 예멘 정부의 마지막 거점이 위협받으면서, 중동 분쟁이 홍해 해운과 원유 공급으로 번질 위험이 커졌다.",
+                "background": "후티는 예멘 북부를 장악한 무장세력이고, 사우디 주도 연합군은 국제사회가 인정하는 예멘 정부를 돕고 있다. 최근 후티가 남쪽으로 공세를 넓혀 왔다.",
+                "keyFacts": [
+                  "24일 리야드의 사우디 국부펀드 본부 빌딩이 맞아 11명이 다쳤다고 사우디 민방위가 밝혔다.",
+                  "같은 빌딩은 19일에도 공격받았으며, 이번에는 경보도 울리지 않았다는 보도가 나왔다.",
+                  "후티는 아덴에서 약 60km 떨어진 곳까지 진격했고, 연합군은 라헤즈주에서 후티 차량을 공습했다.",
+                  "연합군은 민간인을 노린 공격에 단호히 대응하겠다고 밝혔다."
+                ],
+                "outlook": "아덴 방어선이 버틸지, 후티가 예고한 사우디 홍해 항구 공격이 실제로 이어질지 봐야 한다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "국제",
+                  "minor": "중동"
+                },
+                "sources": [
+                  {
+                    "name": "Al Jazeera",
+                    "url": "https://www.aljazeera.com/news/2026/11/24/saudi-led-coalition-condemns-terrorist-attack-on-tower-in-riyadh",
+                    "publishedAt": "2026-11-24",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261124182751079",
+                    "publishedAt": "2026-11-25",
+                    "imageUrl": "https://img.yna.co.kr/etc/inner/KR/2026/11/24/AKR20261124182751079_01_i_P2.jpg"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261125000800079",
+                    "publishedAt": "2026-11-25",
+                    "imageUrl": "https://img.yna.co.kr/etc/inner/KR/2026/11/25/AKR20261125000800079_01_i_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 6,
+                "title": "이스라엘, 가자 공습으로 하마스 내부 보안 책임자 사살",
+                "summary": "이스라엘 공습으로 하마스 내부 보안 책임자 나임 아부 나헬을 포함해 팔레스타인인 7명이 숨진 것으로 전해졌다.",
+                "whyItMatters": "휴전 뒤에도 가자지구에서 하마스 지도부를 겨냥한 공격이 이어져, 불안한 휴전이 다시 흔들릴 수 있다.",
+                "background": "가자지구는 전쟁 뒤에도 이스라엘군 공습이 간헐적으로 이어지고 있다. 아부 나헬은 이 자리에 오른 지 두 달밖에 되지 않았다.",
+                "keyFacts": [
+                  "숨진 아부 나헬은 하마스의 가자 내부 치안을 맡아 왔다.",
+                  "같은 날 이스라엘 공습으로 모두 7명이 숨진 것으로 보도됐다.",
+                  "하마스 소식통도 그의 사망을 확인했다."
+                ],
+                "outlook": "하마스의 대응과 휴전 중재국들의 움직임을 지켜볼 일이다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "국제",
+                  "minor": "중동"
+                },
+                "sources": [
+                  {
+                    "name": "BBC",
+                    "url": "https://www.bbc.co.uk/news/articles/c6rrg7ggq190o?at_medium=RSS&at_campaign=rss",
+                    "publishedAt": "2026-11-25",
+                    "imageUrl": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/9451/live/7a525660-e7fb-11f1-99b6-a35a62fa4264.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261124181300079",
+                    "publishedAt": "2026-11-24",
+                    "imageUrl": "https://img.yna.co.kr/etc/inner/KR/2026/11/24/AKR20261124181300079_01_i_P2.jpg"
+                  }
+                ]
+              }
+            ],
+            "shortNews": [
+              {
+                "summary": "이라크 중앙정부가 쿠르드 자치지역의 유전과 국경 통제권 회수에 나서 양측 갈등이 다시 커질 조짐이다.",
+                "category": {
+                  "major": "국제",
+                  "minor": "중동"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261124176451079",
+                    "publishedAt": "2026-11-24",
+                    "imageUrl": "https://img.yna.co.kr/photo/ap/2025/06/09/PAP20250609254801009_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "콜롬비아 중부 도시 비야비센시오에서 차량 폭탄이 터져 20명 넘게 다쳤다.",
+                "category": {
+                  "major": "국제",
+                  "minor": "기타 지역"
+                },
+                "sources": [
+                  {
+                    "name": "BBC",
+                    "url": "https://www.bbc.co.uk/news/articles/cjqlq2n4np7do?at_medium=RSS&at_campaign=rss",
+                    "publishedAt": "2026-11-24",
+                    "imageUrl": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/17c0/live/f8f77110-e811-11f1-99a1-253766e7ad8b.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "프랑스 사법당국이 니콜라 사르코지 전 대통령과 부인 카를라 브루니를 부패 사건으로 재판에 넘기기로 했다.",
+                "category": {
+                  "major": "국제",
+                  "minor": "유럽·러시아"
+                },
+                "sources": [
+                  {
+                    "name": "BBC",
+                    "url": "https://www.bbc.co.uk/news/articles/c65y17pwv1z7o?at_medium=RSS&at_campaign=rss",
+                    "publishedAt": "2026-11-25",
+                    "imageUrl": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/84cb/live/68cc7a10-e81e-11f1-ab42-55d8d8278025.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "망명 중인 셰이크 하시나 전 방글라데시 총리가 12월 16일 귀국하겠다고 처음으로 날짜를 밝혔다.",
+                "category": {
+                  "major": "국제",
+                  "minor": "기타 지역"
+                },
+                "sources": [
+                  {
+                    "name": "BBC",
+                    "url": "https://www.bbc.co.uk/news/articles/c60rk1yj07xeo?at_medium=RSS&at_campaign=rss",
+                    "publishedAt": "2026-11-24",
+                    "imageUrl": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/5191/live/b1f565b0-e7c1-11f1-b55c-09f84acff1b4.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "미국 11월 소비자신뢰지수가 중간선거 뒤 불확실성 완화와 휘발유값 하락에 1년 10개월 만에 가장 높았다.",
+                "category": {
+                  "major": "경제",
+                  "minor": "거시·정책"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261125002600072",
+                    "publishedAt": "2026-11-25",
+                    "imageUrl": "https://img.yna.co.kr/etc/inner/KR/2026/11/25/AKR20261125002600072_01_i_P2.jpg"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "IT·AI",
+            "flow": "젠슨 황이 엔비디아로 돌아와 AI주가 하루 크게 뛰었지만, 트럼프 개입 논란과 수출통제 문제, 다음 날 반락이 뒤따랐다.",
+            "topStories": [
+              {
+                "rank": 1,
+                "title": "엔비디아 이사회, 사임 11일 만에 젠슨 황 CEO 복귀 결정…주가 31% 급등",
+                "summary": "엔비디아 이사회가 만장일치로 젠슨 황을 사장·CEO·이사로 복귀시켰고, 황은 다음 날 전 직원 앞에서 사과했다.",
+                "whyItMatters": "세계 AI 반도체 시장을 이끄는 회사의 수장 공백이 끝나면서 전 세계 증시가 출렁였고, 미국 정부가 민간 기업 인사에 관여했다는 논란도 커졌다.",
+                "background": "황은 사생활 문제와 외국 정보기관 연루 의혹 속에 이달 초 물러났고, 이사회는 처음에는 복귀시키지 않겠다고 했다. 트럼프 대통령은 공개적으로 황의 복귀를 지지해 왔다.",
+                "keyFacts": [
+                  "이사회는 미국 정부 고위층의 의견을 들은 뒤 황의 복귀가 국가안보 위험이 아니라고 판단했다고 밝혔다.",
+                  "복귀 소식에 엔비디아 주가는 31% 올랐고 나스닥은 6%대 상승해 2025년 4월 이후 최대 상승폭을 기록했다.",
+                  "독립 위원회의 조사는 계속된다.",
+                  "황은 전사 회의에서 사과하며 심리치료를 받고 있다고 말했다."
+                ],
+                "outlook": "이사회 독립성 논란과 연방·주 정부의 여러 조사 결과가 황의 두 번째 임기를 좌우할 전망이다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "AI 산업·기업"
+                },
+                "sources": [
+                  {
+                    "name": "CNN",
+                    "url": "https://www.cnn.com/2026/11/23/tech/nvidia-reinstates-jensen-huang-ceo",
+                    "publishedAt": "2026-11-24",
+                    "primary": true,
+                    "publishedAtEstimated": true
+                  },
+                  {
+                    "name": "NVIDIA",
+                    "url": "https://nvidianews.nvidia.com/news/nvidia-board-reinstates-jensen-huang-as-president-ceo-and-board-director",
+                    "publishedAt": "2026-11-24",
+                    "publishedAtEstimated": true
+                  },
+                  {
+                    "name": "CNBC",
+                    "url": "https://www.cnbc.com/2026/11/23/nvidia-jensen-huang-ceo.html",
+                    "publishedAt": "2026-11-24",
+                    "publishedAtEstimated": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261125005700075",
+                    "publishedAt": "2026-11-25",
+                    "imageUrl": "https://img.yna.co.kr/photo/cms/2024/03/21/03/PCM20240321000003990_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 2,
+                "title": "트럼프의 젠슨 황 복귀 개입에 역풍…민주·공화 의원들 비판, 법무장관은 답변 피해",
+                "summary": "트럼프 대통령이 엔비디아 이사회 결정에 영향을 줬다는 보도가 나오자 미국 의회에서 여야를 가리지 않고 비판이 쏟아졌다.",
+                "whyItMatters": "정부가 민간 기업 경영진 인사에 끼어든 전례로 남을 수 있고, 중국 관련 수출통제 위반 의혹과 맞물려 추가 조사로 이어질 수 있다.",
+                "background": "트럼프 대통령은 자신이 엔비디아 이사회에 의견을 전하고 황과 통화했다고 밝혔다. 황 사태에는 중국 정보활동 의혹과 칩 우회 수출 의혹이 얽혀 있다.",
+                "keyFacts": [
+                  "척 슈머 상원 민주당 원내대표는 황이 수출통제법을 어겼다고 주장했고, 공화당 대중 강경파도 비판에 가세했다.",
+                  "미국 법무장관은 엔비디아 수사에 대한 질문에 답을 피했다.",
+                  "독일 외무장관은 트럼프의 개입에 충격을 받았다고 말했다.",
+                  "일부에서는 정부가 기업을 움직이는 '국가자본주의'라는 비판도 나왔다."
+                ],
+                "outlook": "의회 청문회 일정과 법무부·주 정부 조사의 방향이 다음 쟁점이다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "규제·정책"
+                },
+                "sources": [
+                  {
+                    "name": "BBC",
+                    "url": "https://www.bbc.co.uk/news/articles/crpdw1qx7jgxo?at_medium=RSS&at_campaign=rss",
+                    "publishedAt": "2026-11-25",
+                    "imageUrl": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/067a/live/dc6baca0-e839-11f1-a094-5fdc692f3e33.png",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261125002551071",
+                    "publishedAt": "2026-11-25",
+                    "imageUrl": "https://img.yna.co.kr/photo/etc/gt/2026/11/24/PGT20261124056801009_P2.jpg"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261125001900071",
+                    "publishedAt": "2026-11-25",
+                    "imageUrl": "https://img.yna.co.kr/photo/reuters/2026/11/24/PRU20261124189801009_P2.jpg"
+                  },
+                  {
+                    "name": "BBC",
+                    "url": "https://www.bbc.co.uk/news/articles/c63rgpy50x98o?at_medium=RSS&at_campaign=rss",
+                    "publishedAt": "2026-11-24",
+                    "imageUrl": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/47a8/live/2d61caf0-e7d5-11f1-939f-471cde339c0e.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 3,
+                "title": "미국, 엔비디아 고객사 메가스피드 등 7곳 수출통제 명단에 올려",
+                "summary": "미국 상무부가 엔비디아 칩을 중국으로 빼돌린 의혹을 받는 메가스피드와 계열사를 거래 제한 명단(Entity List)에 올렸다.",
+                "whyItMatters": "엔비디아의 큰 아시아 고객이 막히면서, AI 칩이 제3국을 거쳐 중국으로 흘러가는 길을 미국이 더 강하게 막겠다는 신호가 됐다.",
+                "background": "메가스피드는 엔비디아의 아시아·태평양 클라우드 협력사다. 황과 관계가 드러난 중국인 사업가가 이 회사 고위직을 지낸 것으로 알려지며 황 사태와 얽혔다.",
+                "keyFacts": [
+                  "말레이시아·싱가포르·태국에 걸친 7개 법인이 명단에 올라, 미국 기업은 허가 없이 기술을 팔 수 없다.",
+                  "미 법무부는 메가스피드가 엔비디아 칩을 중국에 넘겼는지 형사 수사하고 있으며, 회사는 의혹을 부인한다.",
+                  "싱가포르 당국도 메가스피드 조사에 나섰다.",
+                  "명단 추가는 황 복귀가 결정된 날과 같은 날 이뤄졌다."
+                ],
+                "outlook": "수사 결과에 따라 엔비디아의 동남아 매출과 수출 관리 체계에도 영향이 갈 수 있다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "규제·정책"
+                },
+                "sources": [
+                  {
+                    "name": "Semafor",
+                    "url": "https://www.semafor.com/article/11/23/2026/commerce-to-add-megaspeed-to-trade-blacklist",
+                    "publishedAt": "2026-11-24",
+                    "primary": true,
+                    "publishedAtEstimated": true
+                  },
+                  {
+                    "name": "Washington Times",
+                    "url": "https://www.washingtontimes.com/news/2026/nov/24/megaspeed-blacklisted-doj-leads-criminal-probe-nvidia-cloud-partner/",
+                    "publishedAt": "2026-11-24"
+                  },
+                  {
+                    "name": "The Next Web",
+                    "url": "https://thenextweb.com/news/us-blacklists-megaspeed-nvidia-scandal",
+                    "publishedAt": "2026-11-24",
+                    "publishedAtEstimated": true
+                  }
+                ]
+              },
+              {
+                "rank": 4,
+                "title": "AI주 하루 만에 반락…앤트로픽, 상장 나흘 만에 공모가 아래로",
+                "summary": "황 복귀 랠리가 하루 만에 식으며 엔비디아와 반도체주가 떨어졌고, 앤트로픽 주가는 처음으로 공모가 83달러 밑에서 마감했다.",
+                "whyItMatters": "AI 기업 가치가 지나치게 높다는 우려가 여전하다는 뜻이고, 사상 최대 규모로 상장한 AI 기업도 흔들릴 수 있음을 보여 줬다.",
+                "background": "앤트로픽은 19일 나스닥에 상장했다. 공모가는 상장할 때 처음 주식을 판 값이다.",
+                "keyFacts": [
+                  "앤트로픽은 6.5% 떨어진 81.91달러로 마감해 공모가 83달러를 밑돌았다.",
+                  "미국 증시 반도체지수는 8% 넘게 떨어졌고 엔비디아는 5.9% 내렸다.",
+                  "앤트로픽이 공모가 밑으로 내려오는 데 걸린 시간은 4거래일로, 스페이스X의 21거래일보다 짧았다.",
+                  "증권사 캐너코드 제뉴이티는 앤트로픽에 매수 의견을 냈다."
+                ],
+                "outlook": "보호예수(상장 뒤 일정 기간 주식 매도 금지)가 풀리는 시점의 매물 부담이 다음 변수다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "AI 산업·기업"
+                },
+                "sources": [
+                  {
+                    "name": "CNBC",
+                    "url": "https://www.cnbc.com/2026/11/24/anthropic-stock-ipo-price.html",
+                    "publishedAt": "2026-11-24",
+                    "primary": true
+                  },
+                  {
+                    "name": "Bloomberg",
+                    "url": "https://www.bloomberg.com/news/articles/2026-11-24/anthropic-breaks-below-83-ipo-price-in-premarket-trading",
+                    "publishedAt": "2026-11-24"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261125017351009",
+                    "publishedAt": "2026-11-25",
+                    "imageUrl": "https://img.yna.co.kr/photo/reuters/2026/11/24/PRU20261124202901009_P2.jpg"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261125012700009",
+                    "publishedAt": "2026-11-25",
+                    "imageUrl": "https://img.yna.co.kr/photo/reuters/2026/11/24/PRU20261124223901009_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 5,
+                "title": "크라우드스트라이크, 지스케일러 440억 달러에 인수…보안업계 최대급 합병",
+                "summary": "엔드포인트 보안 강자 크라우드스트라이크가 클라우드 네트워크 보안 기업 지스케일러를 주식 교환 방식으로 사들이기로 했다.",
+                "whyItMatters": "AI로 사이버 공격이 늘어나는 가운데 보안 시장이 큰 회사 중심으로 재편되는 신호다.",
+                "background": "엔드포인트 보안은 PC·서버 같은 개별 기기를 지키는 것이고, 지스케일러는 '제로 트러스트'(모든 접속을 기본적으로 믿지 않고 검증하는 방식) 네트워크 보안에 강하다.",
+                "keyFacts": [
+                  "지스케일러 주주는 1주당 크라우드스트라이크 1.135주를 받으며, 20일 종가 대비 약 34% 웃돈이다.",
+                  "합병 회사 지분은 크라우드스트라이크 주주가 약 84.1%, 지스케일러 주주가 약 15.9%를 갖는다.",
+                  "발표 당일 크라우드스트라이크 주가는 약 9% 떨어졌고 지스케일러는 약 18% 올랐다.",
+                  "규제 승인을 거쳐 내년 이맘때 마무리될 예정이다."
+                ],
+                "outlook": "반독점 심사 통과 여부와 두 회사 제품 통합 계획이 관건이다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "보안"
+                },
+                "sources": [
+                  {
+                    "name": "TechCrunch",
+                    "url": "https://techcrunch.com/2026/11/23/crowdstrike-to-acquire-zscaler-for-44-billion/",
+                    "publishedAt": "2026-11-24",
+                    "primary": true,
+                    "publishedAtEstimated": true
+                  },
+                  {
+                    "name": "CNBC",
+                    "url": "https://www.cnbc.com/2026/11/23/crowdstrike-zscaler-aquisition-ai-cyberattacks.html",
+                    "publishedAt": "2026-11-24",
+                    "publishedAtEstimated": true
+                  }
+                ],
+                "devCheckpoint": "두 회사 제품을 함께 쓰는 조직은 통합 로드맵과 라이선스 변화를 확인해 둘 필요가 있다."
+              },
+              {
+                "rank": 6,
+                "title": "미국 CIA·국가정보국 비기밀 시스템 해킹 피해",
+                "summary": "미국 중앙정보국(CIA)과 국가정보국(ODNI)이 쓰는 공개정보 분석 시스템이 해킹돼 기밀이 아닌 일부 정보가 노출됐다.",
+                "whyItMatters": "정보기관의 비기밀 시스템이라도 뚫렸다는 점에서, 최근 잇따른 미국 연방기관 장애와 맞물려 보안 우려가 커졌다.",
+                "background": "공개정보(OSINT) 분석은 소셜미디어나 공개 자료를 모아 분석하는 일이다. 최근 미국 정부 기관에서 장애와 침해가 잇따랐다.",
+                "keyFacts": [
+                  "침해된 것은 공개 자료와 비기밀 자료를 분석하는 네트워크로 알려졌다.",
+                  "ODNI는 핵심 기능이나 기밀 시스템에는 지장이 없었다고 밝혔다.",
+                  "공격 주체와 방식은 공식 확인되지 않았다."
+                ],
+                "outlook": "노출된 정보의 범위와 공격 주체에 대한 조사 결과가 나올지 지켜볼 일이다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "보안"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261125007451072",
+                    "publishedAt": "2026-11-25",
+                    "imageUrl": "https://img.yna.co.kr/photo/ap/2026/11/25/PAP20261125051901009_P2.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "Newsweek",
+                    "url": "https://www.newsweek.com/cia-hacked-in-cybersecurity-breach-heres-what-was-impacted-12765090",
+                    "publishedAt": "2026-11-25",
+                    "publishedAtEstimated": true
+                  }
+                ]
+              },
+              {
+                "rank": 7,
+                "title": "미국 배심원단, 화웨이 영업비밀 절취 공모 유죄 평결…공갈 혐의는 무죄",
+                "summary": "뉴욕에서 몇 달 이어진 재판에서 배심원단이 중국 화웨이의 영업비밀 절취 공모 혐의를 유죄로 판단했다.",
+                "whyItMatters": "미중 기술 갈등의 상징 같은 사건에서 미국 법원이 화웨이의 일부 혐의를 인정해, 중국 기술기업에 대한 미국의 압박 근거가 강해졌다.",
+                "background": "미국 검찰은 화웨이가 미국 기업 기술을 빼돌리고 이란 제재를 피해 사업했다며 기소했다. 화웨이는 혐의를 부인해 왔다.",
+                "keyFacts": [
+                  "배심원단은 영업비밀 절취 공모를 유죄로 봤다.",
+                  "조직적 범죄를 처벌하는 공갈 혐의는 무죄로 판단했다.",
+                  "이란 사업과 관련한 혐의도 재판에서 다뤄졌다."
+                ],
+                "outlook": "형량 선고와 화웨이의 항소, 중국 정부 반응을 지켜볼 일이다.",
+                "confidence": "보도에 따르면",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "규제·정책"
+                },
+                "sources": [
+                  {
+                    "name": "BBC",
+                    "url": "https://www.bbc.co.uk/news/articles/cmy49ngydqzpo?at_medium=RSS&at_campaign=rss",
+                    "publishedAt": "2026-11-25",
+                    "imageUrl": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/c0cb/live/da83bf80-e849-11f1-aa88-031e8213533d.jpg",
+                    "primary": true
+                  }
+                ]
+              }
+            ],
+            "shortNews": [
+              {
+                "summary": "한화에어로스페이스가 2028년 첫 가동을 목표로 경남 창원에 국방 AI 데이터센터를 짓는다.",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "AI 산업·기업"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261124148600003",
+                    "publishedAt": "2026-11-24",
+                    "imageUrl": "https://img.yna.co.kr/etc/inner/KR/2026/11/24/AKR20261124148600003_02_i_P2.jpg"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "collectedAt": "2026-11-25T15:02:24+09:00",
+      "late": false
     }
   ],
   "extracted": [
@@ -20279,7 +21211,8 @@
     "2026-11-20",
     "2026-11-21",
     "2026-11-22",
-    "2026-11-23"
+    "2026-11-23",
+    "2026-11-24"
   ],
   "scheduled": [
     "2026-11-01",
@@ -20304,6 +21237,7 @@
     "2026-11-20",
     "2026-11-21",
     "2026-11-22",
-    "2026-11-23"
+    "2026-11-23",
+    "2026-11-24"
   ]
 }
