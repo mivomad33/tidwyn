@@ -2,7 +2,6 @@
 name: brief
 description: Tidwyn 뉴스 브리프를 수집한다. 빠진 날짜까지 한국·세계·IT·AI 뉴스를 RSS 후보 목록과 웹 검색으로 조사해 검사하고 로컬 DB에 저장한 뒤, 뉴스를 이슈(이어지는 이야기)에 연결하고 7일마다 중복 이슈를 합치며, GitHub 주간 트렌딩에 새로 오른 저장소를 골라 설명을 써 빌더 탭에 싣고, 마크다운을 만들고 data 브랜치에 백업하고, 공개 사이트를 빌드해 Vercel에 배포하고 data 브랜치를 push한 뒤, 실행 결과를 대화창에 알린다. 사용자가 /brief 또는 /brief test [YYYY-MM-DD]를 실행할 때 사용한다.
 argument-hint: "[test] [YYYY-MM-DD]"
-disable-model-invocation: true
 model: claude-sonnet-5-5
 ---
 
