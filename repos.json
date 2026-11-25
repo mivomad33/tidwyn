@@ -1,0 +1,41 @@
+{
+  "formatVersion": 12,
+  "days": [
+    {
+      "date": "2026-11-24",
+      "status": "shown",
+      "items": [
+        {
+          "rank": 1,
+          "name": "backnotprop/plannotator",
+          "url": "https://github.com/backnotprop/plannotator",
+          "description": "AI 코딩 에이전트가 내놓은 계획, 문서, 코드 변경을 브라우저에서 검토하게 해 주는 로컬 도구입니다. 에이전트의 플러그인이나 명령으로 연결하면, 에이전트가 계획을 제안하거나 작업을 마칠 때 브라우저 창이 열립니다. 그 자리에서 문서에 주석을 달거나 코드 차이에 의견을 남기고, 한 번에 에이전트로 되돌려 보낼 수 있습니다. 여러 에이전트를 함께 돌리며 사람이 결정을 놓치지 않으려는 개발자에게 쓸모 있습니다."
+        },
+        {
+          "rank": 2,
+          "name": "google-labs-code/stitch-skills",
+          "url": "https://github.com/google-labs-code/stitch-skills",
+          "description": "구글의 디자인 도구 Stitch와 연동되는 에이전트 스킬 모음입니다. 스킬은 코딩 에이전트에 특정 작업 방법을 가르쳐 주는 지침 묶음이며, 디자인 생성, 빌드와 컴포넌트, 보조 기능으로 나뉜 플러그인으로 제공됩니다. Claude Code, Gemini CLI, Cursor, Codex 같은 여러 에이전트에 한 줄 명령으로 설치할 수 있습니다. Stitch로 화면 디자인을 만들고 코드로 옮기는 작업을 에이전트에게 맡기려는 개발자와 디자이너에게 맞습니다."
+        },
+        {
+          "rank": 3,
+          "name": "GoogleChrome/modern-web-guidance-src",
+          "url": "https://github.com/GoogleChrome/modern-web-guidance-src",
+          "description": "코딩 에이전트가 오래된 웹 작성 방식 대신 최신 웹 표준 기능을 쓰도록 안내하는 지침 모음입니다. 모델이 옛 코드를 많이 학습해 불필요하게 무거운 자바스크립트를 만드는 문제를 줄이는 것이 목표입니다. 명령 한 줄로 설치하고, 주제별 가이드를 검색하거나 기존 코드에서 낡은 패턴을 찾아내는 기능도 있습니다. 크롬, 엣지, 파이어폭스, MDN 팀이 함께 관리하며, 에이전트로 웹 프런트엔드를 만드는 개발자에게 쓸모 있습니다."
+        },
+        {
+          "rank": 4,
+          "name": "alibaba/open-code-review",
+          "url": "https://github.com/alibaba/open-code-review",
+          "description": "Git 변경 내용을 읽고 AI가 줄 단위로 리뷰 의견을 달아 주는 코드 리뷰 명령줄 도구입니다. 정해진 규칙으로 검사하는 단계와 AI 에이전트를 함께 쓰는 구조라, 전체 파일을 읽고 코드베이스를 검색해 맥락까지 살핍니다. 널 참조, 스레드 안전성, XSS, SQL 인젝션 같은 흔한 결함에 대한 규칙이 여러 언어용으로 들어 있고, 변경 내역이 없는 폴더도 통째로 점검할 수 있습니다. 사용할 모델 주소만 설정하면 되며, 알리바바 내부 도구에서 출발했습니다."
+        },
+        {
+          "rank": 5,
+          "name": "mvanhorn/last30days-skill",
+          "url": "https://github.com/mvanhorn/last30days-skill",
+          "description": "어떤 주제든 최근 30일 동안 레딧, X, 유튜브, 해커뉴스, 예측 시장, 웹에서 나온 이야기를 모아 요약해 주는 AI 에이전트용 스킬입니다. 편집자가 고른 기사가 아니라 추천 수, 좋아요, 실제 돈이 걸린 예측 확률처럼 사람들이 반응한 정도로 점수를 매겨 정리합니다. Claude Code 플러그인이나 한 줄 명령으로 설치하고, 레딧과 해커뉴스는 설정 없이 바로 쓸 수 있습니다. 인물이나 회사, 기술의 요즘 동향을 빠르게 파악하려는 사람에게 맞습니다."
+        }
+      ]
+    }
+  ]
+}
