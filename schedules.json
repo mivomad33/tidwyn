@@ -990,6 +990,116 @@
       "mergedInto": null,
       "deleted": false,
       "deletedOn": null
+    },
+    {
+      "id": 101,
+      "name": "한국은행 금융통화위원회 기준금리 결정",
+      "due": "2026-11-26",
+      "major": "경제",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 102,
+      "name": "전국법관대표회의 임시회의",
+      "due": "2026-11-30",
+      "major": "정치",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 103,
+      "name": "전국법원장회의",
+      "due": "2026-12-04",
+      "major": "정치",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 104,
+      "name": "홈플러스 대형마트 전 점포 임시휴업",
+      "due": "2026-11-27",
+      "major": "경제",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 105,
+      "name": "국회 국방위 청해부대 파견연장안 전체회의 의결",
+      "due": "2026-11-26",
+      "major": "정치",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 106,
+      "name": "미국 과잉생산 관세안 서면 의견 접수 마감",
+      "due": "2027-01-05",
+      "major": "경제",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 107,
+      "name": "미국 과잉생산 관세 공청회",
+      "due": "2027-01-25",
+      "major": "경제",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 108,
+      "name": "영국 새 에너지 요금 상한 적용",
+      "due": "2027-01-01",
+      "major": "경제",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 109,
+      "name": "솔로몬제도·중국 안보협정 만료",
+      "due": "2027-04",
+      "major": "국제",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 110,
+      "name": "EU 소버린 기술펀드 세부안 발표",
+      "due": "2027-02",
+      "major": "IT·AI",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
     }
   ],
   "links": [
@@ -1872,6 +1982,71 @@
       "story": "2026-11-24/한국-s1",
       "schedule": 94,
       "role": "result"
+    },
+    {
+      "story": "2026-11-25/세계-1",
+      "schedule": 106,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-25/세계-1",
+      "schedule": 107,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-25/세계-2",
+      "schedule": 28,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-25/세계-3",
+      "schedule": 7,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-25/세계-6",
+      "schedule": 108,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-25/세계-7",
+      "schedule": 109,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-25/한국-1",
+      "schedule": 101,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-25/한국-2",
+      "schedule": 102,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-25/한국-2",
+      "schedule": 103,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-25/한국-3",
+      "schedule": 104,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-25/한국-4",
+      "schedule": 101,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-25/한국-5",
+      "schedule": 105,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-25/IT·AI-7",
+      "schedule": 110,
+      "role": "basis"
     }
   ],
   "merges": [],

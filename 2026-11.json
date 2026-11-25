@@ -21186,6 +21186,1103 @@
       },
       "collectedAt": "2026-11-25T15:02:24+09:00",
       "late": false
+    },
+    {
+      "brief": {
+        "targetDate": "2026-11-25",
+        "headline": "코스피가 하루 만에 6% 넘게 밀려 전날 상승분을 모두 반납했고, 미국은 14개 경제권에 새 관세안을 내놓으며 한국에는 상한 15%를 제시했습니다. 국내에서는 대법원장 탄핵 추진에 맞선 판사들의 첫 집단성명과 홈플러스 전 점포 휴업 발표가 이어졌습니다.",
+        "keywords": [
+          "코스피 급락",
+          "과잉생산 관세",
+          "조희대 탄핵",
+          "홈플러스 휴업",
+          "엔비디아 신용등급"
+        ],
+        "sections": [
+          {
+            "name": "한국",
+            "flow": "반도체주 급락으로 증시가 흔들린 가운데 사법부 반발, 유통업체 휴업, 대출금리 상승, 파병 확대 논의가 겹쳤습니다.",
+            "topStories": [
+              {
+                "rank": 1,
+                "title": "코스피 6.16% 급락해 4697.51, 삼성전자·SK하이닉스 10% 안팎 하락",
+                "summary": "코스피가 308.52포인트 내린 4697.51로 마감해 전날 급등분을 모두 반납했습니다.",
+                "whyItMatters": "시가총액 비중이 큰 반도체 두 종목이 한꺼번에 급락해 많은 투자자에게 영향이 넓게 미칩니다.",
+                "background": "전날에는 젠슨 황 엔비디아 최고경영자(CEO)의 복귀 소식에 코스피가 6% 넘게 올라 5000선을 되찾았습니다. 하지만 밤사이 미국에서 반도체주가 크게 내렸고, 메모리 반도체가 2028년 이후 공급 과잉에 빠질 수 있다는 우려와 AI 투자의 수익성에 대한 의문이 다시 커졌습니다.",
+                "keyFacts": [
+                  "삼성전자는 9.87% 내린 17만700원에 마감해 시가총액이 1000조원 아래로 내려갔습니다.",
+                  "SK하이닉스는 11.05% 내린 103만원에 거래를 마쳤습니다.",
+                  "개장 직후인 오전 9시 8분 유가증권시장에 매도 사이드카(프로그램 매도를 잠시 멈추는 장치)가 발동됐습니다.",
+                  "외국인은 약 1조9000억원어치를 순매도했습니다.",
+                  "코스닥은 2.29% 내린 650.64, 원/달러 환율은 0.8원 오른 1343.2원이었습니다."
+                ],
+                "outlook": "정부와 산업은행은 증시안정펀드를 늘리기 위해 금융회사에 추가 출자 의향을 타진하는 것으로 보도됐습니다. 26일 한국은행 금융통화위원회의 금리 결정도 변수입니다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "경제",
+                  "minor": "금융·증시"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261125133251008",
+                    "publishedAt": "2026-11-25",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/11/25/PYH2026112515880001300_P2.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "파이낸셜뉴스",
+                    "url": "https://fnnews.com/news/202611252233183012",
+                    "publishedAt": "2026-11-26"
+                  },
+                  {
+                    "name": "전자신문",
+                    "url": "https://www.etnews.com/20261125000095",
+                    "publishedAt": "2026-11-25"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261125183800002",
+                    "publishedAt": "2026-11-25",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2025/09/10/PYH2025091021390005100_P2.jpg"
+                  }
+                ],
+                "analogy": "사이드카는 차가 너무 빨리 내려갈 때 잠깐 거는 보조 브레이크와 비슷합니다."
+              },
+              {
+                "rank": 2,
+                "title": "창원지법 판사들, 조희대 대법원장 탄핵 추진에 법원 판사회의 첫 반대 성명",
+                "summary": "창원지법 전체 판사회의가 재판을 이유로 한 법관 탄핵 추진은 사법권 독립을 해친다며 국회에 중단을 요구했습니다.",
+                "whyItMatters": "대법원장 탄핵 추진에 일선 법원 판사들이 회의체 이름으로 처음 공개 반대해, 국회와 사법부의 충돌이 한 단계 커졌습니다.",
+                "background": "더불어민주당은 조희대 대법원장 탄핵소추를 추진하고 있으며, 김민석 대표는 25일 진보 성향 야당들에 연대를 공식 제안했습니다. 국민의힘은 강하게 반대하고 있습니다.",
+                "keyFacts": [
+                  "창원지법 판사회의는 사법권 독립을 정한 헌법 제101조와 제103조를 근거로 들었습니다.",
+                  "탄핵은 중대한 위헌·위법이 있을 때만 쓰는 마지막 수단이어야 한다고 밝혔습니다.",
+                  "22일 전직 지방변호사회장 33명, 24일 대한변호사협회, 25일 서울지방변호사회도 우려 성명을 냈습니다.",
+                  "조 대법원장은 해외 일정으로 출국했으며 다음 달 1일 귀국할 예정이라고 보도됐습니다."
+                ],
+                "outlook": "30일 전국법관대표회의 임시회의에서 대응 방향이 논의될 전망이고, 12월 4일에는 전국법원장회의가 예정돼 있습니다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "정치",
+                  "minor": "사법·검찰"
+                },
+                "sources": [
+                  {
+                    "name": "파이낸셜뉴스",
+                    "url": "https://www.fnnews.com/news/202611252124596933",
+                    "publishedAt": "2026-11-25",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261125166500004",
+                    "publishedAt": "2026-11-25",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/11/24/PYH2026112401870001300_P2.jpg"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261125151800004",
+                    "publishedAt": "2026-11-25",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/11/23/PYH2026112309710001300_P2.jpg"
+                  },
+                  {
+                    "name": "서울경제",
+                    "url": "https://m.sedaily.com/article/20118998",
+                    "publishedAt": "2026-11-26"
+                  }
+                ]
+              },
+              {
+                "rank": 3,
+                "title": "홈플러스, 상품 살 돈 떨어져 27일부터 전 점포 임시휴업",
+                "summary": "기업회생 절차 중인 홈플러스가 상품 매입 자금 부족을 이유로 27일부터 대형마트 영업을 모두 멈춥니다.",
+                "whyItMatters": "소비자 불편은 물론 직원과 납품업체, 입점 상인에게 타격이 크고, 매각이 더 어려워질 수 있습니다.",
+                "background": "홈플러스는 7월에도 자금 부족으로 전 점포를 닫았다가 긴급 자금 2000억원을 받아 8월에 다시 열었고, 9월에 법원의 회생계획 인가를 받았습니다. 그러나 재개 뒤 매출이 목표에 못 미쳤습니다.",
+                "keyFacts": [
+                  "26일부터 온라인 배송을 먼저 중단합니다.",
+                  "납품대금 지급이 밀리면서 20일부터 신선식품 공급이 대부분 끊겼습니다.",
+                  "휴업 대상은 대형마트 전 점포로, 보도상 67곳입니다.",
+                  "회사는 인수 절차 진전 등으로 새 자금을 확보하면 영업 재개를 검토하겠다고 밝혔습니다."
+                ],
+                "outlook": "인수 의향자와의 계약에는 법원·채권단 협의와 실사가 필요합니다. 인수자를 찾지 못하면 청산 가능성도 배제하기 어렵다는 관측이 나옵니다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "경제",
+                  "minor": "산업·기업"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261125134751030",
+                    "publishedAt": "2026-11-25",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/10/11/PYH2026101103150001300_P2.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "세계일보",
+                    "url": "https://www.segye.com/newsView/20261125513425",
+                    "publishedAt": "2026-11-25"
+                  },
+                  {
+                    "name": "서울경제TV",
+                    "url": "https://www.sentv.co.kr/article/view/sentv202611250254",
+                    "publishedAt": "2026-11-25"
+                  }
+                ]
+              },
+              {
+                "rank": 4,
+                "title": "10월 가계대출 금리 5.02%, 주택담보대출은 14년 7개월 만에 최고",
+                "summary": "은행의 신규 가계대출 금리가 5%를 넘었고 주택담보대출 금리는 4.98%로 올랐습니다.",
+                "whyItMatters": "새로 돈을 빌리거나 변동금리로 갚는 가계의 이자 부담이 커집니다.",
+                "background": "한국은행이 매달 발표하는 가중평균금리 통계에서 가계대출 금리는 6개월 연속 올랐습니다.",
+                "keyFacts": [
+                  "가계대출 금리가 5%를 넘은 것은 2023년 11월 이후 처음입니다.",
+                  "고정형 주담대는 5.13%로 13개월 연속, 변동형은 4.90%로 0.14%포인트 올랐습니다.",
+                  "일반 신용대출 금리는 6.43%로 0.06%포인트 내렸습니다."
+                ],
+                "outlook": "한국은행은 11월에도 10월과 비슷한 흐름을 예상했고, 26일 금통위에서 기준금리를 올릴 것이라는 전망이 나옵니다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "경제",
+                  "minor": "금융·증시"
+                },
+                "sources": [
+                  {
+                    "name": "디지털타임스",
+                    "url": "https://www.dt.co.kr/article/12097119",
+                    "publishedAt": "2026-11-25",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261125080800002",
+                    "publishedAt": "2026-11-25",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/07/09/PYH2026070911020001300_P2.jpg"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261125128400002",
+                    "publishedAt": "2026-11-26",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/10/22/PYH2026102214330001300_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 5,
+                "title": "청해부대 작전구역 확대안 국방위 소위 통과, 이 대통령 '호르무즈는 제외'",
+                "summary": "청해부대 파견 연장과 오만 남쪽 해역까지의 활동 확대안이 여야 합의로 국방위 법안소위를 통과했습니다.",
+                "whyItMatters": "중동 전쟁 속에서 한국 해군의 활동 범위가 넓어져, 분쟁에 휘말릴 수 있다는 우려와 국민·선박 보호 필요성이 맞서고 있습니다.",
+                "background": "정부는 해적 위협이 커진 데 대응한다는 입장이고, 일부 진보 정당과 시민사회는 사실상의 우회 파병이라고 비판합니다.",
+                "keyFacts": [
+                  "부대의견에 전쟁 불개입, 장병 안전 최우선, 자위권 원칙 준수를 담았습니다.",
+                  "이재명 대통령은 호르무즈 해협과 인근 해역은 활동 범위에서 빠진다고 밝혔습니다.",
+                  "민주당은 구체적 명시를, 국민의힘은 포괄적 원칙을 주장하다 절충했습니다."
+                ],
+                "outlook": "국방위 전체회의 의결과 국회 본회의 동의 절차가 남아 있습니다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "정치",
+                  "minor": "국회·정당"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261125168100001",
+                    "publishedAt": "2026-11-25",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/11/24/PYH2026112404830001300_P2.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "파이낸셜뉴스",
+                    "url": "https://www.fnnews.com/news/202611251821349152",
+                    "publishedAt": "2026-11-25"
+                  },
+                  {
+                    "name": "뉴스토마토",
+                    "url": "https://www.newstomato.com/ReadNews.aspx?no=1321898",
+                    "publishedAt": "2026-11-25"
+                  }
+                ]
+              },
+              {
+                "rank": 6,
+                "title": "LH, 2030년까지 수도권 공적주택 약 50만호 착공 계획…대통령 '초과 달성하라'",
+                "summary": "LH가 5년간 수도권에 건설형 공적주택 49만7000호를 착공하고 발주 규모를 182조원으로 늘리겠다고 보고했습니다.",
+                "whyItMatters": "이전 5년보다 발주를 크게 늘리는 계획이어서 수도권 주택 공급과 건설 경기에 큰 영향을 줄 수 있습니다.",
+                "background": "이재명 대통령은 25일 서울 은평구 공적주택 현장을 찾아 공공임대를 중산층도 선택하는 '공적주택'으로 넓히겠다는 방향을 강조했습니다.",
+                "keyFacts": [
+                  "이전 5년 발주액은 31조원이었고, 이번 계획은 182조원입니다.",
+                  "발주액은 올해 17조원, 내년 25조원, 2028년부터 연평균 47조원 수준으로 늘립니다.",
+                  "대통령은 보편형 임대주택을 분양하지 못하도록 법에 명시하자고 제안했습니다."
+                ],
+                "outlook": "부지 확보 기간을 44개월에서 15개월로 줄이는 방안이 실제 착공으로 이어지는지 지켜봐야 합니다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "경제",
+                  "minor": "부동산"
+                },
+                "sources": [
+                  {
+                    "name": "서울신문",
+                    "url": "https://www.seoul.co.kr/news/politics/2026/11/26/20261126004004",
+                    "publishedAt": "2026-11-25",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261125168651001",
+                    "publishedAt": "2026-11-25",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/11/25/PYH2026112519900001300_P2.jpg"
+                  },
+                  {
+                    "name": "파이낸셜뉴스",
+                    "url": "https://www.fnnews.com/news/202611251912175079",
+                    "publishedAt": "2026-11-25"
+                  }
+                ]
+              },
+              {
+                "rank": 7,
+                "title": "북한, 김여정 담화 하루 만에 평양 스위스 외교사무소 폐쇄 통보",
+                "summary": "북한이 대러 제재에 반발해 스위스 사무소장을 기피 인물로 지정하고 48시간 안에 떠나라고 요구했습니다.",
+                "whyItMatters": "평양에 남은 서방의 드문 외교 창구가 문을 연 지 한 달 만에 닫히게 됐습니다.",
+                "background": "스위스는 우크라이나 아동 강제 이송 연루 의혹을 이유로 북한 송도원국제소년단야영소를 제재 명단에 올렸습니다. 스위스는 10월 평양에 외교사무소를 다시 열었습니다.",
+                "keyFacts": [
+                  "북한 외무성은 스위스의 조치를 주권을 침해하는 적대 행위라고 주장했습니다.",
+                  "전날 김여정은 스위스 사무소 철수 검토를 경고했습니다.",
+                  "스위스는 결정에 유감을 나타냈고 사무소장을 베이징 주재 대사관으로 복귀시키기로 했습니다."
+                ],
+                "outlook": "스위스가 대북 접촉 통로를 어떻게 유지할지와 다른 서방국 공관에 미칠 영향이 관심사입니다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "정치",
+                  "minor": "북한"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261125095351504",
+                    "publishedAt": "2026-11-26",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/10/31/PYH2026103100330004200_P2.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "Korea Times",
+                    "url": "https://www.koreatimes.co.kr/foreignaffairs/northkorea/20261125/n-korea-closes-swiss-office-in-pyongyang-over-sanctions-on-childrens-camp",
+                    "publishedAt": "2026-11-25"
+                  },
+                  {
+                    "name": "BBC",
+                    "url": "https://www.bbc.co.uk/news/articles/cq0l34e4kkr5o?at_medium=RSS&at_campaign=rss",
+                    "publishedAt": "2026-11-26",
+                    "imageUrl": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/b4ee/live/fcd47260-e8fc-11f1-99b6-a35a62fa4264.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 8,
+                "title": "공소청, '교회 돈 102억 자유통일당에' 전광훈 목사 구속영장 청구",
+                "summary": "서울북부지방공소청이 교회 자금을 정당에 불법 기부한 혐의로 전광훈 목사의 구속영장을 청구했습니다.",
+                "whyItMatters": "100억원대 정치자금법 위반 혐의로, 법원 판단에 따라 전 목사의 신병이 다시 확보될 수 있습니다.",
+                "background": "중앙선거관리위원회는 자유통일당이 교회에서 돈을 빌린 형식이었지만 대부분 갚지 않았다고 보고 지난해 전 목사 등을 고발했습니다.",
+                "keyFacts": [
+                  "혐의는 2020년부터 2025년 상반기까지 31차례에 걸친 약 102억원입니다.",
+                  "경찰이 23일 신청한 영장을 이틀 뒤 청구했습니다.",
+                  "전 목사는 은퇴해 교회 재정에 관여할 수 없었다며 혐의를 부인합니다."
+                ],
+                "outlook": "서울북부지법이 영장실질심사를 거쳐 구속 여부를 정합니다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "정치",
+                  "minor": "사법·검찰"
+                },
+                "sources": [
+                  {
+                    "name": "파이낸셜뉴스",
+                    "url": "https://www.fnnews.com/news/202611251826043725",
+                    "publishedAt": "2026-11-25",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261125056551004",
+                    "publishedAt": "2026-11-25",
+                    "imageUrl": "https://img.yna.co.kr/etc/inner/KR/2026/11/25/AKR20261125056551004_02_i_P2.jpg"
+                  }
+                ]
+              }
+            ],
+            "shortNews": [
+              {
+                "summary": "올해 1∼9월 태어난 아기가 21만9천명으로 지난해보다 14% 넘게 늘어 증가율이 역대 최고 수준이었습니다.",
+                "category": {
+                  "major": "사회",
+                  "minor": "복지·인구"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261125087700002",
+                    "publishedAt": "2026-11-25",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/11/25/PYH2026112509480001300_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "노소영 아트센터 나비 관장이 최태원 SK 회장 측이 요청한 화해권고에 동의하지 않고 상고를 취하하라고 요구했습니다.",
+                "category": {
+                  "major": "사회",
+                  "minor": "법·재판"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261125086553004",
+                    "publishedAt": "2026-11-25",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/07/24/PYH2026072410130001300_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "한화오션이 태국의 차세대 호위함 도입 사업에서 우선협상대상자 지위를 잃었다고 밝혔습니다.",
+                "category": {
+                  "major": "경제",
+                  "minor": "산업·기업"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261125179800003",
+                    "publishedAt": "2026-11-25",
+                    "imageUrl": "https://img.yna.co.kr/etc/inner/KR/2026/11/25/AKR20261125179800003_01_i_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "삼성디스플레이가 약 3100억원을 투자해 LED 기업 ams오스람의 최대주주가 되기로 했습니다.",
+                "category": {
+                  "major": "경제",
+                  "minor": "산업·기업"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261125134400003",
+                    "publishedAt": "2026-11-25",
+                    "imageUrl": "https://img.yna.co.kr/etc/inner/KR/2026/11/25/AKR20261125134400003_01_i_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "이재명 대통령이 5·18 진압 관련 경찰관들의 정부 포상 취소를 당연하다며 역사 바로잡기를 이어가겠다고 밝혔습니다.",
+                "category": {
+                  "major": "정치",
+                  "minor": "행정부"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261125013900001",
+                    "publishedAt": "2026-11-25",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/11/24/PYH2026112406180001300_P2.jpg"
+                  }
+                ]
+              }
+            ],
+            "unverified": "홈플러스의 영업 재개 시점과 매각 성사 여부, 정부의 증시안정펀드 확대 규모는 아직 정해지지 않았습니다."
+          },
+          {
+            "name": "세계",
+            "flow": "미국의 새 관세안과 높은 물가가 시장을 흔들었고, 중동에서는 후티의 사우디 공격과 호르무즈 기뢰 주장이 유가를 밀어 올렸습니다.",
+            "topStories": [
+              {
+                "rank": 1,
+                "title": "미국, 중국·EU·한국 등 14개 경제권에 '과잉생산 관세' 예고…한국은 상한 15%",
+                "summary": "미국 무역대표부(USTR)가 과잉 설비를 이유로 14개 경제권에 새 관세안을 내놨고 한국에는 최대 15%를 제시했습니다.",
+                "whyItMatters": "2월 연방대법원이 상호관세를 위법으로 판결한 뒤 미국이 다른 법 조항으로 관세 장벽을 다시 세우는 조치로, 세계 교역과 한국 수출 조건에 직접 영향을 줍니다.",
+                "background": "USTR은 무역법 301조에 따라 8개월간 각국의 제조업 지원이 과잉생산을 낳았는지 조사했습니다. 16곳 중 멕시코와 노르웨이는 조사가 진행 중이라 이번에 빠졌습니다.",
+                "keyFacts": [
+                  "한국·일본·대만·EU·스위스는 최대 15%, 인도네시아·말레이시아·태국·캄보디아·방글라데시는 최대 18%가 제시됐습니다.",
+                  "중국은 최대 20%이며 미중 무역 휴전이 깨지면 40%까지 올리겠다고 했습니다.",
+                  "한국은 협의나 기존 약속 이행이 미흡하면 25%로 올릴 수 있다고 경고했습니다.",
+                  "USTR은 한국의 자동차·반도체·석유화학 지원을 지적했습니다. 다만 232조 관세가 적용되는 자동차·반도체 품목은 이번 추가 관세에서 빠진다고 보도됐습니다.",
+                  "EU는 유럽이 과잉생산의 원천이라는 전제를 거부했고, 중국은 관세 전쟁에 반대한다고 밝혔습니다."
+                ],
+                "outlook": "서면 의견은 내년 1월 5일까지 받고 1월 25일 공청회를 열며, 관세는 그 뒤에야 시행될 수 있습니다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "경제",
+                  "minor": "무역·통상"
+                },
+                "sources": [
+                  {
+                    "name": "BBC",
+                    "url": "https://www.bbc.co.uk/news/articles/c893r9ke5p97o?at_medium=RSS&at_campaign=rss",
+                    "publishedAt": "2026-11-26",
+                    "imageUrl": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/91fc/live/6d9c5c50-e908-11f1-99b6-a35a62fa4264.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261125185752071",
+                    "publishedAt": "2026-11-26",
+                    "imageUrl": "https://img.yna.co.kr/photo/ap/2026/08/24/PAP20260824246501009_P2.jpg"
+                  },
+                  {
+                    "name": "ABC News",
+                    "url": "https://abcnews.com/Politics/trump-admin-proposes-new-tariffs-china-eu-12/story?id=138442698",
+                    "publishedAt": "2026-11-25"
+                  },
+                  {
+                    "name": "이투데이",
+                    "url": "https://www.etoday.co.kr/news/view/2653055",
+                    "publishedAt": "2026-11-26"
+                  }
+                ],
+                "analogy": "새 관세안은 확정 가격표가 아니라 협상을 위한 상한선 표시에 가깝습니다."
+              },
+              {
+                "rank": 2,
+                "title": "후티, 사우디 최대 정유시설과 리야드 금융지구 공격 주장…브렌트유 3.5% 급등",
+                "summary": "예멘 후티 반군이 사우디 라스타누라 정유시설 등을 공격했다고 주장하자 국제유가가 뛰었습니다.",
+                "whyItMatters": "세계 최대 산유국의 시설과 수도가 연이어 표적이 되면서 원유 공급 불안이 커져 물가에 영향을 줄 수 있습니다.",
+                "background": "예멘 내전이 다시 격해지며 후티는 사우디 석유 기반시설을 잇따라 겨냥했고, 호르무즈 해협 통항도 이란 전쟁 여파로 크게 제한돼 있습니다.",
+                "keyFacts": [
+                  "브렌트유는 3.5% 오른 배럴당 94.61달러, 서부텍사스유(WTI)는 2% 오른 83.68달러에 마감했습니다.",
+                  "사우디 주도 연합군은 라스타누라 상공에서 드론 4대를 격추했으며 초기 평가상 부상자는 없다고 밝혔습니다.",
+                  "라스타누라 정유시설은 하루 약 55만 배럴을 처리하는 곳으로 알려졌습니다.",
+                  "정유시설이 실제로 타격을 입었는지는 사우디 측이 확인하지 않았습니다."
+                ],
+                "outlook": "29일 열리는 OPEC+ 회의와 추가 공격 여부가 유가의 변수입니다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "국제",
+                  "minor": "중동"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261126008300072",
+                    "publishedAt": "2026-11-26",
+                    "imageUrl": "https://img.yna.co.kr/etc/inner/KR/2026/11/26/AKR20261126008300072_01_i_P2.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "CNBC",
+                    "url": "https://www.cnbc.com/2026/11/25/oil-wti-brent-hormuz-middle-east.html",
+                    "publishedAt": "2026-11-25"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261125156500079",
+                    "publishedAt": "2026-11-25",
+                    "imageUrl": "https://img.yna.co.kr/photo/etc/xi/2026/11/25/PXI20261125004701009_P2.jpg"
+                  },
+                  {
+                    "name": "RTE",
+                    "url": "https://www.rte.ie/news/business/2026/1125/1600623-world-oil-prices/",
+                    "publishedAt": "2026-11-25"
+                  }
+                ]
+              },
+              {
+                "rank": 3,
+                "title": "미국 10월 PCE 물가 3.8% 상승, 3분기 성장률은 4.3%로 상향",
+                "summary": "연방준비제도(연준)가 중시하는 물가가 목표의 두 배 가까이에 머물러 12월 금리 인상 전망이 굳어졌습니다.",
+                "whyItMatters": "미국 금리가 오르면 환율과 세계 증시, 대출 비용에 영향이 퍼집니다.",
+                "background": "PCE(개인소비지출) 물가는 연준이 통화정책의 기준으로 삼는 지표입니다. 이란 전쟁에 따른 에너지 값, 관세, AI 투자 수요가 물가를 밀어 올린 요인으로 꼽힙니다.",
+                "keyFacts": [
+                  "전체 PCE 물가는 1년 전보다 3.8%, 에너지·식품을 뺀 근원 물가는 3.3% 올랐습니다.",
+                  "3분기 국내총생산(GDP) 성장률은 연율 4.3%로 속보치보다 크게 올려졌습니다.",
+                  "10월 소비지출은 0.3%, 개인소득은 0.7% 늘었습니다.",
+                  "시장은 12월 8∼9일 회의의 0.25%포인트 인상을 모두 반영했습니다."
+                ],
+                "outlook": "12월 연준 회의 전에 나올 고용·물가 지표가 인상 폭 논의를 좌우합니다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "경제",
+                  "minor": "거시·정책"
+                },
+                "sources": [
+                  {
+                    "name": "CNBC",
+                    "url": "https://www.cnbc.com/2026/11/25/pce-inflation-report-october-2026.html",
+                    "publishedAt": "2026-11-25",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261125185851072",
+                    "publishedAt": "2026-11-25",
+                    "imageUrl": "https://img.yna.co.kr/etc/inner/KR/2026/11/25/AKR20261125185851072_01_i_P2.jpg"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261125186251072",
+                    "publishedAt": "2026-11-26",
+                    "imageUrl": "https://img.yna.co.kr/etc/inner/KR/2026/11/25/AKR20261125186251072_02_i_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 4,
+                "title": "이란 '호르무즈에서 유조선·LNG선이 기뢰에 부딪혀 불'…독립 확인 안 돼",
+                "summary": "이란 혁명수비대와 해군이 허가되지 않은 항로로 가던 선박들이 기뢰에 부딪혔다고 주장했습니다.",
+                "whyItMatters": "세계 에너지 수송의 핵심 길목에서 선박 안전과 공급 불안이 다시 커졌습니다.",
+                "background": "이란은 2월 미국·이스라엘의 공격 이후 해협 통항을 강하게 제한해 왔고, 자국 항로 안내를 따르라고 요구합니다.",
+                "keyFacts": [
+                  "이란 측은 유조선 여러 척과 LNG 운반선 한 척이 폭발해 불이 났다고 발표했습니다.",
+                  "선박들이 위치 식별 장치를 끄고 제한 구역에 들어갔다고 주장했습니다.",
+                  "로이터 통신은 이 주장을 확인할 수 없었다고 전했습니다."
+                ],
+                "outlook": "이란은 카타르 중재를 통해 미국이 봉쇄를 풀고 전쟁을 끝내면 48시간 안에 해협을 열겠다고 제안한 것으로 보도됐습니다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "국제",
+                  "minor": "중동"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261126001800079",
+                    "publishedAt": "2026-11-26",
+                    "imageUrl": "https://img.yna.co.kr/photo/ap/2026/11/21/PAP20261121129001009_P2.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "Arab News",
+                    "url": "https://www.arabnews.com/middle-east/iran-claims-lng-tanker-ablaze-in-hormuz-after-hitting-mine-3013942",
+                    "publishedAt": "2026-11-25"
+                  },
+                  {
+                    "name": "Gulf News",
+                    "url": "https://gulfnews.com/world/mena/violating-oil-tanker-catches-fire-after-hitting-naval-mines-near-strait-of-hormuz-iran-1.500761057",
+                    "publishedAt": "2026-11-25"
+                  }
+                ]
+              },
+              {
+                "rank": 5,
+                "title": "네타냐후 재판부, 핵심 뇌물 혐의 공소 취하 검토 권고",
+                "summary": "이스라엘 법원 재판부가 유죄 가능성이 낮다며 검찰총장에게 일부 사건의 재검토를 권했습니다.",
+                "whyItMatters": "10년 가까이 이어진 현직 총리의 부패 재판 흐름이 크게 달라질 수 있습니다.",
+                "background": "베냐민 네타냐후 총리는 세 건의 부패 사건으로 재판을 받아 왔으며 혐의를 부인해 왔습니다.",
+                "keyFacts": [
+                  "재판부는 뇌물 혐의가 걸린 '4000번 사건'의 취하를 검토하라고 권했고, '2000번 사건'은 범죄가 되는지 의문을 나타냈습니다.",
+                  "선물 수수 의혹인 '1000번 사건'은 판결이나 합의로 끝낼 수 있다고 했습니다.",
+                  "재판부는 초기 인상일 뿐 법적 판단이 아니라고 밝혔고, 네타냐후 총리는 재판을 즉시 끝내라고 요구했습니다."
+                ],
+                "outlook": "검찰총장은 아직 취하 여부를 정하지 않았습니다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "국제",
+                  "minor": "중동"
+                },
+                "sources": [
+                  {
+                    "name": "BBC",
+                    "url": "https://www.bbc.co.uk/news/articles/cxj05mv723r2o?at_medium=RSS&at_campaign=rss",
+                    "publishedAt": "2026-11-26",
+                    "imageUrl": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/d91d/live/f0a5ecf0-e8fa-11f1-99b6-a35a62fa4264.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261125178851079",
+                    "publishedAt": "2026-11-25",
+                    "imageUrl": "https://img.yna.co.kr/photo/etc/af/2026/11/25/PAF20261125203401009_P2.jpg"
+                  },
+                  {
+                    "name": "JNS",
+                    "url": "https://www.jns.org/news/israel-news/judges-in-netanyahus-trial-propose-dropping-charges-in-case-4000",
+                    "publishedAt": "2026-11-25"
+                  }
+                ]
+              },
+              {
+                "rank": 6,
+                "title": "영국 에너지 요금 상한 내년 1월부터 26% 인상…표준 가구 연 2166파운드",
+                "summary": "영국 에너지 규제기관이 가스 가격 급등을 반영해 내년 1∼3월 요금 상한을 크게 올렸습니다.",
+                "whyItMatters": "약 2000만 가구의 겨울 난방·전기 요금이 오르게 되고, 중동 전쟁의 충격이 가계로 번지는 사례입니다.",
+                "background": "영국은 변동요금제 가구가 내는 요금에 상한을 두고 분기마다 다시 정합니다.",
+                "keyFacts": [
+                  "계좌 자동이체를 쓰는 표준 가구의 연 환산 금액이 1723파운드에서 2166파운드로 오릅니다.",
+                  "정부는 약 2000만 가구에 1월부터 100파운드를 지원합니다.",
+                  "규제기관은 중동 분쟁이 도매 가스값을 끌어올린 것을 주된 이유로 들었습니다."
+                ],
+                "outlook": "고정요금제를 쓰는 약 1000만 가구는 계약이 끝날 때까지 영향이 없습니다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "경제",
+                  "minor": "거시·정책"
+                },
+                "sources": [
+                  {
+                    "name": "Ofgem",
+                    "url": "https://www.ofgem.gov.uk/press-release/energy-price-cap-rise-26-january-2027",
+                    "publishedAt": "2026-11-25",
+                    "primary": true
+                  },
+                  {
+                    "name": "HQN",
+                    "url": "https://hqnetwork.co.uk/news/energy-price-cap-to-rise-26-in-january-ofgem-confirms/",
+                    "publishedAt": "2026-11-25",
+                    "publishedAtEstimated": true
+                  }
+                ]
+              },
+              {
+                "rank": 7,
+                "title": "솔로몬제도, 호주와 안보조약 서명…중국과의 안보협정은 만료시키기로",
+                "summary": "솔로몬제도가 국가 안보와 민감한 기반시설 문제를 호주와 협의하고 외국 군사기지를 두지 않기로 약속했습니다.",
+                "whyItMatters": "남태평양에서 중국의 영향력 확대를 두고 벌어진 경쟁에서 호주가 중요한 진전을 얻었습니다.",
+                "background": "솔로몬제도는 2022년 중국과 비공개 안보협정을 맺어 호주 등의 우려를 샀고, 올해 새 총리가 이를 재검토해 왔습니다.",
+                "keyFacts": [
+                  "앨버니지 호주 총리와 웨일 솔로몬제도 총리가 25일 캔버라에서 서명했습니다.",
+                  "중국과의 2022년 협정은 내년 4월 갱신 시점에 끝내기로 알렸다고 보도됐습니다.",
+                  "호주는 교육·기반시설 등에 7억4000만 호주달러를 지원하는 것으로 전해졌습니다.",
+                  "야당은 중국과의 개발 협력이 해를 입을 수 있다고 경고했습니다."
+                ],
+                "outlook": "조약 비준 절차와 총리 불신임 움직임 등 솔로몬제도의 국내 정치가 변수입니다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "국제",
+                  "minor": "기타 지역"
+                },
+                "sources": [
+                  {
+                    "name": "ABC News Australia",
+                    "url": "https://www.abc.net.au/news/2026-11-25/australia-signs-pact-with-solomon-islands-in-blow-to-china/107424550",
+                    "publishedAt": "2026-11-25",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261125099900084",
+                    "publishedAt": "2026-11-25",
+                    "imageUrl": "https://img.yna.co.kr/photo/ap/2026/11/25/PAP20261125101901009_P2.jpg"
+                  }
+                ]
+              }
+            ],
+            "shortNews": [
+              {
+                "summary": "이집트 카이로 외곽 순환도로에서 유조차가 뒤집혀 큰불이 나 최소 30명 넘게 숨지고 수십 명이 다쳤습니다.",
+                "category": {
+                  "major": "국제",
+                  "minor": "중동"
+                },
+                "sources": [
+                  {
+                    "name": "BBC",
+                    "url": "https://www.bbc.co.uk/news/articles/cqy7rn30v314o?at_medium=RSS&at_campaign=rss",
+                    "publishedAt": "2026-11-26",
+                    "imageUrl": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/2d4b/live/5e57daf0-e91f-11f1-9108-c5b270b0703d.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "콜롬비아 카르타헤나의 슈퍼마켓 인질 사건에서 특수부대가 진입해 17시간 만에 인질들을 구출했고 괴한 1명이 숨졌습니다.",
+                "category": {
+                  "major": "국제",
+                  "minor": "기타 지역"
+                },
+                "sources": [
+                  {
+                    "name": "BBC",
+                    "url": "https://www.bbc.co.uk/news/articles/ckp80mjr9emyo?at_medium=RSS&at_campaign=rss",
+                    "publishedAt": "2026-11-26",
+                    "imageUrl": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/997a/live/4f4b3940-e8c4-11f1-ac76-db9e97f93d67.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "우크라이나가 러시아의 극초음속 미사일 발진 기지인 사바슬레이카 공군기지를 타격해 군용기 5대를 손상시켰다고 밝혔습니다.",
+                "category": {
+                  "major": "국제",
+                  "minor": "유럽·러시아"
+                },
+                "sources": [
+                  {
+                    "name": "BBC",
+                    "url": "https://www.bbc.co.uk/news/articles/ck9q8xp5r5pgo?at_medium=RSS&at_campaign=rss",
+                    "publishedAt": "2026-11-25",
+                    "imageUrl": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/263d/live/670b2250-e8df-11f1-a3b9-79c60ec9ab33.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "중국 최고위 간부들이 잇따라 낙마하는 가운데 시진핑 주석이 법규에 따른 당 운영을 강조했습니다.",
+                "category": {
+                  "major": "국제",
+                  "minor": "동아시아"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261125143300083",
+                    "publishedAt": "2026-11-25",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/11/18/PYH2026111812180001300_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "대만 검찰이 중국의 선거 개입에 연루된 혐의로 노동당 부대표를 구속했습니다.",
+                "category": {
+                  "major": "국제",
+                  "minor": "동아시아"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261125125900009",
+                    "publishedAt": "2026-11-25",
+                    "imageUrl": "https://img.yna.co.kr/photo/cms/2024/05/28/29/PCM20240528000029990_P2.jpg"
+                  }
+                ]
+              }
+            ],
+            "unverified": "라스타누라 정유시설의 실제 피해와 호르무즈 기뢰 충돌은 당사자 주장 단계이며 독립적으로 확인되지 않았습니다."
+          },
+          {
+            "name": "IT·AI",
+            "flow": "젠슨 황 복귀의 여진이 신용평가와 정보당국 보고로 이어졌고, AI 관련주가 크게 출렁였으며 각국의 플랫폼·우주 데이터센터 규칙이 움직였습니다.",
+            "topStories": [
+              {
+                "rank": 1,
+                "title": "S&P, 엔비디아 신용등급 강등 검토…'이사회 감독과 후계 계획 약점'",
+                "summary": "S&P 글로벌이 엔비디아의 AA 등급을 부정적 관찰대상에 올렸습니다.",
+                "whyItMatters": "AI 반도체의 중심 기업이 실적이 아니라 지배구조 때문에 신용등급 강등 가능성에 놓였습니다.",
+                "background": "젠슨 황 CEO는 사임했다가 11일 만에 복귀했고, 이 과정에서 이사회의 견제 기능과 중국 관련 위험에 의문이 제기됐습니다.",
+                "keyFacts": [
+                  "지배구조 평가 항목을 '긍정적'에서 '중립'으로 낮췄습니다.",
+                  "장기 재직 이사들의 독립성, 경영 감독, 특정 인물 의존과 후계 계획 부재를 지적했습니다.",
+                  "중국 노출과 수출통제 대응도 위험 요인으로 언급했습니다.",
+                  "경쟁력과 재무 상태는 당장 달라지지 않았다고 평가했으며, 무디스는 안정적 전망을 유지했습니다."
+                ],
+                "outlook": "S&P는 이사회·경영진과 만난 뒤 90일 안에 결정할 계획이며, 내려가더라도 한 단계에 그칠 가능성이 크다고 봤습니다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "AI 산업·기업"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261126007151072",
+                    "publishedAt": "2026-11-26",
+                    "imageUrl": "https://img.yna.co.kr/photo/ap/2026/11/24/PAP20261124143801009_P2.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "Yahoo Finance",
+                    "url": "https://finance.yahoo.com/markets/stocks/articles/p-puts-nvidia-creditwatch-over-192625970.html",
+                    "publishedAt": "2026-11-25"
+                  }
+                ],
+                "analogy": "신용등급 관찰대상은 성적을 바로 깎기 전에 '다시 살펴보겠다'는 예고와 같습니다."
+              },
+              {
+                "rank": 2,
+                "title": "AI 투자 불안에 뉴욕증시 장중 급락 뒤 낙폭 축소…나스닥 0.6% 하락 마감",
+                "summary": "나스닥이 장 초반 4% 넘게 밀렸다가 대부분 만회했지만 AI 관련주는 약세였습니다.",
+                "whyItMatters": "AI 투자 열기에 대한 의심이 세계 반도체·클라우드 주가를 함께 흔들며, 한국 증시에도 직접 영향을 줍니다.",
+                "background": "젠슨 황 복귀로 월요일에 AI주가 크게 뛰었지만 화요일부터 되밀렸습니다. 메모리 반도체 공급 과잉과 데이터센터 투자 둔화 걱정이 이어지고 있습니다.",
+                "keyFacts": [
+                  "다우는 장 초반 1000포인트 넘게 빠졌다가 0.3% 올라 마감했고 S&P500은 0.25% 내렸습니다.",
+                  "엔비디아는 4% 안팎, 마이크론은 4%대, 오라클은 약 5% 내렸습니다.",
+                  "앤트로픽은 약 1% 올랐지만 82.79달러로 공모가 83달러를 밑돌았습니다."
+                ],
+                "outlook": "추수감사절 휴장을 앞두고 변동성이 이어질지, 대형 클라우드 기업의 투자 계획이 유지될지 주목됩니다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "경제",
+                  "minor": "금융·증시"
+                },
+                "sources": [
+                  {
+                    "name": "ABC News",
+                    "url": "https://abcnews.com/Business/stocks-tumble-tech-sell-off-resumes-nvidia-falls/story?id=138442070",
+                    "publishedAt": "2026-11-25",
+                    "primary": true
+                  },
+                  {
+                    "name": "SiliconANGLE",
+                    "url": "https://siliconangle.com/2026/11/25/ai-infrastructure-stocks-continue-their-slide-but-anthropic-closes-higher/",
+                    "publishedAt": "2026-11-25"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261126009851072",
+                    "publishedAt": "2026-11-26",
+                    "imageUrl": "https://img.yna.co.kr/photo/reuters/2026/11/26/PRU20261126032101009_P2.jpg"
+                  },
+                  {
+                    "name": "BBC",
+                    "url": "https://www.bbc.co.uk/news/articles/cq0md8g14zryo?at_medium=RSS&at_campaign=rss",
+                    "publishedAt": "2026-11-26",
+                    "imageUrl": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/9f2e/live/6940e8e0-e8f1-11f1-99a1-253766e7ad8b.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 3,
+                "title": "미 정보당국 '앨리스 황, 중국 정보기관과 접촉'…중국 지시 증거는 못 찾아",
+                "summary": "정보당국이 의회에 앨리스 황이 중국 국가안전부와 접촉해 정보를 넘겼다고 보고했다는 보도가 나왔습니다.",
+                "whyItMatters": "엔비디아 CEO를 둘러싼 첩보 의혹은 AI 칩의 중국 유출 문제와 이어져 회사 경영과 수출 규제에 영향을 줄 수 있습니다.",
+                "background": "앨리스 황은 AI 칩을 확보해 중국으로 빼돌린 의심을 받는 싱가포르 기업 메가스피드의 전 임원입니다. 중국은 첩보 의혹을 부인해 왔습니다.",
+                "keyFacts": [
+                  "당국자들은 두 사람의 관계가 중국의 지시로 시작됐다는 증거는 찾지 못했다고 전해졌습니다.",
+                  "중요한 정보를 제공한 흔적은 없어 보인다고 월스트리트저널이 보도했습니다.",
+                  "배우자로 알려진 캉웨이는 국가안전부의 정보원이었다고 보도됐습니다.",
+                  "브리핑은 일반 정보 수준이어서 가장 민감한 자료는 다뤄지지 않았습니다."
+                ],
+                "outlook": "의회의 조사가 이어지고 있으며, 새 정보에 따라 평가가 바뀔 수 있습니다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "보안"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261125136151009",
+                    "publishedAt": "2026-11-25",
+                    "imageUrl": "https://img.yna.co.kr/photo/reuters/2026/11/25/PRU20261125192601009_P2.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "SBS",
+                    "url": "https://news.sbs.co.kr/english/article.do?news_id=N1008863233",
+                    "publishedAt": "2026-11-25"
+                  },
+                  {
+                    "name": "Korea Times",
+                    "url": "https://www.koreatimes.co.kr/world/20261126/us-finds-no-evidence-china-directed-executive-to-spy-on-nvidia-ceo-wsj-reports",
+                    "publishedAt": "2026-11-26"
+                  }
+                ]
+              },
+              {
+                "rank": 4,
+                "title": "호주, 플랫폼에 '피해 예방 의무' 지우는 법 통과…위반 시 세계 매출의 최대 5% 벌금",
+                "summary": "호주 의회가 빅테크에 예상되는 피해를 미리 막을 책임을 부과하는 법을 통과시켰습니다.",
+                "whyItMatters": "개별 게시물 삭제를 넘어 서비스 설계 단계의 책임을 묻는 강한 규제로 다른 나라에도 본보기가 될 수 있습니다.",
+                "background": "집권 노동당은 녹색당과 합의해 법을 통과시켰습니다. 미국 대사는 모호한 기준이 합법적 발언까지 검열하게 만들 것이라고 반발했습니다.",
+                "keyFacts": [
+                  "12개월 유예 뒤 시행됩니다.",
+                  "플랫폼은 매년 위험 평가를 내고, 중독성 기능 같은 위험한 설계 변경 전에 당국에 알려야 합니다.",
+                  "이용자가 플랫폼을 직접 소송할 수 있고 추천 알고리즘 피드를 끌 수 있습니다.",
+                  "야당은 검열 위험을 들어 반대했습니다."
+                ],
+                "outlook": "미국과의 이견 조율, 야당의 폐지 공약, 시행 세칙이 관건입니다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "규제·정책"
+                },
+                "sources": [
+                  {
+                    "name": "TIME",
+                    "url": "https://time.com/article/2026/11/25/australia-digital-duty-of-care-big-tech-fines-social-media-platforms-risks-harms-safety/",
+                    "publishedAt": "2026-11-25",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261125161900084",
+                    "publishedAt": "2026-11-25",
+                    "imageUrl": "https://img.yna.co.kr/photo/etc/epa/2026/11/24/PEP20261124085501009_P2.jpg"
+                  },
+                  {
+                    "name": "The Record",
+                    "url": "https://therecord.media/australia-passes-online-safety-legislation-preempt-harms",
+                    "publishedAt": "2026-11-25",
+                    "publishedAtEstimated": true
+                  }
+                ],
+                "devCheckpoint": "호주 이용자가 있는 서비스는 위험 평가 문서와 추천 피드 끄기 기능을 준비 항목으로 검토할 필요가 있습니다."
+              },
+              {
+                "rank": 5,
+                "title": "빗썸 해킹, 1시간이 아니라 보름 넘게 침입…유출 대상·항목 늘어",
+                "summary": "빗썸이 사내 업무시스템 해킹을 다시 조사한 결과 무단 접속이 10월 12일부터 27일까지 이어졌다고 밝혔습니다.",
+                "whyItMatters": "주민등록번호·여권번호·계좌번호 같은 민감 정보가 포함돼 가상자산 이용자의 2차 피해 우려가 있습니다.",
+                "background": "빗썸은 처음에 27일 약 1시간의 해킹으로 총 7159명의 정보가 유출됐다고 알렸습니다.",
+                "keyFacts": [
+                  "접근은 12일 오후 1시49분부터 27일 오후 3시22분까지로 확인됐습니다.",
+                  "유출 항목은 16개에서 19개로 늘었고 추가 인원은 공개하지 않았습니다.",
+                  "회사는 거래소 서비스나 고객 데이터베이스가 직접 침해된 정황은 없다고 설명합니다."
+                ],
+                "outlook": "유출 확인 고객에게 개별 안내와 보상 절차를 진행할 예정입니다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "보안"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261125176100002",
+                    "publishedAt": "2026-11-25",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/10/28/PYH2026102812140001300_P2.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "블록미디어",
+                    "url": "https://www.blockmedia.co.kr/archives/1170542",
+                    "publishedAt": "2026-11-25"
+                  },
+                  {
+                    "name": "EBN",
+                    "url": "https://www.ebn.co.kr/news/articleView.html?idxno=1733015",
+                    "publishedAt": "2026-11-25",
+                    "publishedAtEstimated": true
+                  }
+                ],
+                "devCheckpoint": "거래 시스템과 분리된 사내 그룹웨어도 접속 로그를 장기간 점검하고 이상 접근 차단 뒤 실제 중단 여부를 확인해야 합니다."
+              },
+              {
+                "rank": 6,
+                "title": "미 FCC, 스페이스X의 우주 AI 데이터센터 위성 최대 100만기 승인",
+                "summary": "미국 연방통신위원회가 스페이스X의 '스타마인드' 위성군 배치를 허가했습니다.",
+                "whyItMatters": "AI 연산에 필요한 전력을 우주 태양광으로 얻으려는 계획이 처음으로 규제 승인을 받았습니다.",
+                "background": "아마존과 비아샛, 미국천문학회는 위성 충돌 위험과 천문 관측 방해 등을 이유로 반대했습니다.",
+                "keyFacts": [
+                  "FCC는 환경과 광학 천문 우려는 자신의 권한 밖이라며 기각했습니다.",
+                  "일부 사안은 결정을 미뤘고, 승인이 곧바로 전면 배치를 뜻하지는 않습니다.",
+                  "블루오리진도 최대 5만1600기의 위성 허가를 신청해 둔 상태입니다."
+                ],
+                "outlook": "정해진 기한 안에 실제 발사와 운용이 이뤄지는지가 시험대입니다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "AI 산업·기업"
+                },
+                "sources": [
+                  {
+                    "name": "CNBC",
+                    "url": "https://www.cnbc.com/2026/11/25/spacex-fcc-satellite-approval.html",
+                    "publishedAt": "2026-11-25",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261126004600091",
+                    "publishedAt": "2026-11-26",
+                    "imageUrl": "https://img.yna.co.kr/photo/reuters/2026/11/19/PRU20261119117201009_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 7,
+                "title": "EU, 미국·중국에 맞설 500억 유로 '소버린 기술펀드' 제안",
+                "summary": "EU 집행위원회가 양자컴퓨팅법 초안과 함께 AI·양자 기업에 지분 투자하는 대형 펀드를 제안했습니다.",
+                "whyItMatters": "핵심 기술을 해외에 의존하지 않으려는 유럽의 산업 정책이 직접 투자로 확대됩니다.",
+                "background": "EU에서는 민간 투자가 미국에 크게 뒤처지고 해외 기술 의존이 안보 문제라는 우려가 커졌습니다.",
+                "keyFacts": [
+                  "500억 유로는 확정 예산이 아니라 목표 규모입니다.",
+                  "양자법은 연구, 실용화, 공급망 보안의 세 축으로 구성됩니다.",
+                  "2030년까지 유럽을 양자 기술 선두로 만드는 것이 목표입니다."
+                ],
+                "outlook": "세부안은 내년 2월 제시될 예정이며 EU 이사회와 의회 승인이 필요합니다.",
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "규제·정책"
+                },
+                "sources": [
+                  {
+                    "name": "Tech.eu",
+                    "url": "https://tech.eu/2026/11/25/eu-proposes-eur50-billion-equity-fund-to-support-quantum-and-essential-sovereign-tech",
+                    "publishedAt": "2026-11-25",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261125125351009",
+                    "publishedAt": "2026-11-25",
+                    "imageUrl": "https://img.yna.co.kr/photo/etc/epa/2026/11/11/PEP20261111250801009_P2.jpg"
+                  }
+                ]
+              }
+            ],
+            "shortNews": [
+              {
+                "summary": "한국투자저축은행에서 해킹으로 고객 8만6433명의 개인정보가 유출돼 업권 최대 규모로 기록됐습니다.",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "보안"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261125165600002",
+                    "publishedAt": "2026-11-25",
+                    "imageUrl": "https://img.yna.co.kr/photo/cms/2019/11/08/15/PCM20191108000215990_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "미국 재무부 산하 금융범죄 단속기관 FinCEN이 해킹 사고 뒤 일부 시스템의 가동을 멈췄습니다.",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "보안"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261126003300072",
+                    "publishedAt": "2026-11-26",
+                    "imageUrl": "https://img.yna.co.kr/photo/reuters/2026/10/30/PRU20261030267701009_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "네덜란드에서 ASML의 대중 장비 거래를 더 옥죌 미국 의회의 '매치법안'에 대한 우려가 커졌습니다.",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "반도체·하드웨어"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261125126300009",
+                    "publishedAt": "2026-11-25",
+                    "imageUrl": "https://img.yna.co.kr/photo/reuters/2026/10/26/PRU20261026402301009_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "중국 선저우 24호가 파키스탄 우주인을 태우고 발사돼 우주정거장 톈궁에 도킹했고, 톈궁 첫 외국인 방문이 이뤄졌습니다.",
+                "category": {
+                  "major": "과학·건강",
+                  "minor": "우주"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261125067251083",
+                    "publishedAt": "2026-11-25",
+                    "imageUrl": "https://img.yna.co.kr/photo/etc/af/2026/11/25/PAF20261125162101009_P2.jpg"
+                  },
+                  {
+                    "name": "BBC",
+                    "url": "https://www.bbc.co.uk/news/videos/cmz74l0yzzvyo?at_medium=RSS&at_campaign=rss",
+                    "publishedAt": "2026-11-25",
+                    "imageUrl": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/4b78/live/6330c460-e889-11f1-a094-5fdc692f3e33.jpg"
+                  }
+                ]
+              }
+            ],
+            "unverified": "앨리스 황 관련 평가는 비공개 브리핑을 전한 언론 보도이며 당국의 공식 발표가 아닙니다."
+          }
+        ]
+      },
+      "collectedAt": "2026-11-26T08:29:57+09:00",
+      "late": false
     }
   ],
   "extracted": [
@@ -21212,7 +22309,8 @@
     "2026-11-21",
     "2026-11-22",
     "2026-11-23",
-    "2026-11-24"
+    "2026-11-24",
+    "2026-11-25"
   ],
   "scheduled": [
     "2026-11-01",
@@ -21238,6 +22336,7 @@
     "2026-11-21",
     "2026-11-22",
     "2026-11-23",
-    "2026-11-24"
+    "2026-11-24",
+    "2026-11-25"
   ]
 }
