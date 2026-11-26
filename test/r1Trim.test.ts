@@ -32,7 +32,7 @@ const RETIRED_WORDS: readonly [string, RegExp][] = [
   ["repo snapshot", /repo[ _-]?snapshot/i],
   ["demand", /demand/i],
   ["community", /community/i],
-  ["영상", /영상/],
+  // "영상"은 B2(2026-11-26)가 영상 탭 이름으로 다시 쓴다(B2 명세서 3.4)
   // "빌더"는 B1(2026-11-25)이 저장소 탭 이름으로 다시 쓴다(B1 명세서 3.4)
   ["수요", /수요(?!일)/],
   ["새 제품", /새 제품/],
@@ -41,11 +41,15 @@ const RETIRED_WORDS: readonly [string, RegExp][] = [
   ["흐름 항목", /흐름 항목/],
 ];
 
+/** B2(명세서 3.4)가 다시 쓰는 이름. 이것만 지우고 낱말을 본다(옛 명령 video-fetch, YouTube Data API 등은 그대로 걸린다) */
+const REUSED_NAMES = /video-pick|youtube-insight|TIDWYN_YOUTUBE_DB/gi;
+
 /** 글 속 지운 기능 낱말의 자리(줄 번호와 낱말) */
 function retiredWordHits(text: string): string[] {
   const hits: string[] = [];
-  text.split("\n").forEach((line, i) => {
-    for (const [name, re] of RETIRED_WORDS) if (re.test(line)) hits.push(`${i + 1}행 ${name}: ${line.trim().slice(0, 80)}`);
+  text.split("\n").forEach((raw, i) => {
+    const line = raw.replace(REUSED_NAMES, "");
+    for (const [name, re] of RETIRED_WORDS) if (re.test(line)) hits.push(`${i + 1}행 ${name}: ${raw.trim().slice(0, 80)}`);
   });
   return hits;
 }
@@ -159,7 +163,10 @@ describe("R1 4.1-1 브리프 스킬 문서", () => {
 
   test("낱말 검사는 일부러 넣은 낱말을 잡고, '수요일'과 뉴스 흐름은 잡지 않는다", () => {
     const planted = `${skill}\n- 12-5단계: 영상 받기(\`video-fetch\`)\n`;
-    assert.deepEqual(retiredWordHits(planted).map((h) => h.replace(/^\d+행 /, "").split(":")[0]), ["video", "영상"]);
+    assert.deepEqual(retiredWordHits(planted).map((h) => h.replace(/^\d+행 /, "").split(":")[0]), ["video"]);
+    // B2가 다시 쓰는 이름과 '영상'은 잡지 않고, 옛 YouTube API 이름은 잡는다
+    assert.deepEqual(retiredWordHits("12-6단계 영상: `video-pick`이 youtube-insight DB(`TIDWYN_YOUTUBE_DB`)를 읽는다"), []);
+    assert.equal(retiredWordHits("YouTube Data API 키").length, 1);
     for (const [word, text] of [["Demand", "Demand flow"], ["수요", "수요 흐름"], ["새 제품", "새 제품 소개"], ["뜨는 저장소", "뜨는 저장소 목록"], ["커뮤니티", "커뮤니티 신호"], ["흐름 항목", "흐름 항목 정정"], ["builder", "BuilderItem"], ["product hunt", "ProductHunt"], ["repo snapshot", "repoSnapshot"], ["gemini", "GEMINI_API_KEY"]] as const) {
       assert.equal(retiredWordHits(text).length, 1, `${word}: ${text}`);
     }
@@ -189,7 +196,7 @@ describe("R1 4.1-1 브리프 스킬 문서", () => {
     const dangling = `${skill}\n앞 명령이 실패해도 멈추지 않고 다음 명령과 18-1단계로 넘어간다.\n`;
     assert.deepEqual(danglingStepRefs(dangling, rows), ["18-1단계"]);
     // 표에 없는 단계의 절
-    const extraHeading = skill.replace("### 13단계: 합치기", "### 12-5단계: 영상 고르기\n\n### 13단계: 합치기");
+    const extraHeading = skill.replace("### 13단계: 합치기", "### 12-9단계: 영상 고르기\n\n### 13단계: 합치기");
     assert.notDeepEqual(headingProblems(extraHeading, rows), []);
     // 다루는 절이 없는 주 단계
     const noHeading = skill.replace(/^### 14단계: .*$/m, "### 지난 날짜 이미지 채우기");

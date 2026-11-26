@@ -80,8 +80,8 @@ const SECRET_PATTERNS: { kind: FindingKind; re: RegExp }[] = [
   { kind: "Google API 키 모양", re: /(?<![0-9A-Za-z_-])AIza[0-9A-Za-z_-]{35}(?![0-9A-Za-z_-])/ },
 ];
 
-/** 백업 파일 이름(backup.ts의 월별 JSON, issues.json, refs.json, schedules.json, indicators.json, corrections.json, repos.json, meta.json). 결과물 검사도 쓴다 */
-export const BACKUP_NAME_RE = /^(?:\d{4}-\d{2}\.json|issues\.json|refs\.json|schedules\.json|indicators\.json|corrections\.json|repos\.json|meta\.json)$/;
+/** 백업 파일 이름(backup.ts의 월별 JSON, issues.json, refs.json, schedules.json, indicators.json, corrections.json, repos.json, watch.json, meta.json). 결과물 검사도 쓴다 */
+export const BACKUP_NAME_RE = /^(?:\d{4}-\d{2}\.json|issues\.json|refs\.json|schedules\.json|indicators\.json|corrections\.json|repos\.json|watch\.json|meta\.json)$/;
 /** 저장소 단계(B1 4.1-3)의 작업 파일: 후보 파일(피드의 README·한 줄 설명)과 Claude가 쓰는 항목 파일. 어느 폴더에 있든 이름으로 찾는다 */
 const REPO_WORK_NAMES = new Set(["repo-candidates.json", "repo-items.json"]);
 export const EMAIL_RE = /[A-Za-z0-9._%+-]+@([A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,})/g;

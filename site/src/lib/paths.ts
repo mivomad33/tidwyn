@@ -19,6 +19,7 @@ export const dataUrl = {
   scheduleRef: (chunk: number) => `${DATA_BASE}schedule-ref-${chunk}.json`,
   indicatorList: () => `${DATA_BASE}indicator-list.json`,
   indicatorSeries: (id: string) => `${DATA_BASE}indicator-${id}.json`,
+  watch: (part: string) => `${DATA_BASE}watch-${part}.json`,
 };
 
 /** 이슈 식별자 묶음 크기(siteTypes의 ISSUE_CHUNK_SIZE와 같다) */

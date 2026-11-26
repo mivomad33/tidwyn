@@ -3,15 +3,16 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { BriefBackLink, Empty, ErrorState, Layout, Loading, NewsTitle, ReadCheck, useFocusNewRow, useTitle } from "../components/common.tsx";
 import { loadJson } from "../data.ts";
+import { videoPartOf } from "../../../src/siteTypes.ts";
 import { repoRankText } from "../components/repoView.ts";
-import { BUILDER_HASH } from "../lib/brief.ts";
+import { BUILDER_HASH, VIDEO_HASH } from "../lib/brief.ts";
 import { monthDayWeekday } from "../lib/format.ts";
 import { dataUrl } from "../lib/paths.ts";
 import { briefPath, entityPath, issuePath, searchPath, termPath } from "../lib/routes.ts";
-import { matchDayStories, matchEntities, matchIssues, matchRepos, matchTerms, monthOf, parseHit, queryTerms, type SearchHit } from "../lib/search.ts";
+import { matchDayStories, matchEntities, matchIssues, matchRepos, matchTerms, matchVideos, monthOf, parseHit, queryTerms, type SearchHit } from "../lib/search.ts";
 import { excerpt } from "../lib/terms.ts";
 import { categoryVar } from "../lib/theme.ts";
-import type { DayRepoItem, EntityChunk, EntityDetail, IssueChunk, IssueDetail, ListStory, MonthDetail, MonthList, SiteIssueList, TermGroupFile, TermItem } from "../lib/types.ts";
+import type { DayRepoItem, DayVideoItem, EntityChunk, EntityDetail, IssueChunk, IssueDetail, ListStory, MonthDetail, MonthList, SiteIssueList, TermGroupFile, TermItem, VideoPartFile } from "../lib/types.ts";
 import { searchRecords, type PagefindResult } from "../pagefind.ts";
 import { Link, navigate } from "../router.tsx";
 
@@ -28,16 +29,22 @@ interface RepoResult {
   item: DayRepoItem;
 }
 
+interface VideoResult {
+  date: string;
+  item: DayVideoItem;
+}
+
 interface Found {
   news: NewsResult[];
   repos: RepoResult[];
+  videos: VideoResult[];
   issues: IssueDetail[];
   entities: EntityDetail[];
   terms: TermItem[];
 }
 
 function joinFound(a: Found, b: Found): Found {
-  return { news: [...a.news, ...b.news], repos: [...a.repos, ...b.repos], issues: [...a.issues, ...b.issues], entities: [...a.entities, ...b.entities], terms: [...a.terms, ...b.terms] };
+  return { news: [...a.news, ...b.news], repos: [...a.repos, ...b.repos], videos: [...a.videos, ...b.videos], issues: [...a.issues, ...b.issues], entities: [...a.entities, ...b.entities], terms: [...a.terms, ...b.terms] };
 }
 
 async function resolveRecords(records: PagefindResult[], terms: string[]): Promise<Found> {
@@ -49,7 +56,8 @@ async function resolveRecords(records: PagefindResult[], terms: string[]): Promi
   const entityHits = hits.filter((h) => h.kind === "entities");
   const termHits = hits.filter((h) => h.kind === "terms");
   const repoHits = hits.filter((h) => h.kind === "repos");
-  const [newsParts, issueParts, entityParts, termParts, repoParts] = await Promise.all([
+  const videoHits = hits.filter((h) => h.kind === "videos");
+  const [newsParts, issueParts, entityParts, termParts, repoParts, videoParts] = await Promise.all([
     Promise.all(
       newsHits.map(async (h) => {
         const month = monthOf(h.date);
@@ -72,10 +80,16 @@ async function resolveRecords(records: PagefindResult[], terms: string[]): Promi
         return day ? matchRepos(day, terms).map((item) => ({ date: h.date, item })) : [];
       }),
     ),
+    Promise.all(
+      videoHits.map(async (h) => {
+        const part = await loadJson<VideoPartFile>(dataUrl.watch(videoPartOf(h.date)));
+        return matchVideos(part.days[h.date], terms).map((item) => ({ date: h.date, item }));
+      }),
+    ),
   ]);
   for (const part of newsParts) news.push(...part);
   for (const part of issueParts) issues.push(...part);
-  return { news, repos: repoParts.flat(), issues, entities: entityParts.flat(), terms: termParts.flat() };
+  return { news, repos: repoParts.flat(), videos: videoParts.flat(), issues, entities: entityParts.flat(), terms: termParts.flat() };
 }
 
 type State =
@@ -162,7 +176,7 @@ export function SearchPage({ q }: { q: string }) {
 function Results({ state, q, onMore }: { state: Extract<State, { status: "ok" }>; q: string; onMore: () => void }) {
   const { found, records, done, more } = state;
   const hasMore = done < records.length;
-  const none = !found.issues.length && !found.news.length && !found.entities.length && !found.terms.length && !found.repos.length;
+  const none = !found.issues.length && !found.news.length && !found.entities.length && !found.terms.length && !found.repos.length && !found.videos.length;
   const moreFocus = useFocusNewRow<HTMLDivElement>("li.item", q);
   if (none && !hasMore) return <Empty>"{q}"에 맞는 결과가 없습니다.</Empty>;
   return (
@@ -237,6 +251,25 @@ function Results({ state, q, onMore }: { state: Extract<State, { status: "ok" }>
                     </NewsTitle>
                     <ReadCheck date={n.date} newsKey={n.story.key} />
                   </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+      {found.videos.length > 0 && (
+        <section aria-labelledby="r-videos">
+          <h2 id="r-videos" className="h list-h">
+            영상
+          </h2>
+          <ul className="list">
+            {sortNews(found.videos).map((r) => (
+              <li key={`${r.date}-${r.item.id}`} className="item">
+                <Link to={briefPath(r.date, VIDEO_HASH)} className="item-btn">
+                  <span className="cat muted-cat">
+                    {monthDayWeekday(r.date)} · {r.item.category} · {r.item.channel}
+                  </span>
+                  <span className="title small">{r.item.title}</span>
                 </Link>
               </li>
             ))}

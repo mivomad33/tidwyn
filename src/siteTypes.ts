@@ -28,6 +28,8 @@ export const siteFiles = {
   /** 6단계: 지표 목록(카드·관련 이슈), 지표마다의 최근 5년 값 */
   indicatorList: "indicator-list.json",
   indicatorSeries: (id: string) => `indicator-${id}.json`,
+  /** B2: 반달 영상 파일(`videoPartOf`, 날짜 → 상태와 항목). 첫 화면의 달 목록 파일에 넣지 않고 영상 탭을 열 때 받는다(4.3-6) */
+  watch: (part: string) => `watch-${part}.json`,
 } as const;
 
 export function issueChunkOf(id: number): number {
@@ -74,6 +76,21 @@ export function termRecordUrl(group: number): string {
 /** B1: 저장소 기록이 '실음'인 날짜 하나에 검색 레코드 하나(meta kind "repos", date). 저장소 이름과 설명을 담고, 결과는 그 날짜의 빌더 탭으로 간다 */
 export function repoRecordUrl(date: string): string {
   return `/${date}/builder`;
+}
+
+/** B2: 영상 기록이 '실음'인 날짜 하나에 검색 레코드 하나(meta kind "videos", date). 영상 제목과 채널을 담고, 결과는 그 날짜의 영상 탭으로 간다 */
+export function videoRecordUrl(date: string): string {
+  return `/${date}/watch`;
+}
+
+/** B2: 영상 하나의 검색 대상 글(제목과 채널). 색인(레코드 글)과 화면의 맞춤이 같은 글을 쓴다 */
+export function videoSearchText(item: { title: string; channel: string }): string {
+  return [item.title, item.channel].join("\n");
+}
+
+/** B2: 영상 검색 레코드의 글 */
+export function videoRecordContent(items: readonly { title: string; channel: string }[]): string {
+  return items.map(videoSearchText).join("\n");
 }
 
 /** B1: 저장소 하나의 검색 대상 글. 이름은 그대로와 낱말로 나눈 것(`owner/name`의 `/`·`-`·`_`·`.`를 띄어 쓴 것)을 함께 둔다. 색인(레코드 글)과 화면의 맞춤이 같은 글을 쓴다 */
@@ -381,6 +398,53 @@ export interface DayList {
   indicators?: IndicatorChip[];
   /** B1: 그날의 저장소 기록(GitHub 주간 트렌딩에 처음 오른 저장소). 기록이 없는 날은 항목을 뺀다 */
   repos?: DayRepos;
+  /** B2: 그날 영상 기록의 상태와 실은 수. 항목은 반달 영상 파일(`watch-YYYY-MM-N.json`, `videoPartOf`)에 있다. 기록이 없는 날은 항목을 뺀다 */
+  videos?: DayVideoSummary;
+}
+
+/** B2: 영상 항목 하나. rank는 분야 안 순위(1부터), id는 유튜브 영상 ID */
+export interface DayVideoItem {
+  id: string;
+  category: string;
+  rank: number;
+  title: string;
+  channel: string;
+  /** 길이(초) */
+  duration: number;
+  /** 조회수(고른 때의 가장 늦은 스냅샷) */
+  views: number;
+  /** 업로드 시각(UTC ISO). 원천이 유튜브의 '3일 전' 같은 글에서 거꾸로 셈한 추정값이다 */
+  uploadAt: string;
+  /** 업로드 시각의 정밀도(초): 86400이면 날 단위, 3600이면 시간 단위, 60이면 분 단위로만 맞다 */
+  uploadPrecision: number;
+  /** 고른 때의 하루 평균 조회수(반올림). 고른 순위의 기준이고, '모든 분야'는 이 값으로 분야를 섞어 보인다 */
+  dailyViews: number;
+}
+
+/** B2: 날짜의 영상 기록. 상태만 싣고 받지 못한 이유는 싣지 않는다. 'shown'이면 항목이 분야 순서·분야 안 순위 순, 아니면 빈 목록 */
+export interface DayVideos {
+  status: "shown" | "none" | "failed";
+  items: DayVideoItem[];
+}
+
+/** B2: 달 목록 파일에 싣는 영상 기록 요약 */
+export interface DayVideoSummary {
+  status: DayVideos["status"];
+  count: number;
+}
+
+/**
+ * B2: 날짜가 드는 영상 파일 조각(`YYYY-MM-1`은 1~15일, `YYYY-MM-2`는 16일~말일).
+ * 하루 70개·제목 100자의 최악 조건에서 한 달 파일은 gzip 300KB를 넘어 반달로 나눈다(4.3-6). 날짜마다 나누는 것보다 파일 수가 덜 는다
+ */
+export function videoPartOf(date: string): string {
+  return `${date.slice(0, 7)}-${Number(date.slice(8, 10)) <= 15 ? 1 : 2}`;
+}
+
+/** `watch-YYYY-MM-N.json`: 그 반달의 영상 기록이 있는 날짜만 */
+export interface VideoPartFile {
+  part: string;
+  days: Record<string, DayVideos>;
 }
 
 /** B1: 저장소 항목 하나. rank는 처음 실린 날의 주간 순위 */

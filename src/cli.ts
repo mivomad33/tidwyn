@@ -79,6 +79,7 @@ import {
   type RefMergeDone,
   type RepoStepResult,
   type RunState,
+  type VideoStepResult,
   type ScheduleMergeDone,
   type ScheduleResult,
   type SiteResult,
@@ -100,6 +101,7 @@ import {
   type RepoCandidatesFile,
 } from "./trendRepos.ts";
 import { formatViolations, validateBrief, type Violation } from "./validate.ts";
+import { VIDEO_STATUS_LABEL, countByCategory, pickVideos, readSource, saveVideoDay, shownVideoIds, sourcePath, videoDayStatus, videoTargetDate } from "./weeklyVideos.ts";
 
 // /brief 스킬이 부르는 명령들. 런타임 의존성 없이 Node 내장 기능과 git만 쓴다.
 
@@ -202,7 +204,9 @@ const USAGE = `명령:
 저장소(B1):
   repo-fetch --run <파일>                 가장 늦은 저장된 브리프 날짜의 GitHub 주간 트렌딩 후보(work/repo-candidates.json). 실패하면 받지 못함으로 남긴다
   repo-check --run <파일>                 항목 파일(work/repo-items.json) 검사(위치와 이유만 출력한다)
-  repo-apply --run <파일>                 검사 → 저장(위반이 남으면 받지 못함으로 남긴다)`;
+  repo-apply --run <파일>                 검사 → 저장(위반이 남으면 받지 못함으로 남긴다)
+영상(B2):
+  video-pick --run <파일> [--at <ISO 시각>]   가장 늦은 저장된 브리프 날짜에 youtube-insight DB(읽기 전용, TIDWYN_YOUTUBE_DB로 바꾼다)의 통과 영상을 분야별 하루 평균 순 최대 10개 싣는다. --at은 기준 시각(시험용, 없으면 지금)`;
 
 function opts(argv: string[], options: Record<string, { type: "string" | "boolean" }>) {
   return parseNodeArgs({ args: argv, options, allowPositionals: false, strict: true }).values as Record<string, string | boolean | undefined>;
@@ -541,6 +545,7 @@ function cmdSummary(argv: string[], ctx: Context): number {
   lines.push(...scheduleSummaryLines(s));
   lines.push(...indicatorSummaryLines(s));
   lines.push(...repoSummaryLines(s.repos));
+  lines.push(...videoSummaryLines(s.videos));
   lines.push(...imageSummaryLines(s, saved));
   lines.push(`- 백업: ${describeBackup(s.backup)}`);
   lines.push(...siteSummaryLines(s));
@@ -569,6 +574,7 @@ function deployOnlySummary(s: RunState): string[] {
     `- 합치기: ${skipped}`,
     `- 이미지: ${skipped}`,
     `- 저장소: ${skipped}`,
+    `- 영상: ${skipped}`,
     `- 백업: ${describeBackup(s.backup)}`,
     ...siteSummaryLines(s),
   ];
@@ -1853,6 +1859,85 @@ function cmdRepoApply(argv: string[], ctx: Context): number {
   }
 }
 
+// ---- 영상(B2) ----
+
+/** 영상 고르기(4.1-1~4.1-3). 원천 DB를 열 수 없거나 구조가 다르면 받지 못함으로 남기고 종료 코드 0으로 끝난다(4.1-4) */
+function cmdVideoPick(argv: string[], ctx: Context): number {
+  const v = opts(argv, { run: { type: "string" }, at: { type: "string" } });
+  const runFile = need(v, "run");
+  let at = ctx.now();
+  if (typeof v.at === "string") {
+    const t = Date.parse(v.at);
+    if (Number.isNaN(t)) throw new UsageError(`--at을 시각으로 읽을 수 없다: ${v.at}`);
+    at = new Date(t);
+  }
+  const state = readRun(runFile);
+  const record = (r: VideoStepResult) => updateRun(runFile, (s) => (s.videos = r));
+  const noTarget = () => {
+    record({ status: "noTarget" });
+    ctx.out("영상: 대상 없음(저장된 브리프가 없다)");
+    return EXIT.ok;
+  };
+  if (!fs.existsSync(state.dbPath)) return noTarget();
+  const db = openExistingDb(state.dbPath);
+  try {
+    const date = videoTargetDate(db);
+    if (date === null) return noTarget();
+    const now = videoDayStatus(db, date);
+    if (now === "shown" || now === "none") {
+      record({ status: "done", date, recorded: now });
+      ctx.out(`영상(${date}): 이미 끝남(${VIDEO_STATUS_LABEL[now]}). 원천 DB를 열지 않았다`);
+      return EXIT.ok;
+    }
+    const atIso = kstIso(at);
+    const src = readSource(sourcePath(requireRepo(ctx.cwd).toplevel, ctx.env), at);
+    if (!src.ok) {
+      saveVideoDay(db, date, "failed", []);
+      record({ status: "failed", date, at: atIso, reason: src.reason });
+      ctx.out(`영상(${date}): 받지 못함(${src.reason}). 같은 날짜로 다시 돌리면 다시 고른다`);
+      return EXIT.ok;
+    }
+    const r = pickVideos(src.rows, { at, shown: shownVideoIds(db), home: homeOf(ctx), secrets: secretsOf(ctx) });
+    const skippedNote = r.skipped > 0 ? `. 결과물 검사에 걸려 건너뛴 영상 ${r.skipped}개` : "";
+    if (r.items.length === 0) {
+      saveVideoDay(db, date, "none", []);
+      record({ status: "none", date, at: atIso, skipped: r.skipped });
+      ctx.out(`영상(${date}): 새 영상 없음(기준 시각 ${atIso}${skippedNote})`);
+      return EXIT.ok;
+    }
+    saveVideoDay(db, date, "shown", r.items);
+    const counts = countByCategory(r.items);
+    record({ status: "shown", date, at: atIso, counts, skipped: r.skipped });
+    ctx.out(`영상(${date}): 실음 ${r.items.length}개(기준 시각 ${atIso}, ${countsText(counts)}${skippedNote})`);
+    return EXIT.ok;
+  } finally {
+    db.close();
+  }
+}
+
+/** 분야별 실은 수의 글("교양/지식 10, 경제 3") */
+function countsText(counts: readonly { category: string; count: number }[]): string {
+  return counts.map((c) => `${c.category} ${c.count}`).join(", ");
+}
+
+/** 요약의 영상 줄(4.1-4). 받지 못한 이유는 실행 기록에서 읽어 여기서만 보인다 */
+function videoSummaryLines(r: VideoStepResult | undefined): string[] {
+  if (r === undefined) return ["- 영상: 이번 실행에서 하지 않음"];
+  const skipped = (n: number) => (n > 0 ? ` (결과물 검사에 걸려 건너뛴 영상 ${n}개)` : "");
+  switch (r.status) {
+    case "noTarget":
+      return ["- 영상: 대상 없음(저장된 브리프가 없다)"];
+    case "done":
+      return [`- 영상(${r.date}): 이미 끝남(${VIDEO_STATUS_LABEL[r.recorded]})`];
+    case "shown":
+      return [`- 영상(${r.date}): 실음 ${r.counts.reduce((n, c) => n + c.count, 0)}개, 기준 시각 ${r.at}${skipped(r.skipped)}`, `  - 분야별: ${countsText(r.counts)}`];
+    case "none":
+      return [`- 영상(${r.date}): 새 영상 없음, 기준 시각 ${r.at}${skipped(r.skipped)}`];
+    case "failed":
+      return [`- 영상(${r.date}): 받지 못함(${r.reason}), 기준 시각 ${r.at}. 같은 날짜로 다시 돌리면 다시 고른다`];
+  }
+}
+
 /** 요약의 저장소 줄(4.2-4). 뺀 저장소 이름(G17)은 실행 기록에서 읽어 여기서만 보인다 */
 function repoSummaryLines(r: RepoStepResult | undefined): string[] {
   if (r === undefined) return ["- 저장소: 이번 실행에서 하지 않음"];
@@ -2082,6 +2167,7 @@ const COMMANDS: Record<string, (argv: string[], ctx: Context) => number> = {
   "indicator-apply": cmdIndicatorApply,
   "repo-check": cmdRepoCheck,
   "repo-apply": cmdRepoApply,
+  "video-pick": cmdVideoPick,
   site: cmdSite,
   push: cmdPush,
   precheck: cmdPrecheck,

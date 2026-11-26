@@ -656,6 +656,33 @@ export const MIGRATIONS: Migration[] = [
       `);
     },
   },
+  {
+    // B2 4.1·4.2: 브리프 날짜마다의 영상 기록(실음/새 영상 없음/받지 못함)과 실린 영상 항목. 표 이름에 `video` 앞머리를 쓰지 않는다(R1 옛 표, 3.4).
+    // 영상 ID는 모든 날짜에서 하나뿐이다(한 번 실린 영상은 다시 싣지 않는다, V3). 받지 못한 이유는 실행 기록에만 둔다
+    version: 17,
+    up: (db) => {
+      db.exec(`
+        CREATE TABLE watch_days (
+          date TEXT PRIMARY KEY REFERENCES briefs(target_date),
+          status TEXT NOT NULL CHECK (status IN ('shown', 'none', 'failed'))
+        );
+        CREATE TABLE watch_items (
+          date TEXT NOT NULL REFERENCES watch_days(date),
+          category TEXT NOT NULL,
+          rank INTEGER NOT NULL CHECK (rank >= 1),
+          video_id TEXT NOT NULL UNIQUE,
+          title TEXT NOT NULL,
+          channel TEXT NOT NULL,
+          duration INTEGER NOT NULL,
+          views INTEGER NOT NULL,
+          upload_at TEXT NOT NULL,
+          upload_precision INTEGER NOT NULL,
+          daily_views INTEGER NOT NULL,
+          PRIMARY KEY (date, category, rank)
+        );
+      `);
+    },
+  },
 ];
 
 export function schemaVersion(db: DatabaseSync): number {

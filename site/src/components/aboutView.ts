@@ -1,4 +1,4 @@
-// 사이트 소개 본문(4.3-4, P9, P10). 4.5단계: 읽은 기록. 5단계: 일정 안내. 6단계: 지표 안내, FRED 고지. 9.5단계: '오류 정정과 연락' 절. B1: '빌더 탭' 절.
+// 사이트 소개 본문(4.3-4, P9, P10). 4.5단계: 읽은 기록. 5단계: 일정 안내. 6단계: 지표 안내, FRED 고지. 9.5단계: '오류 정정과 연락' 절. B1: '빌더 탭' 절. B2: '영상 탭' 절.
 // 앱과 정적 HTML이 같은 문구를 쓴다: 링크 컴포넌트와 읽은 기록 절은 부르는 쪽이 넘긴다(정적 HTML에는 지우기 버튼이 없다).
 import { createElement as h, type ReactNode } from "react";
 import { FRED_AGREEMENT } from "../lib/indicators.ts";
@@ -34,6 +34,18 @@ function BuilderSection() {
   );
 }
 
+/** B2 영상 탭 안내(4.3-4): 어떻게 고르는지, 다시 싣지 않음, 라이브 다시보기 뺌, 추천·보증이 아님 */
+function VideoSection() {
+  return h(
+    "section",
+    { id: "videos" },
+    h("h2", { className: "h" }, "영상 탭"),
+    P("영상 탭은 유튜브 검색으로 모은 최근 일주일 안에 올라온 한국어 영상 중, 분야에 맞고 정보성이 있다고 AI가 판정한 것을 하루 평균 조회수 순으로 분야마다 최대 10개 싣습니다."),
+    P("한 번 실린 영상은 다시 싣지 않습니다. 라이브 방송의 다시보기는 뺍니다."),
+    P("AI의 판정과 조회수로 고른 목록이라 영상을 추천하거나 내용의 정확성을 보증하는 것이 아닙니다. 영상 내용은 직접 확인해 주세요."),
+  );
+}
+
 function CorrectionsSection() {
   return h(
     "section",
@@ -57,6 +69,7 @@ export function AboutView({ readMarks }: { readMarks: ReactNode }) {
     P("인물·기관·국가의 한 줄 설명과 용어 설명도 AI가 쓴 글이라 틀릴 수 있습니다."),
     P("일정도 AI가 뉴스에서 뽑은 것이라 틀리거나 바뀌었을 수 있습니다. 날짜는 그 일이 열리는 곳의 현지 날짜입니다."),
     P("지표는 공식 출처(한국은행 ECOS, FRED)에서 받은 값이지만 늦게 반영되거나 출처가 나중에 고칠 수 있습니다. 날짜는 출처 기준입니다(한국 지표는 한국 날짜, 미국 지표는 미국 날짜)."),
+    h(VideoSection),
     h(BuilderSection),
     h(CorrectionsSection),
     h("h2", { className: "h" }, "구독"),

@@ -1,20 +1,21 @@
 // 날짜별 브리프와 펼친 뉴스 카드(4.2). 4.5단계: 읽음 버튼, 펼침·글 누름·링크로 읽음, '안 읽은 것만' 거르기. 5단계: 카드의 일정 칩. 6단계: 브리프 위 '이번 주 일정 | 지표' 상자
 import { useEffect, useLayoutEffect, useMemo, useReducer, useRef, useState, type ReactNode } from "react";
 import { kstDate } from "../../../src/kst.ts";
+import { videoPartOf } from "../../../src/siteTypes.ts";
 import { ALL_MAJORS, CategoryLine, Main, ChipFilter, Empty, ErrorState, Footer, Layout, Loading, NewsTitle, ReadCheck, ReadToggle, SectionChip, ToggleChip, TopBar, useFullTitle } from "../components/common.tsx";
 import { BriefBox } from "../components/briefBox.ts";
 import { FixMark, FixNotes } from "../components/correctionView.ts";
 import { ScheduleChips } from "../components/scheduleView.ts";
 import { EntityChips, TermBox, TermChips, TermText } from "../components/termView.ts";
 import { retry, useResource, type Resource } from "../data.ts";
-import { ALL_TAB, BRIEF_TAB_KEY, BUILDER_TAB, briefTabs, findDay, findStoryTarget, isBuilderTarget, parseBriefTab, sectionView, stateForHash, storyImage, type BriefTab, type BriefViewState } from "../lib/brief.ts";
+import { ALL_TAB, BRIEF_TAB_KEY, BUILDER_TAB, VIDEO_TAB, briefTabs, findDay, extraTabForHash, findStoryTarget, parseBriefTab, sectionView, stateForHash, storyImage, type BriefTab, type BriefViewState } from "../lib/brief.ts";
 import { briefTitle, latestTitle, monthDay, monthDayWeekday, pageTitle, shortDate, yearOf } from "../lib/format.ts";
 import { dataUrl } from "../lib/paths.ts";
 import { SITE_URL, shortReportHref, storyReportHref } from "../lib/policy.ts";
 import { placeTerms, storyBodyParts, termBoxPlace, toggleTerm } from "../lib/terms.ts";
 import { categoryVar } from "../lib/theme.ts";
 import { adjacentDates, briefPath, hashKey, issuePath, resolveBriefDate, type Route } from "../lib/routes.ts";
-import type { DayList, DayRepos, ListStory, MonthDetail, MonthList, SiteDates, StoryDetail } from "../lib/types.ts";
+import type { DayList, DayRepos, DayVideoItem, DayVideoSummary, ListStory, MonthDetail, MonthList, SiteDates, VideoPartFile, StoryDetail } from "../lib/types.ts";
 import { readStored, writeStored } from "../lib/storage.ts";
 import { ALL_CHIP_TEXT, countChips, keptChip } from "../lib/chips.ts";
 import { markRead, readStore, useReadVersion } from "../readMarks.ts";
@@ -22,6 +23,7 @@ import { MoreMark } from "../components/moreMark.ts";
 import { ReportLink } from "../components/reportLink.ts";
 import { StorySources } from "../components/sourceView.ts";
 import { RepoList } from "../components/repoView.ts";
+import { VideoList, videoCategoryOrder } from "../components/videoView.ts";
 import { cameBackToEntry, Link, lastNavigation, navigate, updateEntry, useLocation } from "../router.tsx";
 import { briefMarkOf, navOf, withBriefMark, type BriefMark } from "../lib/navState.ts";
 import { boxTab, browserStorage, useRemembered } from "../storage.ts";
@@ -168,9 +170,9 @@ export function BriefPage({ route }: { route: Route }) {
   // 주소의 `#`가 정할 탭까지 보고 보일 탭을 정한다(기억한 탭이 그 날짜에 없으면 첫 섹션 탭)
   const hashView = day ? stateForHash(day, key, view) : null;
   const shownTab = hashView?.section ?? null;
-  // 주소의 `#`가 뉴스 키(또는 그날 빌더 탭의 `#builder`)로 탭을 정하면 그렇게 연 탭도 고른 탭으로 기억한다(U1 4.4-4)
+  // 주소의 `#`가 뉴스 키(또는 그날 빌더 탭의 `#builder`, 영상 탭의 `#videos`)로 탭을 정하면 그렇게 연 탭도 고른 탭으로 기억한다(U1 4.4-4)
   useEffect(() => {
-    if (day && shownTab && (findStoryTarget(day, key) || isBuilderTarget(day, key))) rememberTab(shownTab);
+    if (day && shownTab && (findStoryTarget(day, key) || extraTabForHash(day, key))) rememberTab(shownTab);
     // 주소의 `#`가 바뀔 때만 본다(탭 단추는 chooseSection이 기억한다)
   }, [day, key, shownTab]);
   // U1 S8·S12: 이 브리프 기록에 날짜·보이는 탭·그때의 최근 날짜·고른 대분류 칩을 남긴다. 다른 화면으로 갈 때 들어온 브리프가 되고, 돌아올 때 되살린다
@@ -216,6 +218,10 @@ export function BriefPage({ route }: { route: Route }) {
   }, [expanded]);
   const detailUrl = month && expanded ? dataUrl.detail(month) : null;
   const detailRes = useResource<MonthDetail>(detailUrl);
+  // B2: 영상 탭을 열고 그날 영상이 실렸을 때만 그 날짜가 든 반달 영상 파일을 받는다(4.3-6)
+  const watchUrl = date && shownTab === VIDEO_TAB && day?.videos?.status === "shown" ? dataUrl.watch(videoPartOf(date)) : null;
+  const watchRes = useResource<VideoPartFile>(watchUrl);
+  const [videoCat, setVideoCat] = useState<string | null>(null);
 
   // `#<뉴스 키>`로 들어오면 그 카드 위치로 간다(4.2-4). 카드를 눌러 펼친 것은 스크롤하지 않는다.
   const scrolledFor = useRef<string | null>(null);
@@ -264,6 +270,8 @@ export function BriefPage({ route }: { route: Route }) {
   const all = current === ALL_TAB;
   // B1: 빌더 탭은 저장소 목록만 보인다(요약·키워드·대분류 칩·'안 읽은 것만' 없음, 4.4-1). 이번 주 일정|지표 상자는 탭과 관계없이 같다
   const repos = current === BUILDER_TAB ? (day.repos ?? null) : null;
+  // B2: 영상 탭도 같다(4.3-1)
+  const videos = current === VIDEO_TAB ? (day.videos ?? null) : null;
   // U2 4.3-1: 대분류 칩은 지금 탭의 뉴스(주요 뉴스와 짧은 소식)로 센다. '안 읽은 것만'은 건수를 바꾸지 않는다
   const svAll = sectionView(day, current, null);
   const majorChips = countChips([...svAll.top, ...svAll.short], (s) => s.category.major, ALL_MAJORS);
@@ -327,6 +335,8 @@ export function BriefPage({ route }: { route: Route }) {
         <h1 className="sr-only">{monthDayWeekday(date)} 브리프</h1>
         {repos ? (
           <BuilderBody day={day} repos={repos} weekOpen={weekOpen} onWeekToggle={() => setWeekOpen((o) => !o)} />
+        ) : videos ? (
+          <VideoBody day={day} summary={videos} res={watchRes} onRetry={() => retry([watchUrl])} category={videoCat} onCategory={setVideoCat} weekOpen={weekOpen} onWeekToggle={() => setWeekOpen((o) => !o)} />
         ) : (
           <>
             <div className="headline">
@@ -406,6 +416,42 @@ function BuilderBody({ day, repos, weekOpen, onWeekToggle }: { day: DayList; rep
       <TopBox day={day} open={weekOpen} onToggle={onWeekToggle} />
       <RepoList repos={repos} headingLevel="h2" />
     </>
+  );
+}
+
+/** B2 영상 탭 본문: 이번 주 일정|지표 상자 아래 굵은 제목, 분야 칩('모든 분야'와 그날 있는 분야, 건수), 영상 목록(4.3-2) */
+function VideoBody({ day, summary, res, onRetry, category, onCategory, weekOpen, onWeekToggle }: { day: DayList; summary: DayVideoSummary; res: Resource<VideoPartFile>; onRetry: () => void; category: string | null; onCategory: (c: string | null) => void; weekOpen: boolean; onWeekToggle: () => void }) {
+  return (
+    <>
+      <TopBox day={day} open={weekOpen} onToggle={onWeekToggle} />
+      {summary.status !== "shown" ? (
+        <VideoList status={summary.status} items={[]} headingLevel="h2" thumbs />
+      ) : res.status === "error" ? (
+        <ErrorState onRetry={onRetry} />
+      ) : res.status !== "ok" ? (
+        <Loading />
+      ) : (
+        <ShownVideos all={res.data.days[day.date]?.items ?? []} category={category} onCategory={onCategory} />
+      )}
+    </>
+  );
+}
+
+/** 실음인 날의 분야 칩과 목록 */
+function ShownVideos({ all, category, onCategory }: { all: readonly DayVideoItem[]; category: string | null; onCategory: (c: string | null) => void }) {
+  const chips = countChips(all, (v) => v.category, videoCategoryOrder(all));
+  const picked = keptChip(category, chips);
+  const items = picked === null ? all : all.filter((v) => v.category === picked);
+  return (
+    <VideoList
+      status="shown"
+      items={items}
+      headingLevel="h2"
+      now={Date.now()}
+      thumbs
+      showCategory={picked === null}
+      filter={<ChipFilter label="분야" allText={ALL_CHIP_TEXT.major} total={all.length} options={chips} value={picked} onChange={onCategory} />}
+    />
   );
 }
 

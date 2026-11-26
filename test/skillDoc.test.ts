@@ -148,10 +148,10 @@ describe("B1 4.2-1·4.2-4·4.2-5·4.5-1 스킬 문서의 저장소 단계", () =
       assert.match(SKILL, new RegExp(`node src/cli\\.ts ${cmd} --run <실행 기록>`), cmd);
       assert.ok(COMMAND_NAMES.includes(cmd), `${cmd}가 CLI에 없다`);
     }
-    assert.match(SKILL, /12-3단계, 12-4단계, 12-5단계, 13단계는 그래도 한다/);
+    assert.match(SKILL, /12-3단계, 12-4단계, 12-5단계, 12-6단계, 13단계는 그래도 한다/);
   });
   test("실패해도 다음 단계로 가고, 메인이 쓰며, 고치기는 2번까지다", () => {
-    assert.match(SKILL, /이 단계의 어떤 실패도 다음 단계를 막지 않는다\. 명령이 실패해도\(종료 코드 1\) 멈추지 않고 13단계로 넘어간다/);
+    assert.match(SKILL, /이 단계의 어떤 실패도 다음 단계를 막지 않는다\. 명령이 실패해도\(종료 코드 1\) 멈추지 않고 12-6단계로 넘어간다/);
     assert.match(SKILL, /저장소 설명 쓰기\(12-5단계\)도 서브에이전트에 맡기지 않고 메인이 한다/);
     assert.match(SKILL, /고치는 것은 최대 2번이다/);
     assert.match(SKILL, /마지막에 늘 한다/);
@@ -180,5 +180,23 @@ describe("B1 4.2-1·4.2-4·4.2-5·4.5-1 스킬 문서의 저장소 단계", () =
     const r = checkRepoItems(ex, cands, new Set(), null);
     assert.deepEqual(r.violations, []);
     assert.equal(r.items.length, 2);
+  });
+});
+
+describe("B2 4.4-1 스킬 문서의 영상 단계", () => {
+  test("순서 표의 12-6이 12-5 뒤 13 앞이고, 절 제목과 명령이 CLI와 맞으며, 날짜가 없어도 한다", () => {
+    const rows = SKILL.split("\n").filter((l) => /^\| \d+(-\d+)? \|/.test(l));
+    const at = (n: string) => rows.findIndex((r) => r.startsWith(`| ${n} |`));
+    assert.ok(at("12-5") >= 0 && at("12-5") < at("12-6") && at("12-6") < at("13"), "영상은 저장소 뒤, 합치기 앞이다");
+    assert.match(rows[at("12-6")]!, /`node src\/cli\.ts video-pick --run <실행 기록>`/);
+    assert.ok(COMMAND_NAMES.includes("video-pick"), "video-pick이 CLI에 있다");
+    assert.match(SKILL, /\n### 12-6단계: 영상\n/);
+    assert.match(SKILL, /12-5단계, 12-6단계, 13단계는 그래도 한다/);
+    assert.match(SKILL, /종료 코드가 0이 아니어도 멈추지 않고 13단계로 넘어간다/);
+  });
+  test("설명·19단계 요약·15단계 백업 목록에 영상이 있다", () => {
+    assert.match(SKILL, /^description: .*영상 탭에 싣고/m);
+    assert.match(SKILL, /^ {2}- 영상: 대상 날짜와 상태/m);
+    assert.match(SKILL, /영상 기록\(.*\)도 들어간다\(`watch\.json`\)/);
   });
 });

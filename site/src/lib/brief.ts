@@ -10,20 +10,35 @@ export const ALL_TAB = "전체";
 export const BUILDER_TAB = "빌더";
 /** B1: 그날 빌더 탭을 여는 주소 해시(`#builder`, 3.4). 뉴스 키가 아니다 */
 export const BUILDER_HASH = "builder";
-export type BriefTab = SectionName | typeof ALL_TAB | typeof BUILDER_TAB;
+/** B2: 그날 이번 주 볼만한 영상 탭(4.3-1). 뉴스 탭 뒤·빌더 앞에 두고, 그날 영상 기록이 있을 때만 보인다 */
+export const VIDEO_TAB = "영상";
+/** B2: 그날 영상 탭을 여는 주소 해시(`#videos`, V13). 뉴스 키가 아니다 */
+export const VIDEO_HASH = "videos";
+export type BriefTab = SectionName | typeof ALL_TAB | typeof VIDEO_TAB | typeof BUILDER_TAB;
 /** 처음 들어왔을 때(고른 탭 기록이 없을 때)의 탭 */
 export const DEFAULT_TAB: BriefTab = "한국";
 /** 마지막으로 고른 탭을 기억하는 로컬 스토리지 키(읽은 기록 지우기 대상이 아니다, 정의는 browserKeys.ts) */
 export { BRIEF_TAB_KEY } from "./browserKeys.ts";
 
-/** 기억한 탭 값을 읽는다. 없거나 지금 있는 탭이 아니면(지운 탭 '영상'·'수요'의 옛 값 포함, R1 T7) 기본 탭 */
-export function parseBriefTab(raw: string | null): BriefTab {
-  return raw === ALL_TAB || raw === BUILDER_TAB || SECTION_ORDER.includes(raw as SectionName) ? (raw as BriefTab) : DEFAULT_TAB;
+type ExtraTab = typeof VIDEO_TAB | typeof BUILDER_TAB;
+
+/**
+ * 뉴스가 없는 탭: 탭 이름, 그날 그 탭을 여는 주소 해시, 그날 있는지. 순서가 곧 섹션 탭 뒤의 탭 순서다.
+ * 영상은 그날 영상 기록이 있을 때만(4.3-1), 빌더는 그날 저장소 기록이 있을 때만(G1·G10) 보인다
+ */
+const EXTRA_TABS: readonly { tab: ExtraTab; hash: string; has: (day: DayList) => boolean }[] = [
+  { tab: VIDEO_TAB, hash: VIDEO_HASH, has: (day) => day.videos !== undefined },
+  { tab: BUILDER_TAB, hash: BUILDER_HASH, has: (day) => day.repos !== undefined },
+];
+
+/** 뉴스가 없는 탭(영상·빌더)인지 */
+export function isExtraTab(tab: string): tab is ExtraTab {
+  return EXTRA_TABS.some((e) => e.tab === tab);
 }
 
-/** 그날 빌더 탭이 있는지(저장소 기록이 있는 날만, G10) */
-export function hasBuilderTab(day: DayList): boolean {
-  return day.repos !== undefined;
+/** 기억한 탭 값을 읽는다. 없거나 지금 있는 탭이 아니면(지운 탭 '수요'의 옛 값 포함, R1 T7) 기본 탭. '영상'은 B2가 다시 쓴다 */
+export function parseBriefTab(raw: string | null): BriefTab {
+  return raw !== null && (raw === ALL_TAB || isExtraTab(raw) || SECTION_ORDER.includes(raw as SectionName)) ? (raw as BriefTab) : DEFAULT_TAB;
 }
 
 export interface SectionView {
@@ -37,8 +52,8 @@ export interface SectionView {
  * '전체'면 주요 뉴스를 섹션 순서(한국 → 세계 → IT·AI)로 이어 붙이고 짧은 소식도 같은 순서로 붙인다(섹션 정보 section은 null).
  */
 export function sectionView(day: DayList, section: BriefTab, major: Major | null): SectionView {
-  // 빌더 탭에는 뉴스가 없다(G1. '전체' 탭에도 저장소를 섞지 않는다)
-  if (section === BUILDER_TAB) return { section: null, top: [], short: [] };
+  // 영상·빌더 탭에는 뉴스가 없다(G1, 4.3-1. '전체' 탭에도 영상·저장소를 섞지 않는다)
+  if (isExtraTab(section)) return { section: null, top: [], short: [] };
   const byPos = (a: ListStory, b: ListStory) => a.position - b.position;
   const pick = (sec: ListSection | undefined) => (sec?.stories ?? []).filter((s) => major === null || s.category.major === major);
   if (section === ALL_TAB) {
@@ -90,9 +105,16 @@ export interface BriefViewState {
   expanded: string | null;
 }
 
-/** `#builder`가 그날 빌더 탭을 여는지(기록이 없는 날은 열지 않고 기존 대체 동작을 따른다, G16) */
-export function isBuilderTarget(day: DayList, key: string | null): boolean {
-  return key === BUILDER_HASH && hasBuilderTab(day);
+/** `#builder`·`#videos`가 그날 여는 뉴스 없는 탭. 그날 기록이 없으면 null(열지 않고 기존 대체 동작을 따른다, G16·4.3-1) */
+export function extraTabForHash(day: DayList, key: string | null): ExtraTab | null {
+  return EXTRA_TABS.find((e) => e.hash === key && e.has(day))?.tab ?? null;
+}
+
+/** 그날 그 탭이 있는지 */
+function tabExists(day: DayList, tab: BriefTab, sections: SectionName[]): boolean {
+  if (tab === ALL_TAB) return true;
+  const extra = EXTRA_TABS.find((e) => e.tab === tab);
+  return extra ? extra.has(day) : sections.includes(tab as SectionName);
 }
 
 /**
@@ -103,8 +125,9 @@ export function isBuilderTarget(day: DayList, key: string | null): boolean {
  */
 export function stateForHash(day: DayList, key: string | null, current: BriefViewState): BriefViewState {
   const sections = daySections(day);
-  if (isBuilderTarget(day, key)) return { ...current, section: BUILDER_TAB, expanded: null };
-  const keep = current.section === ALL_TAB || (current.section === BUILDER_TAB ? hasBuilderTab(day) : sections.includes(current.section));
+  const extra = extraTabForHash(day, key);
+  if (extra) return { ...current, section: extra, expanded: null };
+  const keep = tabExists(day, current.section, sections);
   const base = keep ? current : { ...current, section: sections[0]! };
   const target = findStoryTarget(day, key);
   if (!target) return { ...base, expanded: null };
@@ -124,9 +147,7 @@ export function storyImage(sources: SourceLike[]): string | null {
   return ordered.find((s) => s.imageUrl)?.imageUrl ?? null;
 }
 
-/** 그 날짜의 섹션 탭: 전체 → 그날 있는 섹션들 → 빌더(그날 저장소 기록이 있을 때만, G1·G10) */
+/** 그 날짜의 섹션 탭: 전체 → 그날 있는 섹션들 → 영상(그날 영상 기록이 있을 때만, 4.3-1) → 빌더(그날 저장소 기록이 있을 때만, G1·G10) */
 export function briefTabs(day: DayList): BriefTab[] {
-  const tabs: BriefTab[] = [ALL_TAB, ...daySections(day)];
-  if (hasBuilderTab(day)) tabs.push(BUILDER_TAB);
-  return tabs;
+  return [ALL_TAB, ...daySections(day), ...EXTRA_TABS.filter((e) => e.has(day)).map((e) => e.tab)];
 }

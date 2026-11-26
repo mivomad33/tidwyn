@@ -13,6 +13,8 @@ import {
   TERM_GROUPS,
   siteFiles,
   type DayList,
+  type DayVideos,
+  type VideoPartFile,
   type EntityChunk,
   type EntityDetail,
   type EntityListPage,
@@ -45,7 +47,8 @@ import { Empty } from "./src/components/emptyView.ts";
 import { BackMark, MoreMark } from "./src/components/moreMark.ts";
 import { StorySources } from "./src/components/sourceView.ts";
 import { RepoList } from "./src/components/repoView.ts";
-import { BUILDER_HASH, BUILDER_TAB } from "./src/lib/brief.ts";
+import { VideoList } from "./src/components/videoView.ts";
+import { BUILDER_HASH, BUILDER_TAB, VIDEO_HASH, VIDEO_TAB } from "./src/lib/brief.ts";
 import { FredNotice, SourceNote } from "./src/components/indicatorView.ts";
 import { NOT_FOUND_LABEL, NotFoundView, RecoverLinks } from "./src/components/notFoundView.ts";
 import { FooterView, PrivacyView } from "./src/components/policyView.ts";
@@ -67,6 +70,8 @@ interface SiteInput {
   dates: SiteDates;
   days: Map<string, DayList>;
   details: Map<string, Record<string, StoryDetail>>;
+  /** B2: 날짜 → 영상 기록 */
+  videos: Map<string, DayVideos>;
   issues: IssueDetail[];
   issueMerged: SiteIssueList["merged"];
   entities: EntityDetail[];
@@ -90,6 +95,9 @@ function loadInput(dataDir: string): SiteInput {
   for (const list of matching<MonthList>(/^list-\d{4}-\d{2}\.json$/)) for (const d of list.days) days.set(d.date, d);
   const details = new Map<string, Record<string, StoryDetail>>();
   for (const m of matching<MonthDetail>(/^detail-\d{4}-\d{2}\.json$/)) for (const [date, stories] of Object.entries(m.days)) details.set(date, stories);
+
+  const videos = new Map<string, DayVideos>();
+  for (const m of matching<VideoPartFile>(/^watch-\d{4}-\d{2}-[12]\.json$/)) for (const [date, v] of Object.entries(m.days)) videos.set(date, v);
 
   const issueList = read<SiteIssueList>(siteFiles.issueList, { issues: [], merged: {} });
   const issueById = new Map<number, IssueDetail>();
@@ -115,7 +123,7 @@ function loadInput(dataDir: string): SiteInput {
   const scheduleIndex = read<ScheduleIndex>(siteFiles.scheduleIndex, { total: 0, months: [], majors: [] });
   const scheduleMonths = scheduleIndex.months.map((m) => read<ScheduleMonth>(siteFiles.scheduleMonth(m.month), { month: m.month, items: [] }));
   const indicators = read<IndicatorList>(siteFiles.indicatorList, { asOf: null, indicators: [] });
-  return { dates, days, details, issues, issueMerged: issueList.merged, entities, entityMerged, terms, termGroups, scheduleMonths, indicators };
+  return { dates, days, details, videos, issues, issueMerged: issueList.merged, entities, entityMerged, terms, termGroups, scheduleMonths, indicators };
 }
 
 function latest(values: readonly (string | null | undefined)[]): string | null {
@@ -233,11 +241,17 @@ function DateNav({ date, prev, next }: { date: string; prev: string | null; next
   return h("span", { className: "datebtn" }, arrow(prev, "‹", "이전 날짜"), h("a", { href: "/dates", className: "date-link", "aria-label": `${monthDayWeekday(date)}, 날짜 목록 보기` }, monthDayWeekday(date)), arrow(next, "›", "다음 날짜"));
 }
 
-function BriefBody({ day, details, prev, next }: { day: DayList; details: Record<string, StoryDetail>; prev: string | null; next: string | null }) {
+function BriefBody({ day, details, videos, prev, next }: { day: DayList; details: Record<string, StoryDetail>; videos: DayVideos | null; prev: string | null; next: string | null }) {
   const date = day.date;
   const sectionId = (i: number) => `section-${i + 1}`;
   // B1: 저장소 기록이 있는 날만 빌더 구역과 이동 칩을 둔다(4.4-3). 구역 id는 앱에서 그날 빌더 탭을 여는 해시와 같다
-  const jumps: [string, string][] = [...day.sections.map((sec, i): [string, string] => [sec.name, sectionId(i)]), ...(day.repos ? [[BUILDER_TAB, BUILDER_HASH] as [string, string]] : [])];
+  // B2: 영상 기록이 있는 날만 영상 구역과 이동 칩을 둔다(4.3-3). 썸네일 이미지는 넣지 않는다(R7)
+  const shownVideos = day.videos ? (videos ?? { status: day.videos.status, items: [] }) : null;
+  const jumps: [string, string][] = [
+    ...day.sections.map((sec, i): [string, string] => [sec.name, sectionId(i)]),
+    ...(shownVideos ? [[VIDEO_TAB, VIDEO_HASH] as [string, string]] : []),
+    ...(day.repos ? [[BUILDER_TAB, BUILDER_HASH] as [string, string]] : []),
+  ];
   return h(
     "div",
     { className: "static-brief" },
@@ -257,6 +271,7 @@ function BriefBody({ day, details, prev, next }: { day: DayList; details: Record
         sec.unverified ? h("p", { className: "flow note" }, `확인되지 않은 내용: ${sec.unverified}`) : null,
       );
     }),
+    shownVideos ? h("section", { className: "brief-section" }, h("h2", { className: "h list-h", id: VIDEO_HASH }, VIDEO_TAB), h(VideoList, { status: shownVideos.status, items: shownVideos.items, headingLevel: "h3", thumbs: false, grouped: true })) : null,
     day.repos ? h("section", { className: "brief-section" }, h("h2", { className: "h list-h", id: BUILDER_HASH }, BUILDER_TAB), h(RepoList, { repos: day.repos, headingLevel: "h3" })) : null,
     h("nav", { className: "static-more", "aria-label": "다른 날짜" }, prev ? h("a", { href: briefPath(prev), className: "text-link" }, `‹ ${monthDay(prev)}`) : h("span"), next ? h("a", { href: briefPath(next), className: "text-link" }, `${monthDay(next)} ›`) : null),
   );
@@ -473,7 +488,7 @@ function buildPages(input: SiteInput): StaticPage[] {
       lastmod: modified,
       ogType: website ? "website" : "article",
       ld: (d) => (website ? pageLd("WebSite", { path: pathname, name: "Tidwyn", description: d }) : articleLd({ path: pathname, headline, description: d, published: date, modified })),
-      body: h(Shell, { center: h(DateNav, { date, prev, next }) }, h(BriefBody, { day, details: input.details.get(date) ?? {}, prev, next })),
+      body: h(Shell, { center: h(DateNav, { date, prev, next }) }, h(BriefBody, { day, details: input.details.get(date) ?? {}, videos: input.videos.get(date) ?? null, prev, next })),
     });
   };
   const home = input.dates.latestDate;

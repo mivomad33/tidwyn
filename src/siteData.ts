@@ -24,6 +24,9 @@ import {
   entityRecordUrl,
   repoRecordContent,
   repoRecordUrl,
+  videoRecordContent,
+  videoPartOf,
+  videoRecordUrl,
   issueChunkOf,
   siteFiles,
   termGroupOf,
@@ -42,6 +45,7 @@ import {
   type Continues,
   type DayList,
   type DayRepos,
+  type VideoPartFile,
   type IssueChunk,
   type IssueDetail,
   type IssueListItem,
@@ -60,6 +64,7 @@ import { buildIndicatorSiteData, type IndicatorSiteData } from "./indicatorSite.
 import { INDICATORS, type IndicatorDef } from "./indicators.ts";
 import { loadBrief, storedDates } from "./store.ts";
 import { allRepoDays } from "./trendRepos.ts";
+import { allVideoDays } from "./weeklyVideos.ts";
 
 // 사이트 데이터(3단계 4.1-1)와 검색 레코드(4.1-3)를 DB에서 만든다. 같은 DB면 같은 결과다(시각 같은 값을 넣지 않는다, 4.1-2).
 // 이전 전개, 전개 순서, 흡수 이슈 따라가기는 2단계 코드(briefIssues, developments, resolveIssue)를 그대로 쓴다.
@@ -281,6 +286,9 @@ export function buildSiteData(db: DatabaseSync, indicatorDefs: readonly Indicato
   const indicators = buildIndicatorSiteData(db, days.map((d) => d.date), indicatorDefs);
   const corrections = correctionsByStory(db);
   const repos = repoDays(db);
+  // B2: 영상 기록은 달 목록에 상태와 실은 수만 싣고, 항목은 반달 영상 파일에 둔다(4.3-6)
+  const videos = new Map(allVideoDays(db).map((d) => [d.date, d]));
+  const watch = new Map<string, VideoPartFile>();
   const lists = new Map<string, MonthList>();
   const details = new Map<string, MonthDetail>();
   days.forEach((day, idx) => {
@@ -290,7 +298,16 @@ export function buildSiteData(db: DatabaseSync, indicatorDefs: readonly Indicato
     let detail = details.get(month);
     if (!detail) details.set(month, (detail = { month, days: {} }));
     const dayDetails: Record<string, StoryDetail> = {};
-    list.days.push(buildDay(db, day, idx > 0 ? days[idx - 1]! : null, dayDetails, refs, schedules, indicators, corrections, repos));
+    const built = buildDay(db, day, idx > 0 ? days[idx - 1]! : null, dayDetails, refs, schedules, indicators, corrections, repos);
+    const v = videos.get(day.date);
+    if (v) {
+      built.videos = { status: v.status, count: v.items.length };
+      const part = videoPartOf(day.date);
+      let w = watch.get(part);
+      if (!w) watch.set(part, (w = { part, days: {} }));
+      w.days[day.date] = { status: v.status, items: v.items };
+    }
+    list.days.push(built);
     detail.days[day.date] = dayDetails;
   });
   const counts = new Map<string, number>();
@@ -306,6 +323,7 @@ export function buildSiteData(db: DatabaseSync, indicatorDefs: readonly Indicato
   out.set(file(siteFiles.dates), JSON.stringify(dates));
   for (const [month, list] of lists) out.set(file(siteFiles.list(month)), JSON.stringify(list));
   for (const [month, detail] of details) out.set(file(siteFiles.detail(month)), JSON.stringify(detail));
+  for (const [part, w] of watch) out.set(file(siteFiles.watch(part)), JSON.stringify(w));
 
   const live = liveIssues(db);
   out.set(file(siteFiles.issueList), JSON.stringify(buildIssueList(db, live)));
@@ -441,6 +459,11 @@ export function buildSearchRecords(db: DatabaseSync): SearchRecord[] {
   for (const d of allRepoDays(db)) {
     if (d.status !== "shown" || d.items.length === 0) continue;
     records.push({ url: repoRecordUrl(d.date), content: repoRecordContent(d.items), language: "ko", meta: { kind: "repos", date: d.date } });
+  }
+  // B2 4.3-3: 영상 기록이 '실음'인 날짜마다 레코드 하나(영상 제목과 채널). 결과는 그 날짜의 영상 탭으로 간다
+  for (const d of allVideoDays(db)) {
+    if (d.status !== "shown" || d.items.length === 0) continue;
+    records.push({ url: videoRecordUrl(d.date), content: videoRecordContent(d.items), language: "ko", meta: { kind: "videos", date: d.date } });
   }
   for (const [chunk, issues] of issueChunks(liveIssues(db))) {
     const parts = issues.flatMap((i) => [i.name, ...i.aliases, i.summary]);

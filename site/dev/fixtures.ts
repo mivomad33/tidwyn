@@ -3,6 +3,7 @@
 //   [--entities 30] [--terms 24] [--hub]   (4단계: 인물·기관·국가와 용어. --hub는 대상 1을 모든 뉴스에 붙인다(5년치 측정용))
 //   [--schedules 0]   (5단계: 일정 수. 0이면 빈 일정 색인만 만든다)
 //   [--indicators 0] [--indicators-all]   (6단계: 지표 값의 햇수. 0이면 지표 파일을 만들지 않는다. --indicators-all은 12개 모두 공개·값 있음(크기 측정용))
+//   [--videos] [--videos-worst]   (B2: 영상 기록. --videos는 최근 네 날짜에 실음·새 영상 없음·받지 못함·영상만, --videos-worst는 모든 날짜에 70개·제목 100자(크기 측정용))
 //   [--repos] [--repos-worst]   (B1: 빌더 탭 저장소 기록. --repos는 최근 세 날짜에 실음·새로 오른 것 없음·받지 못함, --repos-worst는 모든 날짜에 5개·설명 400자(크기 측정용))
 // <폴더>/site-data/*.json과 <폴더>/search-records.json을 만든다. 같은 인자면 같은 결과다.
 import fs from "node:fs";
@@ -11,6 +12,7 @@ import { CONFIDENCE_LEVELS, MINORS_BY_MAJOR, SECTIONS, type Major, type SectionN
 import { ENTITY_FILTERS, ENTITY_FIRST_NEWS, byCount, dayStoryCount, entityChunkOf, issueEntityChips, entityRecordUrl, repoRecordContent, repoRecordUrl, termRecordUrl, type EntityKind } from "../../src/siteTypes.ts";
 import { addDays, rng } from "./random.ts";
 import { fixtureIndicators, type IndicatorFixtureInfo } from "./indicatorFixtures.ts";
+import { fixtureVideos, type VideoFixtureInfo } from "./videoFixtures.ts";
 import { fixtureSchedules, type FixtureStory, type ScheduleFixtureInfo } from "./scheduleFixtures.ts";
 import { entityListPages } from "../src/lib/entities.ts";
 import { buildTermFiles } from "../src/lib/terms.ts";
@@ -71,6 +73,11 @@ export interface FixtureOptions {
    * 나머지 날짜는 기록이 없다. "worst"는 모든 날짜에 실음 5개·설명 400자(크기 측정용). 없으면 다른 파일은 그대로다(난수를 따로 쓴다)
    */
   repos?: boolean | "worst";
+  /**
+   * B2: 영상 기록. true면 최근 날짜부터 실음·새 영상 없음·받지 못함·영상만(실음)을 두고 나머지 날짜는 기록이 없다.
+   * "worst"는 모든 날짜에 하루 70개·제목 100자(크기 측정용). 없으면 다른 파일은 그대로다(난수를 쓰지 않는다)
+   */
+  videos?: boolean | "worst";
   /** 9.5단계: 끝 날짜의 첫 섹션에 정정 표시를 둔다(첫 주요 뉴스 2번, 둘째 주요 뉴스와 첫 짧은 소식 1번). 없으면 다른 파일은 그대로다 */
   corrections?: boolean;
 }
@@ -111,6 +118,8 @@ export interface Fixture {
     indicators: IndicatorFixtureInfo | null;
     /** B1: 저장소 기록을 만들었을 때만. 상태별 날짜(worst는 shown만) */
     repos: RepoFixtureInfo | null;
+    /** B2: 영상 기록을 만들었을 때만 */
+    videos: VideoFixtureInfo | null;
   };
 }
 
@@ -664,6 +673,13 @@ export function generateFixtures(opts: FixtureOptions = {}): Fixture {
       if (r.status === "shown") repoRecords.push({ url: repoRecordUrl(day.date), content: repoRecordContent(r.items), language: "ko", meta: { kind: "repos", date: day.date } });
     }
   }
+  const videoFx = opts.videos ? fixtureVideos(datesDesc, opts.videos) : null;
+  for (const l of lists.values()) {
+    for (const day of l.days) {
+      const v = videoFx?.byDate.get(day.date);
+      if (v) day.videos = { status: v.status, count: v.items.length };
+    }
+  }
   const dayCounts = new Map([...lists.values()].flatMap((l) => l.days.map((d) => [d.date, dayStoryCount(d)] as const)));
   const dates: SiteDates = { version: 1, latestDate: datesDesc[0] ?? null, dates: datesDesc, months: [...new Set(datesDesc.map((x) => x.slice(0, 7)))], storyCounts: datesDesc.map((d) => dayCounts.get(d) ?? 0) };
 
@@ -681,7 +697,8 @@ export function generateFixtures(opts: FixtureOptions = {}): Fixture {
   for (const [g, terms] of [...termFiles.groups].sort((a, b) => a[0] - b[0])) files.set(`site-data/term-group-${g}.json`, json({ group: g, terms }));
   for (const [name, content] of sched.files) files.set(`site-data/${name}`, content);
   for (const [name, content] of ind?.files ?? []) files.set(`site-data/${name}`, content);
-  files.set("search-records.json", json([...newsRecords, ...repoRecords, ...issueRecords, ...entityRecords, ...termRecords]));
+  for (const [name, content] of videoFx?.files ?? []) files.set(`site-data/${name}`, content);
+  files.set("search-records.json", json([...newsRecords, ...repoRecords, ...(videoFx?.records ?? []), ...issueRecords, ...entityRecords, ...termRecords]));
   const most = entityDetails.reduce<EntityDetail | null>((m, e) => (!m || e.count > m.count ? e : m), null);
   return {
     files,
@@ -694,6 +711,7 @@ export function generateFixtures(opts: FixtureOptions = {}): Fixture {
       schedules: sched.info,
       indicators: ind?.info ?? null,
       repos: repoFx?.info ?? null,
+      videos: videoFx?.info ?? null,
     },
   };
 }
@@ -717,7 +735,7 @@ if (import.meta.main) {
   };
   const out = get("--out");
   if (!out) {
-    console.error("사용법: node site/dev/fixtures.ts --out <폴더> [--end YYYY-MM-DD] [--days N] [--top N] [--short N] [--issues N] [--contiguous] [--entities N] [--terms N] [--hub] [--schedules N] [--indicators N] [--indicators-all] [--corrections] [--repos] [--repos-worst]");
+    console.error("사용법: node site/dev/fixtures.ts --out <폴더> [--end YYYY-MM-DD] [--days N] [--top N] [--short N] [--issues N] [--contiguous] [--entities N] [--terms N] [--hub] [--schedules N] [--indicators N] [--indicators-all] [--corrections] [--repos] [--repos-worst] [--videos] [--videos-worst]");
     process.exit(1);
   }
   const num = (name: string) => (get(name) ? Number(get(name)) : undefined);
@@ -736,6 +754,7 @@ if (import.meta.main) {
     indicatorsAll: args.includes("--indicators-all"),
     corrections: args.includes("--corrections"),
     repos: args.includes("--repos-worst") ? "worst" : args.includes("--repos"),
+    videos: args.includes("--videos-worst") ? "worst" : args.includes("--videos"),
   });
   console.log(`가짜 사이트 데이터: ${out} (날짜 ${fx.dates.length}개, 파일 ${fx.files.size}개)`);
 }

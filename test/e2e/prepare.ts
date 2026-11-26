@@ -6,7 +6,7 @@ import path from "node:path";
 import { buildSite } from "../../site/build.ts";
 import { writeFixtures } from "../../site/dev/fixtures.ts";
 import type { E2eInfo } from "./info.ts";
-import { E2E_B1_DATA_DIR, E2E_B1_INFO_FILE, E2E_B1_OUT_DIR, E2E_DATA_DIR, E2E_U1_DATA_DIR, E2E_U1_OUT_DIR, E2E_INDICATOR_DATA_DIR, E2E_INDICATOR_INFO_FILE, E2E_INFO_FILE, E2E_OUT_DIR, E2E_ROOT, E2E_SCHEDULE_DATA_DIR, E2E_SCHEDULE_INFO_FILE } from "./paths.ts";
+import { E2E_B1_DATA_DIR, E2E_B1_INFO_FILE, E2E_B1_OUT_DIR, E2E_B2_DATA_DIR, E2E_B2_INFO_FILE, E2E_B2_OUT_DIR, E2E_DATA_DIR, E2E_U1_DATA_DIR, E2E_U1_OUT_DIR, E2E_INDICATOR_DATA_DIR, E2E_INDICATOR_INFO_FILE, E2E_INFO_FILE, E2E_OUT_DIR, E2E_ROOT, E2E_SCHEDULE_DATA_DIR, E2E_SCHEDULE_INFO_FILE } from "./paths.ts";
 import type { DayList, EntityChunk, EntityListPage, EntityNewsChunk, IssueChunk, MonthDetail, MonthList, SiteIssueList, StoryDetail, TermGroupFile, TermIndex } from "../../src/siteTypes.ts";
 
 /** 고정 날짜(같은 데이터로 매번 같은 결과가 나오게) */
@@ -112,6 +112,13 @@ async function main(): Promise<void> {
   if (!ri?.shown || !ri.none || !ri.failed || !ri.absent) throw new Error("저장소 기록 세 상태와 기록 없는 날이 지어낸 데이터에 없다");
   fs.writeFileSync(E2E_B1_INFO_FILE, JSON.stringify({ dates: bfx.dates, ...ri }, null, 2) + "\n");
   await buildSite({ dataDir: E2E_B1_DATA_DIR, outDir: E2E_B1_OUT_DIR });
+
+  // B2단계: 영상 기록(실음·새 영상 없음·받지 못함 날은 빌더도 있다, 영상만 있는 날, 둘 다 없는 날)과 저장소 기록이 있는 데이터로 빌드한다(검색 색인에 영상이 들어가야 한다)
+  const vfx = writeFixtures(E2E_B2_DATA_DIR, { end: END, days: 7, entities: 30, terms: 24, schedules: 12, indicators: 1, repos: true, videos: true });
+  const vi = vfx.info.videos;
+  if (!vi?.shown || !vi.none || !vi.failed || !vi.only || !vi.absent) throw new Error("영상 기록 세 상태, 영상만 있는 날, 둘 다 없는 날이 지어낸 데이터에 없다");
+  fs.writeFileSync(E2E_B2_INFO_FILE, JSON.stringify({ dates: vfx.dates, ...vi }, null, 2) + "\n");
+  await buildSite({ dataDir: E2E_B2_DATA_DIR, outDir: E2E_B2_OUT_DIR });
   console.log(`E2E 준비 완료: ${E2E_OUT_DIR}`);
 }
 

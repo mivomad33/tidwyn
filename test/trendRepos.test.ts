@@ -763,7 +763,7 @@ describe("B1 4.3-1 백업과 복원", () => {
     db.close();
     assert.ok(files.has("repos.json"));
     assert.equal(JSON.parse(files.get("repos.json")!).formatVersion, BACKUP_FORMAT_VERSION);
-    assert.equal(BACKUP_FORMAT_VERSION, 12);
+    assert.equal(BACKUP_FORMAT_VERSION, 13);
     const out = path.join(dir, "b.db");
     restoreBackup(files, out);
     const r = openDb(out);
@@ -854,14 +854,14 @@ describe("B1 4.3-1 백업과 복원", () => {
     const before = dump(old);
     old.close();
     const db = openDb(file);
-    assert.equal(schemaVersion(db), 16);
+    assert.equal(schemaVersion(db), 17);
     const after1 = dump(db);
     assert.deepEqual(after1.trend_repo_days, []);
     assert.deepEqual(after1.trend_repos, []);
     for (const [name, rows] of Object.entries(before)) assert.deepEqual(after1[name], rows, name);
     db.close();
     const again = openDb(file);
-    assert.equal(schemaVersion(again), 16);
+    assert.equal(schemaVersion(again), 17);
     assert.deepEqual(dump(again), after1);
     again.close();
   });

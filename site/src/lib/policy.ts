@@ -23,4 +23,4 @@ export function shortReportHref(dateLabel: string, url: string): string {
 
 export const PRIVACY_TITLE = "개인정보 처리방침";
 /** 처리방침을 마지막으로 바꾼 날 */
-export const PRIVACY_UPDATED = "2026-11-25";
+export const PRIVACY_UPDATED = "2026-11-26";

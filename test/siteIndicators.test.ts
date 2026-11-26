@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import path from "node:path";
 import { after, describe, test } from "node:test";
 import fs from "node:fs";
+import { gzipSync } from "node:zlib";
 import { createElement as h } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { siteFiles, type DayList, type IndicatorCard, type IndicatorChip, type IndicatorList, type IndicatorPoint, type IndicatorSeries, type IssueChunk, type MonthList } from "../src/siteTypes.ts";
@@ -477,13 +478,13 @@ describe("4.7-9 지어낸 데이터의 지표", () => {
 });
 
 describe("4.6-2 지표를 더한 5년치", () => {
-  test("브리프 첫 화면(새 상자·빌더 저장소 포함)·지표 페이지·지표 하나의 페이지가 처음 받는 데이터가 각각 gzip 300KB 이하다", async () => {
+  test("브리프 첫 화면(새 상자·빌더 저장소·영상 요약 포함)·영상 반달 파일·지표 페이지·지표 하나의 페이지가 처음 받는 데이터가 각각 gzip 300KB 이하다", async () => {
     // 5단계 측정 조건(1,826일, 하루 42건, 이슈·대상 15,000개, 용어 5,000개, 일정 15,000개)에 지표 12개 × 5년, 이슈의 2할이 지표 1~3개.
     // B1 4.4-6: 저장소 설명은 첫 화면 데이터(list-*.json)에 들어가므로 모든 날짜에 저장소 5개·설명 400자(최악 조건)를 둔다
     const work = tempDir("tidwyn-site6y-");
     const dataDir = path.join(work, "data");
     const out = path.join(work, "out");
-    writeFixtures(dataDir, { end: "2026-10-31", days: 1826, top: 6, short: 8, issues: 15000, contiguous: true, entities: 15000, terms: 5000, schedules: 15000, indicators: 5, indicatorsAll: true, repos: "worst" });
+    writeFixtures(dataDir, { end: "2026-10-31", days: 1826, top: 6, short: 8, issues: 15000, contiguous: true, entities: 15000, terms: 5000, schedules: 15000, indicators: 5, indicatorsAll: true, repos: "worst", videos: "worst" });
     const res = await buildSite({ dataDir, outDir: out });
     console.log(`5년치 결과물 ${res.files.length}개, ${(res.bytes / 1024 / 1024).toFixed(1)}MB`);
     const list = JSON.parse(fs.readFileSync(path.join(out, "site-data", siteFiles.indicatorList), "utf8")) as IndicatorList;
@@ -495,6 +496,15 @@ describe("4.6-2 지표를 더한 5년치", () => {
     const latest = (JSON.parse(fs.readFileSync(path.join(out, "site-data", "list-2026-10.json"), "utf8")) as MonthList).days.at(-1)! as DayList;
     assert.ok(latest.indicators && latest.indicators.length >= 10 && latest.week, "가장 최근 날짜에 일정과 지표 칩이 있다");
     assert.ok(latest.repos?.items.length === 5 && latest.repos.items.every((i) => Array.from(i.description).length === 400), "가장 최근 날짜에 저장소 5개·설명 400자가 있다");
+    // B2 4.3-6: 영상 항목은 첫 화면에 없고 반달 영상 파일에 있다. 모든 날짜에 하루 70개·제목 100자(최악 조건)
+    assert.deepEqual(latest.videos, { status: "shown", count: 70 }, "가장 최근 날짜에 영상 70개가 있다");
+    assert.ok(!fs.readFileSync(path.join(out, "site-data", "list-2026-10.json"), "utf8").includes("\"channel\""), "첫 화면 파일에 영상 항목이 없다");
+    const watchFiles = fs.readdirSync(path.join(out, "site-data")).filter((n) => /^watch-\d{4}-\d{2}-[12]\.json$/.test(n));
+    assert.ok(watchFiles.length >= 120 && watchFiles.length <= 122, `5년(1,826일)이 반달 파일 약 120개다: ${watchFiles.length}`);
+    let watchMax = 0;
+    for (const n of watchFiles) watchMax = Math.max(watchMax, gzipSync(fs.readFileSync(path.join(out, "site-data", n))).length);
+    console.log(`B2 4.3-6 영상 반달 파일 ${watchFiles.length}개, 가장 큰 것 gzip ${(watchMax / 1024).toFixed(1)}KB`);
+    assert.ok(watchMax <= FIRST_SCREEN_BUDGET, `영상 반달 파일 gzip ${watchMax}B`);
     const size = measureOutput(out);
     console.log(`B1 4.4-6 브리프 첫 화면 gzip ${(size.firstScreen.gzip / 1024).toFixed(1)}KB: ${size.firstScreen.files.map((f) => `${f.path} ${(f.gzip / 1024).toFixed(1)}KB`).join(", ")}`);
     assert.ok(size.firstScreen.gzip <= FIRST_SCREEN_BUDGET, `브리프 첫 화면 gzip ${size.firstScreen.gzip}B`);

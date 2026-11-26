@@ -306,17 +306,32 @@ function useMoreMark(ref: RefObject<HTMLElement | null>): void {
     };
     update();
     const stop = observeWidth(el, update);
-    // 키보드로 간 칩을 흐린 끝 앞으로 가져온다(브라우저의 포커스 스크롤은 scroll-padding을 따르지 않는다). 마우스로 누를 때는 줄을 밀지 않는다(누르는 동안 칩이 움직이면 눌리지 않는다)
+    // 키보드로 간 칩을 흐린 끝 앞으로 가져온다(브라우저의 포커스 스크롤은 scroll-padding을 따르지 않는다). 마우스로 누를 때는 누르는 동안 줄을 밀지 않고(칩이 움직이면 눌리지 않는다), 누른 뒤에 가져온다(2026-11-26 사용자 결정)
+    const show = (target: Element | null) => target?.scrollIntoView({ block: "nearest", inline: "nearest" });
     const reveal = (ev: Event) => {
       const target = ev.target as HTMLElement;
-      if (focusVisible(target)) target.scrollIntoView({ block: "nearest", inline: "nearest" });
+      if (focusVisible(target)) show(target);
+    };
+    // 누른 칩은 줄 안에서 가로로만 옮긴다(scrollIntoView는 페이지도 위아래로 움직인다, 결과 검토)
+    const revealClicked = (ev: Event) => {
+      const chip = (ev.target as HTMLElement).closest("button, a");
+      if (!chip) return;
+      const box = el.getBoundingClientRect();
+      const r = chip.getBoundingClientRect();
+      const pad = getComputedStyle(el);
+      const start = box.left + (parseFloat(pad.scrollPaddingInlineStart) || 0);
+      const end = box.right - (parseFloat(pad.scrollPaddingInlineEnd) || 0);
+      if (r.right > end) el.scrollLeft += r.right - end;
+      else if (r.left < start) el.scrollLeft -= start - r.left;
     };
     el.addEventListener("scroll", update, { passive: true });
     el.addEventListener("focusin", reveal);
+    el.addEventListener("click", revealClicked);
     return () => {
       stop();
       el.removeEventListener("scroll", update);
       el.removeEventListener("focusin", reveal);
+      el.removeEventListener("click", revealClicked);
     };
   });
 }

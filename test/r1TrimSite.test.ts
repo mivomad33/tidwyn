@@ -24,9 +24,8 @@ function decode(text: string): string {
     .replace(/&#(\d+);/g, (_, d: string) => String.fromCodePoint(Number(d)));
 }
 
-/** 화면 글로 남으면 안 되는 지운 기능 낱말(4.3-3). '수요일'은 걸리지 않는다. '빌더'는 B1(3.4)이 탭 이름으로 다시 써서 뺐다 */
+/** 화면 글로 남으면 안 되는 지운 기능 낱말(4.3-3). '수요일'은 걸리지 않는다. '빌더'는 B1(3.4), '영상'은 B2(3.4)가 탭 이름으로 다시 써서 뺐다 */
 const SCREEN_WORDS: readonly [string, RegExp][] = [
-  ["영상", /영상/],
   ["수요", /수요(?!일)/],
   ["새 제품", /새 제품/],
   ["뜨는 저장소", /뜨는 저장소/],
@@ -85,14 +84,14 @@ describe("R1 4.3-3 빌드 결과물에 지운 기능이 없다", () => {
     const index = path.join(planted, "index.html");
     fs.appendFileSync(index, "<!-- 매주 수요일 -->");
     assert.deepEqual(scanOutput(planted), [], "수요일은 걸리지 않는다");
-    fs.appendFileSync(index, "<p>오늘의 영상</p>");
+    fs.appendFileSync(index, "<p>오늘의 수요</p>");
     const js = listFilesRecursive(planted).find((f) => /^assets[\\/].*\.js$/.test(f))!;
-    fs.appendFileSync(path.join(planted, js), `\nconst t="\\uc601\\uc0c1";`); // 이스케이프한 '영상'
+    fs.appendFileSync(path.join(planted, js), `\nconst t="\\uc218\\uc694";`); // 이스케이프한 '수요'
     fs.writeFileSync(path.join(planted, "site-data", "demand-items-2026-10.json"), "{}");
     fs.appendFileSync(path.join(planted, "sitemap.xml"), "<!-- 뜨는 저장소 -->");
     const hits = scanOutput(planted);
-    assert.ok(hits.some((h) => h.startsWith("index.html: 영상")), hits.join("\n"));
-    assert.ok(hits.some((h) => h.includes(".js: 영상")), hits.join("\n"));
+    assert.ok(hits.some((h) => h.startsWith("index.html: 수요")), hits.join("\n"));
+    assert.ok(hits.some((h) => h.includes(".js: 수요")), hits.join("\n"));
     assert.ok(hits.some((h) => h === "site-data/demand-items-2026-10.json: 파일 이름 demand-items-"), hits.join("\n"));
     assert.ok(hits.some((h) => h.startsWith("sitemap.xml: 뜨는 저장소")), hits.join("\n"));
   });
@@ -115,15 +114,16 @@ function hrefsOf(html: string): string[] {
   return [...html.matchAll(/href="([^"]*)"/g)].map((m) => decode(m[1]!.replaceAll("&amp;", "&")));
 }
 
-/** 소개·처리방침에 남으면 안 되는 지운 서비스·소스 문구. '빌더'는 B1(3.4, 4.4-4)이 빌더 탭 안내와 탭 저장값 문구로 다시 써서 뺐다 */
+/**
+ * 소개·처리방침에 남으면 안 되는 지운 서비스·소스 문구. '빌더'는 B1(3.4, 4.4-4)이 빌더 탭 안내와 탭 저장값 문구로,
+ * 'YouTube'·'영상'은 B2(3.4, 4.3-4)가 영상 탭 안내와 썸네일 문구로 다시 써서 뺐다. YouTube 약관 링크(아래)와 Gemini는 그대로 막는다
+ */
 const POLICY_FORBIDDEN: readonly [string, RegExp][] = [
-  ["YouTube", /youtube/i],
   ["Gemini", /gemini/i],
   ["Product Hunt", /product ?hunt/i],
   ["GitHub 검색·별", /GitHub (Search|API|Trending|Advisory)|stargazer|별 수|별이 [\d,]+|별 이력/i],
   ["뜨는 저장소·새 제품", /뜨는 저장소|새 제품/],
   ["수요 소스", /청원|권익위|민원|1372|DART|SEC Form|Wikimedia|Google Trends|Mastodon|Bluesky|커뮤니티/i],
-  ["영상", /영상/],
   ["수요", /수요(?!일)/],
 ];
 
@@ -159,7 +159,7 @@ describe("R1 4.3-4 소개·처리방침", () => {
     assert.match(text, /방문 통계 운영 주소\([^)]+\)에서만 Vercel Web Analytics로 페이지 보기 수를 셉니다/);
     assert.match(text, /브라우저에만 두는 기록/);
     assert.ok(text.includes(READ_MARKS_KEY), "읽은 기록 키가 목록에 있다");
-    assert.match(text, /브리프에서 마지막으로 고른 탭\(전체·한국·세계·IT·AI·빌더\)/, "탭 저장값 설명에 지운 탭이 없고 B1 빌더 탭이 있다");
+    assert.match(text, /브리프에서 마지막으로 고른 탭\(전체·한국·세계·IT·AI·영상·빌더\)/, "탭 저장값 설명에 지운 탭이 없고 B1 빌더 탭·B2 영상 탭이 있다");
     assert.ok(text.includes(CONTACT_MAIL) && hrefsOf(html).some((h) => h.startsWith(`mailto:${CONTACT_MAIL}`)), "문의 메일");
   });
 
@@ -169,7 +169,7 @@ describe("R1 4.3-4 소개·처리방침", () => {
       '<h2 class="h">추천 영상과 YouTube</h2><p class="p">영상 내용은 Google의 Gemini API로 확인한다. <a href="https://www.youtube.com/t/terms">YouTube 이용약관</a></p></main>',
     );
     assert.notEqual(old, page("privacy.html"), "심을 자리가 있다");
-    assert.deepEqual(policyHits(old), ["글: YouTube", "글: Gemini", "글: 영상", "링크: https://www.youtube.com/t/terms"]);
+    assert.deepEqual(policyHits(old), ["글: Gemini", "링크: https://www.youtube.com/t/terms"]);
     const about = page("about.html").replace("</main>", "<p>새 제품은 Product Hunt에서, 수요는 국회 청원과 Wikimedia에서 받는다.</p></main>");
     assert.deepEqual(policyHits(about), ["글: Product Hunt", "글: 뜨는 저장소·새 제품", "글: 수요 소스", "글: 수요"]);
   });

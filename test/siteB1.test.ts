@@ -87,7 +87,7 @@ describe("B1 4.4-1 탭 목록과 탭 값(DOM 없는 로직)", () => {
   test("저장한 탭 값 '빌더'를 읽고, #builder는 그날 빌더 탭을 열며 기록이 없는 날은 첫 섹션 탭으로 간다", () => {
     const i = info();
     assert.equal(parseBriefTab(BUILDER_TAB), BUILDER_TAB);
-    assert.equal(parseBriefTab("영상"), "한국", "지운 탭의 옛 값은 그대로 기본 탭");
+    assert.equal(parseBriefTab("수요"), "한국", "지운 탭의 옛 값은 그대로 기본 탭(영상은 B2가 다시 쓴다)");
     const base = { section: "세계" as const, major: null, expanded: null };
     assert.equal(stateForHash(day(i.shown), "builder", base).section, BUILDER_TAB);
     assert.equal(stateForHash(day(i.absent), "builder", base).section, "세계", "기록 없는 날의 #builder는 지금 탭 그대로");
@@ -183,11 +183,12 @@ describe("B1 4.4-4 소개·처리방침", () => {
     assert.match(text, /저장소 설명은 AI가 README를 읽고 쓴 글이라 틀릴 수 있습니다\. 저장소를 추천하거나 안전성·품질을 보증하는 것이 아니니/);
   });
 
-  test("처리방침의 탭 저장값 설명에 '빌더'가 있고 바뀐 날짜가 2026-11-25다", () => {
-    assert.equal(PRIVACY_UPDATED, "2026-11-25");
-    assert.equal(BROWSER_KEYS.find((k) => k.key === BRIEF_TAB_KEY)!.what, "브리프에서 마지막으로 고른 탭(전체·한국·세계·IT·AI·빌더)");
+  // B2(2026-11-26)가 영상 탭으로 탭 저장값 설명과 바뀐 날짜를 다시 고쳤다. 빌더가 있고 날짜가 B1 이후인지만 본다
+  test("처리방침의 탭 저장값 설명에 '빌더'가 있고 바뀐 날짜가 2026-11-25 이후다", () => {
+    assert.ok(PRIVACY_UPDATED >= "2026-11-25", PRIVACY_UPDATED);
+    assert.match(BROWSER_KEYS.find((k) => k.key === BRIEF_TAB_KEY)!.what, /^브리프에서 마지막으로 고른 탭\(전체·한국·세계·IT·AI·(영상·)?빌더\)$/);
     const text = textOf(page("privacy.html"));
-    assert.ok(text.includes("브리프에서 마지막으로 고른 탭(전체·한국·세계·IT·AI·빌더)"), "처리방침 목록");
-    assert.ok(text.includes(`바뀐 날짜: ${fullKoreanDate("2026-11-25")}`), "바뀐 날짜");
+    assert.match(text, /브리프에서 마지막으로 고른 탭\(전체·한국·세계·IT·AI·(영상·)?빌더\)/, "처리방침 목록");
+    assert.ok(text.includes(`바뀐 날짜: ${fullKoreanDate(PRIVACY_UPDATED)}`), "바뀐 날짜");
   });
 });

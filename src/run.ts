@@ -100,6 +100,18 @@ export type RepoStepResult =
   | { status: "none"; date: string; excluded: string[] }
   | { status: "failed"; date: string; reason: string; violations?: Violation[]; excluded?: string[] };
 
+/**
+ * 영상 단계 결과(B2 4.1). video-pick이 남긴다. 받지 못한 이유(원천 DB 경로가 들어갈 수 있다)는 이 실행 기록에만 둔다
+ * - noTarget: 저장된 브리프가 없다. done: 그 날짜는 이미 끝났다(실음·새 영상 없음)
+ * - at: 기준 시각(ISO), counts: 분야별 실은 수(분야 순서), skipped: 결과물 검사에 걸려 건너뛴 영상 수
+ */
+export type VideoStepResult =
+  | { status: "noTarget" }
+  | { status: "done"; date: string; recorded: "shown" | "none" }
+  | { status: "shown"; date: string; at: string; counts: { category: string; count: number }[]; skipped: number }
+  | { status: "none"; date: string; at: string; skipped: number }
+  | { status: "failed"; date: string; at: string; reason: string };
+
 /** 사이트 빌드 결과(3단계 4.1, 4.5) */
 export type SiteResult =
   | { status: "built"; outDir: string; dates: number; issues: number; entities?: number; terms?: number; schedules?: number; upcoming?: number; indicators?: number; files: number; bytes: number }
@@ -156,6 +168,8 @@ export interface RunState {
   push?: PushResult | null;
   /** 저장소 단계(B1). 돌지 않은 실행에는 없다 */
   repos?: RepoStepResult;
+  /** 영상 단계(B2). 돌지 않은 실행에는 없다 */
+  videos?: VideoStepResult;
   /** 배포만 실행(R1 T9). start --deploy-only가 남기고, 표시가 없으면 평소 실행이다 */
   deployOnly?: true;
 }

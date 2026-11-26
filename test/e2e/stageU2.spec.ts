@@ -584,7 +584,7 @@ test.describe("4.3-4 칩 줄 넘침 표시(S11, 375)", () => {
     await context.close();
   });
 
-  test("흐린 끝에 걸린 칩을 마우스로 눌러도 줄이 밀리지 않고 그 칩이 골라진다(320, 마우스)", async ({ browser }) => {
+  test("흐린 끝에 걸린 칩을 마우스로 누르면 그 칩이 골라지고, 누른 뒤 흐린 끝 밖으로 온다(320, 마우스, 2026-11-26 사용자 결정)", async ({ browser }) => {
     const { context, page } = await freshPage(browser, { viewport: { width: 320, height: 700 }, hasTouch: false });
     await openScreen(page, "/");
     await sectionTab(page, "전체").click();
@@ -602,8 +602,37 @@ test.describe("4.3-4 칩 줄 넘침 표시(S11, 375)", () => {
     expect(hit.index, "흐린 끝에 걸린 칩이 없다(데이터나 폭이 바뀌었으면 고른 화면을 다시 본다)").toBeGreaterThan(0);
     const before = await row.evaluate(inPage<number>("return e.scrollLeft;"));
     await page.mouse.click(hit.x, hit.y);
-    await expect(row.locator("button").nth(hit.index)).toHaveAttribute("aria-pressed", "true");
-    expect(await row.evaluate(inPage<number>("return e.scrollLeft;"))).toBe(before);
+    const picked = row.locator("button").nth(hit.index);
+    await expect(picked).toHaveAttribute("aria-pressed", "true");
+    await frames(page);
+    const after = await picked.evaluate(
+      inPage<{ right: number; edge: number; scroll: number }>(`
+        const row = e.closest(".chips"); const box = row.getBoundingClientRect();
+        return { right: e.getBoundingClientRect().right, edge: box.right - 48, scroll: row.scrollLeft };`),
+    );
+    expect(after.scroll, "줄이 밀렸다").toBeGreaterThan(before);
+    expect(after.right, JSON.stringify(after)).toBeLessThanOrEqual(after.edge + 0.5);
+    await context.close();
+  });
+
+  test("칩 줄이 화면 아래쪽에 있어도 칩을 마우스로 누르면 페이지는 위아래로 움직이지 않는다(결과 검토)", async ({ browser }) => {
+    const { context, page } = await freshPage(browser, { viewport: { width: 320, height: 700 }, hasTouch: false });
+    await openScreen(page, "/");
+    await sectionTab(page, "전체").click();
+    const row = page.locator("main .chips").first();
+    await expect(row).toHaveAttribute("data-more", "");
+    // 화면 높이를 줄여 줄 아래가 화면 아래 끝에서 30px 위에 오게 한다(포커스 여백 64px 안)
+    const bottom = await row.evaluate(inPage<number>("return e.getBoundingClientRect().bottom + window.scrollY;"));
+    await page.setViewportSize({ width: 320, height: Math.ceil(bottom) + 30 });
+    await frames(page);
+    const before = await page.evaluate<number>("window.scrollY");
+    expect(await page.evaluate<number>("document.documentElement.scrollHeight - window.innerHeight"), "페이지가 짧아 움직일 수 없다").toBeGreaterThan(100);
+    const chip = row.locator("button").nth(1);
+    const box = (await chip.boundingBox())!;
+    await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
+    await expect(chip).toHaveAttribute("aria-pressed", "true");
+    await frames(page);
+    expect(await page.evaluate<number>("window.scrollY")).toBe(before);
     await context.close();
   });
 });
