@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
-import { BACKUP_NAME_RE, contentFindings, nameKinds, type Finding } from "./precheck.ts";
+import { isCurrentBackupName } from "./backupNames.ts";
+import { contentFindings, nameKinds, type Finding } from "./precheck.ts";
 import { ROBOTS_DISALLOW, ROBOTS_FILE, SITEMAP_FILE, SITE_URL, pageFile } from "./publicSite.ts";
 
 // 결과물 검사(3단계 4.1-4). 빌드 뒤와 배포 전에 돌린다. 걸린 값은 출력하지 않는다(경로와 종류만).
@@ -47,7 +48,7 @@ export function checkOutput(outDir: string, home: string | null, secrets: readon
     bytes += st.size;
     for (const kind of nameKinds(rel)) findings.push({ where: rel, kind });
     const base = path.posix.basename(rel);
-    if (BACKUP_NAME_RE.test(base)) findings.push({ where: rel, kind: "백업 파일 이름" });
+    if (isCurrentBackupName(base)) findings.push({ where: rel, kind: "백업 파일 이름" });
     if (RUN_FILE_RES.some((re) => re.test(base)) || rel.split("/").slice(0, -1).some((d) => DATA_DIRS.has(d))) findings.push({ where: rel, kind: "실행 기록·작업 파일" });
     if (!st.isFile()) continue;
     const textScan = TEXT_EXTENSIONS.has(path.posix.extname(base).toLowerCase());

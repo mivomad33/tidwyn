@@ -4,6 +4,7 @@ import type { DatabaseSync } from "node:sqlite";
 import type { StoredBrief } from "./brief.ts";
 import { openDb, purgeBuilderOnlySchedules } from "./db.ts";
 import { git, gitTry } from "./git.ts";
+import { CORRECTIONS_FILE, INDICATORS_FILE, ISSUES_FILE, META_FILE, MONTH_RE, REFS_FILE, REPOS_FILE, SCHEDULES_FILE, WATCH_FILE, isCurrentBackupName } from "./backupNames.ts";
 import {
   FIRST_LINKED_KEY,
   MERGE_CHECKED_KEY,
@@ -62,16 +63,6 @@ export const BACKUP_FORMAT_VERSION = 13;
 const READABLE_VERSIONS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
 export const BACKUP_DIR = "backup";
 export const DATA_REF = "refs/heads/data";
-const META_FILE = "meta.json";
-const ISSUES_FILE = "issues.json";
-const REFS_FILE = "refs.json";
-const SCHEDULES_FILE = "schedules.json";
-const INDICATORS_FILE = "indicators.json";
-const CORRECTIONS_FILE = "corrections.json";
-/** B1: 저장소 기록. 옛 빌더 파일 이름(builder.json)은 옛 형식으로 읽히므로 쓰지 않는다 */
-const REPOS_FILE = "repos.json";
-/** B2: 영상 기록. R1이 막는 옛 영상 파일 이름(videos-)을 쓰지 않는다 */
-const WATCH_FILE = "watch.json";
 /** 지운 기능(R1)의 옛 백업 파일. 쓰지 않고, 복원할 때 builder.json의 일정 연결만 읽는다 */
 const BUILDER_FILE = "builder.json";
 const DEMAND_FILE = "demand.json";
@@ -81,7 +72,6 @@ interface OldBuilderBackup {
   formatVersion: number;
   items?: { schedules?: number[] }[];
 }
-const MONTH_RE = /^\d{4}-\d{2}\.json$/;
 
 interface MetaFile {
   formatVersion: number;
@@ -119,7 +109,7 @@ interface RefsFile {
 }
 
 function isBackupFile(name: string): boolean {
-  return name === META_FILE || name === ISSUES_FILE || name === REFS_FILE || name === SCHEDULES_FILE || name === INDICATORS_FILE || name === CORRECTIONS_FILE || name === REPOS_FILE || name === WATCH_FILE || name === BUILDER_FILE || name === DEMAND_FILE || MONTH_RE.test(name);
+  return isCurrentBackupName(name) || name === BUILDER_FILE || name === DEMAND_FILE;
 }
 
 function buildRefsFile(db: DatabaseSync): RefsFile {

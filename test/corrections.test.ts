@@ -9,7 +9,7 @@ import { MIGRATIONS, openDb, schemaVersion } from "../src/db.ts";
 import { createIssue, linkStory, storiesOfDate } from "../src/issues.ts";
 import { loadBrief, recordFirstCollectionDate, saveBrief } from "../src/store.ts";
 import { validateBrief } from "../src/validate.ts";
-import { BACKUP_NAME_RE } from "../src/precheck.ts";
+import { isCurrentBackupName } from "../src/backupNames.ts";
 import { cleanupTemp, gitIn, makeCtx, sampleBrief, tempDir, tempRepo } from "./helpers.ts";
 
 after(cleanupTemp);
@@ -225,7 +225,7 @@ describe("4.7-4 마이그레이션과 백업", () => {
     const files = buildBackup(db);
     db.close();
     assert.ok(files.has("corrections.json"));
-    assert.ok(BACKUP_NAME_RE.test("corrections.json"));
+    assert.ok(isCurrentBackupName("corrections.json"));
     assert.equal(JSON.parse(files.get("meta.json")!).formatVersion, 13);
     const out = path.join(tempDir(), "restored.db");
     restoreBackup(files, out);
