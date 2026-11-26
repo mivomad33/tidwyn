@@ -1,5 +1,5 @@
 {
-  "formatVersion": 12,
+  "formatVersion": 13,
   "schedules": [
     {
       "id": 1,
@@ -710,7 +710,7 @@
       "name": "EU 정상회의",
       "due": "2026-11-26",
       "major": "국제",
-      "outcome": null,
+      "outcome": "result",
       "postponedTo": null,
       "mergedInto": null,
       "deleted": false,
@@ -996,7 +996,7 @@
       "name": "한국은행 금융통화위원회 기준금리 결정",
       "due": "2026-11-26",
       "major": "경제",
-      "outcome": null,
+      "outcome": "result",
       "postponedTo": null,
       "mergedInto": null,
       "deleted": false,
@@ -1040,7 +1040,7 @@
       "name": "국회 국방위 청해부대 파견연장안 전체회의 의결",
       "due": "2026-11-26",
       "major": "정치",
-      "outcome": null,
+      "outcome": "result",
       "postponedTo": null,
       "mergedInto": null,
       "deleted": false,
@@ -1094,6 +1094,83 @@
       "id": 110,
       "name": "EU 소버린 기술펀드 세부안 발표",
       "due": "2027-02",
+      "major": "IT·AI",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 111,
+      "name": "윤석열 일반이적 혐의 2심 선고",
+      "due": "2026-12-04",
+      "major": "정치",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 112,
+      "name": "철도노조 무기한 총파업 예고일",
+      "due": "2026-12-10",
+      "major": "경제",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 113,
+      "name": "2026년 주택 종부세 납부 기한",
+      "due": "2026-12-15",
+      "major": "경제",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 114,
+      "name": "진에어·에어부산·에어서울 통합 항공사 출범",
+      "due": "2027-03",
+      "major": "경제",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 115,
+      "name": "연기된 메이시스 추수감사절 퍼레이드 개최",
+      "due": "2026-11-28",
+      "major": "사회",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 116,
+      "name": "차기 ECB 총재 후보 유럽의회 청문회",
+      "due": "2026-12-07",
+      "major": "경제",
+      "outcome": null,
+      "postponedTo": null,
+      "mergedInto": null,
+      "deleted": false,
+      "deletedOn": null
+    },
+    {
+      "id": 117,
+      "name": "삼성전자 조직개편 시행",
+      "due": "2026-12-01",
       "major": "IT·AI",
       "outcome": null,
       "postponedTo": null,
@@ -2046,6 +2123,81 @@
     {
       "story": "2026-11-25/IT·AI-7",
       "schedule": 110,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-26/세계-3",
+      "schedule": 75,
+      "role": "result"
+    },
+    {
+      "story": "2026-11-26/세계-5",
+      "schedule": 15,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-26/세계-5",
+      "schedule": 116,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-26/세계-6",
+      "schedule": 115,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-26/한국-1",
+      "schedule": 101,
+      "role": "result"
+    },
+    {
+      "story": "2026-11-26/한국-2",
+      "schedule": 43,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-26/한국-2",
+      "schedule": 111,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-26/한국-4",
+      "schedule": 112,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-26/한국-5",
+      "schedule": 102,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-26/한국-8",
+      "schedule": 113,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-26/한국-9",
+      "schedule": 114,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-26/한국-s1",
+      "schedule": 106,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-26/한국-s3",
+      "schedule": 104,
+      "role": "basis"
+    },
+    {
+      "story": "2026-11-26/한국-s4",
+      "schedule": 105,
+      "role": "result"
+    },
+    {
+      "story": "2026-11-26/IT·AI-5",
+      "schedule": 117,
       "role": "basis"
     }
   ],
