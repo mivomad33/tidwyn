@@ -22,12 +22,21 @@ export const FOOTER_LINKS: readonly [string, string][] = [
   [privacyPath(), PRIVACY_TITLE],
 ];
 
-export function FooterView({ Link }: { Link: LinkLike }) {
+
+export const REPORT_ASK = "틀린 내용을 찾으셨나요?";
+export const REPORT_LABEL = "알려 주기";
+/** 바닥글. 브리프 화면은 report(날짜·주소가 채워진 제보 메일 주소)를 넘겨 맨 윗줄에 메뉴와 떼어 제보 줄을 둔다(reading-terms R15) */
+export function FooterView({ Link, report }: { Link: LinkLike; report?: string }) {
   return h(
     "footer",
     { className: "footer" },
+    report ? h("p", { className: "footer-report" }, REPORT_ASK, " ", h("a", { href: report }, REPORT_LABEL, " ›")) : null,
     h("p", null, "Tidwyn · AI가 매일 모아 쉬운 말로 바꿔 쓴 뉴스 요약"),
-    h("nav", { "aria-label": "바닥 메뉴" }, ...FOOTER_LINKS.map(([to, label]) => h(Link, { key: to, to }, label))),
+    h(
+      "nav",
+      { "aria-label": "바닥 메뉴" },
+      ...FOOTER_LINKS.map(([to, label]) => h(Link, { key: to, to }, label)),
+    ),
   );
 }
 

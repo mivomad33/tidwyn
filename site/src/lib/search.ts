@@ -47,7 +47,7 @@ function pickBest<T>(items: T[], score: (item: T) => number, total: number): T[]
 export function storyText(story: ListStory, detail: StoryDetail | undefined): string {
   const parts = [story.title];
   if (detail) {
-    parts.push(detail.summary, detail.whyItMatters, detail.background, ...detail.keyFacts, detail.analogy ?? "", detail.outlook);
+    parts.push(detail.summary, detail.whyItMatters, detail.background, ...detail.keyFacts, detail.outlook ?? "");
   }
   return parts.join("\n");
 }

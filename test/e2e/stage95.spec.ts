@@ -124,19 +124,25 @@ test.describe("4.6-1 메일 통로", () => {
     await expect(page.locator('a[href="mailto:mivomad33@gmail.com"]')).toBeVisible();
     await expect(page.locator('a[href*="github.com/mivomad33/tidwyn/issues"]')).toHaveCount(0);
   });
-  test("제보 링크는 펼친 카드에 없고 목록 맨 끝에 하나만 있으며 날짜·주소가 채워진다(T8)", async ({ page }) => {
+  test("제보 링크는 펼친 카드에 없고 바닥글 맨 앞에 하나만 있으며 날짜·주소가 채워진다(T8, reading-terms R15)", async ({ page }) => {
     const key = `${section}-3`;
     await page.goto(storyUrl(latest, key));
     const card = storyItem(page, key);
     await expect(card.locator(".detail")).toBeVisible();
-    await expect(card.getByRole("link", { name: /틀린 내용 알리기/ })).toHaveCount(0);
-    const links = page.locator(".brief-report a");
+    await expect(card.getByRole("link", { name: /알려 주기/ })).toHaveCount(0);
+    await expect(page.locator(".brief-report")).toHaveCount(0);
+    const links = page.getByRole("contentinfo").getByRole("link", { name: /알려 주기/ });
     await expect(links).toHaveCount(1);
+    await expect(page.getByRole("contentinfo").getByRole("link").first()).toHaveText(/알려 주기/);
+    await expect(page.locator("footer nav").getByRole("link", { name: /알려 주기/ })).toHaveCount(0);
+    await expect(page.locator(".footer-report")).toContainText("틀린 내용을 찾으셨나요?");
     const href = await links.getAttribute("href");
     const mail = new URL(href!);
     expect(mail.pathname).toBe("mivomad33@gmail.com");
     expect(decodeURIComponent(href!)).toContain(`https://tidwyn.vercel.app/${latest}`);
     expect(decodeURIComponent(href!)).toContain("틀린 뉴스(제목):");
+    await page.goto("/issues");
+    await expect(page.locator(".footer-report")).toHaveCount(0);
   });
 });
 

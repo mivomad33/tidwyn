@@ -95,7 +95,9 @@ describe("4.2-3 주요 뉴스 항목", () => {
   });
   test("한국 섹션에 개발자 체크 포인트가 있으면 거부된다", () => rejects((b) => (top(b, 0, 1).devCheckpoint = "패치"), "한국 섹션 2위 개발자 체크 포인트", "IT·AI"));
   test("IT·AI 섹션의 개발자 체크 포인트는 통과한다", () => passes((b) => (top(b, 2, 3).devCheckpoint = "패치")));
-  test("비유가 없으면 통과한다", () => passes((b) => delete top(b, 0, 0).analogy));
+  test("비유가 있으면 거부된다(R9: 비유는 쓰지 않는다)", () => rejects((b) => (top(b, 0, 0).analogy = "가짜 비유"), "한국 섹션 1위", "analogy"));
+  test("앞으로 볼 것이 없으면 통과한다(R10: 구체적일 때만 쓴다)", () => passes((b) => delete top(b, 0, 0).outlook));
+  test("앞으로 볼 것이 빈 글이면 거부된다", () => rejects((b) => (top(b, 0, 0).outlook = " "), "한국 섹션 1위 앞으로 볼 것", "비어"));
 });
 
 describe("4.2-4 분류", () => {
@@ -179,7 +181,6 @@ describe("4.2-8 인용 길이", () => {
     rejects((b) => (sec(b, 0).flow = long), "한국 섹션 흐름 한 줄", "15단어");
     rejects((b) => (top(b, 0, 0).title = long), "1위 제목", "15단어");
     rejects((b) => (top(b, 0, 0).keyFacts[0] = long), "1위 핵심 사실 1", "15단어");
-    rejects((b) => (top(b, 0, 0).analogy = long), "1위 비유", "15단어");
     rejects((b) => (top(b, 2, 1).devCheckpoint = long), "IT·AI 섹션 2위 개발자 체크 포인트", "15단어");
     rejects((b) => (sec(b, 0).unverified = long), "한국 섹션 확인되지 않은 내용", "15단어");
   });

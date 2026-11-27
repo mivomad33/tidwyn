@@ -143,7 +143,7 @@ function parseTopStory(c: Checker, raw: unknown, section: SectionName, index: nu
   if (o === null) return null;
   const rank = typeof o.rank === "number" ? o.rank : NaN;
   const w = Number.isInteger(rank) ? `${section} 섹션 ${rank}위` : `${section} 섹션 주요 뉴스 ${index + 1}번째`;
-  c.keys(o, ["rank", "title", "summary", "whyItMatters", "background", "keyFacts", "analogy", "outlook", "confidence", "devCheckpoint", "category", "sources"], w);
+  c.keys(o, ["rank", "title", "summary", "whyItMatters", "background", "keyFacts", "outlook", "confidence", "devCheckpoint", "category", "sources"], w);
   const facts = c.arr(o, "keyFacts", "핵심 사실", w);
   c.count(facts.length, 3, 5, `${w} 핵심 사실`);
   const keyFacts = facts.map((f, i) => {
@@ -161,13 +161,13 @@ function parseTopStory(c: Checker, raw: unknown, section: SectionName, index: nu
     whyItMatters: c.text(o, "whyItMatters", "왜 중요한가", w),
     background: c.text(o, "background", "배경", w),
     keyFacts,
-    outlook: c.text(o, "outlook", "앞으로 볼 것", w),
     confidence: (typeof confidence === "string" ? confidence : "보도에 따르면") as Confidence,
     category: parseCategory(c, o.category, w),
     sources: parseSources(c, o, w, true),
   };
-  const analogy = c.optText(o, "analogy", "비유", w);
-  if (analogy !== undefined) story.analogy = analogy;
+  // R10: 앞으로 볼 것은 구체적일 때만 쓴다(없어도 된다)
+  const outlook = c.optText(o, "outlook", "앞으로 볼 것", w);
+  if (outlook !== undefined) story.outlook = outlook;
   const dev = c.optText(o, "devCheckpoint", "개발자 체크 포인트", w);
   if (dev !== undefined) {
     if (section !== "IT·AI") c.add(`${w} 개발자 체크 포인트`, "IT·AI 섹션에서만 쓸 수 있다");
@@ -181,7 +181,6 @@ function parseTopStory(c: Checker, raw: unknown, section: SectionName, index: nu
     ["한 줄 요약", story.summary],
     ["왜 중요한가", story.whyItMatters],
     ["배경", story.background],
-    ["비유", story.analogy],
     ["앞으로 볼 것", story.outlook],
     ["개발자 체크 포인트", story.devCheckpoint],
   ] as const) {

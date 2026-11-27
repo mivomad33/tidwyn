@@ -184,7 +184,11 @@ describe("3단계 4.1-1 사이트 데이터", () => {
 
   test("펼친 카드: 주요 뉴스만, 본문 항목·출처(대표 먼저, 이미지·발행일 추정은 있을 때만)·추가 이슈·이전 전개", () => {
     const { db, a, b } = exampleDb();
+    // R9: DB에 남은 지난 비유는 사이트 데이터(펼친 카드, 검색 글)에 싣지 않는다
+    db.exec("UPDATE stories SET analogy = '지난 가짜 비유' WHERE kind = 'top'");
     const files = buildSiteData(db);
+    assert.ok(![...files.values()].join("").includes("지난 가짜 비유"), "비유를 싣지 않는다");
+    assert.ok(!buildSearchRecords(db).some((r) => r.content.includes("지난 가짜 비유")), "검색 글에도 없다");
     const oct = parse<MonthDetail>(files, "detail-2026-10.json");
     assert.deepEqual(Object.keys(oct.days), ["2026-10-01", "2026-10-02", "2026-10-04"]);
     const d2 = oct.days["2026-10-02"]!;
@@ -202,7 +206,6 @@ describe("3단계 4.1-1 사이트 데이터", () => {
         { name: "가짜통신", url: "https://news.example-kr-1.com/2026-10-02/kr-1", publishedAt: "2026-10-02", imageUrl: IMAGE, primary: true },
         { name: "예시일보", url: "https://daily.example.org/kr-1", publishedAt: "2026-10-02" },
       ],
-      analogy: "큰 배가 방향을 트는 데 시간이 걸리는 것과 같다.",
       extras: [],
       previous: [{ date: "2026-10-01", key: "한국-1", title: "한국 뉴스 1의 핵심을 담은 제목" }],
     });
@@ -409,7 +412,7 @@ describe("3단계 4.1-3 검색 레코드", () => {
     );
     assert.ok(records.every((r) => r.language === "ko"));
     const news = records[1]!.content.split("\n");
-    for (const s of ["한국 뉴스 1의 핵심을 담은 제목", "한국 뉴스 1을 한 줄로 요약했다.", "많은 사람의 생활에 영향을 준다.", "반도체가 수출을 끌어올렸다", "큰 배가 방향을 트는 데 시간이 걸리는 것과 같다.", "다음 주 발표가 예정되어 있다.", "세계 짧은 소식 1을 한 줄로 적었다."]) {
+    for (const s of ["한국 뉴스 1의 핵심을 담은 제목", "한국 뉴스 1을 한 줄로 요약했다.", "많은 사람의 생활에 영향을 준다.", "반도체가 수출을 끌어올렸다", "다음 주 발표가 예정되어 있다.", "세계 짧은 소식 1을 한 줄로 적었다."]) {
       assert.ok(news.includes(s), s);
     }
     const issues0 = records[4]!.content.split("\n");

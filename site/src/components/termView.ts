@@ -1,4 +1,4 @@
-// 펼친 카드의 용어 밑줄·칩·설명 상자와 대상 칩(E8, 4.7-1·4.7-2·4.7-7).
+// 펼친 카드의 용어 밑줄·설명 상자와 대상 칩(E8, 4.7-1·4.7-2·4.7-7). 용어 칩은 '관련' 줄의 링크다(storyMeta.ts, 2026-11-27 R6).
 // 상태는 부르는 쪽(카드)이 갖고, 여기는 그리기만 한다. 테스트가 react-dom/server로 그려 보도록
 // JSX와 화면 이동기(router.tsx)를 쓰지 않는다: 링크 컴포넌트는 부르는 쪽이 넘긴다.
 import { createElement as h, Fragment, type ComponentType, type ReactNode } from "react";
@@ -35,26 +35,6 @@ export function TermText({ segments, openId, onToggle, boxId }: ToggleProps & { 
         "button",
         { key: i, type: "button", className: open ? "term open" : "term", "aria-expanded": open, "aria-controls": open ? boxId : undefined, onClick: () => onToggle(id) },
         s.text,
-      );
-    }),
-  );
-}
-
-/** "용어" 칩 줄. 그 뉴스의 모든 용어(본문 표기가 없는 것 포함). 용어가 없으면 그리지 않는다 */
-export function TermChips({ terms, openId, onToggle, boxId }: ToggleProps & { terms: TermRef[] }) {
-  if (!terms.length) return null;
-  return h(
-    "div",
-    { className: "rel", role: "group", "aria-label": "용어" },
-    ...terms.map((t) => {
-      const open = openId === t.id;
-      return h(
-        "button",
-        { key: t.id, type: "button", className: open ? "on" : undefined, "aria-expanded": open, "aria-controls": open ? boxId : undefined, onClick: () => onToggle(t.id) },
-        t.name,
-        // 제자리에서 여는 칩이라 끝에 ▾를 둔다(다른 화면으로 가는 알약 칩과 가른다, U1 4.2-1)
-        h("span", { "aria-hidden": true }, open ? " ▴" : " ▾"),
-
       );
     }),
   );

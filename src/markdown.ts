@@ -65,7 +65,7 @@ export function renderMarkdown(stored: StoredBrief, issues: BriefIssues = new Ma
       lines.push("- **핵심 사실:**");
       for (const f of t.keyFacts) lines.push(`  - ${f}`);
       if (t.analogy) lines.push(`- **비유:** ${t.analogy}`);
-      lines.push(`- **앞으로 볼 것:** ${t.outlook}`);
+      if (t.outlook) lines.push(`- **앞으로 볼 것:** ${t.outlook}`);
       if (t.devCheckpoint) lines.push(`- **개발자 체크 포인트:** ${t.devCheckpoint}`);
       lines.push(`- **확인 수준:** ${t.confidence}`);
       lines.push("- **출처:**");

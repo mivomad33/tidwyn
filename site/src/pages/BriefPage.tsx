@@ -2,26 +2,24 @@
 import { useEffect, useLayoutEffect, useMemo, useReducer, useRef, useState, type ReactNode } from "react";
 import { kstDate } from "../../../src/kst.ts";
 import { videoPartOf } from "../../../src/siteTypes.ts";
-import { ALL_MAJORS, CategoryLine, Main, ChipFilter, Empty, ErrorState, Footer, Layout, Loading, NewsTitle, ReadCheck, ReadToggle, SectionChip, ToggleChip, TopBar, useFullTitle } from "../components/common.tsx";
+import { ALL_MAJORS, CategoryLine, Main, ChipFilter, Empty, ErrorState, Footer, Layout, Loading, NewsTitle, ReadCheck, ReadToggle, ToggleChip, TopBar, useFullTitle } from "../components/common.tsx";
 import { BriefBox } from "../components/briefBox.ts";
 import { FixMark, FixNotes } from "../components/correctionView.ts";
 import { ScheduleChips } from "../components/scheduleView.ts";
-import { EntityChips, TermBox, TermChips, TermText } from "../components/termView.ts";
+import { TermBox, TermText } from "../components/termView.ts";
+import { LeadPara, StoryMeta } from "../components/storyMeta.ts";
 import { retry, useResource, type Resource } from "../data.ts";
-import { ALL_TAB, BRIEF_TAB_KEY, BUILDER_TAB, VIDEO_TAB, briefTabs, findDay, extraTabForHash, findStoryTarget, parseBriefTab, sectionView, stateForHash, storyImage, type BriefTab, type BriefViewState } from "../lib/brief.ts";
+import { ALL_TAB, BRIEF_TAB_KEY, BUILDER_TAB, SHORTS_NOTE, VIDEO_TAB, briefTabs, findDay, extraTabForHash, findStoryTarget, parseBriefTab, sectionView, stateForHash, storyImage, type BriefTab, type BriefViewState } from "../lib/brief.ts";
 import { briefTitle, latestTitle, monthDay, monthDayWeekday, pageTitle, shortDate, yearOf } from "../lib/format.ts";
 import { dataUrl } from "../lib/paths.ts";
 import { SITE_URL, briefReportHref } from "../lib/policy.ts";
 import { placeTerms, storyBodyParts, termBoxPlace, toggleTerm } from "../lib/terms.ts";
-import { categoryVar } from "../lib/theme.ts";
 import { adjacentDates, briefPath, hashKey, issuePath, resolveBriefDate, type Route } from "../lib/routes.ts";
 import type { DayList, DayRepos, DayVideoItem, DayVideoSummary, ListStory, MonthDetail, MonthList, SiteDates, VideoPartFile, StoryDetail } from "../lib/types.ts";
 import { readStored, writeStored } from "../lib/storage.ts";
 import { ALL_CHIP_TEXT, countChips, keptChip } from "../lib/chips.ts";
 import { markRead, readStore, useReadVersion } from "../readMarks.ts";
 import { MoreMark } from "../components/moreMark.ts";
-import { ReportLink } from "../components/reportLink.ts";
-import { StorySources } from "../components/sourceView.ts";
 import { RepoList } from "../components/repoView.ts";
 import { VideoList, videoCategoryOrder, videoWatchKey } from "../components/videoView.ts";
 import { cameBackToEntry, Link, lastNavigation, navigate, updateEntry, useLocation } from "../router.tsx";
@@ -376,8 +374,9 @@ export function BriefPage({ route }: { route: Route }) {
             )}
             {shorts.length > 0 && (
               <section aria-labelledby="short-h">
-                <h3 id="short-h" className="h list-h">
-                  짧은 소식
+                <h3 id="short-h" className="h list-h shorts-h">
+                  짧은 소식 {shorts.length}
+                  <span className="shorts-note">{SHORTS_NOTE}</span>
                 </h3>
                 <ul className="list">
                   {shorts.map((s) => (
@@ -387,15 +386,10 @@ export function BriefPage({ route }: { route: Route }) {
               </section>
             )}
             {sv.section?.unverified && major === null && <p className="flow note">확인되지 않은 내용: {sv.section.unverified}</p>}
-            {hasStories && (
-              <p className="brief-report">
-                <ReportLink href={briefReportHref(monthDay(date), `${SITE_URL}${briefPath(date)}`)} label="틀린 내용 알리기" />
-              </p>
-            )}
           </>
         )}
       </Main>
-      <Footer />
+      <Footer report={briefReportHref(monthDay(date), `${SITE_URL}${briefPath(date)}`)} />
     </>
   );
 }
@@ -486,25 +480,26 @@ function DateNav({ date, prev, next, weekOpen }: { date: string; prev: string | 
 }
 
 /** 대분류 줄. 정정이 있으면 뒤에 표시를 잇는다(펼쳐도 같은 자리다) */
-function StoryCategory({ story, open, showSection }: { story: ListStory; open: boolean; showSection: boolean }) {
+/**
+ * 뉴스 줄의 윗줄(분야 줄, 2026-11-27 reading-terms R13): 대분류 · 소분류, 이슈 이름, '어제에 이어' 배지, 정정 표시.
+ * 주요 뉴스는 줄 전체가 펼침 버튼이라 이슈 이름이 흐린 글자이고(버튼 안에 링크를 넣지 않는다), 짧은 소식은 이슈 페이지 링크다(issueLink).
+ */
+function StoryCategory({ story, open, showSection, issueLink = false }: { story: ListStory; open: boolean; showSection: boolean; issueLink?: boolean }) {
   const line = <CategoryLine major={story.category.major} minor={story.category.minor} isNewMinor={open && story.category.isNewMinor} section={showSection ? story.section : undefined} />;
-  if (!story.corrections) return line;
+  if (!story.corrections && !story.continues && !story.issue) return line;
   return (
     <span className="cat-row">
       {line}
-      <FixMark fixes={story.corrections} />
-    </span>
-  );
-}
-
-/** 닫힌 줄의 이어짐 표시. 줄 전체가 펼침 버튼이라 다른 대상(이슈 이름)은 쓰지 않고, 이슈 링크는 펼친 카드에만 둔다(U1 4.2-3) */
-function ContLine({ story }: { story: ListStory }) {
-  const fresh = story.issue && story.newIssue;
-  if (!story.continues && !fresh) return null;
-  return (
-    <span className="cont">
+      {story.issue &&
+        (issueLink ? (
+          <Link to={issuePath(story.issue.id)} className="text-link row-issue">
+            {story.issue.name}
+          </Link>
+        ) : (
+          <span className="row-issue">{story.issue.name}</span>
+        ))}
       {story.continues && <span className="badge">{story.continues.label}</span>}
-      {fresh && <span>새 이슈</span>}
+      <FixMark fixes={story.corrections} />
     </span>
   );
 }
@@ -539,7 +534,6 @@ function TopItem({ story, date, open, onToggle, detail, onRetry, showSection, le
           <NewsTitle date={date} newsKey={story.key} className="title">
             {story.title}
           </NewsTitle>
-          {!open && <ContLine story={story} />}
         </button>
         <ReadToggle date={date} newsKey={story.key} title={story.title} />
       </div>
@@ -565,13 +559,16 @@ function StoryImage({ src }: { src: string }) {
   return <img className="hero" src={src} alt="" loading="lazy" decoding="async" referrerPolicy="no-referrer" onError={() => setFailed(true)} />;
 }
 
+/**
+ * 펼친 주요 뉴스 본문(2026-11-27 reading-terms R1). 리드 → 정정 → 사진 → 핵심 불릿 → 굵은 머리말 문단(배경, 왜 중요한가, 앞으로 + 일정 칩)
+ * → 지난 흐름(이전 전개가 있을 때만) → '관련'·'출처' 두 줄. 소제목 줄은 두지 않는다. 비유는 싣지 않는다(R9).
+ */
 function StoryBody({ story, detail, date }: { story: ListStory; detail: StoryDetail; date: string }) {
   const image = storyImage(detail.sources);
   const year = yearOf(date);
   const terms = useMemo(() => detail.terms ?? [], [detail]);
-  const entities = detail.entities ?? [];
   const placement = useMemo(() => placeTerms(storyBodyParts(detail), terms), [detail, terms]);
-  // 열린 용어 설명(한 카드에 하나, E8). 카드를 접으면 이 컴포넌트가 사라져 닫힌다
+  // 열린 용어 설명(본문 밑줄 낱말만, 한 카드에 하나, E8). 카드를 접으면 이 컴포넌트가 사라져 닫힌다. 용어 칩은 용어 사전으로 가는 링크다(R6)
   const [openTerm, setOpenTerm] = useState<number | null>(null);
   const boxId = `${storyDomId(story.key)}-term`;
   const openRef = terms.find((t) => t.id === openTerm) ?? null;
@@ -579,110 +576,65 @@ function StoryBody({ story, detail, date }: { story: ListStory; detail: StoryDet
   const onToggle = (id: number) => setOpenTerm((v) => toggleTerm(v, id));
   const text = (part: string) => <TermText segments={placement.segments[part] ?? []} openId={openTerm} onToggle={onToggle} boxId={boxId} />;
   const box = (part: string): ReactNode => (openRef && boxAt === part ? <TermBox term={openRef} id={boxId} Link={Link} /> : null);
+  const schedules = (detail.schedules?.length ?? 0) > 0;
   return (
     <>
-      {image && <StoryImage src={image} />}
-      {story.issue && (
-        <div className="story">
-          <b>
-            <Link to={issuePath(story.issue.id)} className="text-link">
-              이어지는 이야기 · {story.issue.name}
-              <MoreMark />
-            </Link>
-            {story.continues && <span className="badge">{story.continues.label}</span>}
-          </b>
-          {detail.previous.length > 0 ? (
-            <ol aria-label="이전 전개">
-              {detail.previous.map((p) => (
-                <li key={`${p.date}-${p.key}`}>
-                  <Link to={briefPath(p.date, p.key)} className="nrow">
-                    <div className="nrow-txt">
-                      <em>{shortDate(p.date, year)}</em>
-                      <NewsTitle date={p.date} newsKey={p.key}>
-                        {p.title}
-                      </NewsTitle>
-                    </div>
-                    <ReadCheck date={p.date} newsKey={p.key} />
-                  </Link>
-                </li>
-              ))}
-            </ol>
-          ) : (
-            <span className="new-issue">새 이슈</span>
-          )}
-        </div>
-      )}
       <p className="sum">{text("summary")}</p>
       {box("summary")}
       <FixNotes fixes={story.corrections} className="fix" />
-      <h4 className="h">왜 중요한가</h4>
-      <p className="p">{text("why")}</p>
-      {box("why")}
-      <h4 className="h">배경</h4>
-      <p className="p">{text("background")}</p>
-      {box("background")}
+      {image && <StoryImage src={image} />}
       {detail.keyFacts.length > 0 && (
+        <ul className="facts">
+          {detail.keyFacts.map((_, i) => (
+            <li key={i}>
+              {text(`fact-${i}`)}
+              {box(`fact-${i}`)}
+            </li>
+          ))}
+        </ul>
+      )}
+      <LeadPara label="배경">{text("background")}</LeadPara>
+      {box("background")}
+      <LeadPara label="왜 중요한가">{text("why")}</LeadPara>
+      {box("why")}
+      {(detail.outlook || schedules) && (
         <>
-          <h4 className="h">핵심</h4>
-          <ul className="p facts">
-            {detail.keyFacts.map((_, i) => (
-              <li key={i}>
-                {text(`fact-${i}`)}
-                {box(`fact-${i}`)}
+          <LeadPara label="앞으로">{detail.outlook ? text("outlook") : null}</LeadPara>
+          {box("outlook")}
+          {schedules && <ScheduleChips schedules={detail.schedules} refYear={year} Link={Link} />}
+        </>
+      )}
+      {detail.previous.length > 0 && (
+        <div className="story">
+          <b>
+            {story.issue ? (
+              <Link to={issuePath(story.issue.id)} className="text-link">
+                지난 흐름 · {story.issue.name}
+                <MoreMark />
+              </Link>
+            ) : (
+              "지난 흐름"
+            )}
+            {story.continues && <span className="badge">{story.continues.label}</span>}
+          </b>
+          <ol aria-label="이전 전개">
+            {detail.previous.map((p) => (
+              <li key={`${p.date}-${p.key}`}>
+                <Link to={briefPath(p.date, p.key)} className="nrow">
+                  <div className="nrow-txt">
+                    <em>{shortDate(p.date, year)}</em>
+                    <NewsTitle date={p.date} newsKey={p.key}>
+                      {p.title}
+                    </NewsTitle>
+                  </div>
+                  <ReadCheck date={p.date} newsKey={p.key} />
+                </Link>
               </li>
             ))}
-          </ul>
-        </>
+          </ol>
+        </div>
       )}
-      {detail.analogy && (
-        <>
-          <h4 className="h">비유</h4>
-          <p className="p">{text("analogy")}</p>
-          {box("analogy")}
-        </>
-      )}
-      <h4 className="h">전망</h4>
-      <p className="p">{text("outlook")}</p>
-      {box("outlook")}
-      {(detail.schedules?.length ?? 0) > 0 && (
-        <>
-          <h4 className="h">일정</h4>
-          <ScheduleChips schedules={detail.schedules} refYear={yearOf(date)} Link={Link} />
-        </>
-      )}
-      {entities.length > 0 && (
-        <>
-          <h4 className="h">인물·기관·국가</h4>
-          <EntityChips entities={entities} Link={Link} />
-        </>
-      )}
-      {terms.length > 0 && (
-        <>
-          <h4 className="h">용어</h4>
-          <TermChips terms={terms} openId={openTerm} onToggle={onToggle} boxId={boxId} />
-          {box("chips")}
-        </>
-      )}
-      <h4 className="h">확인 정도</h4>
-      <p className="p">{detail.confidence}</p>
-      {detail.extras.length > 0 && (
-        <>
-          <h4 className="h">함께 엮인 이슈</h4>
-          <div className="rel">
-            {detail.extras.map((x) => (
-              <Link key={x.id} to={issuePath(x.id)}>
-                {x.name}
-              </Link>
-            ))}
-          </div>
-        </>
-      )}
-      {detail.sources.length > 0 && (
-        <>
-          <h4 className="h">출처</h4>
-          <StorySources sources={detail.sources} year={year} />
-        </>
-      )}
+      <StoryMeta issue={detail.previous.length > 0 ? null : story.issue} detail={detail} year={year} Link={Link} />
     </>
   );
 }
@@ -692,25 +644,14 @@ function ShortItem({ story, date, targeted, showSection, leaving, onGone }: { st
   const ref = useLeave(leaving, onGone);
   return (
     <li ref={ref} id={storyDomId(story.key)} tabIndex={-1} className={targeted ? "short has-toggle target" : "short has-toggle"} data-leaving={leaving || undefined}>
+      {/* R13: 주요 뉴스 줄과 같은 두 단 틀(분야 줄에 배지·이슈 링크·정정 표시 → 글) */}
       <div className="short-main">
+        <StoryCategory story={story} open={false} showSection={showSection} issueLink />
         <button type="button" className="short-text" onClick={() => markRead(date, story.key)}>
           <NewsTitle date={date} newsKey={story.key}>
             {story.title}
           </NewsTitle>
         </button>
-        <div className="short-meta">
-          {showSection && <SectionChip section={story.section} />}
-          <span className="cat-inline" style={{ color: categoryVar(story.category.major) }}>
-            {story.category.major} · {story.category.minor}
-          </span>
-          {story.continues && <span className="badge">{story.continues.label}</span>}
-          {story.issue && (
-            <Link to={issuePath(story.issue.id)} className="text-link">
-              {story.issue.name}
-            </Link>
-          )}
-          <FixMark fixes={story.corrections} />
-        </div>
         <FixNotes fixes={story.corrections} className="short-fix" />
       </div>
       <ReadToggle date={date} newsKey={story.key} title={story.title} />

@@ -231,9 +231,9 @@ export function Layout({ left, center, children }: { left?: ReactNode; center?: 
   );
 }
 
-/** 바닥글(개인정보 처리방침 링크, components/policyView.ts) */
-export function Footer() {
-  return <FooterView Link={Link} />;
+/** 바닥글(개인정보 처리방침 링크, components/policyView.ts). report는 브리프 화면의 제보 메일 주소 */
+export function Footer({ report }: { report?: string }) {
+  return <FooterView Link={Link} report={report} />;
 }
 
 export function Loading({ label = "불러오는 중…" }: { label?: string }) {

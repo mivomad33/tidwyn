@@ -158,13 +158,13 @@ function buildDay(db: DatabaseSync, day: DayData, prev: DayData | null, details:
         whyItMatters: t.whyItMatters,
         background: t.background,
         keyFacts: t.keyFacts,
-        outlook: t.outlook,
         confidence: t.confidence,
         sources: orderSources(t.sources),
         extras: info ? info.extras.map((e) => ({ id: e.id, name: e.name })) : [],
         previous: info ? info.previous.map((p) => ({ date: p.date, key: p.key, title: p.title })) : [],
       };
-      if (t.analogy !== undefined) detail.analogy = t.analogy;
+      // R9: 비유는 사이트에 싣지 않는다(지난 글 포함). R10: 앞으로 볼 것은 있을 때만
+      if (t.outlook !== undefined) detail.outlook = t.outlook;
       const ents = refs.entities.get(`${day.date}/${key}`);
       if (ents) detail.entities = ents;
       const terms = refs.terms.get(`${day.date}/${key}`);
@@ -448,8 +448,7 @@ export function buildSearchRecords(db: DatabaseSync): SearchRecord[] {
     for (const sec of stored.brief.sections) {
       for (const t of sec.topStories) {
         parts.push(t.title, t.summary, t.whyItMatters, t.background, ...t.keyFacts);
-        if (t.analogy !== undefined) parts.push(t.analogy);
-        parts.push(t.outlook);
+        if (t.outlook !== undefined) parts.push(t.outlook);
       }
       for (const n of sec.shortNews) parts.push(n.summary);
     }

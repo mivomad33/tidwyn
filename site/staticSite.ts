@@ -45,15 +45,14 @@ import { AboutView, ReadMarksText } from "./src/components/aboutView.ts";
 import { FixMark, FixNotes } from "./src/components/correctionView.ts";
 import { Empty } from "./src/components/emptyView.ts";
 import { BackMark, MoreMark } from "./src/components/moreMark.ts";
-import { StorySources } from "./src/components/sourceView.ts";
+import { LeadPara, StoryMeta } from "./src/components/storyMeta.ts";
 import { RepoList } from "./src/components/repoView.ts";
 import { VideoList } from "./src/components/videoView.ts";
-import { BUILDER_HASH, BUILDER_TAB, VIDEO_HASH, VIDEO_TAB } from "./src/lib/brief.ts";
+import { BUILDER_HASH, BUILDER_TAB, SHORTS_NOTE, VIDEO_HASH, VIDEO_TAB } from "./src/lib/brief.ts";
 import { FredNotice, SourceNote } from "./src/components/indicatorView.ts";
 import { NOT_FOUND_LABEL, NotFoundView, RecoverLinks } from "./src/components/notFoundView.ts";
 import { FooterView, PrivacyView } from "./src/components/policyView.ts";
-import { ReportLink } from "./src/components/reportLink.ts";
-import { EntityChips, IssueEntityChips, type LinkLike } from "./src/components/termView.ts";
+import { IssueEntityChips, type LinkLike } from "./src/components/termView.ts";
 import { entityListLine, entityMetaLine, joinEntityPages } from "./src/lib/entities.ts";
 import { issueListLine, issueMetaLine } from "./src/lib/issues.ts";
 import { briefTitle, entityLabel, fullKoreanDate, groupDatesByMonth, issueLabel, latestTitle, latestYear, monthDay, monthDayWeekday, monthLabel, pageTitle, shortDate, yearOf } from "./src/lib/format.ts";
@@ -144,7 +143,7 @@ function BackLink({ to, label }: { to: string; label: string }) {
   return h("a", { href: to, className: "datebtn back" }, h(BackMark), label);
 }
 
-function Shell({ left, center, children }: { left?: ReactNode; center?: ReactNode; children?: ReactNode }) {
+function Shell({ left, center, report, children }: { left?: ReactNode; center?: ReactNode; report?: string; children?: ReactNode }) {
   return h(
     "div",
     { className: "static-page" },
@@ -161,7 +160,7 @@ function Shell({ left, center, children }: { left?: ReactNode; center?: ReactNod
     ),
     h("nav", { className: "static-menu", "aria-label": "사이트 메뉴" }, h("ul", null, ...MENU.slice(0, STATIC_MENU_ITEMS).map(([to, label]) => h("li", { key: to }, h("a", { href: to }, label))))),
     h("main", { id: "main", className: "page" }, children),
-    h(FooterView, { Link: A }),
+    h(FooterView, { Link: A, report }),
   );
 }
 
@@ -172,47 +171,40 @@ function CategoryText({ major, children, as = "div" }: { major: ListStory["categ
 
 // ---- 브리프 ----
 
-function StoryLinks({ detail, year }: { detail: StoryDetail; year: string }) {
-  return [
-    (detail.entities?.length ?? 0) > 0 ? [h("h4", { className: "h", key: "eh" }, "인물·기관·국가"), h(EntityChips, { key: "e", entities: detail.entities!, Link: A })] : null,
-    h("h4", { className: "h", key: "ch" }, "확인 정도"),
-    h("p", { className: "p", key: "c" }, detail.confidence),
-    detail.extras.length > 0
-      ? [h("h4", { className: "h", key: "xh" }, "함께 엮인 이슈"), h("div", { className: "rel", key: "x" }, detail.extras.map((x) => h("a", { key: x.id, href: issuePath(x.id) }, x.name)))]
-      : null,
-    detail.sources.length > 0
-      ? [
-          h("h4", { className: "h", key: "sh" }, "출처"),
-          h(StorySources, { key: "s", sources: detail.sources, year }),
-        ]
-      : null,
-  ];
-}
-
+/** 펼친 주요 뉴스 본문. 앱의 카드와 같은 순서다(2026-11-27 reading-terms R1, 사진·용어 밑줄·일정 칩·지난 흐름은 앱에만 있다) */
 function StoryBody({ story, detail, date }: { story: ListStory; detail: StoryDetail; date: string }) {
-  const year = yearOf(date);
-  const section = (title: string, text: string | undefined) => (text ? [h("h4", { className: "h", key: `${title}-h` }, title), h("p", { className: "p", key: title }, text)] : null);
   return h(
     "div",
     { className: "detail" },
-    story.issue ? h("div", { className: "story" }, h("b", null, h("a", { href: issuePath(story.issue.id), className: "text-link" }, `이어지는 이야기 · ${story.issue.name}`, h(MoreMark)))) : null,
     h("p", { className: "sum" }, detail.summary),
     h(FixNotes, { fixes: story.corrections, className: "fix" }),
-    section("왜 중요한가", detail.whyItMatters),
-    section("배경", detail.background),
-    detail.keyFacts.length > 0 ? [h("h4", { className: "h", key: "fh" }, "핵심"), h("ul", { className: "p facts", key: "f" }, detail.keyFacts.map((f, i) => h("li", { key: i }, f)))] : null,
-    section("비유", detail.analogy),
-    section("전망", detail.outlook),
-    h(StoryLinks, { detail, year }),
+    detail.keyFacts.length > 0 ? h("ul", { className: "facts" }, detail.keyFacts.map((f, i) => h("li", { key: i }, f))) : null,
+    h(LeadPara, { label: "배경" }, detail.background),
+    h(LeadPara, { label: "왜 중요한가" }, detail.whyItMatters),
+    detail.outlook ? h(LeadPara, { label: "앞으로" }, detail.outlook) : null,
+    h(StoryMeta, { issue: story.issue, detail, year: yearOf(date), Link: A }),
+  );
+}
+
+/** 뉴스 줄의 분야 줄(앱과 같다, R13): 대분류 · 소분류, 이슈 이름(주요 뉴스는 글자, 짧은 소식은 링크), '어제에 이어' 배지, 정정 표시 */
+function RowCategory({ story, issueLink }: { story: ListStory; issueLink: boolean }) {
+  const cat = h(CategoryText, { major: story.category.major }, `${story.category.major} · ${story.category.minor}`);
+  if (!story.corrections && !story.continues && !story.issue) return cat;
+  return h(
+    "span",
+    { className: "cat-row" },
+    cat,
+    story.issue ? (issueLink ? h("a", { href: issuePath(story.issue.id), className: "text-link row-issue" }, story.issue.name) : h("span", { className: "row-issue" }, story.issue.name)) : null,
+    story.continues ? h("span", { className: "badge" }, story.continues.label) : null,
+    h(FixMark, { fixes: story.corrections }),
   );
 }
 
 function TopStory({ story, detail, date }: { story: ListStory; detail: StoryDetail | undefined; date: string }) {
-  const category = `${story.category.major} · ${story.category.minor}`;
   return h(
     "li",
     { id: story.key, className: "item open" },
-    story.corrections ? h("span", { className: "cat-row" }, h(CategoryText, { major: story.category.major }, category), h(FixMark, { fixes: story.corrections })) : h(CategoryText, { major: story.category.major }, category),
+    h(RowCategory, { story, issueLink: false }),
     h("h3", { className: "title" }, story.title),
     detail ? h(StoryBody, { story, detail, date }) : null,
   );
@@ -222,14 +214,9 @@ function ShortStory({ story }: { story: ListStory }) {
   return h(
     "li",
     { id: story.key, className: "short" },
+    // R13: 주요 뉴스와 같은 두 단 틀(분야 줄 → 글)
+    h(RowCategory, { story, issueLink: true }),
     h("p", { className: "short-text" }, story.title),
-    h(
-      "div",
-      { className: "short-meta" },
-      h("span", { className: "cat-inline", style: { color: categoryVar(story.category.major) } }, `${story.category.major} · ${story.category.minor}`),
-      story.issue ? h("a", { href: issuePath(story.issue.id), className: "text-link" }, story.issue.name) : null,
-      h(FixMark, { fixes: story.corrections }),
-    ),
     h(FixNotes, { fixes: story.corrections, className: "short-fix" }),
   );
 }
@@ -266,11 +253,10 @@ function BriefBody({ day, details, videos, prev, next }: { day: DayList; details
         h("h2", { className: "h list-h", id: sectionId(i) }, sec.name),
         sec.flow ? h("p", { className: "flow" }, sec.flow) : null,
         tops.length > 0 ? h("ul", { className: "list" }, tops.map((s) => h(TopStory, { key: s.key, story: s, detail: details[s.key], date }))) : null,
-        shorts.length > 0 ? [h("h3", { className: "h list-h", key: "h" }, "짧은 소식"), h("ul", { className: "list", key: "l" }, shorts.map((s) => h(ShortStory, { key: s.key, story: s })))] : null,
+        shorts.length > 0 ? [h("h3", { className: "h list-h shorts-h", key: "h" }, `짧은 소식 ${shorts.length}`, h("span", { className: "shorts-note" }, SHORTS_NOTE)), h("ul", { className: "list", key: "l" }, shorts.map((s) => h(ShortStory, { key: s.key, story: s })))] : null,
         sec.unverified ? h("p", { className: "flow note" }, `확인되지 않은 내용: ${sec.unverified}`) : null,
       );
     }),
-    h("p", { className: "brief-report" }, h(ReportLink, { href: briefReportHref(monthDay(day.date), `${SITE_URL}${briefPath(day.date)}`), label: "틀린 내용 알리기" })),
     shownVideos ? h("section", { className: "brief-section" }, h("h2", { className: "h list-h", id: VIDEO_HASH }, VIDEO_TAB), h(VideoList, { status: shownVideos.status, items: shownVideos.items, headingLevel: "h3", thumbs: false, grouped: true })) : null,
     day.repos ? h("section", { className: "brief-section" }, h("h2", { className: "h list-h", id: BUILDER_HASH }, BUILDER_TAB), h(RepoList, { repos: day.repos, headingLevel: "h3" })) : null,
     h("nav", { className: "static-more", "aria-label": "다른 날짜" }, prev ? h("a", { href: briefPath(prev), className: "text-link" }, `‹ ${monthDay(prev)}`) : h("span"), next ? h("a", { href: briefPath(next), className: "text-link" }, `${monthDay(next)} ›`) : null),
@@ -488,7 +474,7 @@ function buildPages(input: SiteInput): StaticPage[] {
       lastmod: modified,
       ogType: website ? "website" : "article",
       ld: (d) => (website ? pageLd("WebSite", { path: pathname, name: "Tidwyn", description: d }) : articleLd({ path: pathname, headline, description: d, published: date, modified })),
-      body: h(Shell, { center: h(DateNav, { date, prev, next }) }, h(BriefBody, { day, details: input.details.get(date) ?? {}, videos: input.videos.get(date) ?? null, prev, next })),
+      body: h(Shell, { center: h(DateNav, { date, prev, next }), report: briefReportHref(monthDay(date), `${SITE_URL}${briefPath(date)}`) }, h(BriefBody, { day, details: input.details.get(date) ?? {}, videos: input.videos.get(date) ?? null, prev, next })),
     });
   };
   const home = input.dates.latestDate;

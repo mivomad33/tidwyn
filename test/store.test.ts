@@ -127,7 +127,7 @@ describe("1.5단계 4.3-1 발행일 추정 표시 저장", () => {
         list.forEach((s, i) => old.prepare("INSERT INTO sources (story_id, position, name, url, published_at, image_url, is_primary) VALUES (?, ?, ?, ?, ?, ?, ?)").run(id, i, s.name, s.url, s.publishedAt, s.imageUrl ?? null, s.primary ? 1 : 0));
       for (const t of sec.topStories) {
         const id = old.prepare(`INSERT INTO stories (section_id, kind, position, title, summary, why_it_matters, background, key_facts, analogy, outlook, confidence, dev_checkpoint, major, minor, is_new_minor)
-          VALUES (?, 'top', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).run(sid, t.rank, t.title, t.summary, t.whyItMatters, t.background, JSON.stringify(t.keyFacts), t.analogy ?? null, t.outlook, t.confidence, t.devCheckpoint ?? null, t.category.major, t.category.minor, t.category.isNewMinor ? 1 : 0).lastInsertRowid;
+          VALUES (?, 'top', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).run(sid, t.rank, t.title, t.summary, t.whyItMatters, t.background, JSON.stringify(t.keyFacts), t.analogy ?? null, t.outlook ?? null, t.confidence, t.devCheckpoint ?? null, t.category.major, t.category.minor, t.category.isNewMinor ? 1 : 0).lastInsertRowid;
         addSources(id, t.sources);
       }
       sec.shortNews.forEach((n, ni) => {

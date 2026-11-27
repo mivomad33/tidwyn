@@ -479,8 +479,8 @@ export interface StoryDetail {
   whyItMatters: string;
   background: string;
   keyFacts: string[];
-  analogy?: string;
-  outlook: string;
+  /** 구체적일 때만 있다(2026-11-27 R10). 비유는 싣지 않는다(R9) */
+  outlook?: string;
   confidence: Confidence;
   /** 대표 출처가 앞에 온다 */
   sources: SiteSource[];

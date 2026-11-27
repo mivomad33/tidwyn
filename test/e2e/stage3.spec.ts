@@ -50,11 +50,11 @@ test.describe("첫 화면과 날짜 이동", () => {
     const catChip = chips.getByRole("button", { name: new RegExp(`^${firstCat} \\d+$`) });
     await catChip.click();
     await expect(catChip).toHaveAttribute("aria-pressed", "true");
-    const cats = await page.locator("ul.list > li.item .cat, li.short .cat-inline").allInnerTexts();
+    const cats = await page.locator("ul.list > li.item .cat, li.short .cat").allInnerTexts();
     expect(cats.length).toBeGreaterThan(0);
     for (const c of cats) expect(c.startsWith(`${firstCat} · `), c).toBe(true);
     await chips.getByRole("button", { name: /^모든 분야/ }).click();
-    await expect(page.locator("ul.list > li.item .cat, li.short .cat-inline")).not.toHaveCount(cats.length);
+    await expect(page.locator("ul.list > li.item .cat, li.short .cat")).not.toHaveCount(cats.length);
   });
 });
 
@@ -69,8 +69,8 @@ test.describe("펼친 카드", () => {
     const id = (await card.getAttribute("id"))!;
     const key = id.replace(/^story-/, "");
     await expect(page).toHaveURL(storyUrl(latest, key));
-    await expect(card.getByRole("heading", { name: "왜 중요한가" })).toBeVisible();
-    await expect(card.getByRole("heading", { name: "출처" })).toBeVisible();
+    await expect(card.locator(".lead-in", { hasText: "왜 중요한가" })).toBeVisible();
+    await expect(card.locator(".meta .mrow-h", { hasText: "출처" })).toBeVisible();
     // 출처는 새 탭으로 연다
     await expect(card.locator(".src a").first()).toHaveAttribute("target", "_blank");
     await btn.click();
@@ -85,7 +85,7 @@ test.describe("펼친 카드", () => {
     await expect(tabs.getByRole("button", { name: info.latest.otherSection })).toHaveAttribute("aria-pressed", "true");
     const card = storyItem(page, target);
     await expect(card.locator("button.item-btn")).toHaveAttribute("aria-expanded", "true");
-    await expect(card.getByRole("heading", { name: "왜 중요한가" })).toBeVisible();
+    await expect(card.locator(".lead-in", { hasText: "왜 중요한가" })).toBeVisible();
     await expect(card).toBeInViewport();
     await expect(card).toBeFocused();
   });
@@ -268,7 +268,7 @@ test.describe("불러오기 오류와 다시 시도", () => {
     await expect(card.getByRole("alert")).toBeVisible();
     await page.unroute(dataFile(`detail-${latest.slice(0, 7)}.json`));
     await card.getByRole("button", { name: "다시 시도" }).click();
-    await expect(card.getByRole("heading", { name: "왜 중요한가" })).toBeVisible();
+    await expect(card.locator(".lead-in", { hasText: "왜 중요한가" })).toBeVisible();
   });
 
   test("이슈 목록 파일을 못 받으면 오류, 다시 시도로 회복한다", async ({ page }) => {
@@ -360,7 +360,7 @@ test.describe("375px 폭", () => {
   test("3단계 화면에 가로 스크롤이 생기지 않는다", async ({ page }) => {
     const screens: [string, () => Promise<void>][] = [
       ["/", () => expect(page.getByRole("link", { name: dateLinkName(latest) })).toBeVisible()],
-      [storyUrl(latest, `${info.latest.firstSection}-1`), () => expect(page.getByRole("heading", { name: "왜 중요한가" })).toBeVisible()],
+      [storyUrl(latest, `${info.latest.firstSection}-1`), () => expect(page.locator(".lead-in", { hasText: "왜 중요한가" })).toBeVisible()],
       ["/dates", () => expect(page.getByRole("heading", { level: 1, name: "날짜 목록" })).toBeVisible()],
       ["/issues", () => expect(page.locator("ul.list > li.item").first()).toBeVisible()],
       [`/issues/${info.issues.first.id}`, () => expect(page.getByRole("heading", { level: 1, name: info.issues.first.name })).toBeVisible()],

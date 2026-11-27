@@ -115,7 +115,6 @@ function topStory(section: SectionName, rank: number, date: string): TopStory {
       { name: "예시일보", url: `https://daily.example.org/${slug}`, publishedAt: date },
     ],
   };
-  if (rank === 1) story.analogy = "큰 배가 방향을 트는 데 시간이 걸리는 것과 같다.";
   if (section === "IT·AI" && rank === 2) story.devCheckpoint = "가짜 라이브러리 2.0 보안 패치를 확인한다.";
   return story;
 }

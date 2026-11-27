@@ -109,8 +109,8 @@ function linkTo(scope: Page | Locator, id: NewsId): Locator {
 async function expectReadRow(row: Locator, read: boolean, withCheck: boolean): Promise<void> {
   const title = row.locator(".nt");
   await expect(title).toHaveClass(read ? /\bread\b/ : /\bunread\b/);
-  // 읽은 뉴스는 보통 굵기, 안 읽은 뉴스는 굵게(600 또는 700)
-  await expect(title).toHaveCSS("font-weight", read ? "400" : /^(600|700)$/);
+  // 읽은 뉴스는 보통 굵기, 안 읽은 뉴스는 굵게(600 또는 700, 짧은 소식은 500: reading-terms R14)
+  await expect(title).toHaveCSS("font-weight", read ? "400" : /^(500|600|700)$/);
   if (withCheck) {
     const mark = row.locator("xpath=..").locator(".read-mk");
     await expect(mark).toHaveCount(read ? 1 : 0);

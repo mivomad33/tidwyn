@@ -395,15 +395,21 @@ test.describe("펼친 카드와 이슈 페이지", () => {
     throw new Error("일정 칩이 둘 이상인 카드가 없다");
   })();
 
-  test("카드의 '일정' 칩 줄이 '전망' 아래·'인물·기관·국가' 위에 있고, 칩을 누르면 그 일정이 강조된다", async ({ page }) => {
+  test("카드의 일정 칩 줄이 '앞으로' 문단 바로 아래·'관련' 줄 위에 있고, 칩을 누르면 그 일정이 강조된다(reading-terms R1)", async ({ page }) => {
     await page.goto(storyUrl(card.date, card.key));
     const item = storyItem(page, card.key);
-    await expect(item.getByRole("heading", { name: "일정", exact: true })).toBeVisible();
-    const heads = await item.locator("h4").allTextContents();
-    const at = heads.indexOf("일정");
-    expect(heads[at - 1]).toBe("전망");
-    if (heads.includes("인물·기관·국가")) expect(heads.indexOf("인물·기관·국가")).toBe(at + 1);
     const chips = item.locator("a.evc");
+    await expect(chips.first()).toBeVisible();
+    // 일정 칩 줄 바로 앞 형제는 '앞으로' 머리말 문단이고, '관련'·'출처'(.meta)는 그 뒤다
+    const order = (await page.evaluate(`(() => {
+      const a = document.getElementById(${JSON.stringify(`story-${card.key}`)}).querySelector("a.evc");
+      let row = a.parentElement;
+      while (row.parentElement && !row.parentElement.classList.contains("detail")) row = row.parentElement;
+      const kids = [...row.parentElement.children];
+      const prev = row.previousElementSibling;
+      return [prev && prev.querySelector(".lead-in") ? prev.querySelector(".lead-in").textContent : "", kids.slice(kids.indexOf(row) + 1).some((e) => e.classList.contains("meta"))];
+    })()`)) as [string, boolean];
+    expect(order).toEqual(["앞으로", true]);
     await expect(chips).toHaveCount(card.schedules.length);
     const s = card.schedules[0]!;
     await expect(chips.first()).toHaveText(`${s.due.length === 7 ? `${Number(s.due.slice(5))}월 중` : s.due.slice(5)}${s.name}`);

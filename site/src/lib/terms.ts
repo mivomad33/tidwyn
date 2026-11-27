@@ -1,21 +1,20 @@
 // 펼친 카드의 용어 밑줄·설명 토글(E8, 4.7-1)과 용어 사전(4.7-5). 화면(DOM) 없이 테스트한다.
 import type { StoryDetail, TermIndex, TermRef } from "./types.ts";
 
-/** 본문 문단 하나. 순서는 한 줄 요약 → 왜 중요한가 → 배경 → 핵심 → 비유 → 전망(제목은 본문이 아니다) */
+/** 본문 문단 하나. 순서는 펼친 카드와 같게 한 줄 요약 → 핵심 → 배경 → 왜 중요한가 → 앞으로(제목은 본문이 아니다, 2026-11-27 R1) */
 export interface BodyPart {
   id: string;
   text: string;
 }
 
-export function storyBodyParts(detail: Pick<StoryDetail, "summary" | "whyItMatters" | "background" | "keyFacts" | "analogy" | "outlook">): BodyPart[] {
+export function storyBodyParts(detail: Pick<StoryDetail, "summary" | "whyItMatters" | "background" | "keyFacts" | "outlook">): BodyPart[] {
   const parts: BodyPart[] = [
     { id: "summary", text: detail.summary },
-    { id: "why", text: detail.whyItMatters },
-    { id: "background", text: detail.background },
     ...detail.keyFacts.map((text, i) => ({ id: `fact-${i}`, text })),
+    { id: "background", text: detail.background },
+    { id: "why", text: detail.whyItMatters },
   ];
-  if (detail.analogy) parts.push({ id: "analogy", text: detail.analogy });
-  parts.push({ id: "outlook", text: detail.outlook });
+  if (detail.outlook) parts.push({ id: "outlook", text: detail.outlook });
   return parts;
 }
 
@@ -75,10 +74,10 @@ export function toggleTerm(open: number | null, id: number): number | null {
   return open === id ? null : id;
 }
 
-/** 열린 용어의 설명 상자 자리: 밑줄이 있으면 그 문단 아래, 없으면 칩 줄 아래 */
-export function termBoxPlace(open: number | null, placement: TermPlacement): string | "chips" | null {
+/** 열린 용어의 설명 상자 자리: 밑줄을 그은 문단 아래. 설명은 본문 밑줄 낱말에서만 열린다(용어 칩은 용어 사전 링크다, 2026-11-27 R6) */
+export function termBoxPlace(open: number | null, placement: TermPlacement): string | null {
   if (open === null) return null;
-  return placement.placed.get(open) ?? "chips";
+  return placement.placed.get(open) ?? null;
 }
 
 // ---- 용어 사전 ----

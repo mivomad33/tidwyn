@@ -5,6 +5,9 @@ import type { DayList, ListSection, ListStory, Major, MonthList, SectionName, So
 export const SECTION_ORDER: readonly SectionName[] = SECTIONS;
 
 /** 세 섹션을 한 목록으로 보는 탭(4.5단계, 사용자 결정 2026-10-29) */
+/** 짧은 소식 머리 옆 흐린 안내(R14): 펼칠 내용이 없는 한 줄 소식이라는 것을 알린다 */
+export const SHORTS_NOTE = "한 줄로 전하는 소식";
+
 export const ALL_TAB = "전체";
 /** B1: 그날 GitHub 주간 트렌딩에 처음 오른 저장소 탭(G1). 뉴스 탭 뒤에 두고, 그날 저장소 기록이 있을 때만 보인다(G10) */
 export const BUILDER_TAB = "빌더";

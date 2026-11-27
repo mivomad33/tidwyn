@@ -193,7 +193,7 @@ describe("4.7-3 기록", () => {
   });
 });
 
-function loadOutlook(dbFile: string): string {
+function loadOutlook(dbFile: string): string | undefined {
   const db = openDb(dbFile);
   const v = loadBrief(db, DATE)!.brief.sections[0]!.topStories[0]!.outlook;
   db.close();

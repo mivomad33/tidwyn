@@ -59,7 +59,7 @@ export function saveBrief(db: DatabaseSync, stored: StoredBrief, hooks: SaveHook
       const sectionId = insSection.run(brief.targetDate, si, sec.name, sec.flow, sec.unverified ?? null).lastInsertRowid;
       for (const t of sec.topStories) {
         const id = insStory.run(sectionId, "top", t.rank, t.title, t.summary, t.whyItMatters, t.background, JSON.stringify(t.keyFacts),
-          t.analogy ?? null, t.outlook, t.confidence, t.devCheckpoint ?? null, t.category.major, t.category.minor, t.category.isNewMinor ? 1 : 0).lastInsertRowid;
+          t.analogy ?? null, t.outlook ?? null, t.confidence, t.devCheckpoint ?? null, t.category.major, t.category.minor, t.category.isNewMinor ? 1 : 0).lastInsertRowid;
         addSources(id, t.sources);
         hooks.afterStory?.();
       }
@@ -140,11 +140,11 @@ export function loadBrief(db: DatabaseSync, date: string): StoredBrief | null {
         whyItMatters: r.why_it_matters ?? "",
         background: r.background ?? "",
         keyFacts: JSON.parse(r.key_facts ?? "[]") as string[],
-        outlook: r.outlook ?? "",
         confidence: r.confidence as Confidence,
         category: category(r),
         sources: readSources(r.id),
       };
+      if (r.outlook !== null) t.outlook = r.outlook;
       if (r.analogy !== null) t.analogy = r.analogy;
       if (r.dev_checkpoint !== null) t.devCheckpoint = r.dev_checkpoint;
       return t;

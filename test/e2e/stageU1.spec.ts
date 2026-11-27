@@ -143,20 +143,21 @@ test.describe("4.1-2 글자 크기 종류 6종 이하(375)", () => {
 });
 
 test.describe("4.2-1 알약 칩", () => {
-  test("용어 칩은 끝에 ▾가 있고 누르면 제자리에서 설명이 열린다. 다른 화면으로 가는 칩은 주소를 바꾼다", async ({ page }) => {
+  test("용어 밑줄은 제자리에서 설명을 열고, '관련' 줄의 용어·대상 칩은 다른 화면으로 가는 링크다(reading-terms R2)", async ({ page }) => {
     await page.goto(`/${PAST}#${encodeURIComponent("세계-3")}`);
     await settle(page);
     const card = page.locator('[id="story-세계-3"]');
     await expect(card.locator(".detail .sum")).toBeVisible();
-    const chip = card.getByRole("group", { name: "용어" }).getByRole("button").first();
-    await expect(chip).toHaveText(/▾$/);
-    const before = page.url();
-    await chip.click();
-    await expect(chip).toHaveAttribute("aria-expanded", "true");
-    await expect(card.locator(".tbox")).toBeVisible();
-    expect(page.url()).toBe(before);
-    // 인물·기관·국가 칩(알약, 다른 화면으로 감)
-    const entity = card.locator(".rel a").first();
+    await expect(card.locator(".rel button")).toHaveCount(0);
+    const word = card.locator("button.term").first();
+    if ((await word.count()) > 0) {
+      const before = page.url();
+      await word.click();
+      await expect(word).toHaveAttribute("aria-expanded", "true");
+      await expect(card.locator(".tbox")).toBeVisible();
+      expect(page.url()).toBe(before);
+    }
+    const entity = card.locator(".meta .rel a").first();
     const href = await entity.getAttribute("href");
     await entity.click();
     await expect(page).toHaveURL(new RegExp(`${href}$`));
@@ -239,7 +240,7 @@ test.describe("4.2-2 사각 표시", () => {
 });
 
 test.describe("4.2-3 닫힌 뉴스 줄", () => {
-  test("닫힌 줄에는 이슈 이름이 없고, 펼친 카드의 이슈 링크는 이슈 페이지로 간다", async ({ page }) => {
+  test("닫힌 주요 뉴스 줄의 이슈 이름은 링크 없는 글자이고, 펼친 카드의 이슈 링크는 이슈 페이지로 간다(reading-terms R13)", async ({ page }) => {
     await openScreen(page, `/${PAST}`);
     await page.locator("nav.tabs").getByRole("button", { name: "세계" }).click();
     const tops = listOf(PAST).sections.find((s) => s.name === "세계")!.stories.filter((s) => s.kind === "top");
@@ -249,7 +250,7 @@ test.describe("4.2-3 닫힌 뉴스 줄", () => {
       const btn = page.locator(`[id="story-${s.key}"] .item-btn`);
       await expect(btn).toHaveAttribute("aria-expanded", "false");
       await expect(btn.locator("a")).toHaveCount(0);
-      if (s.issue) await expect(btn).not.toContainText(s.issue.name);
+      if (s.issue) await expect(btn.locator("span.row-issue")).toHaveText(s.issue.name);
     }
     const first = withIssue[0]!;
     await page.locator(`[id="story-${first.key}"] .item-btn`).click();
@@ -310,7 +311,8 @@ test.describe("4.2-5·4.2-6 글 링크와 구역 제목의 한 모양", () => {
     await eachScreen(browser, async (page, url) => {
       const found = (await page.evaluate(`(() => {
         const visible = ${VISIBLE_FN}; const describe = ${DESCRIBE_FN};
-        return [...document.querySelectorAll("h2.h, h3.h, h4.h, .h, .list-h, h3.dh, h2.idx")].filter(visible).map((e) => { const c = getComputedStyle(e); return { combo: c.fontSize + " | " + c.fontWeight + " | " + c.color, what: describe(e) }; });
+        // 짧은 소식 머리('.shorts-h')는 구역을 한눈에 가르려고 14px 본문색인 예외다(reading-terms R14, docs/design.md)
+        return [...document.querySelectorAll("h2.h, h3.h, h4.h, .h, .list-h, h3.dh, h2.idx")].filter(visible).filter((e) => !e.classList.contains("shorts-h")).map((e) => { const c = getComputedStyle(e); return { combo: c.fontSize + " | " + c.fontWeight + " | " + c.color, what: describe(e) }; });
       })()`)) as { combo: string; what: string }[];
       for (const f of found) if (!combos.has(f.combo)) combos.set(f.combo, `${url}: ${f.what}`);
     });
@@ -646,10 +648,8 @@ test.describe("4.4-5 브라우저 뒤로", () => {
     await settle(page);
     await page.goBack();
     await expectRestored(page, "세계-3", y);
-    // 용어(설명 상자의 '용어 사전에서 보기')
-    const chip = card.getByRole("group", { name: "용어" }).getByRole("button").first();
-    await chip.click();
-    const more = card.locator(".tbox a");
+    // 용어('관련' 줄의 용어 링크, reading-terms R2)
+    const more = card.locator('.meta .rel a[href^="/terms/"]').first();
     y = await scrollToMiddle(page, more);
     await more.click();
     await expect(page).toHaveURL(/\/terms/);

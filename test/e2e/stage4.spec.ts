@@ -8,11 +8,11 @@ const under = card.underlineTerm;
 const chipOnly = card.chipOnlyTerm;
 const latest = info.dates[0]!;
 
-/** 용어 밑줄·칩이 있는 카드를 주소로 펼친다 */
+/** 용어 밑줄과 '관련' 줄 용어 링크가 있는 카드를 주소로 펼친다 */
 async function openTermCard(page: Page): Promise<Locator> {
   await page.goto(storyUrl(card.date, card.key));
   const item = storyItem(page, card.key);
-  await expect(item.getByRole("heading", { name: "용어" })).toBeVisible();
+  await expect(item.locator(".detail .meta")).toBeVisible();
   return item;
 }
 
@@ -20,7 +20,12 @@ function termBox(item: Locator, name: string): Locator {
   return item.getByRole("region", { name: `${name} 설명` });
 }
 
-test.describe("펼친 카드의 용어 밑줄과 칩", () => {
+/** '관련' 줄의 용어 링크(reading-terms R2: 칩은 용어 사전으로 가는 링크) */
+function termLinks(item: Locator): Locator {
+  return item.locator('.meta .rel a[href^="/terms/"]');
+}
+
+test.describe("펼친 카드의 용어 밑줄과 링크", () => {
   test("밑줄 낱말을 누르면 설명이 열리고, 같은 것을 다시 누르면 닫힌다", async ({ page }) => {
     const item = await openTermCard(page);
     const word = item.locator("button.term", { hasText: under.surface! });
@@ -33,39 +38,23 @@ test.describe("펼친 카드의 용어 밑줄과 칩", () => {
     await expect(box).toBeVisible();
     await expect(box).toContainText(under.description);
     await expect(word).toHaveAttribute("aria-controls", (await box.getAttribute("id"))!);
-    // 같은 용어의 칩도 열린 것으로 보인다
-    const chips = item.getByRole("group", { name: "용어" });
-    await expect(chips.getByRole("button", { name: under.name })).toHaveAttribute("aria-expanded", "true");
+    await expect(item.locator(".tbox")).toHaveCount(1);
     await word.click();
     await expect(word).toHaveAttribute("aria-expanded", "false");
     await expect(box).toHaveCount(0);
-    await expect(chips.getByRole("button", { name: under.name })).toHaveAttribute("aria-expanded", "false");
   });
 
-  test("다른 용어를 누르면 그 설명으로 바뀌고, 한 카드에 설명은 하나만 열린다", async ({ page }) => {
+  test("'관련' 줄의 용어는 본문 표기가 없는 것까지 모두 용어 사전 링크이고, 누르면 그 용어로 간다(R2)", async ({ page }) => {
     const item = await openTermCard(page);
-    const word = item.locator("button.term", { hasText: under.surface! });
-    const chips = item.getByRole("group", { name: "용어" });
-    // 칩 줄에는 본문 표기가 없는 용어도 있다
-    await expect(chips.getByRole("button")).toHaveText([under, chipOnly].sort((a, b) => a.id - b.id).map((t) => `${t.name} ▾`));
-    await word.click();
-    await expect(termBox(item, under.name)).toBeVisible();
-    const other = chips.getByRole("button", { name: chipOnly.name });
-    await other.click();
-    await expect(other).toHaveAttribute("aria-expanded", "true");
-    await expect(word).toHaveAttribute("aria-expanded", "false");
-    await expect(termBox(item, chipOnly.name)).toBeVisible();
-    await expect(termBox(item, chipOnly.name)).toContainText(chipOnly.description);
-    await expect(termBox(item, under.name)).toHaveCount(0);
-    await expect(item.locator(".tbox")).toHaveCount(1);
-    await expect(item.locator("[aria-expanded='true']:is(button.term, .rel button)")).toHaveCount(1);
-    // 칩을 다시 누르면 닫힌다
-    await other.click();
-    await expect(item.locator(".tbox")).toHaveCount(0);
-    await expect(other).toHaveAttribute("aria-expanded", "false");
+    const ids = [under, chipOnly].sort((a, b) => a.id - b.id);
+    await expect(termLinks(item)).toHaveText(ids.map((t) => t.name));
+    await expect(item.locator(".meta .rel button")).toHaveCount(0);
+    await termLinks(item).filter({ hasText: chipOnly.name }).click();
+    await expect(page).toHaveURL(`/terms/${chipOnly.id}`);
+    await expect(page.locator(`[id="term-${chipOnly.id}"]`)).toHaveClass(/target/);
   });
 
-  test("키보드(Enter·Space)로 밑줄과 칩을 열고 닫는다", async ({ page }) => {
+  test("키보드(Enter·Space)로 밑줄을 열고 닫고, 용어 링크는 Enter로 간다", async ({ page }) => {
     const item = await openTermCard(page);
     const word = item.locator("button.term", { hasText: under.surface! });
     await word.focus();
@@ -75,13 +64,9 @@ test.describe("펼친 카드의 용어 밑줄과 칩", () => {
     await page.keyboard.press("Space");
     await expect(word).toHaveAttribute("aria-expanded", "false");
     await expect(item.locator(".tbox")).toHaveCount(0);
-    const chip = item.getByRole("group", { name: "용어" }).getByRole("button", { name: chipOnly.name });
-    await chip.focus();
-    await page.keyboard.press("Space");
-    await expect(chip).toHaveAttribute("aria-expanded", "true");
-    await expect(termBox(item, chipOnly.name)).toBeVisible();
+    await termLinks(item).filter({ hasText: under.name }).focus();
     await page.keyboard.press("Enter");
-    await expect(chip).toHaveAttribute("aria-expanded", "false");
+    await expect(page).toHaveURL(`/terms/${under.id}`);
   });
 
   test("설명 상자의 용어 사전 링크는 그 용어로 간다", async ({ page }) => {
@@ -102,15 +87,15 @@ test.describe("펼친 카드의 용어 밑줄과 칩", () => {
     await btn.click();
     await expect(btn).toHaveAttribute("aria-expanded", "false");
     await btn.click();
-    await expect(item.getByRole("heading", { name: "용어" })).toBeVisible();
+    await expect(item.locator(".detail .meta")).toBeVisible();
     await expect(item.locator(".tbox")).toHaveCount(0);
   });
 });
 
-test.describe("펼친 카드의 대상 칩", () => {
-  test("인물·기관·국가 칩은 그 대상 페이지로 간다", async ({ page }) => {
+test.describe("펼친 카드의 대상 링크", () => {
+  test("'관련' 줄의 인물·기관·국가는 그 대상 페이지로 간다", async ({ page }) => {
     const item = await openTermCard(page);
-    await expect(item.getByRole("heading", { name: "인물·기관·국가" })).toBeVisible();
+    await expect(item.locator(".meta .mrow-h", { hasText: "관련" })).toBeVisible();
     for (const e of card.entities) await expect(item.locator(`.rel a[href="/entities/${e.id}"]`)).toBeVisible();
     // 인물은 한 줄 설명을 작게 붙인다
     const person = card.entities.find((e) => e.kind === "인물");
@@ -367,7 +352,7 @@ test.describe("새 주소 직접 열기와 새로 고침", () => {
     [`/entities/${info.entities.org.id}`, (p) => p.getByRole("heading", { level: 1, name: info.entities.org.name })],
     ["/terms", (p) => p.getByRole("heading", { level: 1, name: "용어 사전" })],
     [`/terms/${under.id}`, (p) => p.locator(`[id="term-${under.id}"].target`)],
-    [storyUrl(card.date, card.key), (p) => storyItem(p, card.key).getByRole("group", { name: "용어" })],
+    [storyUrl(card.date, card.key), (p) => storyItem(p, card.key).locator(".detail .meta")],
   ];
   for (const [url, locate] of cases) {
     test(`${url}를 직접 열고 새로 고쳐도 같은 화면이다`, async ({ page }) => {

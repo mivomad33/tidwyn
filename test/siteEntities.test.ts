@@ -5,7 +5,8 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { ENTITY_CHUNK_SIZE, entityChunkOf, siteFiles, termGroupOf } from "../src/siteTypes.ts";
 import type { EntityChunk, EntityDetail, EntityListItem, IssueEntity, StoryDetail, TermGroupFile, TermIndex, TermItem, TermRef } from "../src/siteTypes.ts";
 import { resolveStatic } from "../site/hosting.ts";
-import { EntityChips, IssueEntityChips, TermBox, TermChips, TermText, type LinkLikeProps } from "../site/src/components/termView.ts";
+import { EntityChips, IssueEntityChips, TermBox, TermText, type LinkLikeProps } from "../site/src/components/termView.ts";
+import { StoryMeta } from "../site/src/components/storyMeta.ts";
 import { entityListPages, issueEntityChips, joinEntityPages, parseEntityFilter, resolveEntity } from "../site/src/lib/entities.ts";
 import { dataUrl } from "../site/src/lib/paths.ts";
 import { entitiesPath, entityPath, focusTargetId, parseRoute, selfScrolls, termPath } from "../site/src/lib/routes.ts";
@@ -122,31 +123,33 @@ describe("E8·4.7-1 용어 밑줄과 토글", () => {
   const placement = placeTerms(parts, terms);
   const underlined = (id: number) => Object.entries(placement.segments).flatMap(([part, segs]) => segs.filter((s) => s.termId === id).map((s) => ({ part, text: s.text })));
 
-  test("본문 순서는 한 줄 요약 → 왜 중요한가 → 배경 → 핵심 → 비유 → 전망이다", () => {
-    assert.deepEqual(parts.map((p) => p.id), ["summary", "why", "background", "fact-0", "fact-1", "outlook"]);
-    assert.deepEqual(storyBodyParts({ ...detail, analogy: "가짜 비유" }).map((p) => p.id).slice(-2), ["analogy", "outlook"]);
+  test("본문 순서는 펼친 카드와 같게 한 줄 요약 → 핵심 → 배경 → 왜 중요한가 → 앞으로이고, 앞으로가 없으면 빠진다(R1·R10)", () => {
+    assert.deepEqual(parts.map((p) => p.id), ["summary", "fact-0", "fact-1", "background", "why", "outlook"]);
+    const noOutlook: StoryDetail = { ...detail };
+    delete noOutlook.outlook;
+    assert.deepEqual(storyBodyParts(noOutlook).map((p) => p.id).slice(-2), ["background", "why"]);
   });
   test("표기가 본문에 여러 번 나와도 처음 나온 곳 하나에만 밑줄을 긋는다", () => {
     assert.deepEqual(underlined(1), [{ part: "why", text: "양적긴축" }]);
     assert.equal(placement.segments.why!.filter((s) => s.termId === 1).length, 1);
     assert.equal(placement.segments.why!.map((s) => s.text).join(""), detail.whyItMatters, "글은 그대로다");
-    assert.deepEqual(underlined(2), [{ part: "background", text: "기준금리" }]);
+    assert.deepEqual(underlined(2), [{ part: "fact-1", text: "기준금리" }], "핵심이 배경보다 앞이다");
   });
   test("짧은 표기는 긴 표기 안을 차지하지 않고 다음에 나온 곳을 쓴다", () => {
     // "금리"는 요약의 "금리를"이 처음이다. "기준금리" 안의 "금리"에는 긋지 않는다
     assert.deepEqual(underlined(4), [{ part: "summary", text: "금리" }]);
     const only = placeTerms(storyBodyParts({ ...detail, summary: "가짜 요약" }), terms);
     const at = Object.entries(only.segments).flatMap(([part, segs]) => segs.filter((s) => s.termId === 4).map(() => part));
-    assert.deepEqual(at, ["fact-1"], "배경의 '기준금리'는 긴 표기가 차지해 핵심의 다음 '기준금리' 안의 '금리'로 간다");
+    assert.deepEqual(at, ["background"], "핵심의 '기준금리'는 긴 표기가 차지해 다음에 나온 배경의 '기준금리' 안의 '금리'로 간다");
   });
-  test("본문 표기가 없는 용어는 밑줄 없이 칩 줄 아래에서 연다", () => {
+  test("본문 표기가 없는 용어는 밑줄이 없고 설명 상자 자리도 없다(용어 칩은 용어 사전 링크, R6)", () => {
     assert.equal(underlined(3).length, 0);
     assert.equal(placement.placed.has(3), false);
-    assert.equal(termBoxPlace(3, placement), "chips");
+    assert.equal(termBoxPlace(3, placement), null);
     assert.equal(termBoxPlace(1, placement), "why");
     assert.equal(termBoxPlace(null, placement), null);
     const missing = placeTerms(parts, [{ id: 9, name: "없는말", description: "", surface: "본문에없는표기" }]);
-    assert.equal(termBoxPlace(9, missing), "chips", "표기를 본문에서 찾지 못하면 칩 줄 아래");
+    assert.equal(termBoxPlace(9, missing), null, "표기를 본문에서 찾지 못하면 열 자리가 없다");
   });
   test("토글: 열기, 같은 것 다시 눌러 닫기, 다른 것으로 바꾸기(한 카드에 하나)", () => {
     let open: number | null = null;
@@ -169,21 +172,19 @@ describe("E8·4.7-1 용어 밑줄과 토글", () => {
     const nodes: ReactNode[] = parts.map((p) =>
       h(Fragment, { key: p.id }, h("p", null, h(TermText, { segments: placement.segments[p.id]!, openId, onToggle, boxId })), open && at === p.id ? h(TermBox, { term: open, id: boxId, Link }) : null),
     );
-    nodes.push(h(TermChips, { key: "chips", terms, openId, onToggle, boxId }), open && at === "chips" ? h(TermBox, { key: "box", term: open, id: boxId, Link }) : null);
     return renderToStaticMarkup(h(Fragment, null, ...nodes));
   }
-  // 글(text)은 눈에만 보이는 끝 표시(aria-hidden)를 뺀 것이고, 끝 표시는 mark로 따로 본다(U1 4.2-1: 용어 칩 끝의 ▾)
+  // 글(text)은 눈에만 보이는 끝 표시(aria-hidden)를 뺀 것이고, 끝 표시는 mark로 따로 본다
   const hiddenRe = /<span aria-hidden="true">([^<]*)<\/span>/g;
   const buttons = (html: string) =>
     [...html.matchAll(/<button([^>]*)>([\s\S]*?)<\/button>/g)].map((m) => ({ attrs: m[1]!, text: m[2]!.replace(hiddenRe, "").replace(/<[^>]*>/g, ""), mark: [...m[2]!.matchAll(hiddenRe)].map((x) => x[1]!.trim()).join("") }));
 
-  test("닫힌 카드: 밑줄 낱말과 칩은 단추이고 aria-expanded가 false다", () => {
+  test("닫힌 카드: 밑줄 낱말은 단추이고 aria-expanded가 false다", () => {
     const html = card(null);
     const bs = buttons(html);
-    assert.deepEqual(bs.filter((b) => b.attrs.includes('class="term"')).map((b) => b.text).sort(), ["금리", "기준금리", "양적긴축"]);
-    assert.deepEqual(bs.filter((b) => !b.attrs.includes("term")).map((b) => b.text), ["양적긴축", "기준금리", "테이퍼링", "금리"], "칩 줄에는 표기가 없는 용어도 있다");
-    assert.deepEqual(bs.filter((b) => !b.attrs.includes("term")).map((b) => b.mark), ["▾", "▾", "▾", "▾"], "제자리에서 여는 칩은 끝에 ▾를 둔다");
-    assert.deepEqual(bs.filter((b) => b.attrs.includes("term")).map((b) => b.mark), ["", "", ""], "본문 밑줄 낱말에는 끝 표시가 없다");
+    assert.deepEqual(bs.map((b) => b.text).sort(), ["금리", "기준금리", "양적긴축"]);
+    assert.ok(bs.every((b) => b.attrs.includes('class="term"')));
+    assert.deepEqual(bs.map((b) => b.mark), ["", "", ""], "본문 밑줄 낱말에는 끝 표시가 없다");
     for (const b of bs) {
       assert.match(b.attrs, /type="button"/);
       assert.match(b.attrs, /aria-expanded="false"/);
@@ -191,23 +192,30 @@ describe("E8·4.7-1 용어 밑줄과 토글", () => {
     }
     assert.doesNotMatch(html, /class="tbox"/);
   });
-  test("밑줄 낱말을 연 카드: 그 낱말과 칩이 열림·강조, 설명 상자는 그 문단 바로 아래 하나", () => {
+  test("밑줄 낱말을 연 카드: 그 낱말이 열림·강조, 설명 상자는 그 문단 바로 아래 하나", () => {
     const html = card(1);
     const open = buttons(html).filter((b) => b.attrs.includes('aria-expanded="true"'));
-    assert.deepEqual(open.map((b) => [b.text, /class="(term open|on)"/.exec(b.attrs)?.[1]]), [["양적긴축", "term open"], ["양적긴축", "on"]]);
-    assert.equal(open[1]!.mark, "▴", "연 칩은 끝 표시가 ▴로 바뀐다");
+    assert.deepEqual(open.map((b) => [b.text, /class="(term open)"/.exec(b.attrs)?.[1]]), [["양적긴축", "term open"]]);
     for (const b of open) assert.match(b.attrs, /aria-controls="story-한국-1-term"/);
     assert.equal(html.match(/class="tbox"/g)?.length, 1);
     assert.match(html, /양적긴축은 다시 논의된다\.<\/p><div id="story-한국-1-term" class="tbox"[^>]*><b>양적긴축<\/b>가짜 설명 1<a href="\/terms\/1" class="text-link">용어 사전에서 보기/);
   });
-  test("표기가 없는 용어를 칩으로 연 카드: 칩만 강조되고 설명 상자는 칩 줄 아래다", () => {
-    const html = card(3);
-    const open = buttons(html).filter((b) => b.attrs.includes('aria-expanded="true"'));
-    assert.deepEqual(open.map((b) => b.text), ["테이퍼링"]);
-    assert.match(html, /<\/button><\/div><div id="story-한국-1-term" class="tbox"[^>]*><b>테이퍼링<\/b>/);
-  });
-  test("용어가 없으면 칩 줄을 그리지 않는다", () => {
-    assert.equal(renderToStaticMarkup(h(TermChips, { terms: [], openId: null, onToggle: () => {}, boxId: "x" })), "");
+  test("관련 줄(R4·R5·R6): 넘긴 이슈, 엮인 이슈, 인물·기관·국가, 용어 순의 링크이고 용어 칩은 용어 사전으로 간다. 단추·▾와 확인 정도 글이 없다", () => {
+    const withRefs: StoryDetail = {
+      ...detail,
+      extras: [{ id: 8, name: "엮인 이슈" }],
+      entities: [{ id: 7, name: "김가짜", kind: "인물", description: "가짜 총재" }],
+      terms,
+      sources: [{ name: "가짜일보", url: "https://example.com/a", publishedAt: "2026-10-20", primary: true }],
+    };
+    const html = renderToStaticMarkup(h(StoryMeta, { issue: { id: 3, name: "가짜 이슈" }, detail: withRefs, year: "2026", Link }));
+    const rel = /<span class="mrow-h">관련<\/span><div class="rel">([\s\S]*?)<\/div>/.exec(html)![1]!;
+    assert.deepEqual([...rel.matchAll(/href="([^"]+)"/g)].map((m) => m[1]), ["/issues/3", "/issues/8", "/entities/7", "/terms/1", "/terms/2", "/terms/3", "/terms/4"]);
+    assert.doesNotMatch(html, /<button|▾|▴/);
+    assert.match(html, /<span class="mrow-h">출처<\/span>/);
+    assert.doesNotMatch(html, /보도에 따르면/, "확인 정도는 쓰지 않는다");
+    const noIssue = renderToStaticMarkup(h(StoryMeta, { issue: null, detail: { ...withRefs, confidence: "여러 출처 확인" }, year: "2026", Link }));
+    assert.doesNotMatch(noIssue, /여러 출처 확인|\/issues\/3"/, "이슈를 넘기지 않으면(지난 흐름 머리에 있다) 관련 줄에 없다");
   });
 
   test("4.7-2 인물·기관·국가 칩은 대상 페이지로 가고, 인물만 한 줄 설명을 작게 붙인다", () => {

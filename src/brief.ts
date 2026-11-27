@@ -28,8 +28,10 @@ export interface TopStory {
   whyItMatters: string;
   background: string;
   keyFacts: string[];
+  /** 지난 글에만 있다. 2026-11-27 reading-terms R9부터 새 글은 쓰지 않고(검사가 거부한다) 사이트에 보이지 않는다 */
   analogy?: string;
-  outlook: string;
+  /** 구체적일 때만 쓴다(R10). 없으면 항목이 없다 */
+  outlook?: string;
   confidence: Confidence;
   devCheckpoint?: string;
   category: Category;

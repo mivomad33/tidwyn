@@ -439,7 +439,11 @@ export function generateFixtures(opts: FixtureOptions = {}): Fixture {
             extras,
             previous,
           };
-          if (storyCount % 4 === 0) detail.analogy = `마치 ${sentence()}`;
+          // R10: 넷 중 하나는 앞으로 볼 것이 없다(옛 비유 자리의 난수를 그대로 써서 다른 지어낸 값이 바뀌지 않게 한다)
+          if (storyCount % 4 === 0) {
+            sentence();
+            delete detail.outlook;
+          }
           // 용어: 주요 뉴스마다 평균 하나. 본문 표기가 있는 용어는 그 표기를 본문에 넣는다
           const chosen = new Map<number, TermWork>();
           if (activeTerms.length) {
@@ -458,7 +462,8 @@ export function generateFixtures(opts: FixtureOptions = {}): Fixture {
                 if (chosen.has(t.id)) continue;
                 chosen.set(t.id, t);
                 if (t.surface) {
-                  const part = epick(TERM_PARTS);
+                  const picked = epick(TERM_PARTS);
+                  const part = detail[picked] === undefined ? "background" : picked;
                   detail[part] = `${detail[part]} ${t.surface} 문제도 함께 거론됐다.`;
                 }
               }
@@ -475,7 +480,7 @@ export function generateFixtures(opts: FixtureOptions = {}): Fixture {
             detail.terms = refs;
           }
           dayDetails[key] = detail;
-          text.push(title, detail.summary, detail.whyItMatters, detail.background, ...detail.keyFacts, detail.analogy ?? "", detail.outlook);
+          text.push(title, detail.summary, detail.whyItMatters, detail.background, ...detail.keyFacts, detail.outlook ?? "");
         } else {
           text.push(title);
         }

@@ -35,6 +35,12 @@ describe("4.4-1 마크다운 브리프", () => {
       at = i;
     }
   });
+  test("앞으로 볼 것이 없는 뉴스는 그 줄이 없다(R10)", () => {
+    const b = fixtureBrief();
+    delete b.brief.sections[0]!.topStories[0]!.outlook;
+    const md = renderMarkdown(b);
+    assert.equal(md.match(/앞으로 볼 것/g)?.length, renderMarkdown(fixtureBrief()).match(/앞으로 볼 것/g)!.length - 1);
+  });
   test("데이터 폴더 안에 날짜 이름으로 쓴다", () => {
     const dir = tempDir();
     const file = writeMarkdown(dir, fixtureBrief());
