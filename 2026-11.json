@@ -23420,6 +23420,1036 @@
       },
       "collectedAt": "2026-11-27T06:20:32+09:00",
       "late": false
+    },
+    {
+      "brief": {
+        "targetDate": "2026-11-27",
+        "headline": "코스피와 중국 증시가 크게 반등한 가운데, 국내에서는 학교 비정규직 총파업과 예산안 심사 난항이 이어졌고 중동에서는 미국의 이란 해상봉쇄를 둘러싼 긴장이 높아졌다.",
+        "keywords": [
+          "증시 급반등",
+          "학교 비정규직 총파업",
+          "예산안 심사",
+          "이란 해상봉쇄",
+          "해킹 사고"
+        ],
+        "sections": [
+          {
+            "name": "한국",
+            "flow": "증시가 크게 반등했지만 학교 급식과 철도에서는 노사 갈등의 불편이 이어졌고, 국회와 법원에서 굵직한 결정이 나왔다.",
+            "topStories": [
+              {
+                "rank": 1,
+                "title": "코스피 4.3% 올라 4,900선 회복…코스닥은 8% 넘게 급등",
+                "summary": "외국인과 기관이 함께 사들이면서 코스피와 코스닥이 최근의 급락분을 상당 부분 되돌렸다.",
+                "whyItMatters": "인공지능(AI) 투자 불안으로 크게 흔들리던 국내 증시의 투자 심리가 되살아나는지 가늠할 수 있는 반등이기 때문이다.",
+                "background": "엔비디아 최고경영자의 스캔들과 사퇴, 복귀를 거치며 AI 관련주가 흔들렸고 코스피는 25일 6% 넘게 급락했다. 26일에는 0.29% 오르는 데 그쳤다. 이날은 증시안정펀드(주가 급락 때 시장에 넣는 공동 자금) 확대 기대와 메모리 반도체 투자 심리 개선이 상승을 뒷받침한 것으로 풀이된다.",
+                "keyFacts": [
+                  "코스피는 204.47포인트(4.34%) 오른 4,915.68에, 코스닥은 53.28포인트(8.13%) 오른 708.99에 마감했다.",
+                  "유가증권시장에서 외국인은 1조1,298억원, 기관은 2,388억원을 순매수했고 개인은 1조7,746억원을 순매도했다.",
+                  "코스닥에서는 오전 10시 22분 프로그램 매수 주문을 5분간 멈추는 매수 사이드카가 발동됐다.",
+                  "원/달러 환율은 4.8원 내린 1,337.9원을 기록했다."
+                ],
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "경제",
+                  "minor": "금융·증시"
+                },
+                "sources": [
+                  {
+                    "name": "뉴시스",
+                    "url": "https://newsis.com/view/NISX20261127_0003886561",
+                    "publishedAt": "2026-11-27",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261127120451008",
+                    "publishedAt": "2026-11-27",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/11/27/PYH2026112712190001300_P2.jpg"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261127127600002",
+                    "publishedAt": "2026-11-27",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/11/27/PYH2026112702570001300_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 2,
+                "title": "학교 비정규직 총파업에 전국 학교 32% 급식 차질",
+                "summary": "급식·돌봄을 맡는 교육공무직 2만3천여 명이 파업해 4천여 학교에서 정상 급식이 이뤄지지 않았다.",
+                "whyItMatters": "학생의 점심과 맞벌이 가정의 돌봄에 바로 영향을 주는 파업이기 때문이다.",
+                "background": "전국학교비정규직연대회의는 교육 당국과의 집단임금교섭이 결렬되자 27일 총파업에 나섰다. 교육공무직은 학교 급식, 돌봄, 행정 업무 등을 맡는 비정규직 직원을 말한다.",
+                "keyFacts": [
+                  "교육부 집계로 급식 대상 학교 1만2,597곳 가운데 4,014곳(31.9%)에서 정상 급식을 하지 못했다.",
+                  "이 가운데 3,698곳은 빵과 우유 같은 대체식을 냈고 30곳은 도시락을 가져오게 했다.",
+                  "오전 11시 기준 교육공무직 18만722명 중 2만3,562명(13.0%)이 파업에 참여했다.",
+                  "일부 학교의 초등 돌봄교실도 문을 열지 못했다."
+                ],
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "경제",
+                  "minor": "노동·일자리"
+                },
+                "sources": [
+                  {
+                    "name": "뉴스1",
+                    "url": "https://www.news1.kr/society/education/6368624",
+                    "publishedAt": "2026-11-27",
+                    "primary": true
+                  },
+                  {
+                    "name": "서울신문",
+                    "url": "https://seoul.co.kr/news/society/education-news/2026/11/27/20261127500257",
+                    "publishedAt": "2026-11-27"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261127123700530",
+                    "publishedAt": "2026-11-27",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/11/27/PYH2026112707870005200_P2.jpg"
+                  }
+                ],
+                "outlook": "교육 당국과 노조의 임금교섭이 다시 열려 합의에 이르는지가 다음 파업 여부를 가른다."
+              },
+              {
+                "rank": 3,
+                "title": "예산소위 11일 만에 종료…미래대응기금 사업은 모두 보류",
+                "summary": "법정 처리 시한을 닷새 앞두고 국회 예산안조정소위가 최대 쟁점인 미래대응기금 사업을 결론 내지 못한 채 활동을 마쳤다.",
+                "whyItMatters": "내년 나라살림의 핵심 쟁점이 비공식 협의로 넘어가면서 시한 안에 합의 처리할 수 있을지가 불투명해졌기 때문이다.",
+                "background": "미래대응기금은 정부가 미래 산업과 과제에 쓰겠다며 새로 만들려는 162조3천억원 규모의 기금이다. 야당은 예비타당성조사(큰 사업의 경제성을 미리 따지는 절차) 면제를 비판해 왔고, 여당에서도 다른 사업과 겹친다는 지적이 나왔다.",
+                "keyFacts": [
+                  "예산결산특별위원회 예산안조정소위는 27일 가동 11일 만에 활동을 끝냈고 미래대응기금 사업 의결을 모두 보류했다.",
+                  "남은 증액 심사와 보류 사업은 비공식 협의체인 '소소위'로 넘어갔다.",
+                  "같은 날 국회의장은 미래대응기금법 등 내년 예산에 딸린 세입 관련 법안 49건을 지정했다."
+                ],
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "정치",
+                  "minor": "국회·정당"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261127134751001",
+                    "publishedAt": "2026-11-27",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/11/26/PYH2026112608730001300_P2.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "세계일보",
+                    "url": "https://www.segye.com/newsView/20261127513457",
+                    "publishedAt": "2026-11-27"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261127113200001",
+                    "publishedAt": "2026-11-27",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/11/16/PYH2026111605110001301_P2.jpg"
+                  }
+                ],
+                "outlook": "예결위는 30일 전체회의에서 의결을 시도하며, 이때까지 마치지 못하면 12월 1일 예산안이 본회의에 자동으로 올라간다. 헌법상 처리 시한은 12월 2일이다."
+              },
+              {
+                "rank": 4,
+                "title": "올해 수능 부정행위 474건…스마트기기 적발은 작년의 3.6배",
+                "summary": "교육부가 국회에 보고한 수능 부정행위가 지난해보다 70% 가까이 늘었고, 여야는 대책이 부족하다고 한목소리로 질타했다.",
+                "whyItMatters": "AI와 소형 기기를 이용한 부정행위가 늘면서 대입 시험의 공정성과 감독 방식이 시험대에 올랐기 때문이다.",
+                "background": "국가자격시험에서 AI를 이용한 부정행위 사건이 드러난 뒤, 올해 수능(11월 19일)에서도 스마트기기 적발이 크게 늘었다.",
+                "keyFacts": [
+                  "25일 기준 부정행위는 474건으로 지난해 279건보다 69.9% 늘었다.",
+                  "스마트기기 관련 적발은 31건에서 112건으로 늘었고, 교육부는 중대한 부정행위를 한 수험생 6명을 고발했다.",
+                  "교육부는 중대한 부정행위자의 응시 제한을 최대 10년으로 늘리는 법 개정과 시험장 금속탐지기 도입을 추진하겠다고 밝혔다."
+                ],
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "사회",
+                  "minor": "교육"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261127077951001",
+                    "publishedAt": "2026-11-27",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/11/27/PYH2026112706620001300_P2.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "세계일보",
+                    "url": "https://www.segye.com/newsView/20261127512874",
+                    "publishedAt": "2026-11-27"
+                  }
+                ],
+                "outlook": "고등교육법 개정과 탐지 장비 예산 확보가 내년 수능 전에 이뤄지는지가 관건이다."
+              },
+              {
+                "rank": 5,
+                "title": "민주당 윤리심판원, 최민희 최고위원 중징계…최 의원 \"수용 어려워\" 재심 신청 뜻",
+                "summary": "더불어민주당 윤리심판원이 발언 논란을 빚은 최민희 최고위원을 중징계하기로 했고, 당원권 2년 정지로 알려졌다.",
+                "whyItMatters": "확정되면 최고위원직을 잃고 다음 총선에 민주당 후보로 나가기 어려워지며, 당내 계파 갈등도 커질 수 있기 때문이다.",
+                "background": "최 의원은 지난 10월 비공개 당원 간담회에서 한 발언 등으로 논란이 됐고, 당 대표의 지시로 감찰을 받은 뒤 윤리심판원에 넘겨졌다.",
+                "keyFacts": [
+                  "윤리심판원장은 일부 발언이 당의 품위를 훼손했다고 판단했다고 밝혔으며, 구체적인 징계 수위는 공식 발표하지 않았다.",
+                  "당원자격 정지 2년은 당규상 정지 징계 가운데 가장 긴 기간이라고 보도됐다.",
+                  "최 의원은 받아들이기 어렵다며 재심을 신청하겠다고 밝혔고, 가까운 의원들도 반발했다."
+                ],
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "정치",
+                  "minor": "국회·정당"
+                },
+                "sources": [
+                  {
+                    "name": "MBC",
+                    "url": "https://imnews.imbc.com/news/2026/politics/article/6869160_36911.html",
+                    "publishedAt": "2026-11-27",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261127148351001",
+                    "publishedAt": "2026-11-27",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/11/11/PYH2026111116780001300_P2.jpg"
+                  }
+                ],
+                "outlook": "당규상 통보 뒤 7일 안에 재심을 신청할 수 있고, 윤리심판원은 접수 뒤 60일 안에 다시 심사해야 한다."
+              },
+              {
+                "rank": 6,
+                "title": "북한·러시아, 최고 등급 국가기밀까지 나누고 지키는 협정 체결 확인",
+                "summary": "북러 정보기관이 올해 3월 기밀정보 상호 보호협정을 맺은 사실이 뒤늦게 알려졌다.",
+                "whyItMatters": "두 나라가 민감한 군사·정보를 주고받을 법적 기반을 갖춘 것이어서 한반도 안보에도 영향을 줄 수 있기 때문이다.",
+                "background": "북한 전문매체 NK뉴스가 러시아 법률정보 사이트에 올라온 협정문을 확인해 보도했다. 두 나라 정부는 체결 사실을 따로 발표하지 않았다.",
+                "keyFacts": [
+                  "러시아 연방보안국(FSB)과 북한 국가정보국이 3월 26일 평양에서 협정을 맺었고 당일 효력이 생겼다.",
+                  "러시아의 최고 기밀 등급인 '특별 중요' 정보까지 보호 대상에 넣었으며, 공개된 비슷한 협정 21건 중 이 등급을 담은 것은 북한과 몰도바뿐이다.",
+                  "상대국의 서면 동의 없이 기밀을 제3자에게 넘길 수 없고, 유효기간은 정해지지 않았다."
+                ],
+                "confidence": "보도에 따르면",
+                "category": {
+                  "major": "정치",
+                  "minor": "북한"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261127046400009",
+                    "publishedAt": "2026-11-27",
+                    "imageUrl": "https://img.yna.co.kr/photo/etc/ta/2026/09/07/PTA20260907026101009_P2.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "SPN 서울평양뉴스",
+                    "url": "https://www.spnews.co.kr/news/articleView.html?idxno=112994",
+                    "publishedAt": "2026-11-27",
+                    "publishedAtEstimated": true
+                  }
+                ]
+              },
+              {
+                "rank": 7,
+                "title": "표류 북한 어선 24일 만에 송환…7명 중 1명은 남한에 남아",
+                "summary": "동해에서 구조된 북한 어선과 선원 6명이 북한으로 돌아가고, 1명은 한국의 보호를 원해 남았다.",
+                "whyItMatters": "남북 연락 채널이 끊긴 상황에서 이뤄진 송환이며, 현 정부에서 처음 나온 해상 귀순 사례로 전해졌기 때문이다.",
+                "background": "이 어선은 3일 울릉도 근처 공해에서 표류하다 발견돼 예인됐다. 정부는 유엔군사령부를 통해 송환 계획을 북한에 알렸다.",
+                "keyFacts": [
+                  "통일부는 27일 오전 8시 33분 어선이 동해 북방한계선(NLL)을 스스로 항해해 넘어갔다고 밝혔다.",
+                  "7명 가운데 6명이 돌아갔고 1명은 조사 초기부터 남겠다는 뜻을 밝힌 것으로 알려졌다.",
+                  "남은 1명은 관련 절차를 거쳐 보호 여부가 결정되면 정착 교육을 받게 된다."
+                ],
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "정치",
+                  "minor": "북한"
+                },
+                "sources": [
+                  {
+                    "name": "서울신문",
+                    "url": "https://seoul.co.kr/news/politics/2026/11/27/20261127500121",
+                    "publishedAt": "2026-11-27",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261127060751504",
+                    "publishedAt": "2026-11-27",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/11/27/PYH2026112706440001300_P2.jpg"
+                  },
+                  {
+                    "name": "디지털타임스",
+                    "url": "https://www.dt.co.kr/article/12097598",
+                    "publishedAt": "2026-11-27",
+                    "publishedAtEstimated": true
+                  }
+                ]
+              },
+              {
+                "rank": 8,
+                "title": "법원, '10·15 부동산 대책' 규제지역 지정 적법 판단…국민의힘 패소",
+                "summary": "서울행정법원이 국민의힘과 주민들이 낸 토지거래허가구역 등 지정 취소소송을 받아들이지 않았다.",
+                "whyItMatters": "서울과 수도권의 대출·거래 규제가 법원에서 유지돼 당분간 효력이 이어지게 됐기 때문이다.",
+                "background": "원고 측은 정부가 9월 집값 통계를 반영하지 않았고 대출 규제와 실거주 의무 등이 재산권과 거주 이전의 자유를 침해한다며 지난해 12월 소송을 냈다. 함께 낸 효력 정지 신청은 올해 2월 기각됐다.",
+                "keyFacts": [
+                  "서울행정법원 행정1부는 27일 원고 패소로 판결했다.",
+                  "법원은 심의 당시 9월 통계가 공식 발표 전이었던 점 등을 들어 위법하지 않다고 봤다.",
+                  "주민의 불이익이 주택시장 안정이라는 공익보다 크다고 보기 어렵다고 판단했다."
+                ],
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "경제",
+                  "minor": "부동산"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261127099751004",
+                    "publishedAt": "2026-11-27",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2025/12/26/PYH2025122605830001300_P2.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "아주경제",
+                    "url": "https://www.ajunews.com/view/20261127160635922",
+                    "publishedAt": "2026-11-27"
+                  }
+                ],
+                "outlook": "1심 판결이어서 원고 측의 항소 여부가 남아 있다."
+              },
+              {
+                "rank": 9,
+                "title": "카카오 창업자 김범수, 'SM 시세조종' 혐의 무죄 확정",
+                "summary": "공소청이 상고를 포기해 김범수 창업자의 항소심 무죄가 그대로 확정됐다.",
+                "whyItMatters": "3년 가까이 카카오를 따라다닌 사법 불확실성이 해소됐기 때문이다.",
+                "background": "김 창업자는 2023년 2월 SM엔터테인먼트 인수전에서 경쟁사 하이브의 공개매수를 막으려고 주가를 올리는 데 관여한 혐의로 기소됐다.",
+                "keyFacts": [
+                  "1심은 2025년 10월, 서울고법 2심은 올해 11월 20일 각각 무죄를 선고했다.",
+                  "공소청은 판결 내용과 상고심에서 받아들여질 가능성을 검토해 상고하지 않기로 했다고 밝혔다.",
+                  "2심은 경영권 확보를 위한 통상적인 장내 매수는 허용되며 시세조종 목적이 충분히 입증되지 않았다고 봤다."
+                ],
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "사회",
+                  "minor": "법·재판"
+                },
+                "sources": [
+                  {
+                    "name": "이투데이",
+                    "url": "https://www.etoday.co.kr/news/view/2654131",
+                    "publishedAt": "2026-11-27",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261127156300004",
+                    "publishedAt": "2026-11-27",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/11/20/PYH2026112003910001300_P2.jpg"
+                  }
+                ]
+              }
+            ],
+            "shortNews": [
+              {
+                "summary": "철도노조 준법투쟁 이틀째인 27일 오후 5시까지 수도권 전철 445대가 20분 이상 늦었고 일부 일반열차는 운행이 중지됐다.",
+                "category": {
+                  "major": "경제",
+                  "minor": "노동·일자리"
+                },
+                "sources": [
+                  {
+                    "name": "경향신문",
+                    "url": "https://www.khan.co.kr/article/202611271914001",
+                    "publishedAt": "2026-11-27"
+                  }
+                ]
+              },
+              {
+                "summary": "민주당 정년연장특별위원회가 열 달 만에 노사 협의를 다시 열었지만 65세 일괄 연장과 재고용을 두고 합의하지 못했고, 12월 2일 마지막 회의를 연다.",
+                "category": {
+                  "major": "경제",
+                  "minor": "노동·일자리"
+                },
+                "sources": [
+                  {
+                    "name": "뉴스1",
+                    "url": "https://www.news1.kr/politics/assembly/6368305",
+                    "publishedAt": "2026-11-27"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261127069252001",
+                    "publishedAt": "2026-11-27",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/11/27/PYH2026112706070001300_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "특검이 12·3 비상계엄 당시 계엄을 지지하는 글을 올린 혐의로 기소된 황교안 자유와혁신 대표에게 징역 10년을 구형했고, 선고는 1월 28일이다.",
+                "category": {
+                  "major": "정치",
+                  "minor": "사법·검찰"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261127129851004",
+                    "publishedAt": "2026-11-27",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/07/08/PYH2026070806290001300_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "세계변호사협회(IBA)가 여권의 조희대 대법원장 탄핵 추진에 대해 중대한 후폭풍이 우려된다고 공개적으로 밝혔다.",
+                "category": {
+                  "major": "정치",
+                  "minor": "사법·검찰"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261127166500004",
+                    "publishedAt": "2026-11-27",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2026/11/24/PYH2026112401870001300_P2.jpg"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "세계",
+            "flow": "이란 해상봉쇄를 둘러싼 충돌 위험과 우크라이나 지원 협상의 교착 속에 아시아·유럽·오세아니아의 선거가 겹쳤다.",
+            "topStories": [
+              {
+                "rank": 1,
+                "title": "미군, 이란 봉쇄 뚫으려던 상선 또 무력화…이란 혁명수비대는 \"돌파하겠다\"",
+                "summary": "미군이 오만만에서 이란 항구를 떠난 상선을 공격해 멈춰 세웠고, 이란 혁명수비대는 봉쇄를 계속 두지 않겠다고 맞섰다.",
+                "whyItMatters": "호르무즈 해협 주변의 무력 충돌이 커지면 국제 원유 공급과 물가에 곧바로 영향을 줄 수 있기 때문이다.",
+                "background": "미국은 올해 4월부터 이란 항구를 해상 봉쇄했다. 여름 협상 때 잠시 풀었다가 7월부터 다시 막았고, 협상의 문은 열려 있다고 말해 왔다.",
+                "keyFacts": [
+                  "미 중부사령부는 26일 팔라우 선적 '퍼시픽 아처'호의 선미를 항공기 정밀 무기로 타격해 추진 장치를 멈췄으며 선원은 다치지 않았다고 밝혔다.",
+                  "7월 봉쇄 재개 뒤 여섯 번째로 무력화한 선박이며, 미군은 지금까지 상선 158척의 항로를 돌렸다고 밝혔다.",
+                  "혁명수비대 대변인은 해상·육상·공중 봉쇄가 이어지도록 두지 않겠다고 밝혔다.",
+                  "트럼프 대통령은 전쟁을 원할 때 언제든 끝낼 수 있고, 다시 공습하면 이란의 지하 핵 관련 시설이 있는 곡괭이산을 반드시 치겠다고 말했다."
+                ],
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "국제",
+                  "minor": "중동"
+                },
+                "sources": [
+                  {
+                    "name": "Washington Post",
+                    "url": "https://www.washingtonpost.com/politics/2026/11/27/iran-naval-blockade-us-military-disabled-ship/d885ebcc-ea88-11f1-8db0-6f1e3c389e7c_story.html",
+                    "publishedAt": "2026-11-27",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261128003300079",
+                    "publishedAt": "2026-11-28",
+                    "imageUrl": "https://img.yna.co.kr/etc/inner/KR/2026/11/28/AKR20261128003300079_01_i_P2.jpg"
+                  },
+                  {
+                    "name": "Al Jazeera",
+                    "url": "https://aljazeera.com/news/2026/11/27/trump-downplays-russia-china-support-for-iran-during-talks-with-us-troops",
+                    "publishedAt": "2026-11-27"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261128002200071",
+                    "publishedAt": "2026-11-28",
+                    "imageUrl": "https://img.yna.co.kr/photo/etc/af/2026/11/27/PAF20261127104001009_P2.jpg"
+                  }
+                ],
+                "outlook": "이란이 실제로 봉쇄 돌파를 시도할지와 협상이 다시 열릴지가 확전 여부를 가른다."
+              },
+              {
+                "rank": 2,
+                "title": "중국 증시, 당국의 장중 부양 메시지에 2년여 만의 최대 폭 급등",
+                "summary": "중국 정부가 국가 자금의 시장 안정 역할을 키우겠다고 밝히자 주요 지수가 일제히 뛰었다.",
+                "whyItMatters": "급락하던 중국 증시를 정부가 직접 떠받치겠다는 신호이며, 아시아 증시 전반의 투자 심리에 영향을 주기 때문이다.",
+                "background": "상하이종합지수는 전날까지 5월 중순보다 18% 떨어져 있었다. '국가대표팀'은 증시를 안정시키려고 주식을 사들이는 정부 계열 투자 자금을 부르는 말이다.",
+                "keyFacts": [
+                  "상하이종합지수는 3.73% 오른 3,606.49에, 선전성분지수는 7.24% 올라 마감했다.",
+                  "반도체·기술주 중심의 과창판 50 지수는 15% 넘게 뛰었다.",
+                  "리창 총리가 주재한 국무원 상무회의는 장기 투자 자금 유입 확대, 배당과 자사주 매입 장려, 국가대표팀 역할 강화를 내놓았다.",
+                  "투입할 자금 규모와 시행 일정은 나오지 않았다."
+                ],
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "경제",
+                  "minor": "금융·증시"
+                },
+                "sources": [
+                  {
+                    "name": "SBS",
+                    "url": "https://news.sbs.co.kr/news/endPage.do?news_id=N1008867313",
+                    "publishedAt": "2026-11-27",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261127111852089",
+                    "publishedAt": "2026-11-27",
+                    "imageUrl": "https://img.yna.co.kr/photo/yna/YH/2019/05/27/PYH2019052715240001300_P2.jpg"
+                  }
+                ],
+                "outlook": "추가 정책이 구체적인 자금 규모와 함께 나오는지에 따라 반등이 이어질지가 갈린다."
+              },
+              {
+                "rank": 3,
+                "title": "EU 정상회의, 장기예산과 우크라이나 대출 합의 없이 종료",
+                "summary": "27개 회원국이 2028~2034년 예산과 우크라이나 450억 유로 대출을 결정하지 못하고 12월로 미뤘다.",
+                "whyItMatters": "내년 우크라이나의 자금 부족을 메울 지원이 늦어지고 EU 장기 살림 계획도 불확실해졌기 때문이다.",
+                "background": "EU 집행위원회는 EU 예산을 담보로 우크라이나에 최대 450억 유로를 빌려주자고 제안했다. 독일 총리는 모든 회원국이 우크라이나 지원에 참여하지 않으면 예산 합의도 어렵다는 입장이다.",
+                "keyFacts": [
+                  "코스타 EU 정상회의 상임의장은 예산 규모, 분야별 배분, 새 재원 세 가지 모두 합의하지 못했다고 밝혔다.",
+                  "슬로바키아·헝가리·체코가 대출에 동의하지 않았다.",
+                  "대출 결정은 12월 17~18일 정상회의로 넘어갔고 각국은 연말까지 예산 협상을 끝내려 한다."
+                ],
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "국제",
+                  "minor": "유럽·러시아"
+                },
+                "sources": [
+                  {
+                    "name": "BBC",
+                    "url": "https://www.bbc.co.uk/news/articles/cw4gnm3m9deno",
+                    "publishedAt": "2026-11-27",
+                    "imageUrl": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/3a83/live/c35a2570-ea0f-11f1-8868-df2967876f4c.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "Euromaidan Press",
+                    "url": "https://euromaidanpress.com/2026/11/27/eu-leaders-push-ukraines-e45-billion-loan-to-december-as-three-of-27-states-hold-out-germanys-merz-ties-the-blocs-budget-to-it/",
+                    "publishedAt": "2026-11-27"
+                  }
+                ],
+                "outlook": "12월 17~18일 정상회의에서 대출과 예산의 타협안이 나오는지가 관건이다."
+              },
+              {
+                "rank": 4,
+                "title": "젤렌스키 \"트럼프·푸틴의 우정은 이상해\"…미국의 대러 압박 부족 비판",
+                "summary": "젤렌스키 우크라이나 대통령이 BBC 인터뷰에서 미국이 중동에 쏠려 러시아를 충분히 압박하지 않는다고 말했다.",
+                "whyItMatters": "종전 협상의 중재자인 미국과 우크라이나 사이의 불만이 공개적으로 드러났기 때문이다.",
+                "background": "트럼프 대통령은 최근 푸틴 러시아 대통령을 친구라고 불렀고, 26일에는 유럽에 대한 군사 공격을 거두라고 요청했다고 밝혔다.",
+                "keyFacts": [
+                  "젤렌스키 대통령은 트럼프 대통령이 푸틴을 친구라고 부른 것이 이상하다며 푸틴은 살인자라고 말했다.",
+                  "평화 협상에서 미국이 러시아를 충분히 세게 밀지 않고 있다고 불만을 드러냈다.",
+                  "그는 앞서 러시아가 며칠 안에 대규모 공습을 준비한다고 경고했다."
+                ],
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "국제",
+                  "minor": "유럽·러시아"
+                },
+                "sources": [
+                  {
+                    "name": "BBC",
+                    "url": "https://www.bbc.co.uk/news/articles/c820q9wgrpyyo",
+                    "publishedAt": "2026-11-28",
+                    "imageUrl": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/fdee/live/21e805d0-ea60-11f1-99b6-a35a62fa4264.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261127142500009",
+                    "publishedAt": "2026-11-27",
+                    "imageUrl": "https://img.yna.co.kr/photo/reuters/2026/11/27/PRU20261127015901009_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "rank": 5,
+                "title": "대만 지방선거 전날 중국 군용기 30대 출격",
+                "summary": "대만 지방선거를 하루 앞두고 중국이 군용기와 군함으로 대만 주변에서 무력시위를 벌였다.",
+                "whyItMatters": "라이칭더 정부의 중간평가로 불리는 선거에 맞춘 군사 압박이어서 양안 긴장이 높아질 수 있기 때문이다.",
+                "background": "28일 대만에서는 22개 시·현의 단체장 등을 뽑는 지방선거가 열린다. 중국은 대만을 자국 영토라고 주장하며 선거 때마다 목소리를 내 왔다.",
+                "keyFacts": [
+                  "대만 국방부는 중국 군용기 30대를 포착했고 이 중 26대가 대만해협 중간선을 넘었다고 밝혔다.",
+                  "유권자는 약 1,970만 명이다.",
+                  "가장 주목받는 타이베이 시장 선거에는 국민당의 장완안 현 시장과, 중국 경찰이 '분리주의' 혐의로 수배한 민진당 선보양 후보가 맞붙는다."
+                ],
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "국제",
+                  "minor": "동아시아"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261127143000083",
+                    "publishedAt": "2026-11-27",
+                    "imageUrl": "https://img.yna.co.kr/etc/inner/KR/2026/11/27/AKR20261127143000083_01_i_P2.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "ThePrint(Reuters)",
+                    "url": "https://theprint.in/world/packed-rallies-close-taiwan-election-campaign-china-sends-warplanes/3111273/",
+                    "publishedAt": "2026-11-27"
+                  }
+                ],
+                "outlook": "28일 개표 결과가 라이 정부의 국정 동력과 중국의 다음 대응에 영향을 줄 수 있다."
+              },
+              {
+                "rank": 6,
+                "title": "스페인, 29일 총선 앞두고 막판 유세…우파 연합 과반 가능성",
+                "summary": "산체스 총리와 야당이 마지막 유세에 나선 가운데 여론조사는 중도우파 국민당이 근소하게 앞선다.",
+                "whyItMatters": "국민당과 극우 복스(Vox)가 과반을 얻으면 프랑코 독재가 끝난 뒤 처음으로 극우 정당이 중앙정부에 들어갈 수 있기 때문이다.",
+                "background": "산체스 총리가 이끄는 사회노동당 정부가 재신임을 묻는 선거다. 집값과 임대료 문제가 가장 큰 쟁점으로 꼽힌다.",
+                "keyFacts": [
+                  "일간지 엘파이스의 마지막 여론조사 평균은 국민당 31.4%, 사회노동당 29.1%, 복스 17.9%다.",
+                  "국민당의 우위는 선거운동 초반 약 6%포인트에서 2.3%포인트로 줄었다.",
+                  "여러 의석 전망에서 국민당과 복스의 합계가 하원 과반(176석)을 넘는 것으로 나왔다.",
+                  "정부 산하 조사기관 CIS는 사회노동당이 크게 앞선다는 다른 결과를 내놨다."
+                ],
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "국제",
+                  "minor": "유럽·러시아"
+                },
+                "sources": [
+                  {
+                    "name": "BBC",
+                    "url": "https://www.bbc.co.uk/news/articles/c8wy5p4gdnwvo",
+                    "publishedAt": "2026-11-28",
+                    "imageUrl": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/1bb1/live/dd63ff10-ea99-11f1-a094-5fdc692f3e33.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "Euronews",
+                    "url": "https://www.euronews.com/2026/11/27/spain-general-election-is-vox-set-to-be-the-kingmaker-and-how-crucial-is-the-housing-issue",
+                    "publishedAt": "2026-11-27"
+                  },
+                  {
+                    "name": "CNBC",
+                    "url": "https://www.cnbc.com/2026/11/27/spain-election-trump-sanchez.html",
+                    "publishedAt": "2026-11-27"
+                  }
+                ],
+                "outlook": "29일 투표에서 두 우파 정당이 과반을 채우는지가 핵심이다."
+              },
+              {
+                "rank": 7,
+                "title": "뉴질랜드 총선 최종 개표, 집권 연립 과반에 1석 모자라",
+                "summary": "럭슨 총리의 3당 연립이 과반을 잃어 새로 원내에 들어온 정당의 선택에 정부 구성이 달렸다.",
+                "whyItMatters": "연정 협상이 실패하면 총선을 다시 치를 수 있어 정국이 불안해지기 때문이다.",
+                "background": "예비 집계에서는 국민당 중심의 연립이 근소하게 과반을 지켰지만, 약 48만5천 장의 특별 투표를 더하자 결과가 바뀌었다.",
+                "keyFacts": [
+                  "연립은 130석 가운데 65석으로 과반(66석)에 1석 모자란다.",
+                  "정당별로는 국민당 40석, ACT 13석, 뉴질랜드 퍼스트 12석이다.",
+                  "7석을 얻은 오퍼튜니티당이 협상의 열쇠를 쥐었으며, 중도좌파 진영은 이 당의 지지를 받아도 정부를 꾸릴 수 없다."
+                ],
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "국제",
+                  "minor": "기타 지역"
+                },
+                "sources": [
+                  {
+                    "name": "Al Jazeera",
+                    "url": "https://www.aljazeera.com/news/2026/11/27/new-zealand-election-results-set-up-tricky-talks-for-conservative-incumbent",
+                    "publishedAt": "2026-11-27",
+                    "primary": true
+                  },
+                  {
+                    "name": "ABC News(호주)",
+                    "url": "https://www.abc.net.au/news/2026-11-27/official-results-of-new-zealand-s-national-election-announced/107434326",
+                    "publishedAt": "2026-11-27"
+                  }
+                ],
+                "outlook": "럭슨 총리는 협상이 길어질 것이라고 밝혔고, 크리스마스 전 새 정부 출범은 어려울 수 있다."
+              }
+            ],
+            "shortNews": [
+              {
+                "summary": "룰라 브라질 대통령이 대형 은행 브라데스쿠의 트라부쿠 이사회 의장을 재무장관에 앉히기로 하면서 브라질 증시와 헤알화 가치가 크게 올랐다.",
+                "category": {
+                  "major": "경제",
+                  "minor": "거시·정책"
+                },
+                "sources": [
+                  {
+                    "name": "Bloomberg",
+                    "url": "https://www.bloomberg.com/news/articles/2026-11-26/lula-set-to-announce-bradesco-s-trabuco-as-finance-minister",
+                    "publishedAt": "2026-11-26"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261127098400009",
+                    "publishedAt": "2026-11-27",
+                    "imageUrl": "https://img.yna.co.kr/photo/etc/af/2026/11/27/PAF20261127102801009_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "대만이 AI 수요 급증을 반영해 올해 경제성장률 전망을 48년 만에 가장 높은 13.28%로 올렸다.",
+                "category": {
+                  "major": "경제",
+                  "minor": "거시·정책"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261127159000089",
+                    "publishedAt": "2026-11-27",
+                    "imageUrl": "https://img.yna.co.kr/photo/ap/2026/10/16/PAP20261016008301009_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "지난해 쿠데타로 집권한 기니비사우 군정이 민정 이양을 2028년으로 미루고 선거를 2년 뒤로 연기했다.",
+                "category": {
+                  "major": "국제",
+                  "minor": "기타 지역"
+                },
+                "sources": [
+                  {
+                    "name": "BBC",
+                    "url": "https://www.bbc.co.uk/news/articles/cm879e5yxjq5o",
+                    "publishedAt": "2026-11-27",
+                    "imageUrl": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/5f0c/live/9028aca0-ea3f-11f1-9fc4-ef897a334b75.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "캐나다 대법원이 공무원의 종교 상징 착용을 금지한 퀘벡주 법을 대체로 유지하는 판결을 내렸다.",
+                "category": {
+                  "major": "국제",
+                  "minor": "기타 지역"
+                },
+                "sources": [
+                  {
+                    "name": "BBC",
+                    "url": "https://www.bbc.co.uk/news/articles/cq3dgpy9lem3o",
+                    "publishedAt": "2026-11-28",
+                    "imageUrl": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/b5e9/live/7ddd01c0-ea82-11f1-a739-457c2295eaba.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "신도들을 굶어 죽게 한 케냐 종말론 집단의 지도자 폴 매켄지가 추가로 123명의 사망 책임에 대해 유죄 판결을 받았다.",
+                "category": {
+                  "major": "사회",
+                  "minor": "법·재판"
+                },
+                "sources": [
+                  {
+                    "name": "BBC",
+                    "url": "https://www.bbc.co.uk/news/articles/cmy49de4xx1zo",
+                    "publishedAt": "2026-11-28",
+                    "imageUrl": "https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/fd53/live/e165d810-ea74-11f1-a828-d384c0290f6b.jpg"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "IT·AI",
+            "flow": "미국의 AI 칩 수출통제 의혹이 이어졌고, 국방·기업·공공 서비스를 겨냥한 해킹이 잇따랐다.",
+            "topStories": [
+              {
+                "rank": 1,
+                "title": "앨리스 황과 연결된 상하이 데이터센터에서 수출통제 대상 엔비디아 칩 발견 보도",
+                "summary": "블룸버그가 확인한 문서에 따르면 중국에 허가 없이 팔 수 없는 최신 블랙웰 칩이 상하이 데이터센터에 설치됐다.",
+                "whyItMatters": "미국의 AI 칩 수출통제에 구멍이 있었는지와 엔비디아 최고경영자를 둘러싼 의혹에 직접 닿는 보도이기 때문이다.",
+                "background": "앨리스 황은 젠슨 황 엔비디아 최고경영자와의 관계가 알려진 인물로, 싱가포르 AI 업체 메가스피드를 이끌었다. 미 상무부는 이 업체의 수출통제 회피 혐의를 조사해 왔고, 앨리스 황의 중국 정보기관 연루 의혹은 아직 입증되지 않았다.",
+                "keyFacts": [
+                  "문서에 따르면 블랙웰 칩은 장강삼각주 프로젝트와 상하이 커잔이라는 두 업체가 쓰는 데이터센터에 있었고, 이전 세대 호퍼 칩 서버도 발견됐다.",
+                  "블룸버그는 장강삼각주 프로젝트의 대표가 앨리스 황의 남편 캉웨이라고 전했다.",
+                  "메가스피드가 칩을 직접 빼돌렸다는 증거는 찾지 못했고, 회사는 잘못이 없다고 밝혔다."
+                ],
+                "confidence": "보도에 따르면",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "반도체·하드웨어"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261128002400072",
+                    "publishedAt": "2026-11-28",
+                    "imageUrl": "https://img.yna.co.kr/etc/inner/KR/2026/11/28/AKR20261128002400072_01_i_P2.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "Engadget",
+                    "url": "https://www.engadget.com/2329748/restricted-nvidia-chips-were-installed-at-a-chinese-data-center-linked-to-alice-huang/",
+                    "publishedAt": "2026-11-27",
+                    "publishedAtEstimated": true
+                  }
+                ],
+                "outlook": "미 당국의 메가스피드 조사와 추가 제재 여부가 다음 쟁점이다."
+              },
+              {
+                "rank": 2,
+                "title": "미 공군 핵심 클라우드 '클라우드 원' 해킹 보도",
+                "summary": "공격자가 미 공군의 대규모 클라우드 플랫폼에 침입해 일부 시스템의 업데이트와 이전 작업이 막혔다고 로이터가 전했다.",
+                "whyItMatters": "방공 레이더 정보와 탄약 관리 같은 군의 중요 시스템이 올라 있는 기반이 뚫렸을 수 있기 때문이다.",
+                "background": "클라우드 원은 미 공군의 여러 업무 프로그램을 인터넷 기반 서버에 모아 운영하는 플랫폼이다.",
+                "keyFacts": [
+                  "로이터는 사정을 아는 3명을 인용해 최근 한 달 안의 업그레이드 과정에서 침입이 발견됐다고 보도했다.",
+                  "일부 프로그램의 업데이트가 막히고 일부 사용자의 관리자 권한이 회수됐으며 시스템 이전도 중단됐다.",
+                  "한 관계자는 공격자가 소프트웨어 취약점으로 전체를 통제하는 관리 영역에 접근했다고 말했다.",
+                  "공격 주체와 데이터 유출 여부는 확인되지 않았고, 미 사이버사령부가 피해 평가에 들어간 것으로 전해졌다."
+                ],
+                "confidence": "보도에 따르면",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "보안"
+                },
+                "sources": [
+                  {
+                    "name": "Bloomberg",
+                    "url": "https://www.bloomberg.com/news/articles/2026-11-27/hackers-breached-us-air-force-s-cloud-platform",
+                    "publishedAt": "2026-11-27",
+                    "primary": true
+                  },
+                  {
+                    "name": "Military Times",
+                    "url": "https://www.militarytimes.com/news/your-military/2026/11/27/hackers-breach-us-air-force-flagship-cloud-one-computing-platform/",
+                    "publishedAt": "2026-11-27"
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261128000600071",
+                    "publishedAt": "2026-11-28",
+                    "imageUrl": "https://img.yna.co.kr/photo/reuters/2026/11/27/PRU20261127256101009_P2.jpg"
+                  }
+                ],
+                "outlook": "피해 범위와 공격 배후가 공식 확인되는지 지켜볼 대목이다.",
+                "devCheckpoint": "클라우드 관리 영역(컨트롤 플레인)에 닿는 취약점과 관리자 권한은 우선순위를 높여 점검해야 한다."
+              },
+              {
+                "rank": 3,
+                "title": "오픈AI, 애플에 맞소송…\"영업비밀 빼내고 협력사 압박\"",
+                "summary": "애플의 영업비밀 소송을 당한 오픈AI가 거꾸로 애플이 자사 비밀을 가져가고 공급업체를 압박했다고 주장했다.",
+                "whyItMatters": "AI 기기 시장을 두고 두 회사의 다툼이 맞소송으로 번져 인력 이동과 부품 협력에도 영향을 줄 수 있기 때문이다.",
+                "background": "애플은 7월 오픈AI와 하드웨어 업체 io 프로덕츠, 애플 출신 직원 두 명을 상대로 영업비밀 침해 소송을 냈다.",
+                "keyFacts": [
+                  "오픈AI는 새너제이 연방법원에 영업비밀 침해, 계약 방해, 불공정 경쟁을 주장하는 반소를 냈다.",
+                  "소장에서 애플의 직장 문화를 나갈 수 없는 '호텔 캘리포니아'에 빗대며 직원을 붙잡아 두는 구조라고 비판했다.",
+                  "애플은 앞서 조사에서 자사에 들어온 오픈AI 기밀 정보를 찾지 못했다고 밝힌 바 있다."
+                ],
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "AI 산업·기업"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261128007300091",
+                    "publishedAt": "2026-11-28",
+                    "imageUrl": "https://img.yna.co.kr/photo/etc/up/2025/09/05/PUP20250905014001009_P2.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "9to5Mac",
+                    "url": "https://9to5mac.com/2026/11/27/openai-countersues-apple-alleging-trade-secret-theft-and-supplier-threats",
+                    "publishedAt": "2026-11-27"
+                  }
+                ]
+              },
+              {
+                "rank": 4,
+                "title": "유럽 최대 소프트웨어 업체 SAP, 보안 사고 확인",
+                "summary": "SAP가 수상한 활동을 발견해 대응 중이며 고객 업무 데이터가 접근당한 증거는 아직 없다고 밝혔다.",
+                "whyItMatters": "전 세계 기업의 회계·인사 등 핵심 업무를 돌리는 회사의 개발 환경이 공격 대상이 됐을 수 있기 때문이다.",
+                "background": "독일 주간지 슈피겔은 공격자가 직원의 인증 토큰(로그인을 대신하는 접속 열쇠)을 얻어 코드 저장 서비스 깃허브의 SAP 소스코드를 복사하고 고친 것으로 보도했다. SAP는 이 내용을 확인하지 않았다.",
+                "keyFacts": [
+                  "SAP는 고객과 서비스를 보호하는 조치를 취했으며, 지금까지 고객 업무 데이터에 무단 접근한 증거는 없다고 밝혔다.",
+                  "공격에 AI 에이전트(스스로 계획해 움직이는 AI)가 쓰였을 수 있다는 보도가 있으나 확인되지 않았다.",
+                  "SAP는 내부에서 이 일을 '프로젝트 그래닛'이라는 이름의 진행 중인 보안 사고로 다루는 것으로 전해졌다."
+                ],
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "보안"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261127153300082",
+                    "publishedAt": "2026-11-27",
+                    "imageUrl": "https://img.yna.co.kr/photo/ap/2024/06/05/PAP20240605291501009_P2.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "The Next Web",
+                    "url": "https://thenextweb.com/news/sap-security-incident-github-breach",
+                    "publishedAt": "2026-11-27",
+                    "publishedAtEstimated": true
+                  }
+                ],
+                "outlook": "SAP 조사에서 소스코드 변조 여부와 고객 영향이 확인되는지가 중요하다.",
+                "devCheckpoint": "저장소 접근 토큰은 권한과 유효기간을 줄이고, 유출이 의심되면 바로 폐기한 뒤 커밋 이력을 확인해야 한다."
+              },
+              {
+                "rank": 5,
+                "title": "인터넷우체국 해킹…하루치 분석에서만 11만3천여 명 정보 유출",
+                "summary": "해외 IP의 공격으로 등기우편을 받는 사람의 이름, 주소, 전화번호가 빠져나갔다.",
+                "whyItMatters": "분석이 끝난 것은 하루치뿐이라 피해가 더 늘 수 있고, 우체국을 사칭한 사기에 악용될 수 있기 때문이다.",
+                "background": "공격자는 인터넷우체국 모바일 서비스의 '수취인 배달장소 변경'에 접근해 17~24일 배달 중이던 등기우편 정보를 조회한 것으로 파악됐다.",
+                "keyFacts": [
+                  "8일치 가운데 하루치 분석에서 법인을 포함해 11만3,855명의 정보 유출이 확인됐다.",
+                  "우정사업본부는 25일 유출 정황을 알아채고 개인정보보호위원회에 신고하고 경찰에 수사를 의뢰했다.",
+                  "해당 서비스와 비회원 로그인을 멈추고 모바일 웹에 접속하는 해외 IP를 막았다."
+                ],
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "보안"
+                },
+                "sources": [
+                  {
+                    "name": "한국일보",
+                    "url": "https://www.hankookilbo.com/news/article/A2026112801210001124",
+                    "publishedAt": "2026-11-28",
+                    "primary": true
+                  },
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261128000900017",
+                    "publishedAt": "2026-11-28",
+                    "imageUrl": "https://img.yna.co.kr/photo/cms/2025/12/03/41/PCM20251203000141990_P2.jpg"
+                  }
+                ],
+                "outlook": "나머지 기간 분석이 끝나면 전체 피해 규모가 나온다."
+              },
+              {
+                "rank": 6,
+                "title": "대기업의 공공 소프트웨어 사업 참여 제한, 14년 만에 완화 추진",
+                "summary": "국회 법안소위가 대기업의 공공 SW 사업 참여를 원칙적으로 막는 조항을 없애는 법 개정안을 의결했다.",
+                "whyItMatters": "대형 정부 전산 사업의 참여 기업이 바뀌어 대기업과 중소·중견 SW 업체의 경쟁 구도에 영향을 주기 때문이다.",
+                "background": "현행 소프트웨어진흥법은 상호출자제한기업집단(대규모 재벌 그룹)에 속한 기업의 공공 SW 사업 참여를 원칙적으로 금지해 왔다.",
+                "keyFacts": [
+                  "과학기술정보방송통신위원회 법안심사소위가 소프트웨어진흥법 개정안을 의결했으며 본회의 처리 전이다.",
+                  "법이 바뀌면 정부는 700억원 이상 사업에 대기업 참여를 허용하도록 고시를 고칠 계획이다.",
+                  "중소기업만 참여할 수 있는 사업 범위는 40억원 미만으로 넓히는 방향이다."
+                ],
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "규제·정책"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261127093200017",
+                    "publishedAt": "2026-11-27",
+                    "imageUrl": "https://img.yna.co.kr/photo/cms/2024/01/10/15/PCM20240110000115990_P2.jpg",
+                    "primary": true
+                  },
+                  {
+                    "name": "아이티데일리",
+                    "url": "https://www.itdaily.kr/news/articleView.html?idxno=243289",
+                    "publishedAt": "2026-11-27",
+                    "publishedAtEstimated": true
+                  }
+                ],
+                "outlook": "상임위와 본회의 통과, 이후 고시 개정이 남아 있다."
+              },
+              {
+                "rank": 7,
+                "title": "LA 교육구, 학생 기기에서 구글 AI 기능 차단…구글은 검색 접근 제한 경고",
+                "summary": "로스앤젤레스 통합교육구가 학교 기기의 구글 AI 검색 요약을 끄자, 구글은 AI를 막으면 학생이 검색을 쓸 수 없다는 입장을 밝혔다.",
+                "whyItMatters": "학교가 AI를 뺀 검색을 고를 수 있느냐를 두고 대형 교육구와 구글이 맞섰기 때문이다.",
+                "background": "구글은 11월 3일 정책을 바꿔 초·중·고 학생 계정의 제미나이와 구글 검색 등을 관리자가 켜기 전까지 끄도록 했고, 검색과 AI는 깊이 묶여 있어 AI를 뺀 학교용 검색은 제공하지 않는다고 설명한다.",
+                "keyFacts": [
+                  "교육구는 학교가 지급한 기기에서 검색 결과의 AI 요약(AI 개요)을 비활성화했다.",
+                  "구글은 학교가 AI를 금지하면 학생에게는 검색을 쓸 수 없다는 안내가 보이게 된다고 밝혔다.",
+                  "교육구는 기본 검색엔진을 바꾸는 방안도 검토할 수 있다고 밝혔다."
+                ],
+                "confidence": "여러 출처 확인",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "플랫폼·인터넷"
+                },
+                "sources": [
+                  {
+                    "name": "WRAL(AP)",
+                    "url": "https://www.wral.com/news/ap/762a6-as-google-threatens-to-cut-schools-search-access-los-angeles-blocks-ai-features/",
+                    "publishedAt": "2026-11-27",
+                    "primary": true
+                  },
+                  {
+                    "name": "ABC7",
+                    "url": "https://abc7.com/post/lausd-blocks-google-ai-features-tech-giant-threatens-cut-schools-search-access/20091041/",
+                    "publishedAt": "2026-11-27",
+                    "publishedAtEstimated": true
+                  }
+                ]
+              }
+            ],
+            "shortNews": [
+              {
+                "summary": "해외송금업체 이나인페이가 해킹으로 약 25억원을 빼앗긴 것으로 알려져 금융감독원이 현장 점검에 나섰다.",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "보안"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261127162500002",
+                    "publishedAt": "2026-11-27",
+                    "imageUrl": "https://img.yna.co.kr/photo/cms/2026/09/21/10/PCM20260921000110011_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "청와대 국가안보실이 해킹 2차 피해를 막으려 금융당국을 긴급 소집해 인증과 차단을 강화하는 대책을 논의했다.",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "보안"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261127041400001",
+                    "publishedAt": "2026-11-27",
+                    "imageUrl": "https://img.yna.co.kr/photo/cms/2025/12/24/49/PCM20251224000049990_P2.jpg"
+                  }
+                ]
+              },
+              {
+                "summary": "영국 노동연금부가 사이버 사고로 연금·복지 관련 온라인 서비스를 내렸으며, 급여 지급은 정상적으로 이뤄진다고 밝혔다.",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "보안"
+                },
+                "sources": [
+                  {
+                    "name": "City AM",
+                    "url": "https://www.cityam.com/dwp-takes-services-offline-after-cyber-incident/",
+                    "publishedAt": "2026-11-27",
+                    "publishedAtEstimated": true
+                  }
+                ]
+              },
+              {
+                "summary": "중국이 AI 학습과 추론에 쓰는 데이터의 수집·관리 규정을 새로 만들어 데이터 재산권 적용과 안보를 강조했다.",
+                "category": {
+                  "major": "IT·AI",
+                  "minor": "규제·정책"
+                },
+                "sources": [
+                  {
+                    "name": "연합뉴스",
+                    "url": "https://www.yna.co.kr/view/AKR20261127122200083",
+                    "publishedAt": "2026-11-27",
+                    "imageUrl": "https://img.yna.co.kr/photo/etc/xi/2026/10/16/PXI20261016032601009_P2.jpg"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "collectedAt": "2026-11-28T06:17:14+09:00",
+      "late": false
     }
   ],
   "extracted": [
@@ -23448,7 +24478,8 @@
     "2026-11-23",
     "2026-11-24",
     "2026-11-25",
-    "2026-11-26"
+    "2026-11-26",
+    "2026-11-27"
   ],
   "scheduled": [
     "2026-11-01",
@@ -23476,6 +24507,7 @@
     "2026-11-23",
     "2026-11-24",
     "2026-11-25",
-    "2026-11-26"
+    "2026-11-26",
+    "2026-11-27"
   ]
 }

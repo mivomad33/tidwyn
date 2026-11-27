@@ -96,6 +96,18 @@
           "description": "Claude Code, Cursor 같은 AI 코딩 도우미에게 영상 편집 능력을 붙여 주는 도구 모음입니다. 내 컴퓨터의 FFmpeg(영상·음성 처리 프로그램)로 자르기, 자막 넣기, 화면 비율 바꾸기, 소리 크기 맞추기 등을 하고 결과를 스스로 점검하며, 클라우드나 API 키가 필요 없습니다. 영상을 외부에 올리지 않고 말로 요청해 편집하려는 사람에게 알맞습니다."
         }
       ]
+    },
+    {
+      "date": "2026-11-27",
+      "status": "shown",
+      "items": [
+        {
+          "rank": 13,
+          "name": "obsidianmd/obsidian-skills",
+          "url": "https://github.com/obsidianmd/obsidian-skills",
+          "description": "노트 앱 Obsidian을 AI 코딩 도우미가 제대로 다루도록 가르치는 '에이전트 스킬'(AI에게 특정 작업 방법을 알려 주는 설명 묶음) 모음이다. Obsidian 전용 문법의 마크다운 문서, 조건에 따라 노트를 표처럼 모아 보는 Bases, 카드를 배치해 그림처럼 엮는 JSON Canvas 파일을 만들고 고치는 법을 담았다. 스킬 규격을 따르므로 Claude Code, Cursor, GitHub Copilot 등 스킬을 지원하는 여러 도구에 플러그인이나 폴더 복사로 설치해 쓴다. AI 도우미에게 노트 정리를 맡기려는 Obsidian 사용자에게 쓸모 있다."
+        }
+      ]
     }
   ]
 }
