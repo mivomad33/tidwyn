@@ -236,25 +236,25 @@ describe("4.7-4 '이번 주 일정' 상자", () => {
   const line = (id: number, due: string, outcome: ScheduleOutcomeView = pending): ScheduleLine => ({ id, name: `가짜 주간 일정 ${id}`, due, outcome });
   const week: WeekSchedules = { total: 7, items: [line(1, "2026-10-28"), line(2, "2026-10-29", { status: "cancelled" }), line(3, "2026-10-30", { status: "result", news: [{ date: "2026-10-30", key: "한국-1", title: "가짜 결과" }] }), line(4, "2026-11-01", { status: "missing" }), line(5, "2026-11-02")] };
 
-  // 6단계 4.7-1: '이번 주 일정' 상자가 '이번 주 일정 | 지표' 상자(BriefBox)로 바뀌었다. 지표가 없는 날짜는 일정 탭 하나와 접기 버튼이다
-  const box = (collapsed: boolean) => h(BriefBox, { day: { date: TODAY, week }, tab: null, collapsed, onTab: () => {}, onToggle: () => {}, today: TODAY, Link });
-  test("펼침: 접기 버튼(aria-expanded), '일정 전체'(목록으로), 줄마다 날짜·이름·작은 결과 문구(링크 아님), 줄 전체가 일정 주소", () => {
+  // 6단계 4.7-1: '이번 주 일정' 상자가 '이번 주 일정과 지표' 상자(BriefBox)로 바뀌었다(T7부터 탭 없이 두 구역). 지표가 없는 날짜는 일정 구역 하나다
+  const box = (collapsed: boolean) => h(BriefBox, { day: { date: TODAY, week }, collapsed, onToggle: () => {}, today: TODAY, Link });
+  test("펼침: 접기 버튼(aria-expanded), '일정 전체'(목록으로), 줄마다 날짜·이름·작은 결과 문구(링크 아님), 이름 글자만 일정 주소(T7), 취소는 off", () => {
     const html = renderToStaticMarkup(box(false));
-    assert.match(html, /<button type="button" class="box-toggle box-fold" aria-expanded="true" aria-controls="brief-box-panel" aria-label="상자 접기"><span aria-hidden="true">▴<\/span><\/button>/);
-    assert.match(html, /role="tab"[^>]*aria-selected="true"[^>]*>이번 주 일정 7<\/button>/);
+    assert.match(html, /<button type="button" class="box-toggle week-toggle" aria-expanded="true" aria-controls="brief-box-body">이번 주 일정<span aria-hidden="true"> ▴<\/span><\/button>/);
+    assert.match(html, /<h2 id="box-week-h">이번 주 일정 7<\/h2>/);
     assert.match(html, /<a href="\/schedules\?view=list" class="text-link">일정 전체/);
-    assert.equal(html.match(/class="wrow"/g)?.length, 5);
-    assert.match(html, /<a href="\/schedules\/1" class="wrow"><b>10-28 수<\/b><span>가짜 주간 일정 1<\/span><\/a>/);
-    assert.match(html, /<a href="\/schedules\/2" class="wrow"><b>10-29 목<\/b><span>가짜 주간 일정 2<small>취소<\/small><\/span><\/a>/);
+    assert.equal(html.match(/class="wrow( off)?"/g)?.length, 5);
+    assert.match(html, /<li class="wrow"><b>10월 28일 \(수\)<\/b><span><a href="\/schedules\/1" class="wname">가짜 주간 일정 1<\/a><\/span><\/li>/);
+    assert.match(html, /<li class="wrow off"><b>10월 29일 \(목\)<\/b><span><a href="\/schedules\/2" class="wname">가짜 주간 일정 2<\/a><small>취소<\/small><\/span><\/li>/);
     assert.match(html, /<small>결과: 가짜 결과<\/small>/);
     assert.match(html, /<small>결과 못 찾음<\/small>/);
-    for (const m of html.matchAll(/class="wrow">(.*?)<\/a>/g)) assert.doesNotMatch(m[1]!, /<a /, "링크 안에 링크가 없다");
+    for (const m of html.matchAll(/class="wrow( off)?">(.*?)<\/li>/g)) assert.equal(m[2]!.match(/<a /g)?.length, 1, "줄마다 링크는 이름 하나");
   });
 
   test("접음: 배경 없는 한 줄 '이번 주 일정 N ▾'(N은 그 주 전체 수), 목록과 '일정 전체'는 없다", () => {
     const html = renderToStaticMarkup(box(true));
     assert.equal(html, '<section class="week closed" aria-label="이번 주 일정"><div class="week-h"><button type="button" class="box-toggle week-toggle" aria-expanded="false">이번 주 일정 7<span aria-hidden="true"> ▾</span></button></div></section>');
-    assert.equal(weekRowDate("2026-11-02"), "11-02 월");
+    assert.equal(weekRowDate("2026-11-02"), "11월 2일 (월)");
   });
 });
 

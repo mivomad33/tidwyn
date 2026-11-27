@@ -57,7 +57,7 @@ export function PrivacyView({ Link }: { Link: LinkLike }) {
       { className: "p keys" },
       ...BROWSER_KEYS.map((k) => h("li", { key: k.key }, h("code", null, k.key), `: ${k.what}`)),
     ),
-    P("읽은 뉴스 표시는 ", h(Link, { to: "/about", className: "text-link" }, "사이트 소개"), "의 '읽은 기록 지우기'로 지울 수 있습니다. 모든 기록은 브라우저 설정에서 이 사이트의 데이터(사이트 데이터·저장 공간)를 지우면 지워집니다."),
+    P("읽은 뉴스와 본 영상 표시는 ", h(Link, { to: "/about", className: "text-link" }, "사이트 소개"), "의 '읽은 기록 지우기'로 지울 수 있습니다. 모든 기록은 브라우저 설정에서 이 사이트의 데이터(사이트 데이터·저장 공간)를 지우면 지워집니다."),
     h("h2", { className: "h" }, "기사 이미지"),
     P("펼친 뉴스의 기사 이미지는 각 매체 서버에서 바로 불러옵니다. 그래서 이미지가 보일 때 방문자의 브라우저가 그 매체 서버에 접속하고, 접속 정보가 그 서버에 전달됩니다."),
     h("h2", { className: "h" }, "영상 썸네일"),

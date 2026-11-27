@@ -103,9 +103,9 @@ export function dueLabel(due: string, today: string): string {
   return dateText(due, yearOf(today));
 }
 
-/** '이번 주 일정' 줄의 날짜: "10-30 금". 기준 해와 다르면 "'27 01-01 금" */
+/** '이번 주 일정' 줄의 날짜: "10월 30일 (금)". 기준 해와 다르면 "2027년 1월 1일 (금)"(2026-11-27 사이트의 다른 날짜 글과 맞췄다) */
 export function weekRowDate(date: string, refYear?: string): string {
-  return `${shortDate(date, refYear)} ${weekdayOf(date)}`;
+  return dateTextWeekday(date, refYear);
 }
 
 /** 펼친 카드의 일정 칩 날짜: "11-04" 또는 "11월 중". 기준 해와 다르면 "'27 01-04", "2027년 1월 중" */

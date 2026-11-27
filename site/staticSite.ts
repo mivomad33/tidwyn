@@ -59,7 +59,7 @@ import { issueListLine, issueMetaLine } from "./src/lib/issues.ts";
 import { briefTitle, entityLabel, fullKoreanDate, groupDatesByMonth, issueLabel, latestTitle, latestYear, monthDay, monthDayWeekday, monthLabel, pageTitle, shortDate, yearOf } from "./src/lib/format.ts";
 import { groupCards, indicatorRefYear, readingDateText, readingValueText } from "./src/lib/indicators.ts";
 import { MENU, SKIP_LABEL } from "./src/lib/menu.ts";
-import { PRIVACY_TITLE, PRIVACY_UPDATED, SITE_URL, shortReportHref, storyReportHref } from "./src/lib/policy.ts";
+import { PRIVACY_TITLE, PRIVACY_UPDATED, SITE_URL, briefReportHref } from "./src/lib/policy.ts";
 import { adjacentDates, briefPath, entityPath, indicatorPath, issuePath, privacyPath } from "./src/lib/routes.ts";
 import { SCHEDULE_META, chipDue, sourceLink } from "./src/lib/schedules.ts";
 import { categoryVar } from "./src/lib/theme.ts";
@@ -204,7 +204,6 @@ function StoryBody({ story, detail, date }: { story: ListStory; detail: StoryDet
     section("비유", detail.analogy),
     section("전망", detail.outlook),
     h(StoryLinks, { detail, year }),
-    h(ReportLink, { href: storyReportHref(monthDay(date), story.title, `${SITE_URL}${briefPath(date, story.key)}`), label: "틀린 내용 알리기" }),
   );
 }
 
@@ -267,10 +266,11 @@ function BriefBody({ day, details, videos, prev, next }: { day: DayList; details
         h("h2", { className: "h list-h", id: sectionId(i) }, sec.name),
         sec.flow ? h("p", { className: "flow" }, sec.flow) : null,
         tops.length > 0 ? h("ul", { className: "list" }, tops.map((s) => h(TopStory, { key: s.key, story: s, detail: details[s.key], date }))) : null,
-        shorts.length > 0 ? [h("h3", { className: "h list-h", key: "h" }, "짧은 소식"), h("ul", { className: "list", key: "l" }, shorts.map((s) => h(ShortStory, { key: s.key, story: s }))), h("p", { className: "short-report", key: "r" }, h(ReportLink, { href: shortReportHref(monthDay(date), `${SITE_URL}${briefPath(date)}`), label: "짧은 소식 틀린 내용 알리기" }))] : null,
+        shorts.length > 0 ? [h("h3", { className: "h list-h", key: "h" }, "짧은 소식"), h("ul", { className: "list", key: "l" }, shorts.map((s) => h(ShortStory, { key: s.key, story: s })))] : null,
         sec.unverified ? h("p", { className: "flow note" }, `확인되지 않은 내용: ${sec.unverified}`) : null,
       );
     }),
+    h("p", { className: "brief-report" }, h(ReportLink, { href: briefReportHref(monthDay(day.date), `${SITE_URL}${briefPath(day.date)}`), label: "틀린 내용 알리기" })),
     shownVideos ? h("section", { className: "brief-section" }, h("h2", { className: "h list-h", id: VIDEO_HASH }, VIDEO_TAB), h(VideoList, { status: shownVideos.status, items: shownVideos.items, headingLevel: "h3", thumbs: false, grouped: true })) : null,
     day.repos ? h("section", { className: "brief-section" }, h("h2", { className: "h list-h", id: BUILDER_HASH }, BUILDER_TAB), h(RepoList, { repos: day.repos, headingLevel: "h3" })) : null,
     h("nav", { className: "static-more", "aria-label": "다른 날짜" }, prev ? h("a", { href: briefPath(prev), className: "text-link" }, `‹ ${monthDay(prev)}`) : h("span"), next ? h("a", { href: briefPath(next), className: "text-link" }, `${monthDay(next)} ›`) : null),

@@ -143,17 +143,6 @@ test.describe("4.1-2 글자 크기 종류 6종 이하(375)", () => {
 });
 
 test.describe("4.2-1 알약 칩", () => {
-  test("키워드는 테두리·바탕·둥근 모서리 없는 글자다", async ({ page }) => {
-    await openScreen(page, "/");
-    const kw = page.locator(".kw span");
-    expect(await kw.count()).toBeGreaterThan(0);
-    for (const s of await kw.all()) {
-      expect(await hasBorder(s), "키워드 테두리").toBe(false);
-      expect(await css(s, "backgroundColor"), "키워드 바탕").toBe("rgba(0, 0, 0, 0)");
-      expect(await css(s, "borderTopLeftRadius"), "키워드 모서리").toBe("0px");
-    }
-  });
-
   test("용어 칩은 끝에 ▾가 있고 누르면 제자리에서 설명이 열린다. 다른 화면으로 가는 칩은 주소를 바꾼다", async ({ page }) => {
     await page.goto(`/${PAST}#${encodeURIComponent("세계-3")}`);
     await settle(page);
@@ -214,7 +203,7 @@ test.describe("4.2-2 사각 표시", () => {
         const visible = ${VISIBLE_FN}; const describe = ${DESCRIBE_FN};
         const opaque = (c) => c && c !== "transparent" && !/rgba\\([^)]*,\\s*0\\)$/.test(c);
         const out = [];
-        for (const el of document.querySelectorAll(".badge, .tag, .sec, .res, .kw span")) {
+        for (const el of document.querySelectorAll(".badge, .tag, .sec, .res")) {
           if (!visible(el)) continue;
           const c = getComputedStyle(el);
           const border = ["Top", "Right", "Bottom", "Left"].some((s) => parseFloat(c["border" + s + "Width"]) > 0 && c["border" + s + "Style"] !== "none");
@@ -427,8 +416,6 @@ test.describe("4.3-2 지표 변화", () => {
     await openScreen(page, `/${PAST}`);
     // U2 S6: 상자는 접힌 채 시작한다
     await page.locator(".week-toggle").click();
-    const tab = page.getByRole("tab", { name: "지표" });
-    if ((await tab.getAttribute("aria-selected")) !== "true") await tab.click();
     const chg = await page.locator(".ichips .chg [aria-hidden=true]").allTextContents();
     expect(chg.length).toBeGreaterThan(0);
     for (const c of chg) expect(c, "값 변화와 %(또는 %p 지표·변동 없음·값 변화만)").toMatch(/^(변동 없음|[▲▼][\d,.]+(%p| \([\d,.]+%\))?)$/);

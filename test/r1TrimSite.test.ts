@@ -148,7 +148,7 @@ describe("R1 4.3-4 소개·처리방침", () => {
     assert.ok(text.includes(textOf(FRED_NOTICE)), "FRED 고지");
     assert.ok(text.includes(FRED_AGREEMENT), "FRED 이용 약관 문구");
     assert.match(text, /방문 통계 Vercel Web Analytics로 페이지 보기 수만 셉니다/);
-    assert.match(text, /읽은 기록 읽은 뉴스 표시는 이 브라우저에만 저장됩니다/);
+    assert.match(text, /읽은 기록 읽은 뉴스와 본 영상 표시는 이 브라우저에만 저장됩니다/);
     assert.ok(text.includes(CONTACT_MAIL) && hrefsOf(html).some((h) => h.startsWith(`mailto:${CONTACT_MAIL}`)), "연락 메일");
     assert.ok(hrefsOf(html).includes("https://github.com/mivomad33/tidwyn"), "원본 저장소 링크는 남는다");
   });

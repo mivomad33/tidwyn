@@ -1,38 +1,36 @@
-// 브리프 위 '이번 주 일정 | 지표' 상자(6단계 4.7-1, X7. 5단계 '이번 주 일정' 상자를 바꿨다, 확정 시안 design/site.html).
-// 위 줄에 탭('이번 주 일정 N', '지표')과 오른쪽 접기 버튼(▴). 접으면 배경 없는 한 줄 "이번 주 일정 N · 원/달러 <값> <변화> ▾"만 남는다.
-// 상태(고른 탭, 접음)는 부르는 쪽이 갖고, 여기는 그리기와 키보드 처리만 한다. 테스트가 react-dom/server로 그려 보도록 JSX를 쓰지 않는다.
+// 브리프 위 '이번 주 일정과 지표' 상자(6단계 4.7-1, X7. 2026-11-27 tone-split T7에서 탭을 없애고 두 구역을 함께 보인다).
+// 접으면 배경 없는 한 줄 "이번 주 일정 N · 원/달러 <값> <변화> ▾"만 남는다. 펴면 같은 자리의 줄 '이번 주 일정과 지표 ▴' 아래에
+// '이번 주 일정' 구역(최대 5줄)과 '지표' 구역(칸 격자)이 차례로 보인다. 없는 쪽 구역은 빠진다.
+// 펼침 상태는 부르는 쪽이 갖고, 여기는 그리기와 키보드 처리만 한다. 테스트가 react-dom/server로 그려 보도록 JSX를 쓰지 않는다.
 import { createElement as h, useEffect, useRef } from "react";
 import { focusIn } from "../lib/dom.ts";
 import { yearOf } from "../lib/format.ts";
-import { boxTabText, boxValuesDate, briefBoxModel, changeLabel, chipDateNote, collapsedParts, formatValue, type BoxTab } from "../lib/indicators.ts";
+import { BOX_LABEL, briefBoxModel, changeLabel, chipDateNote, collapsedParts, formatValue } from "../lib/indicators.ts";
 import { indicatorPath, indicatorsPath } from "../lib/routes.ts";
 import type { DayList } from "../lib/types.ts";
 import { ChangeText } from "./indicatorView.ts";
 import { WeekAllLink, WeekRows } from "./scheduleView.ts";
 import { MoreMark } from "./moreMark.ts";
-import { Segmented } from "./segmented.ts";
 import type { LinkLike } from "./termView.ts";
 
-export const BOX_PANEL_ID = "brief-box-panel";
-
-function tabId(tab: BoxTab): string {
-  return `brief-box-tab-${tab}`;
-}
+export const BOX_BODY_ID = "brief-box-body";
 
 export interface BriefBoxProps {
   day: Pick<DayList, "date" | "week" | "indicators">;
-  /** 기억한 탭(없으면 null: 그 날짜의 처음 탭) */
-  tab: BoxTab | null;
   collapsed: boolean;
-  onTab: (tab: BoxTab) => void;
   onToggle: () => void;
   today: string;
   Link: LinkLike;
 }
 
+/** 구역 머리: 작은 제목과 같은 줄 오른쪽 끝의 '… 전체 ›' */
+function SectionHead({ id, title, more }: { id: string; title: string; more: ReturnType<typeof h> }) {
+  return h("div", { className: "box-sec-h" }, h("h2", { id }, title), more);
+}
+
 /** 일정도 지표도 없으면 그리지 않는다(상자도 접은 줄도 없다) */
-export function BriefBox({ day, tab, collapsed, onTab, onToggle, today, Link }: BriefBoxProps) {
-  const model = briefBoxModel(day, tab);
+export function BriefBox({ day, collapsed, onToggle, today, Link }: BriefBoxProps) {
+  const model = briefBoxModel(day);
   const ref = useRef(null);
   const refocus = useRef(false);
   // 접고 펴면 버튼이 바뀌므로 키보드 위치를 새 버튼으로 옮긴다
@@ -67,48 +65,52 @@ export function BriefBox({ day, tab, collapsed, onTab, onToggle, today, Link }: 
     );
   }
 
-  const panel =
-    model.tab === "week" && day.week
-      ? [h(WeekRows, { key: "rows", week: day.week, today, refYear: yearOf(day.date), Link }), h("p", { key: "foot", className: "box-foot" }, h(WeekAllLink, { Link }))]
-      : [
-          h(
-            "ul",
-            { key: "chips", className: "ichips", "aria-label": "지표 값" },
-            ...model.chips.map((c) => {
-              const note = chipDateNote(c, day.date);
-              return h(
-                "li",
-                { key: c.id },
-                h(
-                  Link,
-                  { to: indicatorPath(c.id), className: "ichip" },
-                  h("span", { className: "n" }, c.name),
-                  h("b", null, formatValue(c, c.value)),
-                  h(ChangeText, { label: changeLabel({ change: c.kind, decimals: c.decimals }, c.value, c.change) }),
-                  note ? h("small", null, note, h("span", { className: "sr-only" }, " 값")) : null,
-                ),
-              );
-            }),
-          ),
-          h("p", { key: "foot", className: "box-foot" }, `${boxValuesDate(day.date)} · `, h(Link, { to: indicatorsPath(), className: "text-link" }, "지표 전체", MoreMark())),
-        ];
-
+  const refYear = yearOf(day.date);
   return h(
     "section",
     { ref, className: "week", "aria-label": model.label },
     h(
       "div",
       { className: "week-h" },
-      h(Segmented<BoxTab>, {
-        options: model.tabs.map((t) => ({ value: t, label: boxTabText(t, day) })),
-        value: model.tab,
-        onChange: onTab,
-        label: model.label,
-        className: "box-tabs",
-        tabs: { idOf: tabId, panelId: BOX_PANEL_ID },
-      }),
-      h("button", { type: "button", className: "box-toggle box-fold", "aria-expanded": true, "aria-controls": BOX_PANEL_ID, "aria-label": "상자 접기", onClick: toggle }, h("span", { "aria-hidden": true }, "▴")),
+      h("button", { type: "button", className: "box-toggle week-toggle", "aria-expanded": true, "aria-controls": BOX_BODY_ID, onClick: toggle }, model.label, h("span", { "aria-hidden": true }, " ▴")),
     ),
-    h("div", { id: BOX_PANEL_ID, role: "tabpanel", "aria-labelledby": tabId(model.tab), className: `box-panel tab-${model.tab}` }, ...panel),
+    h(
+      "div",
+      { id: BOX_BODY_ID, className: "box-body" },
+      day.week
+        ? h(
+            "section",
+            { className: "box-sec", "aria-labelledby": "box-week-h" },
+            h(SectionHead, { id: "box-week-h", title: `${BOX_LABEL.week} ${day.week.total}`, more: h(WeekAllLink, { Link }) }),
+            h(WeekRows, { week: day.week, today, refYear, Link }),
+          )
+        : null,
+      model.chips.length > 0
+        ? h(
+            "section",
+            { className: "box-sec", "aria-labelledby": "box-ind-h" },
+            h(SectionHead, { id: "box-ind-h", title: BOX_LABEL.indicators, more: h(Link, { to: indicatorsPath(), className: "text-link" }, "지표 전체", MoreMark()) }),
+            h(
+              "ul",
+              { className: "ichips" },
+              ...model.chips.map((c) => {
+                const note = chipDateNote(c, day.date);
+                return h(
+                  "li",
+                  { key: c.id },
+                  h(
+                    Link,
+                    { to: indicatorPath(c.id), className: "ichip" },
+                    h("span", { className: "n" }, c.name),
+                    h("b", null, formatValue(c, c.value)),
+                    h(ChangeText, { label: changeLabel({ change: c.kind, decimals: c.decimals }, c.value, c.change) }),
+                    note ? h("small", null, `${note} 값`) : null,
+                  ),
+                );
+              }),
+            ),
+          )
+        : null,
+    ),
   );
 }

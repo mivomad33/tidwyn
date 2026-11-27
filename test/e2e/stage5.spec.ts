@@ -309,22 +309,24 @@ test.describe("일정 주소", () => {
 });
 
 test.describe("브리프 위 '이번 주 일정'", () => {
-  test("한 문장 아래·칩 위에 최대 5줄, 줄을 누르면 그 일정으로 가고, '일정 전체'는 목록으로 간다", async ({ page }) => {
+  test("칩 위에 최대 5줄, 줄을 누르면 그 일정으로 가고, '일정 전체'는 목록으로 간다", async ({ page }) => {
     await page.goto(`/${LATEST}`);
     // U2 S6: 상자는 접힌 채 시작한다
     await page.locator(".week-toggle").click();
     const box = page.getByRole("region", { name: "이번 주 일정" });
     await expect(box.locator(".wrow")).toHaveCount(Math.min(5, latestWeek.total));
     expect(latestWeek.total).toBeGreaterThan(5);
-    const order = (await page.evaluate(`[...document.querySelectorAll("main > .headline, main > .week, main > .chips")].map((e) => e.className)`)) as string[];
-    expect(order).toEqual(["headline", "week", "chips"]);
+    const order = (await page.evaluate(`[...document.querySelectorAll("main > .week, main > .chips")].map((e) => e.className)`)) as string[];
+    expect(order).toEqual(["week", "chips"]);
     // 섹션 탭과 관계없이 같다
     await page.getByRole("navigation", { name: "섹션" }).getByRole("button", { name: "세계" }).click();
     await expect(box.locator(".wrow")).toHaveCount(5);
-    await expect(box.locator(".wrow small a, .wrow a")).toHaveCount(0);
+    // T7: 줄마다 링크는 이름 하나이고, 결과 문구는 링크가 아니다
+    await expect(box.locator(".wrow small a")).toHaveCount(0);
+    await expect(box.locator(".wrow a")).toHaveCount(5);
     await expect(box.locator(".rd-btn, .read-mk")).toHaveCount(0);
     const firstLine = latestWeek.items[0]!;
-    await box.locator(".wrow").first().click();
+    await box.locator(".wrow a").first().click();
     await expect(page).toHaveURL(`/schedules/${firstLine.id}`);
     await expect(row(page, firstLine.id)).toHaveClass(/\bhl\b/);
     await page.goto(`/schedules`);
@@ -336,7 +338,7 @@ test.describe("브리프 위 '이번 주 일정'", () => {
     await expect(viewBtn(page, "목록")).toHaveAttribute("aria-pressed", "true");
   });
 
-  // 6단계 4.7-1: '이번 주 일정' 상자가 '이번 주 일정 | 지표' 상자로 바뀌어, 제목 대신 오른쪽 접기 버튼(▴)으로 접고 접은 줄을 눌러 편다(지표가 없는 데이터)
+  // 6단계 4.7-1: '이번 주 일정' 상자가 '이번 주 일정과 지표' 상자로 바뀌었다. T7부터 접은 줄과 같은 자리의 줄(▴)로 접는다(지표가 없는 데이터)
   // U2 S6: 상자는 접힌 채 시작하고 펼침은 저장하지 않는다(새로 고치면 다시 접힘)
   test("접은 줄로 펴고 접기 버튼으로 접으며(Enter·Space 포함), 새로 고치면 접힌 채 시작한다", async ({ page }) => {
     await page.goto(`/${LATEST}`);
@@ -344,7 +346,7 @@ test.describe("브리프 위 '이번 주 일정'", () => {
     await expect(toggle).toHaveAttribute("aria-expanded", "false");
     await toggle.click();
     await expect(toggle).toHaveAttribute("aria-expanded", "true");
-    await expect(page.getByRole("tab", { name: `이번 주 일정 ${latestWeek.total}` })).toHaveAttribute("aria-selected", "true");
+    await expect(page.getByRole("heading", { name: `이번 주 일정 ${latestWeek.total}` })).toBeVisible();
     await toggle.click();
     await expect(toggle).toHaveAttribute("aria-expanded", "false");
     await expect(toggle).toHaveText(`이번 주 일정 ${latestWeek.total} ▾`);
@@ -359,7 +361,7 @@ test.describe("브리프 위 '이번 주 일정'", () => {
     await toggle.focus();
     await page.keyboard.press("Enter");
     await expect(toggle).toHaveAttribute("aria-expanded", "true");
-    await expect(toggle).toHaveAccessibleName("상자 접기");
+    await expect(toggle).toHaveAccessibleName(/^이번 주 일정/);
     await expect(toggle).toBeFocused();
     await page.keyboard.press("Space");
     await expect(toggle).toHaveAttribute("aria-expanded", "false");
@@ -371,7 +373,7 @@ test.describe("브리프 위 '이번 주 일정'", () => {
   test("그 주 일정이 없는 날짜에는 상자도 접은 줄도 없고, 저장할 수 없어도 오류 없이 펴고 접는다", async ({ page }) => {
     expect(days.get(OLDEST)!.week).toBeUndefined();
     await page.goto(`/${OLDEST}`);
-    await expect(page.locator(".headline")).toBeVisible();
+    await expect(page.locator("main .chips")).toBeVisible();
     await expect(page.locator(".week")).toHaveCount(0);
     await page.addInitScript({
       content: `Object.defineProperty(window, "localStorage", { configurable: true, get() { throw new DOMException("막힌 저장소", "SecurityError"); } });`,

@@ -269,3 +269,30 @@ test.describe("4.3-3 검색", () => {
     }
   });
 });
+
+// tone-split T9: 폰에서는 유튜브 앱이 열려 :visited가 남지 않아, 누를 때 읽은 기록에 남긴다
+test.describe("T9 본 영상 표시", () => {
+  test("누른 영상은 제목이 흐려지고, 새로 고쳐도 남으며, 읽은 기록 지우기로 풀린다. 날짜 목록의 읽은 수에는 세지 않는다", async ({ page }) => {
+    await openVideos(page, b2.shown);
+    const first = rows(page).first();
+    await expect(first).not.toHaveClass(/\bseen\b/);
+    const popup = page.waitForEvent("popup");
+    await first.locator("a.video-link").click();
+    await (await popup).close();
+    await expect(first).toHaveClass(/\bseen\b/);
+    const muted = (await page.evaluate(`getComputedStyle(document.querySelector(".video-meta")).color`)) as string;
+    await expect(first.locator("a.video-link")).toHaveCSS("color", muted);
+    expect(await page.evaluate((k) => localStorage.getItem(k), READ_MARKS_KEY)).toContain("watch:");
+    await expect(rows(page).nth(1)).not.toHaveClass(/\bseen\b/);
+    await page.reload();
+    await expect(pressedTab(page)).toHaveText("영상");
+    await expect(rows(page).first()).toHaveClass(/\bseen\b/);
+    await page.goto("/dates");
+    await expect(page.locator(`a[href="/${b2.shown}"]`).locator(".read-prog")).toHaveCount(0);
+    await page.goto("/about");
+    page.once("dialog", (d) => void d.accept());
+    await page.getByRole("button", { name: "읽은 기록 지우기" }).click();
+    await openVideos(page, b2.shown);
+    await expect(rows(page).first()).not.toHaveClass(/\bseen\b/);
+  });
+});

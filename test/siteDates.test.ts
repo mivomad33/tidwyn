@@ -47,8 +47,9 @@ describe("U1 4.3-1 날짜 표기 함수(앱·정적 공통, site/src/lib/format.
     assert.equal(shortDate("2026-10-21", "2026"), "10-21");
     assert.equal(shortDate("2025-12-30", "2026"), "'25 12-30");
     assert.doesNotMatch(shortDate("2025-12-30", "2026"), ISO_DATE);
-    assert.equal(chipDateNote({ date: "2025-12-31" }, "2026-01-02"), "'25 12-31");
-    assert.equal(chipDateNote({ date: "2026-10-26" }, "2026-10-27"), "10-26");
+    // T7(2026-11-27): 상자 지표 칸의 날짜는 칸이 넓어져 날짜 글이다
+    assert.equal(chipDateNote({ date: "2025-12-31" }, "2026-01-02"), "2025년 12월 31일");
+    assert.equal(chipDateNote({ date: "2026-10-26" }, "2026-10-27"), "10월 26일");
   });
 
   test("그래프 축: 해를 넘지 않으면 'MM-DD'(월별 'N월'), 해를 넘으면 두 끝 모두 해를 붙인다", () => {
@@ -63,8 +64,9 @@ describe("U1 4.3-1 날짜 표기 함수(앱·정적 공통, site/src/lib/format.
     assert.equal(dayHeading("2027-01-02", today), "2027년 1월 2일 (토)");
     assert.equal(dueLabel("2027-01-02", today), "2027년 1월 2일");
     assert.equal(issueRowDate("2027-01-02", today), "'27 01-02 (토)");
-    assert.equal(weekRowDate("2027-01-02", "2026"), "'27 01-02 토");
-    assert.equal(weekRowDate("2026-12-31", "2026"), "12-31 목");
+    // T7(2026-11-27): 상자의 일정 줄은 사이트의 다른 날짜 글과 같다
+    assert.equal(weekRowDate("2027-01-02", "2026"), "2027년 1월 2일 (토)");
+    assert.equal(weekRowDate("2026-12-31", "2026"), "12월 31일 (목)");
     assert.equal(chipDue("2027-01-02", "2026"), "'27 01-02");
     assert.equal(chipDue("2027-01", "2026"), "2027년 1월 중");
     assert.equal(chipDue("2026-11", "2026"), "11월 중");
@@ -73,8 +75,8 @@ describe("U1 4.3-1 날짜 표기 함수(앱·정적 공통, site/src/lib/format.
   test("브리프 화면의 '이번 주 일정' 줄은 펼친 카드의 일정 칩처럼 브리프 날짜의 해가 기준이다(오늘의 해가 아니다)", () => {
     const Link = ({ to, className, children }: LinkLikeProps) => h("a", { href: to, className }, children);
     const week = { total: 1, items: [{ id: 1, name: "가짜 연말 일정", due: "2025-12-31", outcome: { status: "pending" } as const }] };
-    const html = renderToStaticMarkup(h(BriefBox, { day: { date: "2025-12-30", week }, tab: "week", collapsed: false, onTab: () => {}, onToggle: () => {}, today: "2026-01-05", Link }));
-    assert.match(html, /<b>12-31 수<\/b>/);
+    const html = renderToStaticMarkup(h(BriefBox, { day: { date: "2025-12-30", week }, collapsed: false, onToggle: () => {}, today: "2026-01-05", Link }));
+    assert.match(html, /<b>12월 31일 \(수\)<\/b>/);
     assert.equal(chipDue("2025-12-31", "2025"), "12-31");
   });
 
@@ -138,7 +140,7 @@ describe("U1 4.3-2 지표 변화는 어느 자리든 같은 단위", () => {
 
   test("좁은 자리(상자 칩·접은 줄)와 넓은 자리(카드)가 같은 글: 값 변화와 %", () => {
     const wide = changeOf(renderToStaticMarkup(h(IndicatorCardView, { card, Link })));
-    const box = changeOf(renderToStaticMarkup(h(BriefBox, { day: { date: "2026-10-27", indicators: [chip] }, tab: "indicators", collapsed: false, onTab: () => {}, onToggle: () => {}, today: "2026-10-28", Link })));
+    const box = changeOf(renderToStaticMarkup(h(BriefBox, { day: { date: "2026-10-27", indicators: [chip] }, collapsed: false, onToggle: () => {}, today: "2026-10-28", Link })));
     const folded = collapsedParts({ indicators: [chip] }).chip!.change!.text;
     assert.equal(wide, "▲3.1 (0.22%)");
     assert.equal(box, wide);

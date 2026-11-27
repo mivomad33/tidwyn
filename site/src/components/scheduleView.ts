@@ -53,8 +53,9 @@ export function ScheduleChips({ schedules, refYear, Link }: { schedules: Schedul
 export const WEEK_LIST_ID = "week-list";
 
 /**
- * 브리프 위 상자(6단계 4.7-1, components/briefBox.ts)의 일정 탭 목록: 그 주 일정 최대 5줄(5단계 4.7-4).
- * 줄마다 "MM-DD 요일"과 이름, 작은 결과 문구(링크 아님). 줄 전체가 일정 화면의 그 일정으로 가는 링크다(링크 안에 링크를 두지 않는다).
+ * 브리프 위 상자(6단계 4.7-1, components/briefBox.ts)의 일정 구역 목록: 그 주 일정 최대 5줄(5단계 4.7-4).
+ * 줄마다 "10월 29일 (목)"과 이름, 이름 뒤 같은 줄의 작은 결과 문구(링크 아님). 이름 글자만 일정 화면의 그 일정으로 가는 링크다(T7: 커서가 글자 위에서만 바뀐다).
+ * 취소된 일정은 줄에 off를 붙여 이름에 취소선을 긋는다.
  * 날짜의 기준 해는 refYear(브리프 날짜의 해, 펼친 카드의 일정 칩과 같다), 없으면 오늘의 해다.
  */
 export function WeekRows({ week, today, refYear, Link }: { week: WeekSchedules; today: string; refYear?: string; Link: LinkLike }) {
@@ -65,19 +66,15 @@ export function WeekRows({ week, today, refYear, Link }: { week: WeekSchedules; 
       const parts = outcomeParts(x.outcome, today);
       return h(
         "li",
-        { key: x.id },
-        h(
-          Link,
-          { to: schedulePath(x.id), className: "wrow" },
-          h("b", null, weekRowDate(x.due, refYear ?? yearOf(today))),
-          h("span", null, x.name, parts.length ? h("small", null, parts.map((p) => p.text).join(" · ")) : null),
-        ),
+        { key: x.id, className: x.outcome.status === "cancelled" ? "wrow off" : "wrow" },
+        h("b", null, weekRowDate(x.due, refYear ?? yearOf(today))),
+        h("span", null, h(Link, { to: schedulePath(x.id), className: "wname" }, x.name), parts.length ? h("small", null, parts.map((p) => p.text).join(" · ")) : null),
       );
     }),
   );
 }
 
-/** 일정 탭 아래 줄의 '일정 전체 ›'(기억한 보기와 관계없이 목록으로) */
+/** 일정 구역 머리의 '일정 전체 ›'(기억한 보기와 관계없이 목록으로) */
 export function WeekAllLink({ Link }: { Link: LinkLike }) {
   return h(Link, { to: schedulesPath({ list: true }), className: "text-link" }, "일정 전체", MoreMark());
 }

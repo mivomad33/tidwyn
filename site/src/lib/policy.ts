@@ -11,16 +11,11 @@ export function mailHref(subject?: string, body?: string): string {
   return `mailto:${CONTACT_MAIL}${q ? `?${q}` : ""}`;
 }
 
-/** 펼친 카드의 제보 링크: 날짜, 뉴스 제목, 뉴스 주소를 채운다 */
-export function storyReportHref(dateLabel: string, title: string, url: string): string {
-  return mailHref(`[정정 제보] ${title}`, `날짜: ${dateLabel}\n뉴스: ${title}\n주소: ${url}\n\n틀린 내용:\n`);
-}
-
-/** 짧은 소식의 제보 링크: 제목이 없으므로 날짜와 브리프 주소를 채운다 */
-export function shortReportHref(dateLabel: string, url: string): string {
-  return mailHref(`[정정 제보] ${dateLabel}`, `날짜: ${dateLabel}\n주소: ${url}\n\n틀린 뉴스:\n틀린 내용:\n`);
+/** 브리프 목록 맨 끝의 제보 링크(2026-11-27 T8: 뉴스마다 두던 링크를 하나로 합쳤다). 날짜와 브리프 주소를 채우고, 어느 뉴스인지는 제보하는 사람이 적는다 */
+export function briefReportHref(dateLabel: string, url: string): string {
+  return mailHref(`[정정 제보] ${dateLabel}`, `날짜: ${dateLabel}\n주소: ${url}\n\n틀린 뉴스(제목):\n틀린 내용:\n`);
 }
 
 export const PRIVACY_TITLE = "개인정보 처리방침";
 /** 처리방침을 마지막으로 바꾼 날 */
-export const PRIVACY_UPDATED = "2026-11-26";
+export const PRIVACY_UPDATED = "2026-11-27";

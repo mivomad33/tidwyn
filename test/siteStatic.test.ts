@@ -11,7 +11,7 @@ import { OWNER_VERIFICATION_META, SHARE_IMAGE, esc, metaDescription, renderHead 
 import { resolveStatic, vercelConfig } from "../site/hosting.ts";
 import { AboutView, ReadMarksText } from "../site/src/components/aboutView.ts";
 import { briefTitle, latestTitle } from "../site/src/lib/format.ts";
-import { CONTACT_MAIL, SITE_URL, mailHref, shortReportHref, storyReportHref } from "../site/src/lib/policy.ts";
+import { CONTACT_MAIL, SITE_URL, briefReportHref, mailHref } from "../site/src/lib/policy.ts";
 import { briefPath } from "../site/src/lib/routes.ts";
 import { applyCorrection, checkCorrection } from "../src/corrections.ts";
 import { pageFile } from "../src/publicSite.ts";
@@ -189,11 +189,11 @@ describe("정적 HTML", () => {
     for (const p of b.indexed) assert.ok(seen.has(p), p);
   });
 
-  test("정적 브리프에 뉴스마다 제보 링크, 짧은 소식 끝 제보 링크, 구역 이동 링크가 있다", () => {
+  test("정적 브리프에 제보 링크 하나(T8: 뉴스마다 두지 않는다)와 구역 이동 링크가 있다", () => {
     const date = b.dates.latestDate!;
     const page = html(b.out, pageFile(`/${date}`));
     const reports = hrefsOf(page).filter((href) => href.startsWith("mailto:"));
-    assert.ok(reports.length >= 2, "제보 링크 수");
+    assert.equal(reports.length, 1, "제보 링크 수");
     assert.ok(reports.every((href) => href.includes(encodeURIComponent(date.slice(5, 7).replace(/^0/, "")))), "제보 메일에 날짜가 들어간다");
     const jumps = hrefsOf(page).filter((href) => href.startsWith("#section-"));
     assert.ok(jumps.length > 0, "구역 이동 링크");
@@ -496,14 +496,10 @@ describe("4.6-1 제보 메일 링크", () => {
     assert.equal(url.pathname, CONTACT_MAIL);
     return { subject: url.searchParams.get("subject")!, body: decodeURIComponent(href.split("body=")[1]!) };
   };
-  test("펼친 카드: 날짜, 뉴스 제목, 뉴스 주소가 채워진다", () => {
-    const m = decode(storyReportHref("10월 27일", "가짜 & 제목?", `${SITE_URL}/2026-10-27#한국-1`));
-    assert.ok(decodeURIComponent(storyReportHref("10월 27일", "가짜 & 제목?", "u").split("subject=")[1]!.split("&")[0]!).includes("가짜 & 제목?"));
-    for (const text of ["10월 27일", "가짜 & 제목?", `${SITE_URL}/2026-10-27#한국-1`]) assert.ok(m.body.includes(text), text);
-  });
-  test("짧은 소식: 날짜와 브리프 주소가 채워진다", () => {
-    const m = decode(shortReportHref("10월 27일", `${SITE_URL}/2026-10-27`));
-    for (const text of ["10월 27일", `${SITE_URL}/2026-10-27`]) assert.ok(m.body.includes(text), text);
+  test("목록 끝 제보 링크: 날짜와 브리프 주소가 채워지고 제목 칸을 둔다", () => {
+    const m = decode(briefReportHref("10월 27일", `${SITE_URL}/2026-10-27`));
+    assert.ok(m.subject.includes("10월 27일"));
+    for (const text of ["10월 27일", `${SITE_URL}/2026-10-27`, "틀린 뉴스(제목):"]) assert.ok(m.body.includes(text), text);
   });
 });
 

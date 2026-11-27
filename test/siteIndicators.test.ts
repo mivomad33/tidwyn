@@ -15,13 +15,11 @@ import { BriefBox } from "../site/src/components/briefBox.ts";
 import { ChangeText, FredNotice, IndicatorCardView, LineChart, SourceNote } from "../site/src/components/indicatorView.ts";
 import type { LinkLikeProps } from "../site/src/components/termView.ts";
 import {
-  BOX_TAB_KEY,
   FRED_AGREEMENT,
   FRED_NOTICE,
   FRED_TERMS_URL,
   RELATED_FIRST,
   asOfLine,
-  boxValuesDate,
   briefBoxModel,
   changeLabel,
   chartGeometry,
@@ -37,7 +35,6 @@ import {
   issueGraphPoints,
   moveIndex,
   nearestIndex,
-  parseBoxTab,
   periodPoints,
   periodStart,
   readingDateText,
@@ -47,8 +44,6 @@ import {
 } from "../site/src/lib/indicators.ts";
 import { dataUrl } from "../site/src/lib/paths.ts";
 import { focusTargetId, indicatorPath, indicatorsPath, parseRoute, selfScrolls } from "../site/src/lib/routes.ts";
-import { createRemembered } from "../site/src/lib/storage.ts";
-import type { StorageLike } from "../site/src/lib/readMarks.ts";
 import { DARK, LIGHT, contrast, iconPairs, textPairs } from "../site/src/lib/theme.ts";
 import { cleanupTemp, tempDir } from "./helpers.ts";
 
@@ -165,73 +160,51 @@ describe("4.7-2 값·변화 표기", () => {
   });
 });
 
-describe("4.7-1 브리프 위 '이번 주 일정 | 지표' 상자", () => {
+describe("4.7-1 브리프 위 '이번 주 일정과 지표' 상자(T7: 탭 없이 두 구역)", () => {
   const week = { total: 3, items: [{ id: 1, name: "가짜 일정", due: "2026-10-29", outcome: { status: "pending" as const } }] };
   const chips = [chip(), chip({ id: "kospi", name: "가짜 지수", unit: "", decimals: 2, kind: "pct", value: 2614.2, change: -0.7969 })];
+  const box = (day: Parameters<typeof BriefBox>[0]["day"], collapsed: boolean) => renderToStaticMarkup(h(BriefBox, { day, collapsed, onToggle: () => {}, today: "2026-10-28", Link }));
 
-  test("탭 규칙: 둘 다 있으면 두 탭(처음엔 일정), 일정이 없으면 지표만, 칩이 없으면 일정만, 둘 다 없으면 상자가 없다", () => {
-    assert.deepEqual(briefBoxModel({ week, indicators: chips }, null), { tabs: ["week", "indicators"], tab: "week", label: "이번 주 일정과 지표", chips });
-    assert.equal(briefBoxModel({ week, indicators: chips }, "indicators")!.tab, "indicators");
-    assert.deepEqual(briefBoxModel({ indicators: chips }, "week"), { tabs: ["indicators"], tab: "indicators", label: "지표", chips });
-    assert.deepEqual(briefBoxModel({ week, indicators: [] }, "indicators"), { tabs: ["week"], tab: "week", label: "이번 주 일정", chips: [] });
-    assert.equal(briefBoxModel({}, null), null);
-    const none = renderToStaticMarkup(h(BriefBox, { day: { date: "2026-10-27" }, tab: null, collapsed: false, onTab: () => {}, onToggle: () => {}, today: "2026-10-28", Link }));
-    assert.equal(none, "");
-    assert.equal(renderToStaticMarkup(h(BriefBox, { day: { date: "2026-10-27" }, tab: null, collapsed: true, onTab: () => {}, onToggle: () => {}, today: "2026-10-28", Link })), "", "접은 줄도 없다");
+  test("모양: 둘 다 있으면 '이번 주 일정과 지표', 하나면 그 이름, 둘 다 없으면 상자가 없다", () => {
+    assert.deepEqual(briefBoxModel({ week, indicators: chips }), { label: "이번 주 일정과 지표", chips });
+    assert.deepEqual(briefBoxModel({ indicators: chips }), { label: "지표", chips });
+    assert.deepEqual(briefBoxModel({ week, indicators: [] }), { label: "이번 주 일정", chips: [] });
+    assert.equal(briefBoxModel({}), null);
+    assert.equal(box({ date: "2026-10-27" }, false), "");
+    assert.equal(box({ date: "2026-10-27" }, true), "", "접은 줄도 없다");
   });
 
-  test("지표 탭: 칩마다 이름·값·변화, 지표 하나의 페이지로. 기준값 날짜가 다르면 그 날짜를 작게, 아래 줄에 'MM월 DD일 값 · 지표 전체 ›'", () => {
+  test("펼침: 탭 없이 일정 구역과 지표 구역이 함께 보이고, 구역 머리 오른쪽에 '… 전체 ›'", () => {
     const day = { date: "2026-10-27", week, indicators: [chip(), chip({ id: "wti", name: "가짜 유가", unit: "달러", decimals: 2, kind: "pct", date: "2026-10-26", value: 73.4, change: 1.9 })] };
-    const html = renderToStaticMarkup(h(BriefBox, { day, tab: "indicators", collapsed: false, onTab: () => {}, onToggle: () => {}, today: "2026-10-28", Link }));
-    assert.match(html, /role="tablist"/);
-    assert.match(html, /role="tab" id="brief-box-tab-week" aria-selected="false"[^>]*tabindex="-1">이번 주 일정 3<\/button>/);
-    assert.match(html, /role="tab" id="brief-box-tab-indicators" class="on" aria-selected="true"[^>]*tabindex="0">지표<\/button>/);
+    const html = box(day, false);
+    assert.doesNotMatch(html, /role="tab/);
+    assert.match(html, /<button type="button" class="box-toggle week-toggle" aria-expanded="true" aria-controls="brief-box-body">이번 주 일정과 지표<span aria-hidden="true"> ▴<\/span><\/button>/);
+    assert.match(html, /<h2 id="box-week-h">이번 주 일정 3<\/h2><a href="\/schedules\?view=list" class="text-link">일정 전체/);
+    assert.match(html, /<ul id="week-list"><li class="wrow"><b>10월 29일 \(목\)<\/b><span><a href="\/schedules\/1" class="wname">/);
+    assert.match(html, /<h2 id="box-ind-h">지표<\/h2><a href="\/indicators" class="text-link">지표 전체<span class="mark" aria-hidden="true"> ›<\/span><\/a>/);
+    assert.ok(html.indexOf("box-week-h") < html.indexOf("box-ind-h"), "일정 다음 지표");
     assert.match(html, /<a href="\/indicators\/usdkrw" class="ichip"><span class="n">가짜 원\/달러<\/span><b>1,392\.5원<\/b><span class="chg up"><span aria-hidden="true">▲3\.1 \(0\.22%\)<\/span>/);
-    assert.match(html, /<a href="\/indicators\/wti" class="ichip">.*?<small>10-26<span class="sr-only"> 값<\/span><\/small><\/a>/);
-    assert.doesNotMatch(html.split('href="/indicators/wti"')[0]!, /<small>/, "브리프 날짜의 값에는 날짜를 붙이지 않는다");
-    assert.match(html, /<p class="box-foot">10월 27일 값 · <a href="\/indicators" class="text-link">지표 전체<span class="mark" aria-hidden="true"> ›<\/span><\/a><\/p>/);
-    assert.match(html, /aria-expanded="true" aria-controls="brief-box-panel" aria-label="상자 접기"/);
-    assert.equal(chipDateNote({ date: "2025-12-31" }, "2026-01-02"), "'25 12-31", "해가 다르면 해를 붙이되 YYYY-MM-DD는 쓰지 않는다");
-    assert.equal(boxValuesDate("2026-10-07"), "10월 7일 값");
+    assert.match(html, /<a href="\/indicators\/wti" class="ichip"><span class="n">가짜 유가<\/span>.*?<small>10월 26일 값<\/small><\/a>/);
+    assert.doesNotMatch(html.split('href="/indicators/wti"')[0]!.split('class="ichip"')[1]!, /<small>/, "브리프 날짜의 값에는 날짜를 붙이지 않는다");
+    assert.equal(chipDateNote({ date: "2025-12-31" }, "2026-01-02"), "2025년 12월 31일", "해가 다르면 해를 붙인다");
   });
 
-  test("일정 탭: 일정 줄과 아래 줄 '일정 전체 ›'", () => {
-    const html = renderToStaticMarkup(h(BriefBox, { day: { date: "2026-10-27", week, indicators: chips }, tab: null, collapsed: false, onTab: () => {}, onToggle: () => {}, today: "2026-10-28", Link }));
-    assert.match(html, /<ul id="week-list"><li><a href="\/schedules\/1" class="wrow">/);
-    assert.match(html, /<p class="box-foot"><a href="\/schedules\?view=list" class="text-link">일정 전체/);
-    assert.doesNotMatch(html, /class="ichip"/);
+  test("한쪽만 있으면 그 구역만 보인다", () => {
+    const onlyInd = box({ date: "2026-10-27", indicators: chips }, false);
+    assert.doesNotMatch(onlyInd, /box-week-h|class="wrow/);
+    assert.match(onlyInd, /class="ichip"/);
+    const onlyWeek = box({ date: "2026-10-27", week }, false);
+    assert.match(onlyWeek, /class="wrow/);
+    assert.doesNotMatch(onlyWeek, /box-ind-h|class="ichip"/);
   });
 
   test("접은 줄: '이번 주 일정 N · 원/달러 <값> <전날 대비> ▾'. 없는 쪽은 빠지고, 원/달러가 없으면 칩 순서의 첫 지표", () => {
-    const both = renderToStaticMarkup(h(BriefBox, { day: { date: "2026-10-27", week, indicators: chips }, tab: null, collapsed: true, onTab: () => {}, onToggle: () => {}, today: "2026-10-28", Link }));
+    const both = box({ date: "2026-10-27", week, indicators: chips }, true);
     assert.match(both, /^<section class="week closed" aria-label="이번 주 일정과 지표"><div class="week-h"><button type="button" class="box-toggle week-toggle" aria-expanded="false">이번 주 일정 3<span class="dot-sep" aria-hidden="true"> · <\/span><span class="fold-chip">가짜 원\/달러 1,392\.5원 <span class="chg up"><span aria-hidden="true">▲3\.1 \(0\.22%\)<\/span>/);
     assert.match(both, /<span aria-hidden="true"> ▾<\/span><\/button><\/div><\/section>$/);
     assert.deepEqual(collapsedParts({ week }).chip, null);
     assert.equal(collapsedParts({ indicators: chips.slice(1) }).week, null);
     assert.equal(collapsedParts({ indicators: chips.slice(1) }).chip!.text, "가짜 지수 2,614.20");
-  });
-
-  test("기억: 고른 탭은 새 키 하나(tidwyn.briefBoxTab). 깨진 값·저장할 수 없음은 기본값(상자 펼침은 저장하지 않는다, U2 S6)", () => {
-    assert.equal(BOX_TAB_KEY, "tidwyn.briefBoxTab");
-    assert.equal(parseBoxTab("indicators"), "indicators");
-    assert.equal(parseBoxTab("week"), "week");
-    assert.equal(parseBoxTab("깨짐"), null);
-    assert.equal(parseBoxTab(null), null);
-    const broken: StorageLike = {
-      getItem: () => {
-        throw new Error("막힘");
-      },
-      setItem: () => {
-        throw new Error("막힘");
-      },
-      removeItem: () => {},
-      key: () => null,
-      length: 0,
-    } as unknown as StorageLike;
-    const r = createRemembered(broken, BOX_TAB_KEY, parseBoxTab, (v) => v ?? "");
-    assert.equal(r.get(), null);
-    r.set("indicators");
-    assert.equal(r.get(), "indicators", "저장하지 못해도 이 탭에서는 고른 값");
   });
 });
 

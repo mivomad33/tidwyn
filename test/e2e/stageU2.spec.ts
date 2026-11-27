@@ -60,8 +60,9 @@ async function frames(page: Page): Promise<void> {
 const itemBtn = (page: Page, key: string) => page.locator(`[id="story-${key}"] .item-btn`);
 const itemOf = (page: Page, key: string) => page.locator(`[id="story-${key}"]`);
 const sectionTab = (page: Page, name: string) => page.locator("nav.tabs").getByRole("button", { name, exact: true });
-const weekToggle = (page: Page) => page.locator(".week-toggle");
-const boxFold = (page: Page) => page.locator(".box-fold");
+// T7(2026-11-27): 접은 줄과 펼친 줄이 같은 자리의 같은 버튼이다(접은 것 = aria-expanded false)
+const weekToggle = (page: Page) => page.locator('.week-toggle[aria-expanded="false"]');
+const boxFold = (page: Page) => page.locator('.week-toggle[aria-expanded="true"]');
 
 async function openScreen(page: Page, url: string): Promise<void> {
   const openFirst = async (list: string, row: string) => {
@@ -218,11 +219,11 @@ test.describe("4.1-2 저장 키 정리(S6·S7)", () => {
   });
 });
 
-test.describe("4.1-3 요약·키워드는 뉴스 탭에만", () => {
-  // R1 4.3-1: 요약·키워드가 없던 영상·빌더·수요 탭을 지워 뉴스 탭만 본다
-  test("/(기본 '한국')·'전체' 탭에는 요약·키워드와 상자가 있다", async ({ browser }) => {
-    const seen: Record<string, { headline: number; kw: number; box: number }> = {};
-    const count = async (page: Page) => ({ headline: await page.locator("main .headline").count(), kw: await page.locator("main .kw").count(), box: await weekToggle(page).count() });
+test.describe("4.1-3 요약·키워드는 화면에 없다", () => {
+  // 2026-11-27 tone-split T6: 요약·키워드·흐름 문단을 모든 탭에서 뺐다. 상자는 그대로다
+  test("/(기본 '한국')·'전체' 탭에는 요약·키워드·흐름 문단이 없고 상자가 있다", async ({ browser }) => {
+    const seen: Record<string, { headline: number; kw: number; flow: number; box: number }> = {};
+    const count = async (page: Page) => ({ headline: await page.locator("main .headline").count(), kw: await page.locator("main .kw").count(), flow: await page.locator("main p.flow:not(.note)").count(), box: await weekToggle(page).count() });
     await eachScreen(browser, ["/"], async (page) => {
       await expect(page.locator("nav.tabs button[aria-pressed=true]")).toHaveText("한국");
       seen["/"] = await count(page);
@@ -231,8 +232,8 @@ test.describe("4.1-3 요약·키워드는 뉴스 탭에만", () => {
       seen["전체"] = await count(page);
     });
     expect(seen).toEqual({
-      "/": { headline: 1, kw: 1, box: 1 },
-      전체: { headline: 1, kw: 1, box: 1 },
+      "/": { headline: 0, kw: 0, flow: 0, box: 1 },
+      전체: { headline: 0, kw: 0, flow: 0, box: 1 },
     });
   });
 });
@@ -734,19 +735,6 @@ test.describe("4.4-2 넓힌 누를 곳이 이웃과 겹치지 않음", () => {
     }
   });
 
-  test("상자 탭 둘의 가운데를 누르면 그 탭이 골라진다", async ({ page }) => {
-    await openScreen(page, OPEN_BOX);
-    const tabs = page.locator(".box-tabs [role=tab]");
-    await expect(tabs).toHaveCount(2);
-    for (const i of [1, 0, 1]) {
-      const tab = tabs.nth(i);
-      expect(await hitsItself(tab), `상자 탭 ${i} 가운데`).toBe(true);
-      const box = (await tab.boundingBox())!;
-      await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
-      await expect(tab).toHaveAttribute("aria-selected", "true");
-    }
-  });
-
   test("소개 문단의 글 링크마다 가운데가 그 링크다", async ({ page }) => {
     await openScreen(page, "/about");
     const links = page.locator("main p a[href]");
@@ -793,10 +781,8 @@ test.describe("4.5 일정 이름 링크(S5)", () => {
     };
     // 브리프 상자의 일정 줄
     await openScreen(page, OPEN_BOX);
-    const weekTab = page.getByRole("tab", { name: /일정/ });
-    if ((await weekTab.getAttribute("aria-selected")) !== "true") await weekTab.click();
     const first = listOf(LATEST).week!.items[0]!;
-    await page.locator(".wrow").first().click();
+    await page.locator(".wrow a").first().click();
     await expectSchedule(first.name);
     // 펼친 카드의 일정 칩(11월 3일 'IT·AI-5')
     await openScreen(page, `/${PAST}`);

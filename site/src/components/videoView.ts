@@ -1,6 +1,7 @@
 // B2 영상 탭의 영상 목록(4.3-2, 4.3-3). 앱의 영상 탭과 정적 HTML의 영상 구역이 같은 부품을 쓴다.
 // 굵은 제목 '이번 주 볼만한 영상', 항목(썸네일과 그 오른쪽 아래 길이 · 제목 링크 · 분야·채널·조회수·업로드 때 줄), 또는 상태별 빈 상태 문구.
 // 항목 전체가 제목 링크의 누를 자리다(마우스를 올려도 바탕은 바뀌지 않는다, 2026-11-27 사용자 결정).
+// 본 영상(T9): 앱은 누를 때 부르는 쪽의 onOpen으로 기록하고, watched가 참인 항목은 제목을 흐리게 보인다(.video.seen). 정적 HTML은 넘기지 않는다.
 // 썸네일은 앱에서만 그린다(정적 HTML에는 이미지를 넣지 않는다, R7). 썸네일을 받지 못하면 빈 자리만 남는다.
 import { createElement as h, Fragment, type ReactNode, type SyntheticEvent } from "react";
 import type { DayVideoItem, DayVideos } from "../lib/types.ts";
@@ -14,6 +15,11 @@ export const VIDEO_HEADING = "이번 주 볼만한 영상";
 export const VIDEO_NONE_TEXT = "이 날에는 새로 실을 영상이 없습니다.";
 /** '받지 못함' */
 export const VIDEO_FAILED_TEXT = "이 날에는 영상을 준비하지 못했습니다.";
+
+/** 읽은 기록(tidwyn.read)에 본 영상을 둘 때의 키. 뉴스 키와 겹치지 않고, 날짜 목록의 읽은 수에는 세지 않는다(뉴스 키만 센다) */
+export function videoWatchKey(id: string): string {
+  return `watch:${id}`;
+}
 
 /** 영상 주소(새 탭으로 연다) */
 export function videoUrl(id: string): string {
@@ -78,13 +84,19 @@ function hideMissing(e: SyntheticEvent<HTMLImageElement>) {
   if (img.naturalWidth <= MISSING_THUMB_WIDTH) img.hidden = true;
 }
 
-function VideoItem({ item, level, showCategory, thumbs, now }: { item: DayVideoItem; level: "h3" | "h4" | "h5"; showCategory: boolean; thumbs: boolean; now: number | null }) {
+/** 본 영상 표시(앱만): 봤는지와 누를 때 기록하기 */
+export interface VideoWatch {
+  watched: (id: string) => boolean;
+  onOpen: (id: string) => void;
+}
+
+function VideoItem({ item, level, showCategory, thumbs, now, watch }: { item: DayVideoItem; level: "h3" | "h4" | "h5"; showCategory: boolean; thumbs: boolean; now: number | null; watch: VideoWatch | null }) {
   const duration = durationText(item.duration);
   // 길이는 썸네일이 있으면 썸네일 오른쪽 아래 상자에(유튜브처럼, 2026-11-26 사용자 결정. 화면 낭독은 정보 줄의 숨은 글로), 없으면 정보 줄 끝에 쓴다
   const meta = [...(showCategory ? [item.category] : []), item.channel, viewsText(item.views), ...(now === null ? [] : [uploadText(item.uploadAt, item.uploadPrecision, now)]), ...(thumbs ? [] : [duration])];
   return h(
     "li",
-    { className: thumbs ? "video" : "video no-thumb" },
+    { className: ["video", thumbs ? "" : "no-thumb", watch?.watched(item.id) ? "seen" : ""].filter(Boolean).join(" ") },
     // 썸네일 칸은 크기를 미리 잡아(16:9) 받기 전후에 화면이 튀지 않는다. 제목 링크가 바로 옆에 있어 alt는 비운다
     thumbs
       ? h(
@@ -97,7 +109,7 @@ function VideoItem({ item, level, showCategory, thumbs, now }: { item: DayVideoI
     h(
       "div",
       { className: "video-body" },
-      h(level, { className: "video-title" }, h("a", { href: videoUrl(item.id), className: "video-link", target: "_blank", rel: "noopener noreferrer" }, item.title, h("span", { className: "sr-only" }, " (새 탭)"))),
+      h(level, { className: "video-title" }, h("a", { href: videoUrl(item.id), className: "video-link", target: "_blank", rel: "noopener noreferrer", onClick: watch ? () => watch.onOpen(item.id) : undefined, onAuxClick: watch ? () => watch.onOpen(item.id) : undefined }, item.title, h("span", { className: "sr-only" }, " (새 탭)"))),
       h("p", { className: "video-meta" }, meta.join(" · "), thumbs ? h("span", { className: "sr-only" }, ` · 길이 ${duration}`) : null),
     ),
   );
@@ -117,11 +129,11 @@ export function videoCategoryOrder(items: readonly DayVideoItem[]): string[] {
  * 그날 영상 기록의 상태와 보일 항목(분야 순서·분야 안 순위 순). 실음인데 항목이 없으면 '새 영상 없음'과 같게 보인다.
  * '모든 분야'(showCategory)는 분야를 섞어 하루 평균 조회수 순이다. now(보는 시각)가 있으면 업로드 때를 쓴다(앱만. 정적 HTML은 보는 시각을 몰라 쓰지 않는다). grouped면 분야마다 제목을 두고(정적 HTML), 아니면 한 목록이며 showCategory면 항목에 분야를 쓴다('모든 분야').
  */
-export function VideoList({ status, items, headingLevel, thumbs, grouped = false, showCategory = false, filter = null, now = null }: { status: DayVideos["status"]; items: readonly DayVideoItem[]; headingLevel: "h2" | "h3"; thumbs: boolean; grouped?: boolean; showCategory?: boolean; filter?: ReactNode; now?: number | null }) {
+export function VideoList({ status, items, headingLevel, thumbs, grouped = false, showCategory = false, filter = null, now = null, watch = null }: { status: DayVideos["status"]; items: readonly DayVideoItem[]; headingLevel: "h2" | "h3"; thumbs: boolean; grouped?: boolean; showCategory?: boolean; filter?: ReactNode; now?: number | null; watch?: VideoWatch | null }) {
   const level = headingLevel === "h2" ? "h3" : "h4";
   // 분야 제목을 두면 항목 제목은 그 한 단계 아래다
   const itemLevel = grouped ? (level === "h3" ? "h4" : "h5") : level;
-  const list = (xs: readonly DayVideoItem[], cat: boolean) => h("ol", { className: "list videos" }, xs.map((item) => h(VideoItem, { key: item.id, item, level: itemLevel, showCategory: cat, thumbs, now })));
+  const list = (xs: readonly DayVideoItem[], cat: boolean) => h("ol", { className: "list videos" }, xs.map((item) => h(VideoItem, { key: item.id, item, level: itemLevel, showCategory: cat, thumbs, now, watch })));
   const shown = status === "shown" && items.length > 0;
   let body;
   if (status === "failed") body = h(Empty, null, VIDEO_FAILED_TEXT);

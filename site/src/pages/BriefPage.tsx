@@ -11,7 +11,7 @@ import { retry, useResource, type Resource } from "../data.ts";
 import { ALL_TAB, BRIEF_TAB_KEY, BUILDER_TAB, VIDEO_TAB, briefTabs, findDay, extraTabForHash, findStoryTarget, parseBriefTab, sectionView, stateForHash, storyImage, type BriefTab, type BriefViewState } from "../lib/brief.ts";
 import { briefTitle, latestTitle, monthDay, monthDayWeekday, pageTitle, shortDate, yearOf } from "../lib/format.ts";
 import { dataUrl } from "../lib/paths.ts";
-import { SITE_URL, shortReportHref, storyReportHref } from "../lib/policy.ts";
+import { SITE_URL, briefReportHref } from "../lib/policy.ts";
 import { placeTerms, storyBodyParts, termBoxPlace, toggleTerm } from "../lib/terms.ts";
 import { categoryVar } from "../lib/theme.ts";
 import { adjacentDates, briefPath, hashKey, issuePath, resolveBriefDate, type Route } from "../lib/routes.ts";
@@ -23,10 +23,10 @@ import { MoreMark } from "../components/moreMark.ts";
 import { ReportLink } from "../components/reportLink.ts";
 import { StorySources } from "../components/sourceView.ts";
 import { RepoList } from "../components/repoView.ts";
-import { VideoList, videoCategoryOrder } from "../components/videoView.ts";
+import { VideoList, videoCategoryOrder, videoWatchKey } from "../components/videoView.ts";
 import { cameBackToEntry, Link, lastNavigation, navigate, updateEntry, useLocation } from "../router.tsx";
 import { briefMarkOf, navOf, withBriefMark, type BriefMark } from "../lib/navState.ts";
-import { boxTab, browserStorage, useRemembered } from "../storage.ts";
+import { browserStorage } from "../storage.ts";
 import { NotFoundPage } from "./NotFoundPage.tsx";
 
 export function storyDomId(key: string): string {
@@ -268,7 +268,7 @@ export function BriefPage({ route }: { route: Route }) {
   const tabs = briefTabs(day);
   const current = shownTab!;
   const all = current === ALL_TAB;
-  // B1: 빌더 탭은 저장소 목록만 보인다(요약·키워드·대분류 칩·'안 읽은 것만' 없음, 4.4-1). 이번 주 일정|지표 상자는 탭과 관계없이 같다
+  // B1: 빌더 탭은 저장소 목록만 보인다(대분류 칩·'안 읽은 것만' 없음, 4.4-1. 요약·키워드는 2026-11-27에 모든 탭에서 뺐다). 이번 주 일정|지표 상자는 탭과 관계없이 같다
   const repos = current === BUILDER_TAB ? (day.repos ?? null) : null;
   // B2: 영상 탭도 같다(4.3-1)
   const videos = current === VIDEO_TAB ? (day.videos ?? null) : null;
@@ -339,16 +339,6 @@ export function BriefPage({ route }: { route: Route }) {
           <VideoBody day={day} summary={videos} res={watchRes} onRetry={() => retry([watchUrl])} category={videoCat} onCategory={setVideoCat} weekOpen={weekOpen} onWeekToggle={() => setWeekOpen((o) => !o)} />
         ) : (
           <>
-            <div className="headline">
-              {day.headline}
-              {day.keywords.length > 0 && (
-                <div className="kw" aria-label="키워드">
-                  {day.keywords.map((k) => (
-                    <span key={k}>{k}</span>
-                  ))}
-                </div>
-              )}
-            </div>
             <TopBox day={day} open={weekOpen} onToggle={() => setWeekOpen((o) => !o)} />
             <ChipFilter
               label="카테고리"
@@ -364,7 +354,6 @@ export function BriefPage({ route }: { route: Route }) {
               }
             />
             <h2 className="sr-only">{current} 뉴스</h2>
-            {sv.section?.flow && major === null && <p className="flow">{sv.section.flow}</p>}
             {!hasStories && <Empty>{major ? "이 분류의 뉴스가 없습니다." : "이 섹션의 뉴스가 없습니다."}</Empty>}
             {hasStories && tops.length + shorts.length === 0 && <Empty>안 읽은 뉴스가 없습니다.</Empty>}
             {tops.length > 0 && (
@@ -395,12 +384,14 @@ export function BriefPage({ route }: { route: Route }) {
                     <ShortItem key={s.key} story={s} date={date} targeted={key === s.key} showSection={all} leaving={leaving(s)} onGone={() => onGone(s.key)} />
                   ))}
                 </ul>
-                <p className="short-report">
-                  <ReportLink href={shortReportHref(monthDay(date), `${SITE_URL}${briefPath(date)}`)} label="짧은 소식 틀린 내용 알리기" />
-                </p>
               </section>
             )}
             {sv.section?.unverified && major === null && <p className="flow note">확인되지 않은 내용: {sv.section.unverified}</p>}
+            {hasStories && (
+              <p className="brief-report">
+                <ReportLink href={briefReportHref(monthDay(date), `${SITE_URL}${briefPath(date)}`)} label="틀린 내용 알리기" />
+              </p>
+            )}
           </>
         )}
       </Main>
@@ -431,14 +422,16 @@ function VideoBody({ day, summary, res, onRetry, category, onCategory, weekOpen,
       ) : res.status !== "ok" ? (
         <Loading />
       ) : (
-        <ShownVideos all={res.data.days[day.date]?.items ?? []} category={category} onCategory={onCategory} />
+        <ShownVideos date={day.date} all={res.data.days[day.date]?.items ?? []} category={category} onCategory={onCategory} />
       )}
     </>
   );
 }
 
-/** 실음인 날의 분야 칩과 목록 */
-function ShownVideos({ all, category, onCategory }: { all: readonly DayVideoItem[]; category: string | null; onCategory: (c: string | null) => void }) {
+/** 실음인 날의 분야 칩과 목록. 누른 영상은 읽은 기록에 그 브리프 날짜로 남겨 제목을 흐리게 보인다(T9: 폰에서는 유튜브 앱이 열려 :visited가 남지 않는다) */
+function ShownVideos({ date, all, category, onCategory }: { date: string; all: readonly DayVideoItem[]; category: string | null; onCategory: (c: string | null) => void }) {
+  useReadVersion();
+  const watch = { watched: (id: string) => readStore.isRead(date, videoWatchKey(id)), onOpen: (id: string) => markRead(date, videoWatchKey(id)) };
   const chips = countChips(all, (v) => v.category, videoCategoryOrder(all));
   const picked = keptChip(category, chips);
   const items = picked === null ? all : all.filter((v) => v.category === picked);
@@ -448,6 +441,7 @@ function ShownVideos({ all, category, onCategory }: { all: readonly DayVideoItem
       items={items}
       headingLevel="h2"
       now={Date.now()}
+      watch={watch}
       thumbs
       showCategory={picked === null}
       filter={<ChipFilter label="분야" allText={ALL_CHIP_TEXT.major} total={all.length} options={chips} value={picked} onChange={onCategory} />}
@@ -455,11 +449,10 @@ function ShownVideos({ all, category, onCategory }: { all: readonly DayVideoItem
   );
 }
 
-/** '이번 주 일정 | 지표' 상자(6단계 4.7-1). 섹션 탭·대분류 칩과 관계없이 같다. 고른 탭은 다음 방문에도 이어지고, 펼침은 이 브리프 화면에만 둔다(U2 S6) */
+/** '이번 주 일정과 지표' 상자(6단계 4.7-1). 섹션 탭·대분류 칩과 관계없이 같다. 펼침은 이 브리프 화면에만 둔다(U2 S6) */
 function TopBox({ day, open, onToggle }: { day: DayList; open: boolean; onToggle: () => void }) {
-  const tab = useRemembered(boxTab);
   const today = useMemo(() => kstDate(new Date()), []);
-  return <BriefBox day={day} tab={tab} collapsed={!open} onTab={(t) => boxTab.set(t)} onToggle={onToggle} today={today} Link={Link} />;
+  return <BriefBox day={day} collapsed={!open} onToggle={onToggle} today={today} Link={Link} />;
 }
 
 /** 날짜 화살표. 같은 브리프 화면에서 날짜를 바꾸는 것이라 상자 펼침을 다음 기록으로 넘긴다(S6) */
@@ -535,7 +528,8 @@ function TopItem({ story, date, open, onToggle, detail, onRetry, showSection, le
     if (!open || !hasBody || !fixed || !el) return;
     const bar = barBottom();
     const lastFix = [...el.querySelectorAll(".fix")].at(-1);
-    if (el.getBoundingClientRect().top < bar || (lastFix?.getBoundingClientRect().bottom ?? 0) > window.innerHeight) el.scrollIntoView({ block: "start" });
+    // 1px 여유: 스크롤 위치가 정수로 맞춰지며 윗선이 머리글보다 소수점만큼 위에 놓여도 움직이지 않는다
+    if (el.getBoundingClientRect().top < bar - 1 || (lastFix?.getBoundingClientRect().bottom ?? 0) > window.innerHeight) el.scrollIntoView({ block: "start" });
   }, [open, hasBody, fixed, ref]);
   return (
     <li ref={ref} id={id} tabIndex={-1} className={open ? "item open" : "item"} data-leaving={leaving || undefined}>
@@ -689,7 +683,6 @@ function StoryBody({ story, detail, date }: { story: ListStory; detail: StoryDet
           <StorySources sources={detail.sources} year={year} />
         </>
       )}
-      <ReportLink href={storyReportHref(monthDay(date), story.title, `${SITE_URL}${briefPath(date, story.key)}`)} label="틀린 내용 알리기" />
     </>
   );
 }

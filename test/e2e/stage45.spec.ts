@@ -550,9 +550,8 @@ test.describe("브리프 '전체' 탭", () => {
     await expect(page.locator("main .sec")).toHaveCount(0);
   });
 
-  test("전체 탭은 모든 섹션 뉴스를 정해진 순서로 한 목록에 보이고, 줄마다 섹션 칩을 붙이며, 흐름 설명은 숨긴다", async ({ page }) => {
+  test("전체 탭은 모든 섹션 뉴스를 정해진 순서로 한 목록에 보이고, 줄마다 섹션 칩을 붙인다", async ({ page }) => {
     await page.goto("/");
-    await expect(page.locator("main p.flow")).toHaveCount(1);
     await sectionTabs(page).getByRole("button", { name: "전체" }).click();
     await expect(sectionTabs(page).getByRole("button", { name: "전체" })).toHaveAttribute("aria-pressed", "true");
     expect(await shownIds(page)).toEqual(allOrder(latestDay));
@@ -560,7 +559,6 @@ test.describe("브리프 '전체' 탭", () => {
       const st = sec.stories[0]!;
       await expect(storyItem(page, st.key).locator(".sec")).toHaveText(sec.name);
     }
-    await expect(page.locator("main p.flow")).toHaveCount(0);
   });
 
   test("고른 탭을 기억해 새로 고치거나 다시 열어도 그 탭이다", async ({ page }) => {

@@ -4,7 +4,10 @@ import path from "node:path";
 import { after, before, describe, test } from "node:test";
 import { buildSite, listFilesRecursive } from "../site/build.ts";
 import { writeFixtures, type Fixture } from "../site/dev/fixtures.ts";
-import { VIDEO_FAILED_TEXT, VIDEO_HEADING, VIDEO_NONE_TEXT, byDailyViews, durationText, uploadText, viewsText } from "../site/src/components/videoView.ts";
+import { VIDEO_FAILED_TEXT, VIDEO_HEADING, VIDEO_NONE_TEXT, VideoList, byDailyViews, durationText, uploadText, videoWatchKey, viewsText } from "../site/src/components/videoView.ts";
+import { createElement as h } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
+import { isNewsKey } from "../src/categories.ts";
 import { ALL_TAB, BUILDER_TAB, VIDEO_TAB, briefTabs, parseBriefTab, sectionView, stateForHash } from "../site/src/lib/brief.ts";
 import { BROWSER_KEYS, BRIEF_TAB_KEY } from "../site/src/lib/browserKeys.ts";
 import { dateText, fullKoreanDate } from "../site/src/lib/format.ts";
@@ -132,6 +135,17 @@ describe("B2 4.3-2 표기와 썸네일 주소", () => {
     assert.equal(uploadText("2026-10-01T03:00:00Z", 86400, now), "10월 1일");
   });
 
+  test("본 영상(T9): 키는 뉴스 키가 아니고, watched가 참인 항목만 seen이며 누르면 onOpen을 부른다. 넘기지 않으면(정적 HTML) 표시가 없다", () => {
+    assert.equal(videoWatchKey("abc_123"), "watch:abc_123");
+    assert.equal(isNewsKey(videoWatchKey("abc_123")), false, "날짜 목록의 읽은 수에 세지 않는다");
+    const item = (id: string) => ({ id, category: "경제", rank: 1, dailyViews: 1, title: id, channel: "c", duration: 1, views: 1, uploadAt: "2026-10-25T00:00:00.000Z", uploadPrecision: 86400 });
+    const watched = renderToStaticMarkup(h(VideoList, { status: "shown", items: [item("a"), item("b")], headingLevel: "h2", thumbs: false, watch: { watched: (id) => id === "b", onOpen: () => {} } }));
+    assert.match(watched, /<li class="video no-thumb">.*?watch\?v=a/);
+    assert.match(watched, /<li class="video no-thumb seen">.*?watch\?v=b/);
+    const plain = renderToStaticMarkup(h(VideoList, { status: "shown", items: [item("a")], headingLevel: "h2", thumbs: false }));
+    assert.doesNotMatch(plain, /seen/);
+  });
+
   test("'모든 분야'는 분야를 섞어 하루 평균 조회수 순이고, 같으면 받은 순서(분야 순서·순위) 그대로다", () => {
     const item = (id: string, category: string, rank: number, dailyViews: number) => ({ id, category, rank, dailyViews, title: id, channel: "c", duration: 1, views: 1, uploadAt: "2026-10-25T00:00:00.000Z", uploadPrecision: 86400 });
     const items = [item("a1", "교양/지식", 1, 500), item("a2", "교양/지식", 2, 100), item("b1", "경제", 1, 900), item("b2", "경제", 2, 100)];
@@ -218,14 +232,15 @@ describe("B2 4.3-4 소개·처리방침", () => {
     }
   });
 
-  test("처리방침에 썸네일 문구, 탭 저장값의 '영상', 바뀐 날짜 2026-11-26이 있다", () => {
-    assert.equal(PRIVACY_UPDATED, "2026-11-26");
+  test("처리방침에 썸네일 문구, 탭 저장값의 '영상', 바뀐 날짜(T9에서 2026-11-27)가 있다", () => {
+    assert.equal(PRIVACY_UPDATED, "2026-11-27");
     assert.equal(BROWSER_KEYS.find((k) => k.key === BRIEF_TAB_KEY)!.what, "브리프에서 마지막으로 고른 탭(전체·한국·세계·IT·AI·영상·빌더)");
     const text = textOf(page("privacy.html"));
     assert.ok(text.includes("브리프에서 마지막으로 고른 탭(전체·한국·세계·IT·AI·영상·빌더)"), "처리방침 목록");
     assert.match(text, /영상 탭의 썸네일 이미지는 YouTube\(Google\)의 이미지 서버에서 바로 불러옵니다/);
     assert.match(text, /IP 주소 등 요청 정보가 그 서버에 전달됩니다/);
-    assert.ok(text.includes(`바뀐 날짜: ${fullKoreanDate("2026-11-26")}`), "바뀐 날짜");
+    assert.ok(text.includes(`바뀐 날짜: ${fullKoreanDate("2026-11-27")}`), "바뀐 날짜");
+    assert.ok(text.includes("읽은 뉴스와 본 영상 표시(브리프 날짜와 뉴스 키·영상 ID만 둡니다"), "읽은 기록 키 설명(T9)");
   });
 
   test("소개와 처리방침에 youtube-insight 낱말이 없다", () => {

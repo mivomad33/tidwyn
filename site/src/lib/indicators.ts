@@ -1,7 +1,7 @@
 // 6단계 지표 화면(4.7)의 DOM 없는 로직: 값·변화 표기, 카드 묶기, 기간 거르기, 그래프 좌표, 요약 글, 이슈 그래프의 점,
 // 브리프 위 '이번 주 일정 | 지표' 상자의 탭 규칙과 접은 줄. 화면(DOM) 없이 테스트한다.
 // 지표 정의(src/indicators.ts)는 가져오지 않는다. 표시에 필요한 정보(단위, 소수 자리, 변화 방식, 출처 문구)는 사이트 데이터에 실려 온다.
-import { dayOrMonthText, latestYear, monthDay, shortDate, yearOf } from "./format.ts";
+import { dateText, dayOrMonthText, latestYear, monthDay, yearOf } from "./format.ts";
 import type { DayList, IndicatorCard, IndicatorChip, IndicatorList, IndicatorMetaInfo, IndicatorPoint, IssueRef } from "./types.ts";
 
 // ---- 값과 변화 표기 ----
@@ -312,44 +312,28 @@ export function graphFromText(from: string, refYear?: string): string {
   return `${readingDateText(from, refYear)}부터`;
 }
 
-// ---- 브리프 위 '이번 주 일정 | 지표' 상자(4.7-1) ----
+// ---- 브리프 위 '이번 주 일정과 지표' 상자(4.7-1. 2026-11-27 tone-split T7부터 탭 없이 두 구역을 함께 보인다) ----
 
-export type BoxTab = "week" | "indicators";
-/** 고른 탭을 기억하는 로컬 스토리지 키(읽은 기록 지우기 대상이 아니다, 정의는 browserKeys.ts). 상자의 펼침은 저장하지 않는다(U2 S6) */
-export { BOX_TAB_KEY } from "./browserKeys.ts";
-
-/** 기억한 탭. 없거나 모르는 값이면 null(그 날짜의 기본 탭) */
-export function parseBoxTab(raw: string | null): BoxTab | null {
-  return raw === "week" || raw === "indicators" ? raw : null;
-}
-
-export const BOX_TAB_LABEL: Record<BoxTab, string> = { week: "이번 주 일정", indicators: "지표" };
+export const BOX_LABEL = { week: "이번 주 일정", indicators: "지표" } as const;
 
 export interface BriefBoxModel {
-  /** 보일 탭(일정이 없으면 일정 탭, 기준값이 있는 칩이 없으면 지표 탭이 빠진다) */
-  tabs: BoxTab[];
-  /** 고른 탭 */
-  tab: BoxTab;
-  /** 상자 이름(보조 기술) */
+  /** 상자 이름(보조 기술, 펼친 줄의 글자) */
   label: string;
+  /** 기준값이 있는 칩(없으면 지표 구역이 빠진다) */
   chips: IndicatorChip[];
 }
 
-/** 상자 모양. 일정도 지표도 없으면 null(상자도 접은 줄도 없다). 기억한 탭이 그 날짜에 없으면 처음 탭(일정, 없으면 지표) */
-export function briefBoxModel(day: Pick<DayList, "week" | "indicators">, remembered: BoxTab | null): BriefBoxModel | null {
+/** 상자 모양. 일정도 지표도 없으면 null(상자도 접은 줄도 없다) */
+export function briefBoxModel(day: Pick<DayList, "week" | "indicators">): BriefBoxModel | null {
   const chips = day.indicators ?? [];
-  const tabs: BoxTab[] = [];
-  if (day.week) tabs.push("week");
-  if (chips.length > 0) tabs.push("indicators");
-  if (tabs.length === 0) return null;
-  const tab = remembered && tabs.includes(remembered) ? remembered : tabs[0]!;
-  const label = tabs.length === 2 ? "이번 주 일정과 지표" : BOX_TAB_LABEL[tabs[0]!];
-  return { tabs, tab, label, chips };
+  if (!day.week && chips.length === 0) return null;
+  const label = day.week && chips.length > 0 ? "이번 주 일정과 지표" : day.week ? BOX_LABEL.week : BOX_LABEL.indicators;
+  return { label, chips };
 }
 
-/** 탭 글자: '이번 주 일정 N', '지표' */
-export function boxTabText(tab: BoxTab, day: Pick<DayList, "week">): string {
-  return tab === "week" ? `${BOX_TAB_LABEL.week} ${day.week?.total ?? 0}` : BOX_TAB_LABEL.indicators;
+/** 일정 글자: '이번 주 일정 N'(N은 그 주 전체 수) */
+export function weekCountText(day: Pick<DayList, "week">): string {
+  return `${BOX_LABEL.week} ${day.week?.total ?? 0}`;
 }
 
 /** 접은 줄의 지표: 칩 순서의 첫 칩(데이터가 원/달러부터 칩 순서로 싣는다. 원/달러 값이 없으면 기준값이 있는 첫 지표) */
@@ -361,20 +345,15 @@ export function collapsedChip(chips: IndicatorChip[]): IndicatorChip | null {
 export function collapsedParts(day: Pick<DayList, "week" | "indicators">): { week: string | null; chip: { text: string; change: ChangeLabel | null } | null } {
   const c = collapsedChip(day.indicators ?? []);
   return {
-    week: day.week ? boxTabText("week", day) : null,
+    week: day.week ? weekCountText(day) : null,
     chip: c ? { text: `${c.name} ${formatValue(c, c.value)}`, change: changeLabel({ change: c.kind, decimals: c.decimals }, c.value, c.change) } : null,
   };
 }
 
-/** 칩의 날짜 표시: 기준값의 날짜가 브리프 날짜와 다르면 좁은 자리 날짜("10-26", 해가 다르면 "'25 12-31"), 같으면 null */
+/** 칩의 날짜 표시: 기준값의 날짜가 브리프 날짜와 다르면 "10월 26일"(해가 다르면 "2025년 12월 31일"), 같으면 null */
 export function chipDateNote(chip: { date: string }, briefDate: string): string | null {
   if (chip.date === briefDate) return null;
-  return shortDate(chip.date, yearOf(briefDate));
-}
-
-/** 지표 탭 아래 줄의 날짜 글자: "10월 27일 값" */
-export function boxValuesDate(briefDate: string): string {
-  return `${monthDay(briefDate)} 값`;
+  return dateText(chip.date, yearOf(briefDate));
 }
 
 /** 지표 주소의 식별자(짧은 영어 소문자·숫자) */

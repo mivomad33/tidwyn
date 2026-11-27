@@ -6,7 +6,7 @@ import { createElement as h, type ReactElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { SEGMENTED_CLASS, Segmented, type SegmentedProps } from "../site/src/components/segmented.ts";
 
-// U1 4.2-4 고르기 부품: 일정 '목록|달력', '다가오는 일정|지난 일정', 지표 기간, 브리프 위 상자 탭이 공통 Segmented 하나를 쓴다. 지어낸 값만 쓴다.
+// U1 4.2-4 고르기 부품: 일정 '목록|달력', '다가오는 일정|지난 일정', 지표 기간이 공통 Segmented 하나를 쓴다(브리프 위 상자 탭은 2026-11-27 T7에서 없앴다). 지어낸 값만 쓴다.
 
 const ROOT = path.join(import.meta.dirname, "..");
 const read = (rel: string) => fs.readFileSync(path.join(ROOT, rel), "utf8");
@@ -30,14 +30,13 @@ const options = [
 ] as const;
 
 describe("U1 4.2-4 고르기 부품 Segmented", () => {
-  test("네 곳(일정 보기, 일정 구분, 지표 기간, 브리프 위 상자 탭)이 같은 공통 부품을 쓰고, 고르기 버튼 묶음을 따로 만들지 않는다", () => {
+  test("세 곳(일정 보기, 일정 구분, 지표 기간)이 같은 공통 부품을 쓰고, 고르기 버튼 묶음을 따로 만들지 않는다. 브리프 위 상자에는 고르기가 없다(T7)", () => {
     const schedules = code("site/src/pages/SchedulesPage.tsx");
     const indicator = code("site/src/pages/IndicatorPage.tsx");
     const box = code("site/src/components/briefBox.ts");
     for (const [name, src] of [
       ["SchedulesPage", schedules],
       ["IndicatorPage", indicator],
-      ["briefBox", box],
     ] as const) assert.match(src, /import \{ Segmented \} from "(\.\.\/components|\.)\/segmented\.ts";/, `${name}가 공통 부품을 가져온다`);
     for (const [name, src] of [
       ["IndicatorPage", indicator],
@@ -50,7 +49,7 @@ describe("U1 4.2-4 고르기 부품 Segmented", () => {
     assert.match(schedules, /<Segmented<ScheduleView> label="보기" className="view"/, "일정 '목록|달력'");
     assert.match(schedules, /<Segmented<ScheduleTab> label="일정 구분" className="seg"/, "'다가오는 일정|지난 일정'");
     assert.match(indicator, /<Segmented<Period> label="기간"/, "지표 기간");
-    assert.match(box, /h\(Segmented<BoxTab>, \{[\s\S]*?tabs: \{ idOf: tabId, panelId: BOX_PANEL_ID \}/, "브리프 위 상자 탭(탭 역할)");
+    assert.doesNotMatch(box, /Segmented/, "브리프 위 상자에는 탭이 없다(T7)");
   });
 
   test("모양: 테두리 묶음, 고른 것 = 상자 바탕 + 700 글자색. 자리 클래스는 모양을 덮지 않고, 달력의 고른 날도 같은 표시다(검은 면 없음)", () => {
@@ -61,7 +60,7 @@ describe("U1 4.2-4 고르기 부품 Segmented", () => {
     assert.match(on, /background: var\(--segmented-on, var\(--chip\)\);/);
     assert.match(on, /color: var\(--fg\);/);
     assert.match(on, /font-weight: 700;/);
-    for (const place of [".view", ".seg", ".box-tabs", ".ind-seg"]) {
+    for (const place of [".view", ".seg", ".ind-seg"]) {
       assert.equal(cssRule(css, `${place} button.on`), null, `${place}가 고른 모양을 따로 두지 않는다`);
       for (const prop of ["border", "background", "color", "font-weight", "border-radius"]) assert.doesNotMatch(cssRule(css, place) ?? "", new RegExp(`(^|\\s)${prop}:`), `${place}는 배치만 더한다(${prop})`);
     }
@@ -70,8 +69,6 @@ describe("U1 4.2-4 고르기 부품 Segmented", () => {
     assert.match(sel, /color: var\(--fg\);/);
     assert.match(sel, /font-weight: 700;/);
     assert.doesNotMatch(sel, /var\(--fg\);[\s\S]*background|background: var\(--fg\)/, "검은 면을 쓰지 않는다");
-    // 바탕이 상자 바탕인 브리프 위 상자 안에서는 상자 바탕과 다른 바탕으로 구별한다
-    assert.match(cssRule(css, ".week")!, /--segmented-on: var\(--bg\);/);
   });
 
   test("보기 고르기: role=group과 aria-pressed, 고른 것에 on", () => {

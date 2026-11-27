@@ -249,6 +249,7 @@ li:focus {
   padding: 16px 18px;
 }
 
+/* 그날 요약과 키워드는 정적 HTML에만 있다(앱 화면에서는 2026-11-27에 뺐다) */
 .headline {
   padding: 14px 18px;
   font-size: var(--fs-sm);
@@ -480,8 +481,8 @@ li:focus {
   outline: none;
 }
 
-/* 한 번 연 영상의 제목은 흐린 글자색(브라우저 방문 기록 :visited, 저장하는 것 없음. 2026-11-27 사용자 결정) */
-.video-link:visited {
+/* 한 번 연 영상의 제목은 흐린 글자색. 누를 때 읽은 기록(tidwyn.read)에 남긴다(2026-11-27 T9. :visited는 폰에서 유튜브 앱이 열려 남지 않아 쓰지 않는다) */
+.video.seen .video-link {
   color: var(--muted);
 }
 
@@ -1354,7 +1355,7 @@ button.short-text {
   margin: 0;
 }
 
-/* 고르기 부품 Segmented(U1 4.2-4, components/segmented.ts): 테두리 묶음, 고른 것 = 상자 바탕 + 700 글자색. 자리 클래스(.view, .seg, .box-tabs)는 배치만 더한다 */
+/* 고르기 부품 Segmented(U1 4.2-4, components/segmented.ts): 테두리 묶음, 고른 것 = 상자 바탕 + 700 글자색. 자리 클래스(.view, .seg)는 배치만 더한다 */
 .segmented {
   display: flex;
   border: 1px solid var(--line);
@@ -1574,14 +1575,13 @@ span.res {
   background: var(--muted);
 }
 
-/* 브리프 위 '이번 주 일정'(C10). 접으면 배경 없는 한 줄 */
+/* 브리프 위 '이번 주 일정과 지표' 상자(C10). 접으면 바탕 없는 한 줄, 펴면 연한 바탕 카드 안에 일정·지표 두 구역(2026-11-27 T7: 탭을 없앴다).
+   카드는 뉴스 목록과 덩어리로 구분되게 한다 */
 .week {
   margin: 10px 18px 4px;
-  padding: 8px 12px 6px;
+  padding: 6px 14px 12px;
   border-radius: 10px;
   background: var(--chip);
-  /* 바탕이 상자 바탕이라 안의 고르기 부품은 고른 것을 화면 바탕으로 둔다(상자 바탕과 구별되게) */
-  --segmented-on: var(--bg);
 }
 
 .week.closed {
@@ -1596,19 +1596,37 @@ span.res {
   align-items: center;
   font-size: var(--fs-xs);
   font-weight: 700;
-  color: var(--muted);
 }
 
 .week-toggle {
   font-weight: 700;
   min-height: 32px;
   text-align: left;
+  color: var(--fg);
 }
 
-.week-h a {
-  font-weight: 400;
-  color: var(--accent);
-  padding: 6px 0;
+.box-sec {
+  margin-top: 10px;
+}
+
+.box-sec + .box-sec {
+  margin-top: 16px;
+}
+
+/* 구역 머리: 작은 제목 + 오른쪽 끝 '… 전체 ›' */
+.box-sec-h {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 4px;
+  font-size: var(--fs-xs);
+}
+
+.box-sec-h h2 {
+  margin: 0;
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: var(--muted);
 }
 
 .week ul {
@@ -1617,21 +1635,23 @@ span.res {
   padding: 0;
 }
 
+/* 줄 간격은 보이는 대로 좁게(약 28px). 폰의 누를 칸 44px는 이름 링크만 투명하게 넓힌다(아래 44px 절) */
 .wrow {
   display: flex;
-  gap: 10px;
-  padding: 5px 0;
+  gap: 12px;
+  align-items: baseline;
+  padding: 4px 0;
   font-size: var(--fs-sm);
-  line-height: 1.4;
+  line-height: 1.45;
 }
 
 .wrow b {
   flex: none;
-  width: 56px;
+  width: 92px;
   font-size: var(--fs-xs);
   color: var(--muted);
   font-weight: 600;
-  padding-top: 1px;
+  white-space: nowrap;
   font-variant-numeric: tabular-nums;
 }
 
@@ -1639,11 +1659,23 @@ span.res {
   min-width: 0;
 }
 
+/* 이름 뒤 같은 줄의 결과 글('· 취소', '· 연기 → …'). 이름과 구분되게 흐린 색이다. 뉴스 목록 화면은 강조색을 쓰지 않는다 */
 .wrow small {
-  /* 일정 화면의 결과 글(span.res)과 같은 색. 뉴스 목록 화면은 강조색을 쓰지 않는다 */
-  display: block;
   font-size: var(--fs-xs);
-  color: var(--fg);
+  color: var(--muted);
+}
+
+.wrow small::before {
+  content: " · ";
+}
+
+/* 상자 일정 이름: 줄 높이는 그대로 두고 누를 칸만 위아래로 넓혀 24px를 넘긴다(폰은 아래에서 44px) */
+.wrow .wname { padding-block: 4px; }
+
+/* 취소된 일정: 이름에 취소선, 흐린 색 */
+.wrow.off .wname {
+  text-decoration: line-through;
+  color: var(--muted);
 }
 
 /* 펼친 카드의 일정 칩: 예정일을 강조색으로 앞에 */
@@ -1695,82 +1727,59 @@ span.res {
   color: var(--muted);
 }
 
-/* 브리프 위 '이번 주 일정 | 지표' 상자(X7): 위 줄의 탭과 접기 버튼 */
-.box-tabs {
-  min-width: 0;
-}
-
-.box-fold {
-  margin-left: auto;
-  min-width: 32px;
-  min-height: 32px;
-  font-size: var(--fs-base);
-  color: var(--muted);
-}
-
-.week.closed .box-toggle {
-  color: var(--fg);
-}
-
 .fold-chip {
   font-weight: 700;
 }
 
-.box-foot {
-  margin: 2px 0 2px;
+/* 지표 구역: 칸 격자(폰 2열, 600px 이상 4열). 가로로 넘기지 않고 모두 보인다(T7) */
+.ichips {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px 12px;
+}
+
+@media (min-width: 600px) {
+  .ichips {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* 칸의 글자 폭만 링크다(빈 곳에서 커서가 바뀌지 않게, T7) */
+.ichip {
+  display: inline-flex;
+  flex-direction: column;
+  padding: 5px 0;
+  min-height: 44px;
+  line-height: 1.35;
+}
+
+.ichip .n {
   font-size: var(--fs-xs);
   color: var(--muted);
 }
 
-.box-foot a {
-  display: inline-block;
-  padding: 6px 0;
-}
-
-/* 넘기는 칩은 상자 안에서만 가로로 넘긴다(문서에는 가로 스크롤이 없다) */
-/* position: 칩 안 보조 기술용 글자(.sr-only, 절대 위치)가 이 넘김 상자 밖으로 문서를 넓히지 않게 한다 */
-.ichips {
-  position: relative;
-  list-style: none;
-  margin: 2px -12px 0;
-  padding: 0 12px;
-  display: flex;
-  overflow-x: auto;
-  scrollbar-width: none;
-  overscroll-behavior-x: contain;
-}
-
-.ichips::-webkit-scrollbar {
-  display: none;
-}
-
-.ichips li {
-  flex: none;
-  margin-right: 14px;
-}
-
-.ichip {
-  display: flex;
-  align-items: baseline;
-  gap: 5px;
+.ichip .n {
   white-space: nowrap;
+}
+
+/* 기준값 날짜가 브리프 날짜와 다른 칸만 맨 아래 줄에 '10월 26일 값' */
+.ichip small {
   font-size: var(--fs-xs);
-  padding: 6px 0;
-  min-height: 32px;
+  color: var(--muted);
 }
 
 .ichip b {
+  font-size: var(--fs-sm);
   font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
 
 .ichip .chg {
   font-size: var(--fs-xs);
-}
-
-.ichip small {
-  font-size: var(--fs-xs);
-  color: var(--muted);
+  font-variant-numeric: tabular-nums;
 }
 
 /* 지표 페이지와 지표 하나의 페이지 */
@@ -2006,8 +2015,8 @@ ul.isrc {
 
 /* 짧은 소식의 정정: 펼침이 없어 메타 줄 아래에 사유까지 늘 보인다. 목록 안에 늘 보이는 글이라 본문만 낮춰 훑기를 막지 않는다. 펼친 카드의 .fix는 일반 글자색이다 */
 .short-fix { margin: 6px 0 0; font-size: var(--fs-sm); line-height: 1.65; color: var(--muted); }
-/* 짧은 소식은 펼침이 없어 목록 끝에 제보 줄을 하나 둔다 */
-.short-report { margin: 0; padding: 0 18px; }
+/* 뉴스 목록 맨 끝의 제보 줄 하나(T8: 뉴스마다 두지 않는다) */
+.brief-report { margin: 0; padding: 0 18px; }
 
 /* 제보 링크: 메일 앱이 없어도 주소를 볼 수 있게 글에 함께 쓴다. 넘치면 주소를 통째로 다음 줄로 내린다 */
 .report { display: inline-block; padding-block: 12px; margin-top: 6px; font-size: var(--fs-sm); line-height: 20px; color: var(--muted); }
@@ -2099,7 +2108,6 @@ ul.isrc {
 .skip:focus-visible { outline-color: var(--fg); }
 
 .about section:focus { outline: none; }
-.src + .report { margin-top: 9px; }
 /*
  * U2 4.4(C7): 누를 곳 44px. 보이는 글자·모양·줄 높이는 그대로 두고 누를 칸만 넓힌다.
  * - 바탕·테두리가 있는 부품(칩, 고르기, 관련 칩): 위아래에 투명 테두리를 더하고 바탕은 padding 칸까지만 칠한다(background-clip).
@@ -2158,9 +2166,7 @@ ul.isrc {
 .rel .on { box-shadow: inset 0 0 0 1px var(--fg); }
 
 .week-toggle { min-height: 44px; margin-block: -6px; }
-.box-fold { min-width: 44px; min-height: 44px; margin-block: -6px; margin-right: -6px; }
-.wrow { padding-block: 12px; min-height: 44px; margin-block: -7px; position: relative; }
-.box-foot a { padding-block: 15px; margin-block: -9px; } /* 낮은 글꼴(윈도우)에서도 44px를 채우게 1px씩 더 둔다 */
+.box-sec-h a { padding-block: 15px; margin-block: -15px; }
 /* 펼친 카드의 관련 줄만 여백이 없어 넓힌다(목록·타임라인의 줄은 이미 44px 이상) */
 .story li a.nrow:not(.row-link) { padding-block: 10px; margin-block: -10px; }
 .ev-link { padding-block: 12px; margin-block: -2px; }
@@ -2173,6 +2179,8 @@ ul.isrc {
 small a.text-link,
 .isrc a.text-link { padding-bottom: 10px; }
 @media (max-width: 767.98px) {
+  /* 상자 일정 이름: 줄은 좁게 두고 누를 칸만 위아래로 넓힌다(겹친 자리는 아래 줄 링크가 받는다) */
+  .wrow .wname { padding-block: 14px; }
   .p a.text-link,
   small a.text-link,
   .isrc a.text-link { padding-bottom: 30px; }
